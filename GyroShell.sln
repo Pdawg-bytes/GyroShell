@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32922.545
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GyroShell", "GyroShell\GyroShell.csproj", "{9489365D-B182-45AD-A7BF-F6D942949A5A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|arm64 = Debug|arm64
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|arm64 = Release|arm64
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9489365D-B182-45AD-A7BF-F6D942949A5A}.Debug|arm64.ActiveCfg = Debug|arm64
+		{9489365D-B182-45AD-A7BF-F6D942949A5A}.Debug|arm64.Build.0 = Debug|arm64
+		{9489365D-B182-45AD-A7BF-F6D942949A5A}.Debug|arm64.Deploy.0 = Debug|arm64
+		{9489365D-B182-45AD-A7BF-F6D942949A5A}.Debug|x64.ActiveCfg = Debug|x64
+		{9489365D-B182-45AD-A7BF-F6D942949A5A}.Debug|x64.Build.0 = Debug|x64
+		{9489365D-B182-45AD-A7BF-F6D942949A5A}.Debug|x64.Deploy.0 = Debug|x64
+		{9489365D-B182-45AD-A7BF-F6D942949A5A}.Debug|x86.ActiveCfg = Debug|x86
+		{9489365D-B182-45AD-A7BF-F6D942949A5A}.Debug|x86.Build.0 = Debug|x86
+		{9489365D-B182-45AD-A7BF-F6D942949A5A}.Debug|x86.Deploy.0 = Debug|x86
+		{9489365D-B182-45AD-A7BF-F6D942949A5A}.Release|arm64.ActiveCfg = Release|arm64
+		{9489365D-B182-45AD-A7BF-F6D942949A5A}.Release|arm64.Build.0 = Release|arm64
+		{9489365D-B182-45AD-A7BF-F6D942949A5A}.Release|arm64.Deploy.0 = Release|arm64
+		{9489365D-B182-45AD-A7BF-F6D942949A5A}.Release|x64.ActiveCfg = Release|x64
+		{9489365D-B182-45AD-A7BF-F6D942949A5A}.Release|x64.Build.0 = Release|x64
+		{9489365D-B182-45AD-A7BF-F6D942949A5A}.Release|x64.Deploy.0 = Release|x64
+		{9489365D-B182-45AD-A7BF-F6D942949A5A}.Release|x86.ActiveCfg = Release|x86
+		{9489365D-B182-45AD-A7BF-F6D942949A5A}.Release|x86.Build.0 = Release|x86
+		{9489365D-B182-45AD-A7BF-F6D942949A5A}.Release|x86.Deploy.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5410AA72-7929-4871-BF3C-31B94DA7FEA5}
+	EndGlobalSection
+EndGlobal

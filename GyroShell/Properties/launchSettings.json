@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "GyroShell (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "GyroShell (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
