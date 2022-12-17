@@ -108,46 +108,31 @@ namespace GyroShell
         {
             if (SystemControls.IsChecked == true)
             {
-                //keybd_event(WIN, 0, 0, 0);
-                //keybd_event(A, 0, 0, 0);
 
-                //keybd_event(WIN, 0, UP, 0);
-                //keybd_event(A, 0, UP, 0);
             }
             else
             {
-                //keybd_event(ESC, 0, 0, 0);
-                //keybd_event(ESC, 0, UP, 0);
+
             }
         }
 
-        private void StartButton_Click(object sender, RoutedEventArgs e)
+        private async void StartButton_Click(object sender, RoutedEventArgs e)
         {
-
             if (StartButton.IsChecked == true)
             {
-                // ShellViewCoordinator shellViewCoordinator = new ShellViewCoordinator(ShellView.ActionCenter);
-
-                // await shellViewCoordinator.TryShowAsync(new ShowShellViewOptions());
+                ShellViewCoordinator startC = new ShellViewCoordinator(ShellView.Start);
+                await startC.TryShowAsync(new ShowShellViewOptions());
             }
             else
             {
-                //keybd_event(ESC, 0, 0, 0);
-                //keybd_event(ESC, 0, UP, 0);
+                
             }
         }
 
         private async void ActionCenter_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                var uri = new Uri("ms-actioncenter://");
-                var success = await Windows.System.Launcher.LaunchUriAsync(uri);
-            }
-            catch (Exception NotifURI)
-            {
-                Debug.WriteLine(NotifURI.ToString());
-            }
+            ShellViewCoordinator shellViewCoordinator = new ShellViewCoordinator(ShellView.ActionCenter);
+            await shellViewCoordinator.TryShowAsync(new ShowShellViewOptions());
         }
     } 
 }

@@ -10,8 +10,8 @@
     <PublishProfile>win10-$(Platform).pubxml</PublishProfile>
     <UseWinUI>true</UseWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>
+    <CsWinRTFilters>-include WindowsUdk</CsWinRTFilters>
     <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
-    <CsWinRTIncludes>WindowsUdk</CsWinRTIncludes>
   </PropertyGroup>
 
   <ItemGroup>
@@ -42,7 +42,7 @@
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="WindowsUdk">
+    <Reference Include="WindowsUdk.UI.Shell">
       <HintPath>WinMD\windowsudk.winmd</HintPath>
       <IsWinMDFile>true</IsWinMDFile>
     </Reference>
