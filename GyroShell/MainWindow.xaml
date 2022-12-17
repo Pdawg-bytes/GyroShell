@@ -8,7 +8,38 @@
     mc:Ignorable="d"
     >
 
-    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Background="Transparent">
-        <TextBlock Text="Soon to be a shell..." HorizontalAlignment="Center" VerticalAlignment="Center"/>
-    </StackPanel>
+    <Grid x:Name="MainShellGrid">
+        <StackPanel Orientation="Horizontal" x:Name="LeftControls">
+            <ToggleButton HorizontalAlignment="Left" Height="40" Width="40" Margin="5" Background="Transparent" BorderBrush="Transparent" x:Name="StartButton" Click="StartButton_Click" LostFocus="StartButton_LostFocus">
+                <ToggleButton.Content>
+                    <Image Source="Assets/start_dark.png"/>
+                </ToggleButton.Content>
+            </ToggleButton>
+        </StackPanel>
+        <StackPanel x:Name="RightControls" Orientation="Horizontal" HorizontalAlignment="Right">
+            <ToggleButton x:Name="SystemControls" HorizontalAlignment="Right" Height="40" Background="Transparent" BorderBrush="Transparent" Click="SystemControls_Click">
+                <ToggleButton.Content>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xEBAA;" VerticalAlignment="Center" Margin="5,4,8,0" FontSize="16" x:Name="BattStatus"/>
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE701;" VerticalAlignment="Center" Margin="5,0,5,0" FontSize="16" x:Name="WifiStatus"/>
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE702;" VerticalAlignment="Center" Margin="5" FontSize="18" x:Name="BTStatus"/>
+                    </StackPanel>
+                </ToggleButton.Content>
+            </ToggleButton>
+            <Button HorizontalAlignment="Right" Height="40" Width="200" Margin="5" Background="Transparent" BorderBrush="Transparent" x:Name="ActionCenter" Click="ActionCenter_Click">
+                <Button.Content>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="9:54 PM " FontSize="15" VerticalAlignment="Center" x:Name="TimeText"/>
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE1F5;" VerticalAlignment="Center" Margin="8" FontSize="8"/>
+                        <TextBlock Text="December 16" FontSize="15" VerticalAlignment="Center" x:Name="DateText"/>
+                    </StackPanel>
+                </Button.Content>
+            </Button>
+            <Button HorizontalAlignment="Right" Height="40" Width="50" Margin="5" Background="Transparent" BorderBrush="Transparent" x:Name="NotificationButton">
+                <Button.Content>
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE7E7;"/>
+                </Button.Content>
+            </Button>
+        </StackPanel>
+    </Grid>
 </Window>
