@@ -1083,11 +1083,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\pgago\\source\\repos\\GyroShell\\GyroShell\\GyroShell.csproj",
+      "projectUniqueName": "C:\\Users\\pgago\\source\\repos\\GShell\\GyroShell\\GyroShell\\GyroShell.csproj",
       "projectName": "GyroShell",
-      "projectPath": "C:\\Users\\pgago\\source\\repos\\GyroShell\\GyroShell\\GyroShell.csproj",
+      "projectPath": "C:\\Users\\pgago\\source\\repos\\GShell\\GyroShell\\GyroShell\\GyroShell.csproj",
       "packagesPath": "C:\\Users\\pgago\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\pgago\\source\\repos\\GyroShell\\GyroShell\\obj\\",
+      "outputPath": "C:\\Users\\pgago\\source\\repos\\GShell\\GyroShell\\GyroShell\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

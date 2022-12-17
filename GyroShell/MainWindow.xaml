@@ -10,7 +10,7 @@
 
     <Grid x:Name="MainShellGrid">
         <StackPanel Orientation="Horizontal" x:Name="LeftControls">
-            <ToggleButton HorizontalAlignment="Left" Height="40" Width="40" Margin="5" Background="Transparent" BorderBrush="Transparent" x:Name="StartButton" Click="StartButton_Click" LostFocus="StartButton_LostFocus">
+            <ToggleButton HorizontalAlignment="Left" Height="40" Width="40" Margin="5" Background="Transparent" BorderBrush="Transparent" x:Name="StartButton" Click="StartButton_Click">
                 <ToggleButton.Content>
                     <Image Source="Assets/start_dark.png"/>
                 </ToggleButton.Content>

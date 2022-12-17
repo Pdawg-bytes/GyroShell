@@ -67,6 +67,8 @@ namespace GyroShell
             int ScreenWidth = (int)Bounds.Width;
             appWindow.Resize(new SizeInt32 { Width = ScreenWidth, Height = 50 });
 
+            appWindow.MoveInZOrderAtTop();
+
             // TaskbarManager.ShowTaskbar();
 
             // Init stuff
