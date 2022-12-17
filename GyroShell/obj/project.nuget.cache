@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "8Lqk45xbDRxL5P4YWxK/C9zPaIp++zwMlu3skYrQDBssQHawQb+b6iYzVFclzwtW/4A6PJOni+KtYdGqH7u9jw==",
+  "dgSpecHash": "rSG6as7LMX0UJti6EYcWOCpBRNY60ZGpuwGX1qgej6HhuIOmX+hiHAWU7UyE1Q8NWj2LeY87SrOrQ5Roxzb9uA==",
   "success": true,
   "projectFilePath": "C:\\Users\\pgago\\source\\repos\\GShell\\GyroShell\\GyroShell\\GyroShell.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\pgago\\.nuget\\packages\\microsoft.windows.cswinrt\\2.0.1\\microsoft.windows.cswinrt.2.0.1.nupkg.sha512",
     "C:\\Users\\pgago\\.nuget\\packages\\microsoft.windows.sdk.buildtools\\10.0.22000.194\\microsoft.windows.sdk.buildtools.10.0.22000.194.nupkg.sha512",
     "C:\\Users\\pgago\\.nuget\\packages\\microsoft.windowsappsdk\\1.1.3\\microsoft.windowsappsdk.1.1.3.nupkg.sha512",
     "C:\\Users\\pgago\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\6.0.12\\microsoft.netcore.app.host.win-x64.6.0.12.nupkg.sha512",

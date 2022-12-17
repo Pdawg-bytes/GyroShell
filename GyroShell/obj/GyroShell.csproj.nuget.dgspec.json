@@ -45,6 +45,10 @@
         "net6.0-windows10.0.19041": {
           "targetAlias": "net6.0-windows10.0.19041.0",
           "dependencies": {
+            "Microsoft.Windows.CsWinRT": {
+              "target": "Package",
+              "version": "[2.0.1, )"
+            },
             "Microsoft.Windows.SDK.BuildTools": {
               "target": "Package",
               "version": "[10.0.22000.194, )"

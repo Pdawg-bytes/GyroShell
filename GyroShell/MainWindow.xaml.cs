@@ -22,9 +22,9 @@ using Windows.ApplicationModel.Activation;
 using Microsoft.UI.Composition.SystemBackdrops;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
-using ShowAndHideTaskbar;
 using System.Threading;
 using System.Timers;
+using WindowsUdk.UI.Shell;
 using System.Linq.Expressions;
 using Microsoft.Win32;
 using Windows.UI.Core;
@@ -36,13 +36,13 @@ namespace GyroShell
     {
         AppWindow m_appWindow;
 
-        [DllImport("User32.dll")]
+        /*[DllImport("User32.dll")]
         public static extern int keybd_event(Byte bVk, Byte bScan, long dwFlags, long dwExtraInfo);
         public const byte UP = 2;
         public const byte CTRL = 17;
         public const byte ESC = 27;
         public const byte WIN = 91;
-        public const byte A = 65;
+        public const byte A = 65;*/
 
         public MainWindow()
         {
@@ -69,7 +69,7 @@ namespace GyroShell
 
             appWindow.MoveInZOrderAtTop();
 
-            // TaskbarManager.ShowTaskbar();
+            Helpers.TaskbarManager.ShowTaskbar();
 
             // Init stuff
             TimeAndDate();
@@ -108,16 +108,16 @@ namespace GyroShell
         {
             if (SystemControls.IsChecked == true)
             {
-                keybd_event(WIN, 0, 0, 0);
-                keybd_event(A, 0, 0, 0);
+                //keybd_event(WIN, 0, 0, 0);
+                //keybd_event(A, 0, 0, 0);
 
-                keybd_event(WIN, 0, UP, 0);
-                keybd_event(A, 0, UP, 0);
+                //keybd_event(WIN, 0, UP, 0);
+                //keybd_event(A, 0, UP, 0);
             }
             else
             {
-                keybd_event(ESC, 0, 0, 0);
-                keybd_event(ESC, 0, UP, 0);
+                //keybd_event(ESC, 0, 0, 0);
+                //keybd_event(ESC, 0, UP, 0);
             }
         }
 
@@ -126,16 +126,14 @@ namespace GyroShell
 
             if (StartButton.IsChecked == true)
             {
-                keybd_event(CTRL, 0, 0, 0);
-                keybd_event(ESC, 0, 0, 0);
+                // ShellViewCoordinator shellViewCoordinator = new ShellViewCoordinator(ShellView.ActionCenter);
 
-                keybd_event(CTRL, 0, UP, 0);
-                keybd_event(ESC, 0, UP, 0);
+                // await shellViewCoordinator.TryShowAsync(new ShowShellViewOptions());
             }
             else
             {
-                keybd_event(ESC, 0, 0, 0);
-                keybd_event(ESC, 0, UP, 0);
+                //keybd_event(ESC, 0, 0, 0);
+                //keybd_event(ESC, 0, UP, 0);
             }
         }
 
