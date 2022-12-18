@@ -126,11 +126,11 @@ namespace GyroShell
             double battLevel = (currentCharge / fullCharge) * 100;
             Debug.WriteLine(battLevel);
         }
-        async private void AggregateBattery_ReportUpdated(Battery sender, object args)
+        private void AggregateBattery_ReportUpdated(Battery sender, object args)
         {
             if (reportRequested)
             {
-                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                DispatcherQueue.TryEnqueue((Microsoft.UI.Dispatching.DispatcherQueuePriority)CoreDispatcherPriority.Normal, () =>
                 {
                    AggregateBattery();
                 });
