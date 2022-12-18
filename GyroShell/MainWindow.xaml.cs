@@ -125,51 +125,102 @@ namespace GyroShell
             double fullCharge = Convert.ToDouble(report.FullChargeCapacityInMilliwattHours);
             double currentCharge = Convert.ToDouble(report.RemainingCapacityInMilliwattHours);
             double battLevel = (currentCharge / fullCharge) * 100;
-            if (battLevel >= 90)
+            if (report.ChargeRateInMilliwatts > 0)
             {
-                BattStatus.Text = "\uEBAA";
+                if (battLevel >= 90)
+                {
+                    BattStatus.Text = "\uEBB5";
+                }
+                else if (battLevel >= 80)
+                {
+                    BattStatus.Text = "\uEBB4";
+                }
+                else if (battLevel >= 70)
+                {
+                    BattStatus.Text = "\uEBB3";
+                }
+                else if (battLevel >= 60)
+                {
+                    BattStatus.Text = "\uEBB2";
+                }
+                else if (battLevel >= 50)
+                {
+                    BattStatus.Text = "\uEBB1";
+                }
+                else if (battLevel >= 40)
+                {
+                    BattStatus.Text = "\uEBB0";
+                }
+                else if (battLevel >= 30)
+                {
+                    BattStatus.Text = "\uEBAF";
+                }
+                else if (battLevel >= 20)
+                {
+                    BattStatus.Text = "\uEBAE";
+                }
+                else if (battLevel >= 10)
+                {
+                    BattStatus.Text = "\uEBAD";
+                }
+                else if (battLevel >= 5)
+                {
+                    BattStatus.Text = "\uEBAC";
+                }
+                else if (battLevel < 5)
+                {
+                    BattStatus.Text = "\uEBAB";
+                }
             }
-            else if (battLevel >= 80)
+            else
             {
-                BattStatus.Text = "\uEBA9";
-            }
-            else if (battLevel >= 70)
-            {
-                BattStatus.Text = "\uEBA8";
-            }
-            else if (battLevel >= 60)
-            {
-                BattStatus.Text = "\uEBA7";
-            }
-            else if (battLevel >= 50)
-            {
-                BattStatus.Text = "\uEBA6";
-            }
-            else if (battLevel >= 40)
-            {
-                BattStatus.Text = "\uEBA5";
-            }
-            else if (battLevel >= 30)
-            {
-                BattStatus.Text = "\uEBA4";
-            }
-            else if (battLevel >= 20)
-            {
-                BattStatus.Text = "\uEBA3";
-            }
-            else if (battLevel >= 10)
-            {
-                BattStatus.Text = "\uEBA2";
-            }
-            else if (battLevel >= 5)
-            {
-                BattStatus.Text = "\uEBA1";
-            }
-            else if (battLevel < 5)
-            {
-                BattStatus.Text = "\uEBA0";
+                if (battLevel >= 90)
+                {
+                    BattStatus.Text = "\uEBAA";
+                }
+                else if (battLevel >= 80)
+                {
+                    BattStatus.Text = "\uEBA9";
+                }
+                else if (battLevel >= 70)
+                {
+                    BattStatus.Text = "\uEBA8";
+                }
+                else if (battLevel >= 60)
+                {
+                    BattStatus.Text = "\uEBA7";
+                }
+                else if (battLevel >= 50)
+                {
+                    BattStatus.Text = "\uEBA6";
+                }
+                else if (battLevel >= 40)
+                {
+                    BattStatus.Text = "\uEBA5";
+                }
+                else if (battLevel >= 30)
+                {
+                    BattStatus.Text = "\uEBA4";
+                }
+                else if (battLevel >= 20)
+                {
+                    BattStatus.Text = "\uEBA3";
+                }
+                else if (battLevel >= 10)
+                {
+                    BattStatus.Text = "\uEBA2";
+                }
+                else if (battLevel >= 5)
+                {
+                    BattStatus.Text = "\uEBA1";
+                }
+                else if (battLevel < 5)
+                {
+                    BattStatus.Text = "\uEBA0";
+                }
             }
         }
+
         private void AggregateBattery_ReportUpdated(Battery sender, object args)
         {
             if (reportRequested)
