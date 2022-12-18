@@ -124,7 +124,6 @@ namespace GyroShell
             double fullCharge = Convert.ToDouble(report.FullChargeCapacityInMilliwattHours);
             double currentCharge = Convert.ToDouble(report.RemainingCapacityInMilliwattHours);
             double battLevel = (currentCharge / fullCharge) * 100;
-            Debug.WriteLine(battLevel);
         }
         private void AggregateBattery_ReportUpdated(Battery sender, object args)
         {
