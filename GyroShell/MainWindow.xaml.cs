@@ -31,6 +31,7 @@ using Microsoft.Win32;
 using Windows.UI.Core;
 using static System.Net.Mime.MediaTypeNames;
 using Windows.Devices.Power;
+using Windows.Devices.WiFiDirect;
 
 namespace GyroShell
 {
@@ -122,10 +123,11 @@ namespace GyroShell
         {
             var aggBattery = Battery.AggregateBattery;
             var report = aggBattery.GetReport();
+            double? chargeRate = Convert.ToDouble(report.ChargeRateInMilliwatts);
             double fullCharge = Convert.ToDouble(report.FullChargeCapacityInMilliwattHours);
             double currentCharge = Convert.ToDouble(report.RemainingCapacityInMilliwattHours);
             double battLevel = (currentCharge / fullCharge) * 100;
-            if (report.ChargeRateInMilliwatts > 0)
+            if (chargeRate > 0)
             {
                 if (battLevel >= 90)
                 {
