@@ -25,24 +25,19 @@ using System.Diagnostics;
 using System.Threading;
 using System.Timers;
 using WindowsUdk.UI.Shell;
+using GyroShell.Helpers;
 using System.Linq.Expressions;
 using Microsoft.Win32;
 using Windows.UI.Core;
 using static System.Net.Mime.MediaTypeNames;
+using Windows.Devices.Power;
 
 namespace GyroShell
 {
     public sealed partial class MainWindow : Window
     {
         AppWindow m_appWindow;
-
-        /*[DllImport("User32.dll")]
-        public static extern int keybd_event(Byte bVk, Byte bScan, long dwFlags, long dwExtraInfo);
-        public const byte UP = 2;
-        public const byte CTRL = 17;
-        public const byte ESC = 27;
-        public const byte WIN = 91;
-        public const byte A = 65;*/
+        bool reportRequested = false;
 
         public MainWindow()
         {
@@ -69,10 +64,12 @@ namespace GyroShell
 
             appWindow.MoveInZOrderAtTop();
 
-            Helpers.TaskbarManager.ShowTaskbar();
+            TaskbarManager.ShowTaskbar();
 
             // Init stuff
             TimeAndDate();
+            DetectBatteryPresence();
+            Battery.AggregateBattery.ReportUpdated += AggregateBattery_ReportUpdated;
         }
 
         private OverlappedPresenter GetAppWindowAndPresenter()
@@ -94,21 +91,53 @@ namespace GyroShell
         private void TimeAndDate()
         {
             DispatcherTimer dateTimeUpdate = new DispatcherTimer();
-            dateTimeUpdate.Interval = new TimeSpan(1000);
-            dateTimeUpdate.Tick += UpdateMethod;
+            dateTimeUpdate.Tick += DTUpdateMethod;
+            dateTimeUpdate.Interval = new TimeSpan(1000000);
             dateTimeUpdate.Start();
         }
-        private void UpdateMethod(object sender, object e)
+        private void DTUpdateMethod(object sender, object e)
         {
             TimeText.Text = DateTime.Now.ToString("t");
             DateText.Text = DateTime.Now.ToString("M");
         }
 
-        private void SystemControls_Click(object sender, RoutedEventArgs e)
+        private void DetectBatteryPresence()
+        {
+            var aggBattery = Battery.AggregateBattery;
+            var report = aggBattery.GetReport();
+            string ReportResult = report.Status.ToString();
+            Debug.WriteLine(ReportResult);
+            if (ReportResult == "NotPresent")
+            {
+                BattStatus.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                BattStatus.Visibility = Visibility.Visible;
+                reportRequested = true;
+                double fullCharge = Convert.ToDouble(report.FullChargeCapacityInMilliwattHours);
+                double currentCharge = Convert.ToDouble(report.RemainingCapacityInMilliwattHours);
+                double battLevel = (currentCharge / fullCharge) * 100;
+                Debug.WriteLine(battLevel);
+            }
+        }
+        async private void AggregateBattery_ReportUpdated(Battery sender, object args)
+        {
+            if (reportRequested)
+            {
+                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    DetectBatteryPresence();
+                });
+            }
+        }
+
+        private async void SystemControls_Click(object sender, RoutedEventArgs e)
         {
             if (SystemControls.IsChecked == true)
             {
-
+                ShellViewCoordinator controlsC = new ShellViewCoordinator(ShellView.ControlCenter);
+                await controlsC.TryShowAsync(new ShowShellViewOptions());
             }
             else
             {
@@ -131,8 +160,15 @@ namespace GyroShell
 
         private async void ActionCenter_Click(object sender, RoutedEventArgs e)
         {
-            ShellViewCoordinator shellViewCoordinator = new ShellViewCoordinator(ShellView.ActionCenter);
-            await shellViewCoordinator.TryShowAsync(new ShowShellViewOptions());
+            if (ActionCenter.IsChecked == true)
+            {
+                ShellViewCoordinator actionC = new ShellViewCoordinator(ShellView.ActionCenter);
+                await actionC.TryShowAsync(new ShowShellViewOptions());
+            }
+            else
+            {
+
+            }
         }
     } 
 }
