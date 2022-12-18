@@ -115,11 +115,16 @@ namespace GyroShell
             {
                 BattStatus.Visibility = Visibility.Visible;
                 reportRequested = true;
-                double fullCharge = Convert.ToDouble(report.FullChargeCapacityInMilliwattHours);
-                double currentCharge = Convert.ToDouble(report.RemainingCapacityInMilliwattHours);
-                double battLevel = (currentCharge / fullCharge) * 100;
-                Debug.WriteLine(battLevel);
             }
+        }
+        private void AggregateBattery()
+        {
+            var aggBattery = Battery.AggregateBattery;
+            var report = aggBattery.GetReport();
+            double fullCharge = Convert.ToDouble(report.FullChargeCapacityInMilliwattHours);
+            double currentCharge = Convert.ToDouble(report.RemainingCapacityInMilliwattHours);
+            double battLevel = (currentCharge / fullCharge) * 100;
+            Debug.WriteLine(battLevel);
         }
         async private void AggregateBattery_ReportUpdated(Battery sender, object args)
         {
@@ -127,7 +132,7 @@ namespace GyroShell
             {
                 await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
-                    DetectBatteryPresence();
+                   AggregateBattery();
                 });
             }
         }
