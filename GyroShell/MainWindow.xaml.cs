@@ -127,47 +127,47 @@ namespace GyroShell
             double battLevel = (currentCharge / fullCharge) * 100;
             if (battLevel >= 90)
             {
-                BattStatus.Text = "&#xEBAA;";
+                BattStatus.Text = "\uEBAA";
             }
             else if (battLevel >= 80)
             {
-                BattStatus.Text = "&#xEBA9;";
+                BattStatus.Text = "\uEBA9";
             }
             else if (battLevel >= 70)
             {
-                BattStatus.Text = "&#xEBA8;";
+                BattStatus.Text = "\uEBA8";
             }
             else if (battLevel >= 60)
             {
-                BattStatus.Text = "&#xEBA7;";
+                BattStatus.Text = "\uEBA7";
             }
             else if (battLevel >= 50)
             {
-                BattStatus.Text = "&#xEBA6;";
+                BattStatus.Text = "\uEBA6";
             }
             else if (battLevel >= 40)
             {
-                BattStatus.Text = "&#xEBA5;";
+                BattStatus.Text = "\uEBA5";
             }
             else if (battLevel >= 30)
             {
-                BattStatus.Text = "&#xEBA4;";
+                BattStatus.Text = "\uEBA4";
             }
             else if (battLevel >= 20)
             {
-                BattStatus.Text = "&#xEBA3;";
+                BattStatus.Text = "\uEBA3";
             }
             else if (battLevel >= 10)
             {
-                BattStatus.Text = "&#xEBA2;";
+                BattStatus.Text = "\uEBA2";
             }
             else if (battLevel >= 5)
             {
-                BattStatus.Text = "&#xEBA1;";
+                BattStatus.Text = "\uEBA1";
             }
             else if (battLevel < 5)
             {
-                BattStatus.Text = "&#xEBA0;";
+                BattStatus.Text = "\uEBA0";
             }
         }
         private void AggregateBattery_ReportUpdated(Battery sender, object args)
