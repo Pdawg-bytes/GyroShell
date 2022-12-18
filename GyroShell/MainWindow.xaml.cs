@@ -48,7 +48,7 @@ namespace GyroShell
             presenter.IsMaximizable = false;
             presenter.IsMinimizable = false;
             presenter.IsAlwaysOnTop = true;
-            presenter.IsResizable = false;
+            presenter.IsResizable = true;
             presenter.SetBorderAndTitleBar(true, false);
             m_appWindow = GetAppWindowForCurrentWindow();
             m_appWindow.SetPresenter(AppWindowPresenterKind.FullScreen);
@@ -115,6 +115,7 @@ namespace GyroShell
             {
                 BattStatus.Visibility = Visibility.Visible;
                 reportRequested = true;
+                AggregateBattery();
             }
         }
         private void AggregateBattery()
@@ -124,6 +125,50 @@ namespace GyroShell
             double fullCharge = Convert.ToDouble(report.FullChargeCapacityInMilliwattHours);
             double currentCharge = Convert.ToDouble(report.RemainingCapacityInMilliwattHours);
             double battLevel = (currentCharge / fullCharge) * 100;
+            if (battLevel >= 90)
+            {
+                BattStatus.Text = "&#xEBAA;";
+            }
+            else if (battLevel >= 80)
+            {
+                BattStatus.Text = "&#xEBA9;";
+            }
+            else if (battLevel >= 70)
+            {
+                BattStatus.Text = "&#xEBA8;";
+            }
+            else if (battLevel >= 60)
+            {
+                BattStatus.Text = "&#xEBA7;";
+            }
+            else if (battLevel >= 50)
+            {
+                BattStatus.Text = "&#xEBA6;";
+            }
+            else if (battLevel >= 40)
+            {
+                BattStatus.Text = "&#xEBA5;";
+            }
+            else if (battLevel >= 30)
+            {
+                BattStatus.Text = "&#xEBA4;";
+            }
+            else if (battLevel >= 20)
+            {
+                BattStatus.Text = "&#xEBA3;";
+            }
+            else if (battLevel >= 10)
+            {
+                BattStatus.Text = "&#xEBA2;";
+            }
+            else if (battLevel >= 5)
+            {
+                BattStatus.Text = "&#xEBA1;";
+            }
+            else if (battLevel < 5)
+            {
+                BattStatus.Text = "&#xEBA0;";
+            }
         }
         private void AggregateBattery_ReportUpdated(Battery sender, object args)
         {
