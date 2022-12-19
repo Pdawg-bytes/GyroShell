@@ -11,7 +11,7 @@ namespace GyroShell.Helpers
 {
     public class TaskbarManager
     {
-        #region -- WIN32 Shizzle
+        #region -- WIN32 Imports
 
         private const int CONST_SHOW = 5;
         private const int CONST_HIDE = 0;

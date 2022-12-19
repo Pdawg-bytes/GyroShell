@@ -1,37 +1,21 @@
 ﻿using Microsoft.UI.Windowing;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using WinRT;
-using Windows.Foundation.Collections;
-using Windows.UI.WindowManagement;
+using System.Runtime.InteropServices;
 using AppWindow = Microsoft.UI.Windowing.AppWindow;
 using Windows.Graphics;
-using Windows.ApplicationModel.Activation;
-using Microsoft.UI.Composition.SystemBackdrops;
-using System.Runtime.InteropServices;
 using System.Diagnostics;
-using System.Threading;
-using System.Timers;
 using WindowsUdk.UI.Shell;
 using GyroShell.Helpers;
-using System.Linq.Expressions;
-using Microsoft.Win32;
 using Windows.UI.Core;
-using static System.Net.Mime.MediaTypeNames;
 using Windows.Devices.Power;
-using Windows.Devices.WiFiDirect;
+using Windows.ApplicationModel.Core;
+using Windows.UI.ViewManagement;
+using Windows.UI.Xaml;
+using Microsoft.UI.Composition.SystemBackdrops;
+using Microsoft.UI.Xaml.Controls;
+using WinRT;
 
 namespace GyroShell
 {
@@ -42,6 +26,19 @@ namespace GyroShell
 
         [DllImport("User32.dll")]
         public static extern void GetSystemPowerStatus();
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct RECT
+        {
+            public int Left;
+            public int Top;
+            public int Right;
+            public int Bottom;
+        }
+
+        private delegate bool MonitorEnumProc(IntPtr hMonitor, IntPtr hdcMonitor, ref RECT lprcMonitor, IntPtr dwData);
+        [DllImport("user32.dll")]
+        private static extern bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip, MonitorEnumProc lpfnEnum, IntPtr dwData);
 
         public MainWindow()
         {
@@ -68,11 +65,13 @@ namespace GyroShell
 
             appWindow.MoveInZOrderAtTop();
 
-            TaskbarManager.ShowTaskbar();
+            TaskbarManager.HideTaskbar();
 
             // Init stuff
             TimeAndDate();
             DetectBatteryPresence();
+            MonitorSummonAsync();
+            TrySetMicaBackdrop();
             Battery.AggregateBattery.ReportUpdated += AggregateBattery_ReportUpdated;
         }
 
@@ -81,7 +80,6 @@ namespace GyroShell
             var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
             WindowId WndId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
             var _apw = AppWindow.GetFromWindowId(WndId);
-            var handleObject = WinRT.Interop.WindowNative.GetWindowHandle(this);
 
             return _apw.Presenter as OverlappedPresenter;
         }
@@ -92,6 +90,20 @@ namespace GyroShell
 
             return AppWindow.GetFromWindowId(WndIdApp);
         }
+
+        private async void MonitorSummonAsync()
+        {
+            bool MonitorEnumProc(IntPtr hMonitor, IntPtr hdcMonitor, ref RECT lprcMonitor, IntPtr dwData)
+            {
+                return true;
+            }
+
+            [DllImport("user32.dll")]
+            static extern bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip, MonitorEnumProc lpfnEnum, IntPtr dwData);
+
+            EnumDisplayMonitors(IntPtr.Zero, IntPtr.Zero, MonitorEnumProc, IntPtr.Zero);
+        }
+
         private void TimeAndDate()
         {
             DispatcherTimer dateTimeUpdate = new DispatcherTimer();
@@ -110,7 +122,6 @@ namespace GyroShell
             var aggDetectBattery = Battery.AggregateBattery;
             var report = aggDetectBattery.GetReport();
             string ReportResult = report.Status.ToString();
-            Debug.WriteLine(ReportResult);
             if (ReportResult == "NotPresent")
             {
                 BattStatus.Visibility = Visibility.Collapsed;
@@ -130,7 +141,7 @@ namespace GyroShell
             double fullCharge = Convert.ToDouble(report.FullChargeCapacityInMilliwattHours);
             double currentCharge = Convert.ToDouble(report.RemainingCapacityInMilliwattHours);
             double battLevel = (currentCharge / fullCharge) * 100;
-            if (charging == "Charging")
+            if (charging == "Charging" || charging == "Idle")
             {
                 if (battLevel >= 100)
                 {
@@ -275,5 +286,110 @@ namespace GyroShell
 
             }
         }
-    } 
+
+        WindowsSystemDispatcherQueueHelper m_wsdqHelper; // See separate sample below for implementation
+        MicaController micaController;
+        DesktopAcrylicController acrylicController;
+        SystemBackdropConfiguration m_configurationSource;
+        bool TrySetMicaBackdrop()
+        {
+            if (MicaController.IsSupported())
+            {
+                m_wsdqHelper = new WindowsSystemDispatcherQueueHelper();
+                m_wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
+
+                // Hooking up the policy object
+                m_configurationSource = new Microsoft.UI.Composition.SystemBackdrops.SystemBackdropConfiguration();
+                this.Activated += Window_Activated;
+                this.Closed += Window_Closed;
+                ((FrameworkElement)this.Content).ActualThemeChanged += Window_ThemeChanged;
+
+                // Initial configuration state.
+                m_configurationSource.IsInputActive = true;
+                SetConfigurationSourceTheme();
+
+                micaController = new Microsoft.UI.Composition.SystemBackdrops.MicaController();
+
+                micaController.Kind = Microsoft.UI.Composition.SystemBackdrops.MicaKind.BaseAlt;
+
+                // Enable the system backdrop.
+                // Note: Be sure to have "using WinRT;" to support the Window.As<...>() call.
+                micaController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
+                micaController.SetSystemBackdropConfiguration(m_configurationSource);
+                return true; // succeeded
+            }
+            TrySetAcrylicBackdrop();
+            return false; // Mica is not supported on this system
+        }
+        bool TrySetAcrylicBackdrop()
+        {
+            if (DesktopAcrylicController.IsSupported())
+            {
+                m_wsdqHelper = new WindowsSystemDispatcherQueueHelper();
+                m_wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
+
+                // Hooking up the policy object
+                m_configurationSource = new SystemBackdropConfiguration();
+                this.Activated += Window_Activated;
+                this.Closed += Window_Closed;
+                ((FrameworkElement)this.Content).ActualThemeChanged += Window_ThemeChanged;
+
+                // Initial configuration state.
+                m_configurationSource.IsInputActive = true;
+                SetConfigurationSourceTheme();
+
+                acrylicController = new DesktopAcrylicController();
+
+                // Enable the system backdrop.
+                // Note: Be sure to have "using WinRT;" to support the Window.As<...>() call.
+                acrylicController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
+                acrylicController.SetSystemBackdropConfiguration(m_configurationSource);
+                return true; // succeeded
+            }
+
+            return false; // Acrylic is not supported on this system
+        }
+
+        private void Window_Activated(object sender, Microsoft.UI.Xaml.WindowActivatedEventArgs args)
+        {
+            m_configurationSource.IsInputActive = true;
+        }
+
+        private void Window_Closed(object sender, WindowEventArgs args)
+        {
+            // Make sure any Mica/Acrylic controller is disposed so it doesn't try to
+            // use this closed window.
+            if (micaController != null)
+            {
+                micaController.Dispose();
+                micaController = null;
+            }
+            if (acrylicController != null)
+            {
+                acrylicController.Dispose();
+                acrylicController = null;
+            }
+            this.Activated -= Window_Activated;
+            m_configurationSource = null;
+            TaskbarManager.ShowTaskbar();
+        }
+
+        private void Window_ThemeChanged(FrameworkElement sender, object args)
+        {
+            if (m_configurationSource != null)
+            {
+                SetConfigurationSourceTheme();
+            }
+        }
+
+        private void SetConfigurationSourceTheme()
+        {
+            switch (((FrameworkElement)this.Content).ActualTheme)
+            {
+                case ElementTheme.Dark: m_configurationSource.Theme = Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Dark; break;
+                case ElementTheme.Light: m_configurationSource.Theme = Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Light; break;
+                case ElementTheme.Default: m_configurationSource.Theme = Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Default; break;
+            }
+        }
+    }
 }
