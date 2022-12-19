@@ -40,6 +40,9 @@ namespace GyroShell
         AppWindow m_appWindow;
         bool reportRequested = false;
 
+        [DllImport("User32.dll")]
+        public static extern void GetSystemPowerStatus();
+
         public MainWindow()
         {
             this.InitializeComponent();
@@ -104,8 +107,8 @@ namespace GyroShell
 
         private void DetectBatteryPresence()
         {
-            var aggBattery = Battery.AggregateBattery;
-            var report = aggBattery.GetReport();
+            var aggDetectBattery = Battery.AggregateBattery;
+            var report = aggDetectBattery.GetReport();
             string ReportResult = report.Status.ToString();
             Debug.WriteLine(ReportResult);
             if (ReportResult == "NotPresent")
@@ -123,11 +126,11 @@ namespace GyroShell
         {
             var aggBattery = Battery.AggregateBattery;
             var report = aggBattery.GetReport();
-            double? chargeRate = Convert.ToDouble(report.ChargeRateInMilliwatts);
+            string charging = report.Status.ToString();
             double fullCharge = Convert.ToDouble(report.FullChargeCapacityInMilliwattHours);
             double currentCharge = Convert.ToDouble(report.RemainingCapacityInMilliwattHours);
             double battLevel = (currentCharge / fullCharge) * 100;
-            if (chargeRate > 0)
+            if (charging == "Charging")
             {
                 if (battLevel >= 90)
                 {
