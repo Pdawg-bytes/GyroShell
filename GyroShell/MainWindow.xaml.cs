@@ -16,6 +16,8 @@ using Windows.UI.Xaml;
 using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Xaml.Controls;
 using WinRT;
+using Windows.UI;
+using System.Runtime.CompilerServices;
 
 namespace GyroShell
 {
@@ -23,9 +25,6 @@ namespace GyroShell
     {
         AppWindow m_appWindow;
         bool reportRequested = false;
-
-        [DllImport("User32.dll")]
-        public static extern void GetSystemPowerStatus();
 
         [StructLayout(LayoutKind.Sequential)]
         private struct RECT
@@ -97,9 +96,6 @@ namespace GyroShell
             {
                 return true;
             }
-
-            [DllImport("user32.dll")]
-            static extern bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip, MonitorEnumProc lpfnEnum, IntPtr dwData);
 
             EnumDisplayMonitors(IntPtr.Zero, IntPtr.Zero, MonitorEnumProc, IntPtr.Zero);
         }
@@ -312,14 +308,12 @@ namespace GyroShell
 
                 micaController.Kind = Microsoft.UI.Composition.SystemBackdrops.MicaKind.BaseAlt;
 
-                // Enable the system backdrop.
-                // Note: Be sure to have "using WinRT;" to support the Window.As<...>() call.
                 micaController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
                 micaController.SetSystemBackdropConfiguration(m_configurationSource);
-                return true; // succeeded
+                return true;
             }
             TrySetAcrylicBackdrop();
-            return false; // Mica is not supported on this system
+            return false;
         }
         bool TrySetAcrylicBackdrop()
         {
@@ -332,22 +326,22 @@ namespace GyroShell
                 m_configurationSource = new SystemBackdropConfiguration();
                 this.Activated += Window_Activated;
                 this.Closed += Window_Closed;
-                ((FrameworkElement)this.Content).ActualThemeChanged += Window_ThemeChanged;
 
                 // Initial configuration state.
                 m_configurationSource.IsInputActive = true;
                 SetConfigurationSourceTheme();
 
                 acrylicController = new DesktopAcrylicController();
+                acrylicController.TintColor = Color.FromArgb(255,0,0,0);
+                acrylicController.TintOpacity = 0;
 
-                // Enable the system backdrop.
-                // Note: Be sure to have "using WinRT;" to support the Window.As<...>() call.
+                ((FrameworkElement)this.Content).ActualThemeChanged += Window_ThemeChanged;
+
                 acrylicController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
                 acrylicController.SetSystemBackdropConfiguration(m_configurationSource);
-                return true; // succeeded
+                return true;
             }
-
-            return false; // Acrylic is not supported on this system
+            return false;
         }
 
         private void Window_Activated(object sender, Microsoft.UI.Xaml.WindowActivatedEventArgs args)
@@ -386,9 +380,9 @@ namespace GyroShell
         {
             switch (((FrameworkElement)this.Content).ActualTheme)
             {
-                case ElementTheme.Dark: m_configurationSource.Theme = Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Dark; break;
-                case ElementTheme.Light: m_configurationSource.Theme = Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Light; break;
-                case ElementTheme.Default: m_configurationSource.Theme = Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Default; break;
+                case ElementTheme.Dark: m_configurationSource.Theme = SystemBackdropTheme.Dark; if (acrylicController != null) { acrylicController.TintColor = Color.FromArgb(255, 0, 0, 0); } break;
+                case ElementTheme.Light: m_configurationSource.Theme = SystemBackdropTheme.Light; if (acrylicController != null) { acrylicController.TintColor = Color.FromArgb(255, 255, 255, 255); } break;
+                case ElementTheme.Default: m_configurationSource.Theme = SystemBackdropTheme.Default; if (acrylicController != null) { acrylicController.TintColor = Color.FromArgb(255, 50, 50, 50); } break;
             }
         }
     }

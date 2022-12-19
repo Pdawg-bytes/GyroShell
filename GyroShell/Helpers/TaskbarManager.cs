@@ -49,6 +49,8 @@ namespace GyroShell.Helpers
         {
             var taskbar = FindWindow("Shell_TrayWnd", null);
 
+            var multitaskbar = FindWindow("Sell_TryWnd2", null);
+
             var startmenu = FindWindowEx(taskbar, IntPtr.Zero, "Button", "Start");
 
             if (startmenu == IntPtr.Zero)
@@ -58,6 +60,7 @@ namespace GyroShell.Helpers
 
             ShowWindow(taskbar, visible ? CONST_SHOW : CONST_HIDE);
             ShowWindow(startmenu, visible ? CONST_SHOW : CONST_HIDE);
+            ShowWindow(multitaskbar, visible ? CONST_SHOW : CONST_HIDE);
         }
 
     }
