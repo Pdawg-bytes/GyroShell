@@ -132,94 +132,94 @@ namespace GyroShell
             double battLevel = (currentCharge / fullCharge) * 100;
             if (charging == "Charging")
             {
-                if (battLevel >= 90)
+                if (battLevel >= 100)
                 {
                     BattStatus.Text = "\uEBB5";
                 }
-                else if (battLevel >= 80)
+                else if (battLevel >= 90)
                 {
                     BattStatus.Text = "\uEBB4";
                 }
-                else if (battLevel >= 70)
+                else if (battLevel >= 80)
                 {
                     BattStatus.Text = "\uEBB3";
                 }
-                else if (battLevel >= 60)
+                else if (battLevel >= 70)
                 {
                     BattStatus.Text = "\uEBB2";
                 }
-                else if (battLevel >= 50)
+                else if (battLevel >= 60)
                 {
                     BattStatus.Text = "\uEBB1";
                 }
-                else if (battLevel >= 40)
+                else if (battLevel >= 50)
                 {
                     BattStatus.Text = "\uEBB0";
                 }
-                else if (battLevel >= 30)
+                else if (battLevel >= 40)
                 {
                     BattStatus.Text = "\uEBAF";
                 }
-                else if (battLevel >= 20)
+                else if (battLevel >= 30)
                 {
                     BattStatus.Text = "\uEBAE";
                 }
-                else if (battLevel >= 10)
+                else if (battLevel >= 20)
                 {
                     BattStatus.Text = "\uEBAD";
                 }
-                else if (battLevel >= 5)
+                else if (battLevel >= 10)
                 {
                     BattStatus.Text = "\uEBAC";
                 }
-                else if (battLevel < 5)
+                else if (battLevel >= 0)
                 {
                     BattStatus.Text = "\uEBAB";
                 }
             }
             else
             {
-                if (battLevel >= 90)
+                if (battLevel >= 100)
                 {
                     BattStatus.Text = "\uEBAA";
                 }
-                else if (battLevel >= 80)
+                else if (battLevel >= 90)
                 {
                     BattStatus.Text = "\uEBA9";
                 }
-                else if (battLevel >= 70)
+                else if (battLevel >= 80)
                 {
                     BattStatus.Text = "\uEBA8";
                 }
-                else if (battLevel >= 60)
+                else if (battLevel >= 70)
                 {
                     BattStatus.Text = "\uEBA7";
                 }
-                else if (battLevel >= 50)
+                else if (battLevel >= 60)
                 {
                     BattStatus.Text = "\uEBA6";
                 }
-                else if (battLevel >= 40)
+                else if (battLevel >= 50)
                 {
                     BattStatus.Text = "\uEBA5";
                 }
-                else if (battLevel >= 30)
+                else if (battLevel >= 40)
                 {
                     BattStatus.Text = "\uEBA4";
                 }
-                else if (battLevel >= 20)
+                else if (battLevel >= 30)
                 {
                     BattStatus.Text = "\uEBA3";
                 }
-                else if (battLevel >= 10)
+                else if (battLevel >= 20)
                 {
                     BattStatus.Text = "\uEBA2";
                 }
-                else if (battLevel >= 5)
+                else if (battLevel >= 10)
                 {
                     BattStatus.Text = "\uEBA1";
                 }
-                else if (battLevel < 5)
+                else if (battLevel >= 0)
                 {
                     BattStatus.Text = "\uEBA0";
                 }
