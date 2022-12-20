@@ -5,7 +5,7 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 
-// Thanks stackoverflow for this one
+// Thank stackoverflow for this one
 
 namespace GyroShell.Helpers
 {

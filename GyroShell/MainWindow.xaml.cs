@@ -35,9 +35,16 @@ namespace GyroShell
             public int Bottom;
         }
 
+
         private delegate bool MonitorEnumProc(IntPtr hMonitor, IntPtr hdcMonitor, ref RECT lprcMonitor, IntPtr dwData);
         [DllImport("user32.dll")]
-        private static extern bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip, MonitorEnumProc lpfnEnum, IntPtr dwData);
+        static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
+
+        [DllImport("user32.dll")]
+        static extern IntPtr GetForegroundWindow();
+
+        [DllImport("User32.dll")]
+        static extern bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip, MonitorEnumProc lpfnEnum, IntPtr dwData);
 
         public MainWindow()
         {
@@ -64,12 +71,12 @@ namespace GyroShell
 
             appWindow.MoveInZOrderAtTop();
 
-            TaskbarManager.HideTaskbar();
+            TaskbarManager.ShowTaskbar();
 
             // Init stuff
             TimeAndDate();
             DetectBatteryPresence();
-            MonitorSummonAsync();
+            MonitorSummon();
             TrySetMicaBackdrop();
             Battery.AggregateBattery.ReportUpdated += AggregateBattery_ReportUpdated;
         }
@@ -90,8 +97,9 @@ namespace GyroShell
             return AppWindow.GetFromWindowId(WndIdApp);
         }
 
-        private async void MonitorSummonAsync()
+        private void MonitorSummon()
         {
+
             bool MonitorEnumProc(IntPtr hMonitor, IntPtr hdcMonitor, ref RECT lprcMonitor, IntPtr dwData)
             {
                 return true;
