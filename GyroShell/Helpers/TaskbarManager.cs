@@ -49,7 +49,7 @@ namespace GyroShell.Helpers
         {
             var taskbar = FindWindow("Shell_TrayWnd", null);
 
-            var multitaskbar = FindWindow("Shell_TryWnd2", null);
+            var multitaskbar = FindWindow("Shell_SecondaryTrayWnd", null);
 
             var startmenu = FindWindowEx(taskbar, IntPtr.Zero, "Button", "Start");
 
