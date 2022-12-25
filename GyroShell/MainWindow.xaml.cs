@@ -137,7 +137,7 @@ namespace GyroShell
                 AggregateBattery();
             }
         }
-        string[] batteryIconsCharge = { "\uEBB5", "\uEBB4", "\uEBB3", "\uEBB2", "\uEBB1", "\uEBB0", "\uEBAF", "\uEBAE", "\uEBAD", "\uEBAC", "\uEBAB" };
+        string[] batteryIconsCharge = { "\uEBAE", "\uEBAC", "\uEBAD", "\uEBAE", "\uEBAF", "\uEBB0", "\uEBB1", "\uEBB2", "\uEBB3", "\uEBB4", "\uEBB5" };
         private void AggregateBattery()
         {
             var aggBattery = Battery.AggregateBattery;
@@ -145,7 +145,7 @@ namespace GyroShell
             string charging = report.Status.ToString();
             double fullCharge = Convert.ToDouble(report.FullChargeCapacityInMilliwattHours);
             double currentCharge = Convert.ToDouble(report.RemainingCapacityInMilliwattHours);
-            double battLevel = (currentCharge / fullCharge) * 100;
+            double battLevel = Math.Ceiling((currentCharge / fullCharge) * 100);
             if (charging == "Charging" || charging == "Idle")
             {
                 int index = (int)Math.Floor(battLevel / 10);
