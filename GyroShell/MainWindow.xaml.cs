@@ -148,52 +148,8 @@ namespace GyroShell
             double battLevel = Math.Ceiling((currentCharge / fullCharge) * 100);
             if (charging == "Charging" || charging == "Idle")
             {
-                int index = (int)Math.Floor(battLevel / 10);
-                BattStatus.Text = batteryIconsCharge[index];
-                /*if (battLevel >= 100)
-                {
-                    BattStatus.Text = "\uEBB5";
-                }
-                else if (battLevel >= 90)
-                {
-                    BattStatus.Text = "\uEBB4";
-                }
-                else if (battLevel >= 80)
-                {
-                    BattStatus.Text = "\uEBB3";
-                }
-                else if (battLevel >= 70)
-                {
-                    BattStatus.Text = "\uEBB2";
-                }
-                else if (battLevel >= 60)
-                {
-                    BattStatus.Text = "\uEBB1";
-                }
-                else if (battLevel >= 50)
-                {
-                    BattStatus.Text = "\uEBB0";
-                }
-                else if (battLevel >= 40)
-                {
-                    BattStatus.Text = "\uEBAF";
-                }
-                else if (battLevel >= 30)
-                {
-                    BattStatus.Text = "\uEBAE";
-                }
-                else if (battLevel >= 20)
-                {
-                    BattStatus.Text = "\uEBAD";
-                }
-                else if (battLevel >= 10)
-                {
-                    BattStatus.Text = "\uEBAC";
-                }
-                else if (battLevel >= 0)
-                {
-                    BattStatus.Text = "\uEBAB";
-                }*/
+                int indexCharge = (int)Math.Floor(battLevel / 10);
+                BattStatus.Text = batteryIconsCharge[indexCharge];
             }
             else
             {
