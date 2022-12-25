@@ -137,6 +137,7 @@ namespace GyroShell
                 AggregateBattery();
             }
         }
+        string[] batteryIconsCharge = { "\uEBB5", "\uEBB4", "\uEBB3", "\uEBB2", "\uEBB1", "\uEBB0", "\uEBAF", "\uEBAE", "\uEBAD", "\uEBAC", "\uEBAB" };
         private void AggregateBattery()
         {
             var aggBattery = Battery.AggregateBattery;
@@ -147,7 +148,9 @@ namespace GyroShell
             double battLevel = (currentCharge / fullCharge) * 100;
             if (charging == "Charging" || charging == "Idle")
             {
-                if (battLevel >= 100)
+                int index = (int)Math.Floor(battLevel / 10);
+                BattStatus.Text = batteryIconsCharge[index];
+                /*if (battLevel >= 100)
                 {
                     BattStatus.Text = "\uEBB5";
                 }
@@ -190,7 +193,7 @@ namespace GyroShell
                 else if (battLevel >= 0)
                 {
                     BattStatus.Text = "\uEBAB";
-                }
+                }*/
             }
             else
             {
