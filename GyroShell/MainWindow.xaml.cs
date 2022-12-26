@@ -18,6 +18,8 @@ using Microsoft.UI.Xaml.Controls;
 using WinRT;
 using Windows.UI;
 using System.Runtime.CompilerServices;
+using System.Windows.Input;
+using Microsoft.UI.Xaml.Input;
 
 namespace GyroShell
 {
@@ -26,6 +28,7 @@ namespace GyroShell
         AppWindow m_appWindow;
         bool reportRequested = false;
 
+        #region Win32 Stuff
         [StructLayout(LayoutKind.Sequential)]
         private struct RECT
         {
@@ -35,8 +38,8 @@ namespace GyroShell
             public int Bottom;
         }
 
-
         private delegate bool MonitorEnumProc(IntPtr hMonitor, IntPtr hdcMonitor, ref RECT lprcMonitor, IntPtr dwData);
+
         [DllImport("user32.dll")]
         static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
 
@@ -45,6 +48,7 @@ namespace GyroShell
 
         [DllImport("User32.dll")]
         static extern bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip, MonitorEnumProc lpfnEnum, IntPtr dwData);
+        #endregion
 
         public MainWindow()
         {
@@ -310,6 +314,11 @@ namespace GyroShell
                 case ElementTheme.Light: m_configurationSource.Theme = SystemBackdropTheme.Light; if (acrylicController != null) { acrylicController.TintColor = Color.FromArgb(255, 255, 255, 255); } break;
                 case ElementTheme.Default: m_configurationSource.Theme = SystemBackdropTheme.Default; if (acrylicController != null) { acrylicController.TintColor = Color.FromArgb(255, 50, 50, 50); } break;
             }
+        }
+
+        private void StartButton_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            StartFlyout.ShowAt(StartButton);
         }
     }
 }

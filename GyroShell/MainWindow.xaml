@@ -9,10 +9,21 @@
     >
 
     <Grid x:Name="MainShellGrid">
+        <Frame Visibility="Collapsed" Background="{ThemeResource SystemControlAcrylicWindowBrush}">
+            <MenuFlyout x:Name="StartFlyout" AreOpenCloseAnimationsEnabled="True">
+                <MenuFlyoutItem Text="Task Manager"/>
+                <MenuFlyoutItem Text="Settings"/>
+                <MenuFlyoutItem Text="File Explorer"/>
+                <MenuFlyoutItem Text="Search"/>
+                <MenuFlyoutItem Text="Run"/>
+                <MenuFlyoutSeparator/>
+                <MenuFlyoutItem Text="Shut down or sign out"/>
+            </MenuFlyout>
+        </Frame>
         <StackPanel Orientation="Horizontal" x:Name="LeftControls">
-            <ToggleButton HorizontalAlignment="Left" Height="40" Width="40" Margin="5" Background="Transparent" BorderBrush="Transparent" x:Name="StartButton" Click="StartButton_Click">
+            <ToggleButton HorizontalAlignment="Left" Height="40" Width="40" Margin="5" Background="Transparent" BorderBrush="Transparent" x:Name="StartButton" Click="StartButton_Click" RightTapped="StartButton_RightTapped">
                 <ToggleButton.Content>
-                    <Image Source="Assets/start_dark.png"/>
+                    <TextBlock FontFamily="HoloLens MDL2 Assets" Text="&#xE782;" VerticalAlignment="Center" Margin="0" FontSize="16"/>
                 </ToggleButton.Content>
             </ToggleButton>
         </StackPanel>
