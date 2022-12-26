@@ -138,6 +138,7 @@ namespace GyroShell
             }
         }
         string[] batteryIconsCharge = { "\uEBAE", "\uEBAC", "\uEBAD", "\uEBAE", "\uEBAF", "\uEBB0", "\uEBB1", "\uEBB2", "\uEBB3", "\uEBB4", "\uEBB5" };
+        string[] batteryIcons = { "\uEBA0", "\uEBA1", "\uEBA2", "\uEBA3", "\uEBA4", "\uEBA5", "\uEBA6", "\uEBA7", "\uEBA8", "\uEBA9", "\uEBAA" };
         private void AggregateBattery()
         {
             var aggBattery = Battery.AggregateBattery;
@@ -153,50 +154,8 @@ namespace GyroShell
             }
             else
             {
-                if (battLevel >= 100)
-                {
-                    BattStatus.Text = "\uEBAA";
-                }
-                else if (battLevel >= 90)
-                {
-                    BattStatus.Text = "\uEBA9";
-                }
-                else if (battLevel >= 80)
-                {
-                    BattStatus.Text = "\uEBA8";
-                }
-                else if (battLevel >= 70)
-                {
-                    BattStatus.Text = "\uEBA7";
-                }
-                else if (battLevel >= 60)
-                {
-                    BattStatus.Text = "\uEBA6";
-                }
-                else if (battLevel >= 50)
-                {
-                    BattStatus.Text = "\uEBA5";
-                }
-                else if (battLevel >= 40)
-                {
-                    BattStatus.Text = "\uEBA4";
-                }
-                else if (battLevel >= 30)
-                {
-                    BattStatus.Text = "\uEBA3";
-                }
-                else if (battLevel >= 20)
-                {
-                    BattStatus.Text = "\uEBA2";
-                }
-                else if (battLevel >= 10)
-                {
-                    BattStatus.Text = "\uEBA1";
-                }
-                else if (battLevel >= 0)
-                {
-                    BattStatus.Text = "\uEBA0";
-                }
+                int indexDischarge = (int)Math.Floor(battLevel / 10);
+                BattStatus.Text = batteryIcons[indexDischarge];
             }
         }
 
