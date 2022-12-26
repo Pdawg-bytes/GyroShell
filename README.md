@@ -12,3 +12,7 @@ To install GyroShell, just download the app package from releases and install th
 
 # Tools used for this app
 ![C#](https://img.shields.io/badge/c%23-%23239120.svg?style=for-the-badge&logo=c-sharp&logoColor=white) ![.Net](https://img.shields.io/badge/.NET-5C2D91?style=for-the-badge&logo=.net&logoColor=white) ![Visual Studio](https://img.shields.io/badge/Visual%20Studio-5C2D91.svg?style=for-the-badge&logo=visual-studio&logoColor=white) ![Visual Studio Code](https://img.shields.io/badge/Visual%20Studio%20Code-0078d7.svg?style=for-the-badge&logo=visual-studio-code&logoColor=white)
+
+# Screenshots (***subject to change***)
+![Screenshot_20221225_101323](https://user-images.githubusercontent.com/83825746/209495446-49c0e040-2537-4f92-b47b-924777dce877.png)
+![Screenshot_20221225_101526](https://user-images.githubusercontent.com/83825746/209495456-f8b4243c-ebab-4640-862e-1b2f51f8d823.png)
