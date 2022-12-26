@@ -20,6 +20,9 @@ using Windows.UI;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using Microsoft.UI.Xaml.Input;
+using Windows.UI.Xaml.Interop;
+using System.Windows;
+using Windows.Foundation;
 
 namespace GyroShell
 {
@@ -30,12 +33,30 @@ namespace GyroShell
 
         #region Win32 Stuff
         [StructLayout(LayoutKind.Sequential)]
-        private struct RECT
+        internal struct RECT
         {
             public int Left;
             public int Top;
             public int Right;
             public int Bottom;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct POINT
+        {
+            public int x;
+            public int y;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct WINDOWPLACEMENT
+        {
+            public int length;
+            public int flags;
+            public int showCmd;
+            public POINT ptMinPosition;
+            public POINT ptMaxPosition;
+            public RECT rcNormalPosition;
         }
 
         private delegate bool MonitorEnumProc(IntPtr hMonitor, IntPtr hdcMonitor, ref RECT lprcMonitor, IntPtr dwData);
@@ -60,7 +81,7 @@ namespace GyroShell
             presenter.IsMinimizable = false;
             presenter.IsAlwaysOnTop = true;
             presenter.IsResizable = true;
-            presenter.SetBorderAndTitleBar(true, false);
+            presenter.SetBorderAndTitleBar(false, false);
             m_appWindow = GetAppWindowForCurrentWindow();
             m_appWindow.SetPresenter(AppWindowPresenterKind.FullScreen);
             m_appWindow.Show();
@@ -69,6 +90,8 @@ namespace GyroShell
             IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
             var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
             var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
+
+
 
             int ScreenWidth = (int)Bounds.Width;
             appWindow.Resize(new SizeInt32 { Width = ScreenWidth, Height = 50 });
@@ -81,6 +104,7 @@ namespace GyroShell
             TimeAndDate();
             DetectBatteryPresence();
             MonitorSummon();
+            MoveWindow();
             TrySetMicaBackdrop();
             Battery.AggregateBattery.ReportUpdated += AggregateBattery_ReportUpdated;
         }
@@ -99,6 +123,29 @@ namespace GyroShell
             WindowId WndIdApp = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWndApp);
 
             return AppWindow.GetFromWindowId(WndIdApp);
+        }
+
+        private void MoveWindow()
+        {
+            /*Window window = this;
+            IntPtr windowHandle = WinRT.Interop.WindowNative.GetWindowHandle(this);
+
+            var placement = new WINDOWPLACEMENT
+            {
+                length = Marshal.SizeOf<WINDOWPLACEMENT>(),
+                flags = 0,
+                ptMinPosition = new POINT { x = 0, y = 0 },
+                ptMaxPosition = new POINT { x = 0, y = 0 },
+                rcNormalPosition = new RECT
+                {
+                    Left = (int)window.Bounds.Width,
+                    Top = (int)window.Bounds.Height,
+                    Right = (int)window.Bounds.Width,
+                    Bottom = (int)window.Bounds.Height,
+                }
+            };
+
+            window.SetWindowPlacement(windowHandle, ref placement);*/
         }
 
         private void MonitorSummon()
