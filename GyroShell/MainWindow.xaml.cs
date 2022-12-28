@@ -5,24 +5,15 @@ using System;
 using System.Runtime.InteropServices;
 using AppWindow = Microsoft.UI.Windowing.AppWindow;
 using Windows.Graphics;
-using System.Diagnostics;
 using WindowsUdk.UI.Shell;
 using GyroShell.Helpers;
 using Windows.UI.Core;
 using Windows.Devices.Power;
-using Windows.ApplicationModel.Core;
-using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
 using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Xaml.Controls;
 using WinRT;
 using Windows.UI;
-using System.Runtime.CompilerServices;
-using System.Windows.Input;
 using Microsoft.UI.Xaml.Input;
-using Windows.UI.Xaml.Interop;
-using System.Windows;
-using Windows.Foundation;
 
 namespace GyroShell
 {
@@ -30,6 +21,7 @@ namespace GyroShell
     {
         AppWindow m_appWindow;
         bool reportRequested = false;
+        public static int SettingInstances = 0;
 
         #region Win32 Stuff
         [StructLayout(LayoutKind.Sequential)]
@@ -95,7 +87,7 @@ namespace GyroShell
 
             int ScreenWidth = (int)Bounds.Width;
             appWindow.Resize(new SizeInt32 { Width = ScreenWidth, Height = 50 });
-
+            Title = "GyroShell";
             appWindow.MoveInZOrderAtTop();
 
             TaskbarManager.ShowTaskbar();
@@ -260,7 +252,7 @@ namespace GyroShell
             }
         }
 
-        WindowsSystemDispatcherQueueHelper m_wsdqHelper; // See separate sample below for implementation
+        WindowsSystemDispatcherQueueHelper m_wsdqHelper;
         MicaController micaController;
         DesktopAcrylicController acrylicController;
         SystemBackdropConfiguration m_configurationSource;
@@ -270,21 +262,14 @@ namespace GyroShell
             {
                 m_wsdqHelper = new WindowsSystemDispatcherQueueHelper();
                 m_wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
-
-                // Hooking up the policy object
                 m_configurationSource = new Microsoft.UI.Composition.SystemBackdrops.SystemBackdropConfiguration();
                 this.Activated += Window_Activated;
                 this.Closed += Window_Closed;
                 ((FrameworkElement)this.Content).ActualThemeChanged += Window_ThemeChanged;
-
-                // Initial configuration state.
                 m_configurationSource.IsInputActive = true;
                 SetConfigurationSourceTheme();
-
                 micaController = new Microsoft.UI.Composition.SystemBackdrops.MicaController();
-
                 micaController.Kind = Microsoft.UI.Composition.SystemBackdrops.MicaKind.BaseAlt;
-
                 micaController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
                 micaController.SetSystemBackdropConfiguration(m_configurationSource);
                 return true;
@@ -298,22 +283,15 @@ namespace GyroShell
             {
                 m_wsdqHelper = new WindowsSystemDispatcherQueueHelper();
                 m_wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
-
-                // Hooking up the policy object
                 m_configurationSource = new SystemBackdropConfiguration();
                 this.Activated += Window_Activated;
                 this.Closed += Window_Closed;
-
-                // Initial configuration state.
                 m_configurationSource.IsInputActive = true;
                 SetConfigurationSourceTheme();
-
                 acrylicController = new DesktopAcrylicController();
                 acrylicController.TintColor = Color.FromArgb(255,0,0,0);
                 acrylicController.TintOpacity = 0;
-
                 ((FrameworkElement)this.Content).ActualThemeChanged += Window_ThemeChanged;
-
                 acrylicController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
                 acrylicController.SetSystemBackdropConfiguration(m_configurationSource);
                 return true;
@@ -328,8 +306,6 @@ namespace GyroShell
 
         private void Window_Closed(object sender, WindowEventArgs args)
         {
-            // Make sure any Mica/Acrylic controller is disposed so it doesn't try to
-            // use this closed window.
             if (micaController != null)
             {
                 micaController.Dispose();
@@ -366,6 +342,29 @@ namespace GyroShell
         private void StartButton_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
             StartFlyout.ShowAt(StartButton);
+        }
+
+        private void StartFlyout_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuFlyoutItem selectedItem)
+            {
+                string shellOption = selectedItem.Tag.ToString();
+                switch (shellOption)
+                {
+                    case "ShellSettings":
+                        SettingInstances++;
+                        if (SettingInstances <= 1)
+                        {
+                            Settings.SettingsWindow settingsWindow = new Settings.SettingsWindow();
+                            settingsWindow.Activate();
+                        }
+                        break;
+                }
+            }
+            else
+            {
+                throw new Exception("MenuFlyout sender variable error");
+            }
         }
     }
 }

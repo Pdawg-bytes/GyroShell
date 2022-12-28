@@ -11,13 +11,15 @@
     <Grid x:Name="MainShellGrid">
         <Frame Visibility="Collapsed" Background="{ThemeResource SystemControlAcrylicWindowBrush}">
             <MenuFlyout x:Name="StartFlyout" AreOpenCloseAnimationsEnabled="True">
-                <MenuFlyoutItem Text="Task Manager"/>
-                <MenuFlyoutItem Text="Settings"/>
-                <MenuFlyoutItem Text="File Explorer"/>
-                <MenuFlyoutItem Text="Search"/>
-                <MenuFlyoutItem Text="Run"/>
+                <MenuFlyoutItem Text="Shell Settings" Click="StartFlyout_Click" Tag="ShellSettings"/>
                 <MenuFlyoutSeparator/>
-                <MenuFlyoutItem Text="Shut down or sign out"/>
+                <MenuFlyoutItem Text="Task Manager" Tag="TaskMgr" Click="StartFlyout_Click"/>
+                <MenuFlyoutItem Text="Settings" Tag="Settings" Click="StartFlyout_Click"/>
+                <MenuFlyoutItem Text="File Explorer" Tag="FileExp" Click="StartFlyout_Click"/>
+                <MenuFlyoutItem Text="Search" Tag="Search" Click="StartFlyout_Click"/>
+                <MenuFlyoutItem Text="Run" Tag="Run" Click="StartFlyout_Click"/>
+                <MenuFlyoutSeparator/>
+                <MenuFlyoutItem Text="Shut down or sign out" Tag="Shutdown" Click="StartFlyout_Click"/>
             </MenuFlyout>
         </Frame>
         <StackPanel Orientation="Horizontal" x:Name="LeftControls">

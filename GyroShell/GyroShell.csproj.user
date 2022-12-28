@@ -19,7 +19,16 @@
     <None Update="Package.appxmanifest">
       <SubType>Designer</SubType>
     </None>
-    <Page Update="Settings\SettingsPage.xaml">
+    <Page Update="Settings\AboutPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Settings\Customization.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Settings\BarSettings.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Settings\SettingsWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
