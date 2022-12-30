@@ -12,7 +12,7 @@
             <RowDefinition Height="40"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Grid x:Name="AppTitleBar" Grid.Row="0" Background="Transparent">
+        <Grid x:Name="AppTitleBar" Grid.Row="0" Background="Transparent" Opacity="1">
             <StackPanel Orientation="Horizontal">
                 <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE713;" Margin="10" FontSize="18"/>
                 <TextBlock Text="GyroShell Settings" Margin="10" FontSize="15"/>

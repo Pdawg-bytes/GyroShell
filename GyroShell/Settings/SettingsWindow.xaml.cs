@@ -14,7 +14,8 @@ using Microsoft.UI.Xaml.Controls;
 using WinRT;
 using Windows.UI;
 using Microsoft.UI.Xaml.Input;
-
+using Windows.UI.WindowManagement;
+using Windows.ApplicationModel.Core;
 
 namespace GyroShell.Settings
 {
@@ -34,7 +35,7 @@ namespace GyroShell.Settings
             appWindow.Move(new PointInt32 { X = 200, Y = 200 });
             contentFrame.Navigate(typeof(BarSettings));
 
-            ExtendsContentIntoTitleBar = true;
+            ExtendsContentIntoTitleBar = false;
             Title = "GyroShell Settings";
             SetTitleBar(AppTitleBar);
             TrySetMicaBackdrop();
@@ -58,7 +59,7 @@ namespace GyroShell.Settings
                 m_configurationSource.IsInputActive = true;
                 SetConfigurationSourceTheme();
                 micaController = new Microsoft.UI.Composition.SystemBackdrops.MicaController();
-                micaController.Kind = Microsoft.UI.Composition.SystemBackdrops.MicaKind.BaseAlt;
+                micaController.Kind = Microsoft.UI.Composition.SystemBackdrops.MicaKind.Base;
                 micaController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
                 micaController.SetSystemBackdropConfiguration(m_configurationSource);
                 return true;
@@ -90,7 +91,7 @@ namespace GyroShell.Settings
 
         private void Window_Activated(object sender, Microsoft.UI.Xaml.WindowActivatedEventArgs args)
         {
-            m_configurationSource.IsInputActive = true;
+            m_configurationSource.IsInputActive = args.WindowActivationState != WindowActivationState.Deactivated;
         }
 
         private void Window_Closed(object sender, WindowEventArgs args)
