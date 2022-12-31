@@ -35,7 +35,7 @@ namespace GyroShell.Settings
             appWindow.Move(new PointInt32 { X = 200, Y = 200 });
             contentFrame.Navigate(typeof(BarSettings));
 
-            ExtendsContentIntoTitleBar = false;
+            ExtendsContentIntoTitleBar = true;
             Title = "GyroShell Settings";
             SetTitleBar(AppTitleBar);
             TrySetMicaBackdrop();

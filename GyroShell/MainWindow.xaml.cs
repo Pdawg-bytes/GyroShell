@@ -14,6 +14,7 @@ using Microsoft.UI.Xaml.Controls;
 using WinRT;
 using Windows.UI;
 using Microsoft.UI.Xaml.Input;
+using GyroShell.Controls;
 
 namespace GyroShell
 {
@@ -22,6 +23,8 @@ namespace GyroShell
         AppWindow m_appWindow;
         bool reportRequested = false;
         public static int SettingInstances = 0;
+        public static MicaKind micaKind;
+        public static bool useAcrylic = false;
 
         #region Win32 Stuff
         [StructLayout(LayoutKind.Sequential)]
@@ -97,6 +100,7 @@ namespace GyroShell
             DetectBatteryPresence();
             MonitorSummon();
             MoveWindow();
+            micaKind = MicaKind.BaseAlt;
             TrySetMicaBackdrop();
             Battery.AggregateBattery.ReportUpdated += AggregateBattery_ReportUpdated;
         }
@@ -252,13 +256,14 @@ namespace GyroShell
             }
         }
 
+        #region Backdrop Stuff
         WindowsSystemDispatcherQueueHelper m_wsdqHelper;
         MicaController micaController;
         DesktopAcrylicController acrylicController;
         SystemBackdropConfiguration m_configurationSource;
         bool TrySetMicaBackdrop()
         {
-            if (MicaController.IsSupported())
+            if (MicaController.IsSupported() && useAcrylic == false)
             {
                 m_wsdqHelper = new WindowsSystemDispatcherQueueHelper();
                 m_wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
@@ -269,7 +274,7 @@ namespace GyroShell
                 m_configurationSource.IsInputActive = true;
                 SetConfigurationSourceTheme();
                 micaController = new Microsoft.UI.Composition.SystemBackdrops.MicaController();
-                micaController.Kind = Microsoft.UI.Composition.SystemBackdrops.MicaKind.BaseAlt;
+                micaController.Kind = micaKind;
                 micaController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
                 micaController.SetSystemBackdropConfiguration(m_configurationSource);
                 return true;
@@ -338,6 +343,7 @@ namespace GyroShell
                 case ElementTheme.Default: m_configurationSource.Theme = SystemBackdropTheme.Default; if (acrylicController != null) { acrylicController.TintColor = Color.FromArgb(255, 50, 50, 50); } break;
             }
         }
+        #endregion
 
         private void StartButton_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
