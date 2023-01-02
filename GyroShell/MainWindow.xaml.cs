@@ -14,7 +14,8 @@ using Microsoft.UI.Xaml.Controls;
 using WinRT;
 using Windows.UI;
 using Microsoft.UI.Xaml.Input;
-using GyroShell.Controls;
+using CommunityToolkit.WinUI.Connectivity;
+using Windows.Networking.Connectivity;
 
 namespace GyroShell
 {
@@ -25,6 +26,7 @@ namespace GyroShell
         public static int SettingInstances = 0;
         public static MicaKind micaKind;
         public static bool useAcrylic = false;
+        public static string timeType = "t";
 
         #region Win32 Stuff
         [StructLayout(LayoutKind.Sequential)]
@@ -102,6 +104,7 @@ namespace GyroShell
             MoveWindow();
             micaKind = MicaKind.BaseAlt;
             TrySetMicaBackdrop();
+            InternetUpdate();
             Battery.AggregateBattery.ReportUpdated += AggregateBattery_ReportUpdated;
         }
 
@@ -159,13 +162,47 @@ namespace GyroShell
         {
             DispatcherTimer dateTimeUpdate = new DispatcherTimer();
             dateTimeUpdate.Tick += DTUpdateMethod;
-            dateTimeUpdate.Interval = new TimeSpan(1000000);
+            dateTimeUpdate.Interval = new TimeSpan(5000000);
             dateTimeUpdate.Start();
         }
         private void DTUpdateMethod(object sender, object e)
         {
-            TimeText.Text = DateTime.Now.ToString("t");
+            TimeText.Text = DateTime.Now.ToString(timeType);
             DateText.Text = DateTime.Now.ToString("M");
+        }
+
+        private void InternetUpdate()
+        {
+            DispatcherTimer internetUpdate = new DispatcherTimer();
+            internetUpdate.Tick += ITUpdateMethod;
+            internetUpdate.Interval = new TimeSpan(20000000);
+            internetUpdate.Start();
+        }
+        private void ITUpdateMethod(object sender, object e)
+        {
+            if (NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable)
+            {
+                switch (NetworkHelper.Instance.ConnectionInformation.ConnectionType)
+                {
+                    case ConnectionType.Ethernet:
+                        WifiStatus.Text = "\uE839";
+                        break;
+                    case ConnectionType.WiFi:
+                        int WifiSignalBars = NetworkHelper.Instance.ConnectionInformation.SignalStrength.GetValueOrDefault(0);
+                        break;
+                    case ConnectionType.Data:
+                        int DataSignalBars = NetworkHelper.Instance.ConnectionInformation.SignalStrength.GetValueOrDefault(0);
+                        break;
+                    case ConnectionType.Unknown:
+                    default:
+                        WifiStatus.Text = "\uE774";
+                        break;
+                }
+            }
+            else
+            {
+                WifiStatus.Text = "\uE7E7";
+            }
         }
 
         private void DetectBatteryPresence()

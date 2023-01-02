@@ -42,5 +42,17 @@ namespace GyroShell.Settings
                     break;
             }
         }
+
+        private void SecondsToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (SecondsToggle.IsOn)
+            {
+                MainWindow.timeType = "T";
+            }
+            else
+            {
+                MainWindow.timeType = "t";
+            }
+        }
     }
 }

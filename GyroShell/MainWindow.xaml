@@ -33,13 +33,13 @@
             <ToggleButton x:Name="SystemControls" HorizontalAlignment="Right" Height="40" Background="Transparent" BorderBrush="Transparent" Click="SystemControls_Click">
                 <ToggleButton.Content>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xEBAA;" VerticalAlignment="Center" Margin="5,4,5,0" FontSize="16" x:Name="BattStatus"/>
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xEBAA;" VerticalAlignment="Center" Margin="0,4,5,0" FontSize="16" x:Name="BattStatus"/>
                         <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE701;" VerticalAlignment="Center" Margin="5,0,5,0" FontSize="16" x:Name="WifiStatus"/>
                         <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE995;" VerticalAlignment="Center" Margin="5,2,0,0" FontSize="16" x:Name="SndStatus"/>
                     </StackPanel>
                 </ToggleButton.Content>
             </ToggleButton>
-            <ToggleButton HorizontalAlignment="Right" Height="40" Width="200" Margin="5" Background="Transparent" BorderBrush="Transparent" x:Name="ActionCenter" Click="ActionCenter_Click">
+            <ToggleButton HorizontalAlignment="Right" Height="40" Margin="5" Background="Transparent" BorderBrush="Transparent" x:Name="ActionCenter" Click="ActionCenter_Click">
                 <ToggleButton.Content>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock FontSize="15" VerticalAlignment="Center" x:Name="TimeText"/>
