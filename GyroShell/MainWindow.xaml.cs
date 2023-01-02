@@ -189,9 +189,47 @@ namespace GyroShell
                         break;
                     case ConnectionType.WiFi:
                         int WifiSignalBars = NetworkHelper.Instance.ConnectionInformation.SignalStrength.GetValueOrDefault(0);
+                        switch (WifiSignalBars)
+                        {
+                            case 0:
+                            default:
+                                WifiStatus.Text = "\uE871";
+                                break;
+                            case 1:
+                                WifiStatus.Text = "\uE872";
+                                break;
+                            case 2:
+                                WifiStatus.Text = "\uE873";
+                                break;
+                            case 3:
+                                WifiStatus.Text = "\uE874";
+                                break;
+                            case 4:
+                                WifiStatus.Text = "\uE701";
+                                break;
+                        }
                         break;
                     case ConnectionType.Data:
                         int DataSignalBars = NetworkHelper.Instance.ConnectionInformation.SignalStrength.GetValueOrDefault(0);
+                        switch (DataSignalBars)
+                        {
+                            case 1:
+                            default:
+                                WifiStatus.Text = "\uEC37";
+                                break;
+                            case 2:
+                                WifiStatus.Text = "\uEC38";
+                                break;
+                            case 3:
+                                WifiStatus.Text = "\uEC39";
+                                break;
+                            case 4:
+                                WifiStatus.Text = "\uEC3A";
+                                break;
+                            case 5:
+                                WifiStatus.Text = "\uEC3B";
+                                break;
+                        }
                         break;
                     case ConnectionType.Unknown:
                     default:
