@@ -16,7 +16,20 @@
                     <x:String>Mica</x:String>
                     <x:String>Acrylic</x:String>
                 </ComboBox>
-                <ToggleSwitch Header="Use seconds in time" Margin="20" VerticalAlignment="Top" HorizontalAlignment="Left" x:Name="SecondsToggle" Toggled="SecondsToggle_Toggled"/>
+                <Expander x:Name="ClockExpander" HorizontalAlignment="Stretch" Margin="20" HorizontalContentAlignment="Left">
+                    <Expander.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xF182;" FontFamily="Segoe MDL2 Assets" Margin="5" FontSize="16"/>
+                            <TextBlock Text="Clock Settings" Margin="5"/>
+                        </StackPanel>
+                    </Expander.Header>
+                    <Expander.Content>
+                        <StackPanel>
+                            <ToggleSwitch Header="Use seconds in time" VerticalAlignment="Top" HorizontalAlignment="Left" x:Name="SecondsToggle" Toggled="SecondsToggle_Toggled"/>
+                            <ToggleSwitch Header="24 Hour time" VerticalAlignment="Top" HorizontalAlignment="Left" x:Name="TFHourToggle" Toggled="TFHourToggle_Toggled"/>
+                        </StackPanel>
+                    </Expander.Content>
+                </Expander>
             </StackPanel>
         </ScrollViewer>
     </Grid>

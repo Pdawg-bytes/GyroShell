@@ -54,5 +54,17 @@ namespace GyroShell.Settings
                 MainWindow.timeType = "t";
             }
         }
+
+        private void TFHourToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (TFHourToggle.IsOn)
+            {
+                MainWindow.timeType = "H:mm";
+            }
+            else
+            {
+                MainWindow.timeType = "t";
+            }
+        }
     }
 }
