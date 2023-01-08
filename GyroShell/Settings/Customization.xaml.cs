@@ -13,23 +13,17 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Microsoft.UI.Composition.SystemBackdrops;
-using GyroShell.ViewModels;
 
 namespace GyroShell.Settings
 {
     public sealed partial class Customization : Page
     {
-        private readonly CustomizationViewModel _customizationViewModel;
-
         public static bool TFHourEnabled;
         public static bool SecondsEnabled;
-        public Customization(CustomizationViewModel customizationViewModel)
+        public Customization()
         {
-            _customizationViewModel = customizationViewModel;
             this.InitializeComponent();
         }
-
-        public CustomizationViewModel CustomizationViewModel => _customizationViewModel;
 
         private void TransparencyType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -76,6 +70,22 @@ namespace GyroShell.Settings
             {
                 MainWindow.timeType = "t";
                 TFHourEnabled = false;
+            }
+        }
+
+        private void Icon_Checked(object sender, RoutedEventArgs e)
+        {
+            RadioButton irb = sender as RadioButton;
+            if (irb != null)
+            {
+                switch (irb.Name)
+                {
+                    case "10Icon":
+                    default:
+                        break;
+                    case "11Icon":
+                        break;
+                }
             }
         }
     }
