@@ -79,7 +79,7 @@ namespace GyroShell
             presenter.IsMaximizable = false;
             presenter.IsMinimizable = false;
             presenter.IsAlwaysOnTop = true;
-            presenter.IsResizable = false;
+            presenter.IsResizable = true;
             presenter.SetBorderAndTitleBar(false, false);
             m_appWindow = GetAppWindowForCurrentWindow();
             m_appWindow.SetPresenter(AppWindowPresenterKind.FullScreen);
@@ -171,6 +171,7 @@ namespace GyroShell
             DateText.Text = DateTime.Now.ToString("M");
         }
 
+        #region Internet
         private void InternetUpdate()
         {
             DispatcherTimer internetUpdate = new DispatcherTimer();
@@ -242,7 +243,9 @@ namespace GyroShell
                 WifiStatus.Text = "\uE7E7";
             }
         }
+        #endregion
 
+        #region Battery
         private void DetectBatteryPresence()
         {
             var aggDetectBattery = Battery.AggregateBattery;
@@ -259,6 +262,7 @@ namespace GyroShell
                 AggregateBattery();
             }
         }
+
         string[] batteryIconsCharge = { "\uEBAE", "\uEBAC", "\uEBAD", "\uEBAE", "\uEBAF", "\uEBB0", "\uEBB1", "\uEBB2", "\uEBB3", "\uEBB4", "\uEBB5" };
         string[] batteryIcons = { "\uEBA0", "\uEBA1", "\uEBA2", "\uEBA3", "\uEBA4", "\uEBA5", "\uEBA6", "\uEBA7", "\uEBA8", "\uEBA9", "\uEBAA" };
         private void AggregateBattery()
@@ -291,6 +295,7 @@ namespace GyroShell
                 });
             }
         }
+        #endregion
 
         private async void SystemControls_Click(object sender, RoutedEventArgs e)
         {
