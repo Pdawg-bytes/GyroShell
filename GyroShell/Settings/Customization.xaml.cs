@@ -80,10 +80,10 @@ namespace GyroShell.Settings
             {
                 switch (irb.Name)
                 {
-                    case "10Icon":
+                    case "Icon10":
                     default:
                         break;
-                    case "11Icon":
+                    case "Icon11":
                         break;
                 }
             }

@@ -15,7 +15,6 @@ using WinRT;
 using Windows.UI;
 using Microsoft.UI.Xaml.Input;
 using CommunityToolkit.WinUI.Connectivity;
-using GyroShell.ViewModels;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -30,7 +29,6 @@ namespace GyroShell
         public static bool useAcrylic = false;
         public static string timeType = "t";
 
-        public static MainWindowViewModel ViewModel { get; } = new MainWindowViewModel();
 
         #region Win32 Stuff
         [StructLayout(LayoutKind.Sequential)]
@@ -81,10 +79,10 @@ namespace GyroShell
             presenter.IsMaximizable = false;
             presenter.IsMinimizable = false;
             presenter.IsAlwaysOnTop = true;
-            presenter.IsResizable = true;
+            presenter.IsResizable = false;
             presenter.SetBorderAndTitleBar(false, false);
             m_appWindow = GetAppWindowForCurrentWindow();
-            m_appWindow.SetPresenter(AppWindowPresenterKind.CompactOverlay);
+            m_appWindow.SetPresenter(AppWindowPresenterKind.FullScreen);
             m_appWindow.Show();
 
             // Resize Window

@@ -39,8 +39,8 @@
                     </Expander.Header>
                     <Expander.Content>
                         <StackPanel>
-                            <RadioButton Content="Windows 10 Icon Style" GroupName="IconStyle" Margin="0,0,0,8" x:Name="10Icon" Checked="IconSet_Checked"/>
-                            <RadioButton Content="Windows 11 Icon Style" GroupName="IconStyle" x:Name="11Icon" Checked="IconSet_Checked"/>
+                            <RadioButton Content="Windows 10 Icon Style" GroupName="IconStyle" Margin="0,0,0,8" x:Name="Icon10" Checked="Icon_Checked"/>
+                            <RadioButton Content="Windows 11 Icon Style" GroupName="IconStyle" x:Name="Icon11" Checked="Icon_Checked"/>
                         </StackPanel>
                     </Expander.Content>
                 </Expander>
