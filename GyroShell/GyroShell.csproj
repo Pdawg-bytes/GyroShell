@@ -68,6 +68,7 @@
     <PRIResource Remove="Commands\**" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Controls\DefaultTaskbar.xaml" />
     <None Remove="Controls\StartWindow.xaml" />
     <None Remove="Settings\AboutPage.xaml" />
     <None Remove="Settings\BarSettings.xaml" />
@@ -101,5 +102,10 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ViewModels\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Controls\DefaultTaskbar.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 </Project>

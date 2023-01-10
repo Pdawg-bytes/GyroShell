@@ -13,6 +13,9 @@
     <None Update="App.xaml">
       <SubType>Designer</SubType>
     </None>
+    <Page Update="Controls\DefaultTaskbar.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Controls\StartWindow.xaml">
       <SubType>Designer</SubType>
     </Page>

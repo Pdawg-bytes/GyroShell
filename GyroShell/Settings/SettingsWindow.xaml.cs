@@ -16,6 +16,7 @@ using Windows.UI;
 using Microsoft.UI.Xaml.Input;
 using Windows.UI.WindowManagement;
 using Windows.ApplicationModel.Core;
+using GyroShell.Controls;
 
 namespace GyroShell.Settings
 {
@@ -108,7 +109,7 @@ namespace GyroShell.Settings
             }
             this.Activated -= Window_Activated;
             m_configurationSource = null;
-            MainWindow.SettingInstances = 0;
+            DefaultTaskbar.SettingInstances = 0;
         }
 
         private void Window_ThemeChanged(FrameworkElement sender, object args)
@@ -139,6 +140,7 @@ namespace GyroShell.Settings
                 {
                     case "BarSettings":
                     default:
+                        
                         contentFrame.Navigate(typeof(BarSettings));
                         break;
                     case "Customization":

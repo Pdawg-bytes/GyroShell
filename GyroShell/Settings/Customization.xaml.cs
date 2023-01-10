@@ -13,6 +13,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Microsoft.UI.Composition.SystemBackdrops;
+using GyroShell.Controls;
 
 namespace GyroShell.Settings
 {
@@ -20,9 +21,13 @@ namespace GyroShell.Settings
     {
         public static bool TFHourEnabled;
         public static bool SecondsEnabled;
+
+        DefaultTaskbar defaultTaskbar;
+
         public Customization()
         {
             this.InitializeComponent();
+            defaultTaskbar = new DefaultTaskbar();
         }
 
         private void TransparencyType_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -49,12 +54,12 @@ namespace GyroShell.Settings
         {
             if (SecondsToggle.IsOn)
             {
-                MainWindow.timeType = "T";
+                DefaultTaskbar.timeType = "T";
                 SecondsEnabled = true;
             }
             else
             {
-                MainWindow.timeType = "t";
+                DefaultTaskbar.timeType = "t";
                 SecondsEnabled = false;
             }
         }
@@ -63,12 +68,12 @@ namespace GyroShell.Settings
         {
             if (TFHourToggle.IsOn)
             {
-                MainWindow.timeType = "H:mm";
+                DefaultTaskbar.timeType = "H:mm";
                 TFHourEnabled = true;
             }
             else
             {
-                MainWindow.timeType = "t";
+                DefaultTaskbar.timeType = "t";
                 TFHourEnabled = false;
             }
         }
@@ -82,8 +87,10 @@ namespace GyroShell.Settings
                 {
                     case "Icon10":
                     default:
+                        defaultTaskbar.UpdateIconService(true);
                         break;
                     case "Icon11":
+                        defaultTaskbar.UpdateIconService(false);
                         break;
                 }
             }

@@ -7,53 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     >
-    
-
-    <Grid x:Name="MainShellGrid">
-        <Frame Visibility="Collapsed" Background="{ThemeResource SystemControlAcrylicWindowBrush}">
-            <MenuFlyout x:Name="StartFlyout" AreOpenCloseAnimationsEnabled="True">
-                <MenuFlyoutItem Text="Shell Settings" Click="StartFlyout_Click" Tag="ShellSettings"/>
-                <MenuFlyoutSeparator/>
-                <MenuFlyoutItem Text="Task Manager" Tag="TaskMgr" Click="StartFlyout_Click"/>
-                <MenuFlyoutItem Text="Settings" Tag="Settings" Click="StartFlyout_Click"/>
-                <MenuFlyoutItem Text="File Explorer" Tag="FileExp" Click="StartFlyout_Click"/>
-                <MenuFlyoutItem Text="Search" Tag="Search" Click="StartFlyout_Click"/>
-                <MenuFlyoutItem Text="Run" Tag="Run" Click="StartFlyout_Click"/>
-                <MenuFlyoutSeparator/>
-                <MenuFlyoutItem Text="Shut down or sign out" Tag="Shutdown" Click="StartFlyout_Click"/>
-            </MenuFlyout>
-        </Frame>
-        <StackPanel Orientation="Horizontal" x:Name="LeftControls">
-            <ToggleButton HorizontalAlignment="Left" Height="40" Width="40" Margin="5" Background="Transparent" BorderBrush="Transparent" x:Name="StartButton" Click="StartButton_Click" RightTapped="StartButton_RightTapped">
-                <ToggleButton.Content>
-                    <TextBlock FontFamily="HoloLens MDL2 Assets" Text="&#xE782;" VerticalAlignment="Center" Margin="0" FontSize="16"/>
-                </ToggleButton.Content>
-            </ToggleButton>
-        </StackPanel>
-        <StackPanel x:Name="RightControls" Orientation="Horizontal" HorizontalAlignment="Right">
-            <ToggleButton x:Name="SystemControls" HorizontalAlignment="Right" Height="40" Background="Transparent" BorderBrush="Transparent" Click="SystemControls_Click">
-                <ToggleButton.Content>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xEBAA;" VerticalAlignment="Center" Margin="0,7,3,0" FontSize="16" x:Name="BattStatus"/>
-                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE701;" VerticalAlignment="Center" Margin="5,0,5,0" FontSize="16" x:Name="WifiStatus"/>
-                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE995;" VerticalAlignment="Center" Margin="5,2,0,0" FontSize="16" x:Name="SndStatus"/>
-                    </StackPanel>
-                </ToggleButton.Content>
-            </ToggleButton>
-            <ToggleButton HorizontalAlignment="Right" Height="40" Margin="5" Background="Transparent" BorderBrush="Transparent" x:Name="ActionCenter" Click="ActionCenter_Click">
-                <ToggleButton.Content>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontSize="15" VerticalAlignment="Center" x:Name="TimeText"/>
-                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE1F5;" VerticalAlignment="Center" Margin="8" FontSize="8"/>
-                        <TextBlock FontSize="15" VerticalAlignment="Center" x:Name="DateText"/>
-                    </StackPanel>
-                </ToggleButton.Content>
-            </ToggleButton>
-            <ToggleButton HorizontalAlignment="Right" Height="40" Width="50" Margin="5" Background="Transparent" BorderBrush="Transparent" x:Name="NotificationButton">
-                <ToggleButton.Content>
-                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE7E7;"/>
-                </ToggleButton.Content>
-            </ToggleButton>
-        </StackPanel>
+    <Grid>
+        <Frame x:Name="TaskbarFrame"/>
     </Grid>
 </Window>
