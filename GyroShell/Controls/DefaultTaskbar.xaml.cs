@@ -50,7 +50,7 @@ namespace GyroShell.Controls
         {
             DispatcherTimer dateTimeUpdate = new DispatcherTimer();
             dateTimeUpdate.Tick += DTUpdateMethod;
-            dateTimeUpdate.Interval = new TimeSpan(5000000);
+            dateTimeUpdate.Interval = new TimeSpan(100000);
             dateTimeUpdate.Start();
         }
         private void DTUpdateMethod(object sender, object e)
@@ -129,7 +129,7 @@ namespace GyroShell.Controls
             }
             else
             {
-                WifiStatus.Text = "\uE7E7";
+                WifiStatus.Text = "\uF140";
             }
         }
         #endregion

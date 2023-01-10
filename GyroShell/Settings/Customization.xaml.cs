@@ -19,11 +19,9 @@ namespace GyroShell.Settings
 {
     public sealed partial class Customization : Page
     {
-        public static bool TFHourEnabled;
-        public static bool SecondsEnabled;
-
         DefaultTaskbar defaultTaskbar;
-
+        public static bool SecondsEnabled;
+        public static bool TFHourEnabled;
         public Customization()
         {
             this.InitializeComponent();
@@ -55,26 +53,30 @@ namespace GyroShell.Settings
             if (SecondsToggle.IsOn)
             {
                 DefaultTaskbar.timeType = "T";
-                SecondsEnabled = true;
             }
             else
             {
                 DefaultTaskbar.timeType = "t";
-                SecondsEnabled = false;
             }
         }
 
         private void TFHourToggle_Toggled(object sender, RoutedEventArgs e)
         {
-            if (TFHourToggle.IsOn)
+            if (TFHourToggle.IsOn == true && SecondsToggle.IsOn == true)
+            {
+                DefaultTaskbar.timeType = "H:mm:ss";
+            }
+            else if (TFHourToggle.IsOn)
             {
                 DefaultTaskbar.timeType = "H:mm";
-                TFHourEnabled = true;
+            }
+            else if (TFHourToggle.IsOn == false && SecondsToggle.IsOn == true)
+            {
+                DefaultTaskbar.timeType = "T";
             }
             else
             {
                 DefaultTaskbar.timeType = "t";
-                TFHourEnabled = false;
             }
         }
 
