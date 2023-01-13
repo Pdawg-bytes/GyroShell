@@ -5,6 +5,7 @@
     xmlns:local="using:GyroShell">
     <Application.Resources>
         <ResourceDictionary>
+            <FontFamily x:Key="FluentIcons">/Assets/SegoeFluentIconsNormal.ttf#Segoe Fluent Icons</FontFamily>
             <ResourceDictionary.MergedDictionaries>
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
             </ResourceDictionary.MergedDictionaries>
