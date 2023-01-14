@@ -1,6 +1,3 @@
-// Copyright (c) Microsoft Corporation and Contributors.
-// Licensed under the MIT License.
-
 using CommunityToolkit.WinUI.Connectivity;
 using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Xaml;
@@ -22,14 +19,8 @@ using Windows.Foundation.Collections;
 using Windows.UI.Core;
 using WindowsUdk.UI.Shell;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
-
 namespace GyroShell.Controls
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class DefaultTaskbar : Page
     {
         public static int SettingInstances = 0;

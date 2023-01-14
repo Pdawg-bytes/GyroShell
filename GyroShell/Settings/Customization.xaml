@@ -11,8 +11,8 @@
         <ScrollViewer HorizontalScrollMode="Disabled" HorizontalAlignment="Stretch" Margin="10">
             <StackPanel>
                 <TextBlock Text="Customization" FontWeight="SemiBold" Margin="20" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="30" TextWrapping="WrapWholeWords"/>
-                <ComboBox x:Name="TransparencyType" Header="Set GyroShell's bar transparency effect" Margin="20,20,0,0" SelectionChanged="TransparencyType_SelectionChanged" SelectedItem="Mica Alt (Default)">
-                    <x:String>Mica Alt (Default)</x:String>
+                <ComboBox x:Name="TransparencyType" Header="Set GyroShell's bar transparency effect" Margin="20,20,0,0" SelectionChanged="TransparencyType_SelectionChanged">
+                    <x:String>Mica Alt</x:String>
                     <x:String>Mica</x:String>
                     <x:String>Acrylic</x:String>
                 </ComboBox>

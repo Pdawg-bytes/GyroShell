@@ -20,12 +20,12 @@ namespace GyroShell.Settings
     public sealed partial class Customization : Page
     {
         DefaultTaskbar defaultTaskbar;
-        public static bool SecondsEnabled;
-        public static bool TFHourEnabled;
+        MainWindow mainWindow;
         public Customization()
         {
             this.InitializeComponent();
             defaultTaskbar = new DefaultTaskbar();
+            mainWindow = new MainWindow();
         }
 
         private void TransparencyType_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -33,30 +33,35 @@ namespace GyroShell.Settings
             string materialName = e.AddedItems[0].ToString();
             switch (materialName)
             {
-                case "Mica Alt (Default)":
-                default:
-                    MainWindow.micaKind = MicaKind.BaseAlt;
-                    MainWindow.useAcrylic = false;
-                    break;
+                case "Mica Alt":
+                   mainWindow.TrySetMicaBackdrop(MicaKind.BaseAlt);
+                   break;
                 case "Mica":
-                    MainWindow.micaKind = MicaKind.Base;
-                    MainWindow.useAcrylic = false;
-                    break;
+                   mainWindow.TrySetMicaBackdrop(MicaKind.Base);
+                   break;
                 case "Acrylic":
-                    MainWindow.useAcrylic = true;
-                    break;
+                   mainWindow.TrySetAcrylicBackdrop();
+                   break;
             }
         }
 
         private void SecondsToggle_Toggled(object sender, RoutedEventArgs e)
         {
-            if (SecondsToggle.IsOn)
+            if (TFHourToggle.IsOn == true && SecondsToggle.IsOn == false)
             {
-                DefaultTaskbar.timeType = "T";
+                DefaultTaskbar.timeType = "H:mm";
             }
-            else
+            else if (TFHourToggle.IsOn == true && SecondsToggle.IsOn == true)
+            {
+                DefaultTaskbar.timeType = "H:mm:ss";
+            }
+            else if (TFHourToggle.IsOn == false && SecondsToggle.IsOn == false)
             {
                 DefaultTaskbar.timeType = "t";
+            }
+            else if (SecondsToggle.IsOn)
+            {
+                DefaultTaskbar.timeType = "T";
             }
         }
 

@@ -24,9 +24,6 @@ namespace GyroShell
     public sealed partial class MainWindow : Window
     {
         AppWindow m_appWindow;
-        public static MicaKind micaKind;
-        public static bool useAcrylic = false;
-
 
         #region Win32 Stuff
         [StructLayout(LayoutKind.Sequential)]
@@ -97,9 +94,8 @@ namespace GyroShell
 
             // Init stuff
             MonitorSummon();
-            MoveWindow();
-            micaKind = MicaKind.BaseAlt;
-            TrySetMicaBackdrop();
+            MoveWindow();;
+            TrySetMicaBackdrop(MicaKind.BaseAlt);
             TaskbarFrame.Navigate(typeof(Controls.DefaultTaskbar), null, new SuppressNavigationTransitionInfo());
         }
 
@@ -158,9 +154,9 @@ namespace GyroShell
         MicaController micaController;
         DesktopAcrylicController acrylicController;
         SystemBackdropConfiguration m_configurationSource;
-        bool TrySetMicaBackdrop()
+        public bool TrySetMicaBackdrop(MicaKind micaKind)
         {
-            if (MicaController.IsSupported() && useAcrylic == false)
+            if (MicaController.IsSupported())
             {
                 m_wsdqHelper = new WindowsSystemDispatcherQueueHelper();
                 m_wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
@@ -179,7 +175,7 @@ namespace GyroShell
             TrySetAcrylicBackdrop();
             return false;
         }
-        bool TrySetAcrylicBackdrop()
+        public bool TrySetAcrylicBackdrop()
         {
             if (DesktopAcrylicController.IsSupported())
             {
