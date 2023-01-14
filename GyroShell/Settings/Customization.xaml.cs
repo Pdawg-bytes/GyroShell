@@ -19,13 +19,9 @@ namespace GyroShell.Settings
 {
     public sealed partial class Customization : Page
     {
-        DefaultTaskbar defaultTaskbar;
-        MainWindow mainWindow;
         public Customization()
         {
             this.InitializeComponent();
-            defaultTaskbar = new DefaultTaskbar();
-            mainWindow = new MainWindow();
         }
 
         private void TransparencyType_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -34,17 +30,15 @@ namespace GyroShell.Settings
             switch (materialName)
             {
                 case "Mica Alt":
-                   mainWindow.TrySetMicaBackdrop(MicaKind.BaseAlt);
-                   break;
+                    break;
                 case "Mica":
-                   mainWindow.TrySetMicaBackdrop(MicaKind.Base);
-                   break;
+                    break;
                 case "Acrylic":
-                   mainWindow.TrySetAcrylicBackdrop();
-                   break;
+                    break;
             }
         }
 
+        #region Clock Settings
         private void SecondsToggle_Toggled(object sender, RoutedEventArgs e)
         {
             if (TFHourToggle.IsOn == true && SecondsToggle.IsOn == false)
@@ -84,6 +78,7 @@ namespace GyroShell.Settings
                 DefaultTaskbar.timeType = "t";
             }
         }
+        #endregion
 
         private void Icon_Checked(object sender, RoutedEventArgs e)
         {
@@ -94,10 +89,10 @@ namespace GyroShell.Settings
                 {
                     case "Icon10":
                     default:
-                        defaultTaskbar.UpdateIconService(true);
+                        
                         break;
                     case "Icon11":
-                        defaultTaskbar.UpdateIconService(false);
+                        
                         break;
                 }
             }

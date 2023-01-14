@@ -39,7 +39,7 @@ namespace GyroShell
             AboutPage.PackageVer = string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
             string mainExecutablePath = System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "GyroShell.exe");
             DateTime buildDate = File.GetLastWriteTime(mainExecutablePath);
-            AboutPage.PackageBuild = buildDate.ToString();
+            AboutPage.PackageBuild = buildDate.ToString("MMMM dd, yyyy");
         }
 
         private Window m_window;

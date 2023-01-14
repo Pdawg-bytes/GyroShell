@@ -138,7 +138,7 @@ namespace GyroShell
             window.SetWindowPlacement(windowHandle, ref placement);*/
         }
 
-        private void MonitorSummon()
+        public void MonitorSummon()
         {
 
             bool MonitorEnumProc(IntPtr hMonitor, IntPtr hdcMonitor, ref RECT lprcMonitor, IntPtr dwData)
@@ -154,7 +154,8 @@ namespace GyroShell
         MicaController micaController;
         DesktopAcrylicController acrylicController;
         SystemBackdropConfiguration m_configurationSource;
-        public bool TrySetMicaBackdrop(MicaKind micaKind)
+
+        bool TrySetMicaBackdrop(MicaKind micaKind)
         {
             if (MicaController.IsSupported())
             {
@@ -175,7 +176,7 @@ namespace GyroShell
             TrySetAcrylicBackdrop();
             return false;
         }
-        public bool TrySetAcrylicBackdrop()
+        bool TrySetAcrylicBackdrop()
         {
             if (DesktopAcrylicController.IsSupported())
             {
