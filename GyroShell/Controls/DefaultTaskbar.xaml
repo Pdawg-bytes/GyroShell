@@ -47,11 +47,6 @@
                     </StackPanel>
                 </ToggleButton.Content>
             </ToggleButton>
-            <ToggleButton HorizontalAlignment="Right" Height="40" Width="50" Margin="5" Background="Transparent" BorderBrush="Transparent" x:Name="NotificationButton">
-                <ToggleButton.Content>
-                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE7E7;" x:Name="FontIconNotif"/>
-                </ToggleButton.Content>
-            </ToggleButton>
         </StackPanel>
     </Grid>
 </Page>

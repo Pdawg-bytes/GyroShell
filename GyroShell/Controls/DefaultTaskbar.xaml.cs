@@ -251,14 +251,12 @@ namespace GyroShell.Controls
                 BattStatus.FontFamily = new FontFamily("Segoe MDL2 Assets");
                 WifiStatus.FontFamily = new FontFamily("Segoe MDL2 Assets");
                 SndStatus.FontFamily = new FontFamily("Segoe MDL2 Assets");
-                FontIconNotif.FontFamily = new FontFamily("Segoe MDL2 Assets");
             }
             else
             {
                 BattStatus.FontFamily = new FontFamily("Segoe Fluent Icons");
                 WifiStatus.FontFamily = new FontFamily("Segoe Fluent Icons");
                 SndStatus.FontFamily = new FontFamily("Segoe Fluent Icons");
-                FontIconNotif.FontFamily = new FontFamily("Segoe Fluent Icons");
             }
         }
     }
