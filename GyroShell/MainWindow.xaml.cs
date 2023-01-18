@@ -63,10 +63,10 @@ namespace GyroShell
             presenter.IsMaximizable = false;
             presenter.IsMinimizable = false;
             presenter.IsAlwaysOnTop = true;
-            presenter.IsResizable = true;
+            presenter.IsResizable = false;
             presenter.SetBorderAndTitleBar(false, false);
             m_appWindow = GetAppWindowForCurrentWindow();
-            m_appWindow.SetPresenter(AppWindowPresenterKind.FullScreen);
+            m_appWindow.SetPresenter(AppWindowPresenterKind.Default);
             m_appWindow.Show();
 
             // Resize Window
@@ -74,12 +74,12 @@ namespace GyroShell
             var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
             var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
 
-            int ScreenWidth = (int)Bounds.Width;
-            appWindow.Resize(new SizeInt32 { Width = ScreenWidth, Height = 50 });
+            appWindow.Move(new PointInt32 { X = -1, Y = 719});
+            appWindow.Resize(new SizeInt32 { Width = 1366 + 2, Height = 50 });
             Title = "GyroShell";
             appWindow.MoveInZOrderAtTop();
 
-            TaskbarManager.ShowTaskbar();
+            TaskbarManager.HideTaskbar();
 
             // Init stuff
             MonitorSummon();
@@ -159,8 +159,8 @@ namespace GyroShell
                 m_configurationSource.IsInputActive = true;
                 SetConfigurationSourceTheme();
                 acrylicController = new DesktopAcrylicController();
-                acrylicController.TintColor = Color.FromArgb(255,0,0,0);
-                acrylicController.TintOpacity = 0;
+                acrylicController.TintColor = Color.FromArgb(255,2,2,2);
+                acrylicController.TintOpacity = 0.2f;
                 acrylicController.LuminosityOpacity = 0.6f;
                 ((FrameworkElement)this.Content).ActualThemeChanged += Window_ThemeChanged;
                 acrylicController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
@@ -177,6 +177,7 @@ namespace GyroShell
 
         private void Window_Closed(object sender, WindowEventArgs args)
         {
+            TaskbarManager.ShowTaskbar();
             if (micaController != null)
             {
                 micaController.Dispose();
@@ -189,7 +190,6 @@ namespace GyroShell
             }
             this.Activated -= Window_Activated;
             m_configurationSource = null;
-            TaskbarManager.ShowTaskbar();
         }
 
         private void Window_ThemeChanged(FrameworkElement sender, object args)
