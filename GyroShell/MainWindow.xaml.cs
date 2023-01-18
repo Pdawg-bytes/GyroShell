@@ -161,6 +161,7 @@ namespace GyroShell
                 acrylicController = new DesktopAcrylicController();
                 acrylicController.TintColor = Color.FromArgb(255,0,0,0);
                 acrylicController.TintOpacity = 0;
+                acrylicController.LuminosityOpacity = 0.6f;
                 ((FrameworkElement)this.Content).ActualThemeChanged += Window_ThemeChanged;
                 acrylicController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
                 acrylicController.SetSystemBackdropConfiguration(m_configurationSource);
