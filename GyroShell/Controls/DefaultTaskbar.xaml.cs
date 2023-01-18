@@ -16,6 +16,7 @@ using System.Threading;
 using Windows.Devices.Power;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Media.Devices;
 using Windows.UI.Core;
 using WindowsUdk.UI.Shell;
 
@@ -175,6 +176,10 @@ namespace GyroShell.Controls
                 });
             }
         }
+        #endregion
+
+        #region Sound
+
         #endregion
 
         private async void SystemControls_Click(object sender, RoutedEventArgs e)

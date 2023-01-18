@@ -41,9 +41,9 @@
             <ToggleButton HorizontalAlignment="Right" Height="40" Margin="5" Background="Transparent" BorderBrush="Transparent" x:Name="ActionCenter" Click="ActionCenter_Click">
                 <ToggleButton.Content>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock FontSize="15" VerticalAlignment="Center" x:Name="TimeText"/>
+                        <TextBlock FontSize="14" VerticalAlignment="Center" x:Name="TimeText" Margin="0,0,0,2"/>
                         <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE1F5;" VerticalAlignment="Center" Margin="8" FontSize="8"/>
-                        <TextBlock FontSize="15" VerticalAlignment="Center" x:Name="DateText"/>
+                        <TextBlock FontSize="14" VerticalAlignment="Center" x:Name="DateText" Margin="0,0,0,2"/>
                     </StackPanel>
                 </ToggleButton.Content>
             </ToggleButton>

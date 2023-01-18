@@ -42,17 +42,6 @@ namespace GyroShell
             public int y;
         }
 
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct WINDOWPLACEMENT
-        {
-            public int length;
-            public int flags;
-            public int showCmd;
-            public POINT ptMinPosition;
-            public POINT ptMaxPosition;
-            public RECT rcNormalPosition;
-        }
-
         private delegate bool MonitorEnumProc(IntPtr hMonitor, IntPtr hdcMonitor, ref RECT lprcMonitor, IntPtr dwData);
 
         [DllImport("user32.dll")]
@@ -95,7 +84,7 @@ namespace GyroShell
             // Init stuff
             MonitorSummon();
             MoveWindow();;
-            TrySetMicaBackdrop(MicaKind.BaseAlt);
+            TrySetAcrylicBackdrop();
             TaskbarFrame.Navigate(typeof(Controls.DefaultTaskbar), null, new SuppressNavigationTransitionInfo());
         }
 
@@ -117,25 +106,7 @@ namespace GyroShell
 
         private void MoveWindow()
         {
-            /*Window window = this;
-            IntPtr windowHandle = WinRT.Interop.WindowNative.GetWindowHandle(this);
 
-            var placement = new WINDOWPLACEMENT
-            {
-                length = Marshal.SizeOf<WINDOWPLACEMENT>(),
-                flags = 0,
-                ptMinPosition = new POINT { x = 0, y = 0 },
-                ptMaxPosition = new POINT { x = 0, y = 0 },
-                rcNormalPosition = new RECT
-                {
-                    Left = (int)window.Bounds.Width,
-                    Top = (int)window.Bounds.Height,
-                    Right = (int)window.Bounds.Width,
-                    Bottom = (int)window.Bounds.Height,
-                }
-            };
-
-            window.SetWindowPlacement(windowHandle, ref placement);*/
         }
 
         public void MonitorSummon()
