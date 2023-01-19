@@ -144,8 +144,8 @@ namespace GyroShell
         }
         bool TrySetAcrylicBackdrop()
         {
-           // if (DesktopAcrylicController.IsSupported())
-            //{
+            if (DesktopAcrylicController.IsSupported())
+            {
                 m_wsdqHelper = new WindowsSystemDispatcherQueueHelper();
                 m_wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
                 m_configurationSource = new SystemBackdropConfiguration();
@@ -161,7 +161,7 @@ namespace GyroShell
                 acrylicController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
                 acrylicController.SetSystemBackdropConfiguration(m_configurationSource);
                 return true;
-         //   }
+            }
             return false;
         }
 
