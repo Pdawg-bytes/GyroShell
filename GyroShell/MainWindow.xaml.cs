@@ -52,6 +52,9 @@ namespace GyroShell
 
         [DllImport("User32.dll")]
         static extern bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip, MonitorEnumProc lpfnEnum, IntPtr dwData);
+
+        [DllImport("User32.dll")]
+        static extern int GetSystemMetrics(int nIndex);
         #endregion
 
         public MainWindow()
@@ -74,8 +77,11 @@ namespace GyroShell
             var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
             var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
 
-            appWindow.Move(new PointInt32 { X = -1, Y = 719});
-            appWindow.Resize(new SizeInt32 { Width = 1366 + 2, Height = 50 });
+            int screenWidth = GetSystemMetrics(/*SM_CXSCREEN*/0);
+            int screenHeight = GetSystemMetrics(/*SM_CYSCREEN*/1);
+
+            appWindow.Resize(new SizeInt32 { Width = screenWidth, Height = 50 });
+            appWindow.Move(new PointInt32 { X = 0, Y = screenHeight - 50 });
             Title = "GyroShell";
             appWindow.MoveInZOrderAtTop();
 
