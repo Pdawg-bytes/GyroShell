@@ -4,6 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using System.Security.Cryptography;
+using System.Runtime.CompilerServices;
+using static GyroShell.Helpers.Win32Interop;
+using System.Threading;
 
 // Thank stackoverflow for this one
 
@@ -11,46 +15,36 @@ namespace GyroShell.Helpers
 {
     public class TaskbarManager
     {
-        #region -- WIN32 Imports
+        public static void SetHeight(int height)
+        {
+            int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+            int screenHeight = GetSystemMetrics(SM_CYSCREEN);
 
-        private const int CONST_SHOW = 5;
-        private const int CONST_HIDE = 0;
+            NativeRect workArea = new NativeRect();
 
-        private delegate bool EnumThreadProc(IntPtr hwnd, IntPtr lParam);
+            workArea.Top = 0;
+            workArea.Left = 0;
+            workArea.Right = screenWidth;
+            workArea.Bottom = screenHeight - height;
 
-        [DllImport("user32.dll")]
-        private static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count);
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        private static extern bool EnumThreadWindows(int threadId, EnumThreadProc pfnEnum, IntPtr lParam);
-
-        [DllImport("user32.dll", SetLastError = true)]
-        private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
-
-        [DllImport("user32.dll", SetLastError = true)]
-        private static extern IntPtr FindWindowEx(IntPtr parentHandle, IntPtr childAfter, string className, string windowTitle);
-
-        [DllImport("user32.dll")]
-        private static extern int ShowWindow(IntPtr hwnd, int nCmdShow);
-
-        #endregion
+            //Probably will need rework when using more than 1 monitor
+            SystemParametersInfoA(SPI_SETWORKAREA, 0, ref workArea, SPIF_UPDATEINIFILE);
+        }
 
         public static void ShowTaskbar()
         {
-            ToggleVisibility(true);
+            SetVisibility(true);
         }
 
         public static void HideTaskbar()
         {
-            ToggleVisibility(false);
+            SetVisibility(false);
         }
 
-        private static void ToggleVisibility(bool visible)
+        private static void SetVisibility(bool isVisible)
         {
             var taskbar = FindWindow("Shell_TrayWnd", null);
-
             var multitaskbar = FindWindow("Shell_SecondaryTrayWnd", null);
-
             var startmenu = FindWindowEx(taskbar, IntPtr.Zero, "Button", "Start");
 
             if (startmenu == IntPtr.Zero)
@@ -58,9 +52,11 @@ namespace GyroShell.Helpers
                 startmenu = FindWindow("Button", null);
             }
 
-            ShowWindow(taskbar, visible ? CONST_SHOW : CONST_HIDE);
-            ShowWindow(startmenu, visible ? CONST_SHOW : CONST_HIDE);
-            ShowWindow(multitaskbar, visible ? CONST_SHOW : CONST_HIDE);
+            int nCmd = isVisible ? SW_SHOW : SW_HIDE;
+
+            ShowWindow(taskbar, nCmd);
+            ShowWindow(startmenu, nCmd);
+            ShowWindow(multitaskbar, nCmd);
         }
 
     }
