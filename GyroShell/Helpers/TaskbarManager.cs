@@ -8,13 +8,29 @@ using System.Security.Cryptography;
 using System.Runtime.CompilerServices;
 using static GyroShell.Helpers.Win32Interop;
 using System.Threading;
-
+using System.Reflection.Metadata;
+using WindowsUdk.UI.Shell;
+using Windows.UI.Core;
+using Windows.Foundation;
+using System.Threading.Tasks;
 // Thank stackoverflow for this one
 
 namespace GyroShell.Helpers
 {
     public class TaskbarManager
     {
+        public static void Init()
+        {
+            m_hTaskBar = FindWindow("Shell_TrayWnd", null);
+            m_hMultiTaskBar = FindWindow("Shell_SecondaryTrayWnd", null);
+            m_hStartMenu = FindWindowEx(m_hStartMenu, IntPtr.Zero, "Button", "Start");
+
+            if (m_hStartMenu == IntPtr.Zero)
+            {
+                m_hStartMenu = FindWindow("Button", null);
+            }
+        }
+
         public static void SetHeight(int height)
         {
             int screenWidth = GetSystemMetrics(SM_CXSCREEN);
@@ -43,21 +59,29 @@ namespace GyroShell.Helpers
 
         private static void SetVisibility(bool isVisible)
         {
-            var taskbar = FindWindow("Shell_TrayWnd", null);
-            var multitaskbar = FindWindow("Shell_SecondaryTrayWnd", null);
-            var startmenu = FindWindowEx(taskbar, IntPtr.Zero, "Button", "Start");
-
-            if (startmenu == IntPtr.Zero)
-            {
-                startmenu = FindWindow("Button", null);
-            }
-
             int nCmd = isVisible ? SW_SHOW : SW_HIDE;
 
-            ShowWindow(taskbar, nCmd);
-            ShowWindow(startmenu, nCmd);
-            ShowWindow(multitaskbar, nCmd);
+            ShowWindow(m_hTaskBar, nCmd);
+            ShowWindow(m_hStartMenu, nCmd);
+            ShowWindow(m_hMultiTaskBar, nCmd);
         }
+
+        public static async Task ToggleStart()
+        {
+            if (OSVersion.IsWin11())
+            {
+                ShellViewCoordinator startC = new ShellViewCoordinator(ShellView.Start);
+                await startC.TryShowAsync(new ShowShellViewOptions());
+            }
+            else
+            {
+                SendMessage(m_hTaskBar, /*WM_SYSCOMMAND*/ 0x0112, (IntPtr) /*SC_TASKLIST*/ 0xF130, (IntPtr)0);
+            }
+        }
+
+        private static IntPtr m_hTaskBar;
+        private static IntPtr m_hMultiTaskBar;
+        private static IntPtr m_hStartMenu;
 
     }
 }

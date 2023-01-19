@@ -28,12 +28,14 @@ namespace GyroShell
 {
     public sealed partial class MainWindow : Window
     {
-        AppWindow m_appWindow;
-
+        AppWindow m_AppWindow;
+ 
         public MainWindow()
         {
             this.InitializeComponent();
             AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
+
+            TaskbarManager.Init();
 
             // Removes titlebar
             var presenter = GetAppWindowAndPresenter();
@@ -42,8 +44,8 @@ namespace GyroShell
             presenter.IsAlwaysOnTop = true;
             presenter.IsResizable = false;
             presenter.SetBorderAndTitleBar(false, false);
-            m_appWindow = GetAppWindowForCurrentWindow();
-            m_appWindow.SetPresenter(AppWindowPresenterKind.Default);
+            m_AppWindow = GetAppWindowForCurrentWindow();
+            m_AppWindow.SetPresenter(AppWindowPresenterKind.Default);
             
             // Resize Window
             IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
@@ -74,7 +76,7 @@ namespace GyroShell
             TaskbarFrame.Navigate(typeof(Controls.DefaultTaskbar), null, new SuppressNavigationTransitionInfo());
            
             //Show GyroShell when everything is ready
-            m_appWindow.Show();
+            m_AppWindow.Show();
             TaskbarManager.HideTaskbar();
         }
 

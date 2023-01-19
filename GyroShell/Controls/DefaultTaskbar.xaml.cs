@@ -1,4 +1,5 @@
 using CommunityToolkit.WinUI.Connectivity;
+using GyroShell.Helpers;
 using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -198,14 +199,7 @@ namespace GyroShell.Controls
         private async void StartButton_Click(object sender, RoutedEventArgs e)
         {
             if (StartButton.IsChecked == true)
-            {
-                ShellViewCoordinator startC = new ShellViewCoordinator(ShellView.Start);
-                await startC.TryShowAsync(new ShowShellViewOptions());
-            }
-            else
-            {
-
-            }
+                await TaskbarManager.ToggleStart();
         }
 
         private async void ActionCenter_Click(object sender, RoutedEventArgs e)
