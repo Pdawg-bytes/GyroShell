@@ -18,6 +18,11 @@ using CommunityToolkit.WinUI.Connectivity;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Microsoft.UI.Xaml.Media.Animation;
+using System.Reflection;
+using System.Threading;
+using Windows.Perception.Spatial.Preview;
+using static GyroShell.Helpers.Win32Interop;
+
 
 namespace GyroShell
 {
@@ -25,41 +30,10 @@ namespace GyroShell
     {
         AppWindow m_appWindow;
 
-        #region Win32 Stuff
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct RECT
-        {
-            public int Left;
-            public int Top;
-            public int Right;
-            public int Bottom;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct POINT
-        {
-            public int x;
-            public int y;
-        }
-
-        private delegate bool MonitorEnumProc(IntPtr hMonitor, IntPtr hdcMonitor, ref RECT lprcMonitor, IntPtr dwData);
-
-        [DllImport("user32.dll")]
-        static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
-
-        [DllImport("user32.dll")]
-        static extern IntPtr GetForegroundWindow();
-
-        [DllImport("User32.dll")]
-        static extern bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip, MonitorEnumProc lpfnEnum, IntPtr dwData);
-
-        [DllImport("User32.dll")]
-        static extern int GetSystemMetrics(int nIndex);
-        #endregion
-
         public MainWindow()
         {
             this.InitializeComponent();
+            AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
 
             // Removes titlebar
             var presenter = GetAppWindowAndPresenter();
@@ -70,28 +44,43 @@ namespace GyroShell
             presenter.SetBorderAndTitleBar(false, false);
             m_appWindow = GetAppWindowForCurrentWindow();
             m_appWindow.SetPresenter(AppWindowPresenterKind.Default);
-            m_appWindow.Show();
-
+            
             // Resize Window
             IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
             var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
             var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
 
-            int screenWidth = GetSystemMetrics(/*SM_CXSCREEN*/0);
-            int screenHeight = GetSystemMetrics(/*SM_CYSCREEN*/1);
+            //Hide in ALT+TAB view
+            int exStyle = (int)GetWindowLongPtr(hWnd, /* GWL_EXSTYLE */ -20);
+            exStyle |= /* WS_EX_TOOLWINDOW */ 128;
+            SetWindowLongPtr(hWnd, /* GWL_EXSTYLE */ -20, (IntPtr)exStyle);
 
+            //Set working area (is different in win10 / win11)
+            TaskbarManager.SetHeight(50);
+            Thread.Sleep(1000); //TODO: Stop the window message from moving our window into the wokring area...
+
+            int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+            int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+
+            Title = "GyroShell";
             appWindow.Resize(new SizeInt32 { Width = screenWidth, Height = 50 });
             appWindow.Move(new PointInt32 { X = 0, Y = screenHeight - 50 });
-            Title = "GyroShell";
             appWindow.MoveInZOrderAtTop();
-
-            TaskbarManager.HideTaskbar();
 
             // Init stuff
             MonitorSummon();
             MoveWindow();;
             TrySetAcrylicBackdrop();
             TaskbarFrame.Navigate(typeof(Controls.DefaultTaskbar), null, new SuppressNavigationTransitionInfo());
+           
+            //Show GyroShell when everything is ready
+            m_appWindow.Show();
+            TaskbarManager.HideTaskbar();
+        }
+
+        private void OnProcessExit(object sender, EventArgs e)
+        {
+            TaskbarManager.ShowTaskbar();
         }
 
         private OverlappedPresenter GetAppWindowAndPresenter()
@@ -118,7 +107,7 @@ namespace GyroShell
         public void MonitorSummon()
         {
 
-            bool MonitorEnumProc(IntPtr hMonitor, IntPtr hdcMonitor, ref RECT lprcMonitor, IntPtr dwData)
+            bool MonitorEnumProc(IntPtr hMonitor, IntPtr hdcMonitor, ref NativeRect lprcMonitor, IntPtr dwData)
             {
                 return true;
             }
@@ -155,8 +144,8 @@ namespace GyroShell
         }
         bool TrySetAcrylicBackdrop()
         {
-            if (DesktopAcrylicController.IsSupported())
-            {
+           // if (DesktopAcrylicController.IsSupported())
+            //{
                 m_wsdqHelper = new WindowsSystemDispatcherQueueHelper();
                 m_wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
                 m_configurationSource = new SystemBackdropConfiguration();
@@ -172,7 +161,7 @@ namespace GyroShell
                 acrylicController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
                 acrylicController.SetSystemBackdropConfiguration(m_configurationSource);
                 return true;
-            }
+         //   }
             return false;
         }
 
@@ -183,7 +172,6 @@ namespace GyroShell
 
         private void Window_Closed(object sender, WindowEventArgs args)
         {
-            TaskbarManager.ShowTaskbar();
             if (micaController != null)
             {
                 micaController.Dispose();
