@@ -58,20 +58,20 @@ namespace GyroShell
             SetWindowLongPtr(hWnd, /* GWL_EXSTYLE */ -20, (IntPtr)exStyle);
 
             //Set working area (is different in win10 / win11)
-            TaskbarManager.SetHeight(50);
+            TaskbarManager.SetHeight(48);
             Thread.Sleep(1000); //TODO: Stop the window message from moving our window into the wokring area...
 
             int screenWidth = GetSystemMetrics(SM_CXSCREEN);
             int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+            int barHeight = 50;
 
             Title = "GyroShell";
-            appWindow.Resize(new SizeInt32 { Width = screenWidth, Height = 50 });
-            appWindow.Move(new PointInt32 { X = 0, Y = screenHeight - 50 });
+            appWindow.Resize(new SizeInt32 { Width = screenWidth + 2, Height = barHeight });
+            appWindow.Move(new PointInt32 { X = -1, Y = screenHeight - 49 });
             appWindow.MoveInZOrderAtTop();
 
             // Init stuff
             MonitorSummon();
-            MoveWindow();;
             TrySetAcrylicBackdrop();
             TaskbarFrame.Navigate(typeof(Controls.DefaultTaskbar), null, new SuppressNavigationTransitionInfo());
            
@@ -99,11 +99,6 @@ namespace GyroShell
             WindowId WndIdApp = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWndApp);
 
             return AppWindow.GetFromWindowId(WndIdApp);
-        }
-
-        private void MoveWindow()
-        {
-
         }
 
         public void MonitorSummon()
@@ -156,9 +151,9 @@ namespace GyroShell
                 m_configurationSource.IsInputActive = true;
                 SetConfigurationSourceTheme();
                 acrylicController = new DesktopAcrylicController();
-                acrylicController.TintColor = Color.FromArgb(255,2,2,2);
-                acrylicController.TintOpacity = 0.2f;
-                acrylicController.LuminosityOpacity = 0.6f;
+                acrylicController.TintColor = Color.FromArgb(255, 52, 52, 52);
+                acrylicController.TintOpacity = 0.1f;
+                acrylicController.LuminosityOpacity = 1;
                 ((FrameworkElement)this.Content).ActualThemeChanged += Window_ThemeChanged;
                 acrylicController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
                 acrylicController.SetSystemBackdropConfiguration(m_configurationSource);

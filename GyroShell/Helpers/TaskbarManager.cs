@@ -13,7 +13,6 @@ using WindowsUdk.UI.Shell;
 using Windows.UI.Core;
 using Windows.Foundation;
 using System.Threading.Tasks;
-// Thank stackoverflow for this one
 
 namespace GyroShell.Helpers
 {
