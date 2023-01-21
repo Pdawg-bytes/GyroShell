@@ -8,6 +8,7 @@
     mc:Ignorable="d">
 
     <Grid x:Name="MainShellGrid">
+        <Border Height="1" VerticalAlignment="Top" HorizontalAlignment="Stretch" Background="{ThemeResource SystemControlAcrylicWindowBrush}" Margin="1,0,1,0" x:Name="BarBorder"/>
         <Frame Visibility="Collapsed" Background="{ThemeResource SystemControlAcrylicWindowBrush}">
             <MenuFlyout x:Name="StartFlyout" AreOpenCloseAnimationsEnabled="True" ShouldConstrainToRootBounds="True">
                 <MenuFlyoutItem Text="Shell Settings" Click="StartFlyout_Click" Tag="ShellSettings"/>
@@ -32,9 +33,9 @@
             <ToggleButton x:Name="SystemControls" HorizontalAlignment="Right" Height="40" Background="Transparent" BorderBrush="Transparent" Click="SystemControls_Click">
                 <ToggleButton.Content>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xEBAA;" VerticalAlignment="Center" Margin="0,6,3,0" FontSize="16" x:Name="BattStatus"/>
-                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE701;" VerticalAlignment="Center" Margin="5,0,5,0" FontSize="15" x:Name="WifiStatus"/>
-                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE995;" VerticalAlignment="Center" Margin="5,2,0,0" FontSize="15" x:Name="SndStatus"/>
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xEBAA;" VerticalAlignment="Center" Margin="0,4,3,0" FontSize="16" x:Name="BattStatus"/>
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE701;" VerticalAlignment="Center" Margin="5,-2,5,0" FontSize="15" x:Name="WifiStatus"/>
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE995;" VerticalAlignment="Center" Margin="5,0,0,0" FontSize="15" x:Name="SndStatus"/>
                     </StackPanel>
                 </ToggleButton.Content>
             </ToggleButton>

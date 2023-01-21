@@ -22,7 +22,7 @@ using System.Reflection;
 using System.Threading;
 using Windows.Perception.Spatial.Preview;
 using static GyroShell.Helpers.Win32Interop;
-
+using System.Diagnostics;
 
 namespace GyroShell
 {
@@ -51,15 +51,17 @@ namespace GyroShell
             IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
             var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
             var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
+            var attribute = DWMWINDOWATTRIBUTE.DWMWA_WINDOW_CORNER_PREFERENCE;
+            var preference = DWM_WINDOW_CORNER_PREFERENCE.DWMWCP_DONOTROUND;
+            DwmSetWindowAttribute(hWnd, attribute, ref preference, sizeof(uint));
 
-            //Hide in ALT+TAB view
-            int exStyle = (int)GetWindowLongPtr(hWnd, /* GWL_EXSTYLE */ -20);
-            exStyle |= /* WS_EX_TOOLWINDOW */ 128;
-            SetWindowLongPtr(hWnd, /* GWL_EXSTYLE */ -20, (IntPtr)exStyle);
+            // Hide in ALT+TAB view
+            int exStyle = (int)GetWindowLongPtr(hWnd, -20);
+            exStyle |= 128;
+            SetWindowLongPtr(hWnd, -20, (IntPtr)exStyle);
 
-            //Set working area (is different in win10 / win11)
             TaskbarManager.SetHeight(48);
-            Thread.Sleep(1000); //TODO: Stop the window message from moving our window into the wokring area...
+            Thread.Sleep(1000); //TODO: Stop the window message from moving our window into the wokring area
 
             int screenWidth = GetSystemMetrics(SM_CXSCREEN);
             int screenHeight = GetSystemMetrics(SM_CYSCREEN);
@@ -72,7 +74,7 @@ namespace GyroShell
 
             // Init stuff
             MonitorSummon();
-            TrySetAcrylicBackdrop();
+            TrySetMicaBackdrop(MicaKind.BaseAlt);
             TaskbarFrame.Navigate(typeof(Controls.DefaultTaskbar), null, new SuppressNavigationTransitionInfo());
            
             //Show GyroShell when everything is ready
