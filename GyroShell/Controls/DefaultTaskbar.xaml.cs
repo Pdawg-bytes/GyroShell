@@ -258,5 +258,10 @@ namespace GyroShell.Controls
                 SndStatus.FontFamily = new FontFamily("Segoe Fluent Icons");
             }
         }
+
+        private void ExitGyroShell_Click(object sender, RoutedEventArgs e)
+        {
+            App.Current.Exit();
+        }
     }
 }
