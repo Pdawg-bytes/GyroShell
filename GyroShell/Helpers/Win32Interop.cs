@@ -74,7 +74,24 @@ namespace GyroShell.Helpers
         [DllImport("dwmapi.dll", CharSet = CharSet.Unicode, PreserveSig = false)]
         public static extern void DwmSetWindowAttribute(IntPtr hwnd, DWMWINDOWATTRIBUTE attribute, ref DWM_WINDOW_CORNER_PREFERENCE pvAttribute, uint cbAttribute);
 
-        // Sound API
+        // Proc info API for unpackaged
+        [DllImport("kernel32.dll")]
+        public static extern void GetNativeSystemInfo(out SYSTEM_INFO lpSystemInfo);
 
+        [StructLayout(LayoutKind.Sequential)]
+        public struct SYSTEM_INFO
+        {
+            public ushort wProcessorArchitecture;
+            public ushort wReserved;
+            public uint dwPageSize;
+            public IntPtr lpMinimumApplicationAddress;
+            public IntPtr lpMaximumApplicationAddress;
+            public IntPtr dwActiveProcessorMask;
+            public uint dwNumberOfProcessors;
+            public uint dwProcessorType;
+            public uint dwAllocationGranularity;
+            public ushort wProcessorLevel;
+            public ushort wProcessorRevision;
+        }
     }
 }

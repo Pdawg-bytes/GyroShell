@@ -30,7 +30,7 @@ namespace GyroShell.Helpers
             }
         }
 
-        public static void SetHeight(int height)
+        public static void SetHeight(int height, int width)
         {
             int screenWidth = GetSystemMetrics(SM_CXSCREEN);
             int screenHeight = GetSystemMetrics(SM_CYSCREEN);
@@ -39,7 +39,7 @@ namespace GyroShell.Helpers
 
             workArea.Top = 0;
             workArea.Left = 0;
-            workArea.Right = screenWidth;
+            workArea.Right = screenWidth - width;
             workArea.Bottom = screenHeight - height;
 
             //Probably will need rework when using more than 1 monitor

@@ -60,7 +60,7 @@ namespace GyroShell
             exStyle |= 128;
             SetWindowLongPtr(hWnd, -20, (IntPtr)exStyle);
 
-            TaskbarManager.SetHeight(48);
+            TaskbarManager.SetHeight(48, 0);
             Thread.Sleep(1000); //TODO: Stop the window message from moving our window into the wokring area
 
             int screenWidth = GetSystemMetrics(SM_CXSCREEN);
