@@ -10,7 +10,7 @@
 
     <Grid x:Name="MainShellGrid">
         <Border Height="1" VerticalAlignment="Top" HorizontalAlignment="Stretch" Background="{ThemeResource SystemControlAcrylicWindowBrush}" Margin="1,0,1,0" x:Name="BarBorder"/>
-        <Frame Visibility="Visible" Background="{ThemeResource SystemControlAcrylicWindowBrush}">
+        <Frame Visibility="Collapsed" Background="{ThemeResource SystemControlAcrylicWindowBrush}">
             <MenuFlyout x:Name="StartFlyout" AreOpenCloseAnimationsEnabled="True" ShouldConstrainToRootBounds="False">
                 <MenuFlyoutItem Text="Shell Settings" Click="StartFlyout_Click" Tag="ShellSettings"/>
                 <MenuFlyoutItem Text="Exit GyroShell" Click="ExitGyroShell_Click" Tag="ExitGyroShell"/>

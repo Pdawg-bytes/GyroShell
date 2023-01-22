@@ -71,7 +71,7 @@ namespace GyroShell
                         break;
                 }
                 AboutPage.PackageVer = "0.0.0.0";
-                AboutPage.PackageBuild = "2023";
+                AboutPage.PackageBuild = "Janurary, 2023";
             }
         }
 

@@ -30,17 +30,17 @@ namespace GyroShell.Helpers
             }
         }
 
-        public static void SetHeight(int height, int width)
+        public static void SetHeight(int left, int right, int top, int bottom)
         {
             int screenWidth = GetSystemMetrics(SM_CXSCREEN);
             int screenHeight = GetSystemMetrics(SM_CYSCREEN);
 
             NativeRect workArea = new NativeRect();
 
-            workArea.Top = 0;
-            workArea.Left = 0;
-            workArea.Right = screenWidth - width;
-            workArea.Bottom = screenHeight - height;
+            workArea.Top = top;
+            workArea.Left = left;
+            workArea.Right = screenWidth - right;
+            workArea.Bottom = screenHeight - bottom;
 
             //Probably will need rework when using more than 1 monitor
             SystemParametersInfoA(SPI_SETWORKAREA, 0, ref workArea, SPIF_UPDATEINIFILE);
