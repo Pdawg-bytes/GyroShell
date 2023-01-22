@@ -36,8 +36,8 @@
                 <ToggleButton.Content>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xEBAA;" VerticalAlignment="Center" Margin="0,4,3,0" FontSize="16" x:Name="BattStatus"/>
-                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE701;" VerticalAlignment="Center" Margin="5,-2,5,0" FontSize="15" x:Name="WifiStatus"/>
-                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE995;" VerticalAlignment="Center" Margin="5,0,0,0" FontSize="15" x:Name="SndStatus"/>
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE839;" VerticalAlignment="Center" Margin="5,-2,5,0" FontSize="16" x:Name="WifiStatus"/>
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE995;" VerticalAlignment="Center" Margin="5,0,0,0" FontSize="16" x:Name="SndStatus"/>
                     </StackPanel>
                 </ToggleButton.Content>
             </ToggleButton>

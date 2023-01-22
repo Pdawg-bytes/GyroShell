@@ -68,9 +68,13 @@ namespace GyroShell.Controls
                 switch (NetworkHelper.Instance.ConnectionInformation.ConnectionType)
                 {
                     case ConnectionType.Ethernet:
+                        Thickness EthMargin = WifiStatus.Margin;
+                        EthMargin.Top = 1;
                         WifiStatus.Text = "\uE839";
                         break;
                     case ConnectionType.WiFi:
+                        Thickness WifiMargin = WifiStatus.Margin;
+                        WifiMargin.Top = -2;
                         int WifiSignalBars = NetworkHelper.Instance.ConnectionInformation.SignalStrength.GetValueOrDefault(0);
                         switch (WifiSignalBars)
                         {
@@ -93,6 +97,8 @@ namespace GyroShell.Controls
                         }
                         break;
                     case ConnectionType.Data:
+                        Thickness DataMargin = WifiStatus.Margin;
+                        DataMargin.Top = -2;
                         int DataSignalBars = NetworkHelper.Instance.ConnectionInformation.SignalStrength.GetValueOrDefault(0);
                         switch (DataSignalBars)
                         {
@@ -116,6 +122,8 @@ namespace GyroShell.Controls
                         break;
                     case ConnectionType.Unknown:
                     default:
+                        Thickness UnknownMargin = WifiStatus.Margin;
+                        UnknownMargin.Top = 0;
                         WifiStatus.Text = "\uE774";
                         break;
                 }
