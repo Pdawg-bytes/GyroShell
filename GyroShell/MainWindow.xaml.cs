@@ -46,14 +46,17 @@ namespace GyroShell
             presenter.SetBorderAndTitleBar(false, false);
             m_AppWindow = GetAppWindowForCurrentWindow();
             m_AppWindow.SetPresenter(AppWindowPresenterKind.Default);
-            
+
             // Resize Window
             IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
             var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
             var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
-            var attribute = DWMWINDOWATTRIBUTE.DWMWA_WINDOW_CORNER_PREFERENCE;
-            var preference = DWM_WINDOW_CORNER_PREFERENCE.DWMWCP_DONOTROUND;
-            DwmSetWindowAttribute(hWnd, attribute, ref preference, sizeof(uint));
+            if (OSVersion.IsWin11())
+            {   
+                var attribute = DWMWINDOWATTRIBUTE.DWMWA_WINDOW_CORNER_PREFERENCE;
+                var preference = DWM_WINDOW_CORNER_PREFERENCE.DWMWCP_DONOTROUND;
+                DwmSetWindowAttribute(hWnd, attribute, ref preference, sizeof(uint));
+            }
 
             // Hide in ALT+TAB view
             int exStyle = (int)GetWindowLongPtr(hWnd, -20);
