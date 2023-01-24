@@ -207,7 +207,9 @@ namespace GyroShell.Controls
         private async void StartButton_Click(object sender, RoutedEventArgs e)
         {
             if (StartButton.IsChecked == true)
+            {
                 await TaskbarManager.ToggleStart();
+            }
         }
 
         private async void ActionCenter_Click(object sender, RoutedEventArgs e)

@@ -5,10 +5,15 @@
     xmlns:local="using:GyroShell">
     <Application.Resources>
         <ResourceDictionary>
-            <FontFamily x:Key="FluentIcons">/Assets/SegoeFluentIconsNormal.ttf#Segoe Fluent Icons</FontFamily>
             <ResourceDictionary.MergedDictionaries>
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+                <!-- Other merged dictionaries here -->
             </ResourceDictionary.MergedDictionaries>
+            <!-- Other app resources here -->
+            <SolidColorBrush x:Key="WindowCaptionBackground">Transparent</SolidColorBrush>
+            <SolidColorBrush x:Key="WindowCaptionBackgroundDisabled">Transparent</SolidColorBrush>
+            <SolidColorBrush x:Key="WindowCaptionForeground">Gray</SolidColorBrush>
+            <SolidColorBrush x:Key="WindowCaptionForegroundDisabled">DarkGray</SolidColorBrush>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

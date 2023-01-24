@@ -140,7 +140,6 @@ namespace GyroShell.Settings
                 {
                     case "BarSettings":
                     default:
-                        
                         contentFrame.Navigate(typeof(BarSettings));
                         break;
                     case "Customization":
