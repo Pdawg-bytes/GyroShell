@@ -97,6 +97,7 @@ namespace GyroShell.Settings
 
         private void Window_Closed(object sender, WindowEventArgs args)
         {
+            SaveSettings();
             if (micaController != null)
             {
                 micaController.Dispose();

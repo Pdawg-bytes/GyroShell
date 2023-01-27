@@ -1,19 +1,8 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Microsoft.UI.Composition.SystemBackdrops;
+using System.Text.Json;
 using GyroShell.Controls;
+using GyroShell.Helpers;
 
 namespace GyroShell.Settings
 {
@@ -23,6 +12,11 @@ namespace GyroShell.Settings
         {
             this.InitializeComponent();
         }
+
+        public static string settingTransparencyType;
+        public static bool settingSecondsEnabled;
+        public static bool settingIs24Hour;
+        public static string settingIconType;
 
         private void TransparencyType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

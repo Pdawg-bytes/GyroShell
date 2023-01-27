@@ -76,5 +76,7 @@ namespace GyroShell
         }
 
         private Window m_window;
+
+        // TODO: Add JSON stuff for accessors.
     }
 }
