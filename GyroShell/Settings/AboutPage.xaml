@@ -8,42 +8,50 @@
     mc:Ignorable="d">
 
     <Grid>
-        <ScrollViewer HorizontalScrollMode="Disabled">
+        <ScrollViewer HorizontalScrollMode="Disabled" HorizontalAlignment="Stretch" Margin="10">
             <StackPanel>
-                <TextBlock Text="About GyroShell" FontWeight="SemiBold" Margin="20" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="30" TextWrapping="WrapWholeWords"/>
+                <TextBlock Text="About GyroShell" Style="{StaticResource TitleTextBlockStyle}" Margin="20" VerticalAlignment="Top" HorizontalAlignment="Left" TextWrapping="WrapWholeWords"/>
                 <Expander ExpandDirection="Down" HorizontalAlignment="Stretch" Margin="20,20,20,0" VerticalAlignment="Top" HorizontalContentAlignment="Left">
                     <Expander.Header>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="&#xE946;" FontFamily="Segoe MDL2 Assets" Margin="0,13,10,10" FontSize="16"/>
-                            <TextBlock Text="App Information" Margin="0,10,10,10" TextWrapping="WrapWholeWords"/>
+                        <StackPanel Orientation="Horizontal" Padding="5,10,5,10">
+                            <TextBlock Text="&#xE946;" FontFamily="Segoe MDL2 Assets" Margin="0,13,10,10" FontSize="24"/>
+                            <TextBlock Text="App Information" Margin="10,14,10,10" TextWrapping="WrapWholeWords"/>
                         </StackPanel>
                     </Expander.Header>
                     <Expander.Content>
-                        <StackPanel>
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                                <TextBlock Text="App Version: " FontSize="15" FontWeight="Medium" TextWrapping="WrapWholeWords"/>
-                                <TextBlock Text="ERROR - Cannot parse app version." FontSize="15" Margin="5,0,0,0" x:Name="VersionText" TextWrapping="WrapWholeWords"/>
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                                <TextBlock Text="App Architecture: " FontSize="15" FontWeight="Medium" TextWrapping="WrapWholeWords"/>
-                                <TextBlock Text="ERROR - Cannot parse app architecture." FontSize="15" Margin="5,0,0,0" x:Name="ArchText" TextWrapping="WrapWholeWords"/>
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Build Date: " FontSize="15" FontWeight="Medium" TextWrapping="WrapWholeWords"/>
-                                <TextBlock Text="ERROR - Cannot parse app build date." FontSize="15" Margin="5,0,0,0" x:Name="BDText" TextWrapping="WrapWholeWords"/>
-                            </StackPanel>
+                        <StackPanel Padding="48,0,48,0">
+                            <Grid RowSpacing="12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition MinWidth="130" Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0" Text="App Version" Style="{StaticResource BodyStrongTextBlockStyle}" TextWrapping="WrapWholeWords"/>
+                                <TextBlock Grid.Row="0" Grid.Column="1" Text="ERROR - Cannot parse app version." Style="{StaticResource BodyTextBlockStyle}" Foreground="LightGray" Margin="5,0,0,0" x:Name="VersionText" TextWrapping="WrapWholeWords"/>
+
+                                <TextBlock Grid.Row="1" Text="App Architecture" Style="{StaticResource BodyStrongTextBlockStyle}" TextWrapping="WrapWholeWords"/>
+                                <TextBlock Grid.Row="1" Grid.Column="1" Text="ERROR - Cannot parse app architecture." Style="{StaticResource BodyTextBlockStyle}" Foreground="LightGray" Margin="5,0,0,0" x:Name="ArchText" TextWrapping="WrapWholeWords"/>
+
+                                <TextBlock Grid.Row="2" Text="Build Date" Style="{StaticResource BodyStrongTextBlockStyle}" TextWrapping="WrapWholeWords"/>
+                                <TextBlock Grid.Row="2" Grid.Column="1" Text="ERROR - Cannot parse app build date." Style="{StaticResource BodyTextBlockStyle}" Foreground="LightGray" Margin="5,0,0,0" x:Name="BDText" TextWrapping="WrapWholeWords"/>
+                            </Grid>
                         </StackPanel>
                     </Expander.Content>
                 </Expander>
                 <Expander ExpandDirection="Down" HorizontalAlignment="Stretch" Margin="20,20,20,0" VerticalAlignment="Top" HorizontalContentAlignment="Left">
                     <Expander.Header>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="&#xE71B;" FontFamily="Segoe MDL2 Assets" Margin="0,13,10,10"/>
-                            <TextBlock Text="Links" Margin="0,10,10,10" TextWrapping="WrapWholeWords"/>
+                        <StackPanel Orientation="Horizontal" Padding="5,10,5,10">
+                            <TextBlock Text="&#xE71B;" FontFamily="Segoe MDL2 Assets" Margin="0,13,10,10" FontSize="24"/>
+                            <TextBlock Text="Links" Margin="10,14,10,10" TextWrapping="WrapWholeWords"/>
                         </StackPanel>
                     </Expander.Header>
                     <Expander.Content>
-                        <StackPanel Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal" Padding="48,0,48,0">
                             <HyperlinkButton NavigateUri="https://github.com/Pdawg-bytes/GyroShell" Content="GitHub - Source Code"/>
                             <HyperlinkButton NavigateUri="https://github.com/Pdawg-bytes/GyroShell/issues/new" Content="GitHub - Report a bug"/>
                         </StackPanel>
@@ -51,13 +59,13 @@
                 </Expander>
                 <Expander ExpandDirection="Down" HorizontalAlignment="Stretch" Margin="20,20,20,0" VerticalAlignment="Top" HorizontalContentAlignment="Left">
                     <Expander.Header>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="&#xEC08;" FontFamily="Segoe MDL2 Assets" Margin="0,12,10,10" FontSize="16"/>
-                            <TextBlock Text="Source code license" Margin="0,10,10,10" TextWrapping="WrapWholeWords"/>
+                        <StackPanel Orientation="Horizontal" Padding="5,10,5,10">
+                            <TextBlock Text="&#xEC08;" FontFamily="Segoe MDL2 Assets" Margin="0,12,10,10" FontSize="24"/>
+                            <TextBlock Text="Source code license" Margin="10,14,10,10" TextWrapping="WrapWholeWords"/>
                         </StackPanel>
                     </Expander.Header>
                     <Expander.Content>
-                        <StackPanel Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal" Padding="48,0,48,0">
                             <HyperlinkButton Content="GitHub - MIT Source License" NavigateUri="https://github.com/Pdawg-bytes/GyroShell/blob/main/LICENSE"/>
                             <HyperlinkButton Content="OSI - MIT License Information" NavigateUri="https://opensource.org/licenses/MIT"/>
                         </StackPanel>

@@ -10,7 +10,7 @@
     <Grid>
         <ScrollViewer HorizontalScrollMode="Disabled" HorizontalAlignment="Stretch" Margin="10">
             <StackPanel>
-                <TextBlock Text="Customization" FontWeight="SemiBold" Margin="20" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="30" TextWrapping="WrapWholeWords"/>
+                <TextBlock Text="Customization" Style="{StaticResource TitleTextBlockStyle}" Margin="20" VerticalAlignment="Top" HorizontalAlignment="Left" TextWrapping="WrapWholeWords"/>
                 <ComboBox x:Name="TransparencyType" Header="Set GyroShell's bar transparency effect" Margin="20,20,0,0" SelectionChanged="TransparencyType_SelectionChanged">
                     <x:String>Mica Alt</x:String>
                     <x:String>Mica</x:String>
@@ -18,27 +18,27 @@
                 </ComboBox>
                 <Expander x:Name="ClockExpander" HorizontalAlignment="Stretch" Margin="20,20,0,0" HorizontalContentAlignment="Left">
                     <Expander.Header>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="&#xF182;" FontFamily="Segoe MDL2 Assets" Margin="5" FontSize="16"/>
-                            <TextBlock Text="Clock Settings" Margin="5"/>
+                        <StackPanel Orientation="Horizontal" Padding="5,10,5,10">
+                            <TextBlock Text="&#xF182;" FontFamily="Segoe MDL2 Assets" Margin="0,13,10,10" FontSize="22"/>
+                            <TextBlock Text="Clock Settings" Margin="10,13,10,10"/>
                         </StackPanel>
                     </Expander.Header>
                     <Expander.Content>
-                        <StackPanel>
-                            <ToggleSwitch Header="Use seconds in time" VerticalAlignment="Top" HorizontalAlignment="Left" x:Name="SecondsToggle" Toggled="SecondsToggle_Toggled"/>
+                        <StackPanel Padding="48,0,48,0">
+                            <ToggleSwitch Header="Use seconds in time" Margin="0,0,0,8" VerticalAlignment="Top" HorizontalAlignment="Left" x:Name="SecondsToggle" Toggled="SecondsToggle_Toggled"/>
                             <ToggleSwitch Header="24 Hour time" VerticalAlignment="Top" HorizontalAlignment="Left" x:Name="TFHourToggle" Toggled="TFHourToggle_Toggled"/>
                         </StackPanel>
                     </Expander.Content>
                 </Expander>
                 <Expander x:Name="IconExpander" HorizontalAlignment="Stretch" Margin="20,20,0,0" HorizontalContentAlignment="Left">
                     <Expander.Header>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="&#xE790;" FontFamily="Segoe MDL2 Assets" Margin="3,7,7,5" FontSize="16"/>
-                            <TextBlock Text="Icon Settings" Margin="5"/>
+                        <StackPanel Orientation="Horizontal" Padding="5,10,5,10">
+                            <TextBlock Text="&#xE790;" FontFamily="Segoe MDL2 Assets" Margin="0,13,10,10" FontSize="22"/>
+                            <TextBlock Text="Icon Settings" Margin="10,13,10,10"/>
                         </StackPanel>
                     </Expander.Header>
                     <Expander.Content>
-                        <StackPanel>
+                        <StackPanel Padding="48,0,48,0">
                             <RadioButton Content="Windows 10 Icon Style" GroupName="IconStyle" Margin="0,0,0,8" x:Name="Icon10" Checked="Icon_Checked"/>
                             <RadioButton Content="Windows 11 Icon Style" GroupName="IconStyle" x:Name="Icon11" Checked="Icon_Checked"/>
                         </StackPanel>
