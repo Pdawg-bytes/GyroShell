@@ -1,25 +1,13 @@
 ﻿using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using Microsoft.UI.Xaml.Shapes;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Diagnostics;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel;
-using Windows.ApplicationModel.Activation;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using GyroShell.Settings;
 using static GyroShell.Helpers.Win32Interop;
 using Windows.Storage;
 using GyroShell.Helpers;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace GyroShell
 {
@@ -91,6 +79,19 @@ namespace GyroShell
                 TransparencyType = Customization.settingTransparencyType,
                 IconType = Customization.settingIconType,
             };
+
+            DefaultContractResolver contractResolver = new DefaultContractResolver
+            {
+                NamingStrategy = new CamelCaseNamingStrategy()
+            };
+
+            var json = JsonConvert.SerializeObject(model, Formatting.Indented, new JsonSerializerSettings
+            {
+                ContractResolver = contractResolver,
+                NullValueHandling = NullValueHandling.Ignore
+            });
+
+            System.Diagnostics.Debug.WriteLine(json);
         }
     }
 }

@@ -34,10 +34,10 @@
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.WinUI.Connectivity" Version="7.1.2" />
-    <PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.1.2" />
     <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.0.1" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.221209.1" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
+    <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
 
@@ -99,9 +99,6 @@
     <Page Update="Controls\StartWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ViewModels\" />
   </ItemGroup>
   <ItemGroup>
     <Page Update="Controls\DefaultTaskbar.xaml">
