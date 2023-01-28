@@ -10,7 +10,7 @@ namespace GyroShell.Helpers
     {
         public bool IsSeconds { get; set; }
         public bool Is24HR { get; set; }
-        public string TransparencyType { get; set; }
-        public string IconType { get; set; }
+        public int TransparencyType { get; set; }
+        public int IconType { get; set; }
     }
 }

@@ -13,10 +13,10 @@ namespace GyroShell.Settings
             this.InitializeComponent();
         }
 
-        public static string settingTransparencyType;
+        public static int settingTransparencyType;
         public static bool settingSecondsEnabled;
         public static bool settingIs24Hour;
-        public static string settingIconType;
+        public static int settingIconType;
 
         private void TransparencyType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -24,10 +24,13 @@ namespace GyroShell.Settings
             switch (materialName)
             {
                 case "Mica Alt":
+                    settingTransparencyType = 0;
                     break;
                 case "Mica":
+                    settingTransparencyType = 1;
                     break;
                 case "Acrylic":
+                    settingTransparencyType = 2;
                     break;
             }
         }
@@ -38,18 +41,26 @@ namespace GyroShell.Settings
             if (TFHourToggle.IsOn == true && SecondsToggle.IsOn == false)
             {
                 DefaultTaskbar.timeType = "H:mm";
+                settingIs24Hour = true;
+                settingSecondsEnabled = false;
             }
             else if (TFHourToggle.IsOn == true && SecondsToggle.IsOn == true)
             {
                 DefaultTaskbar.timeType = "H:mm:ss";
+                settingIs24Hour = true;
+                settingSecondsEnabled = true;
             }
             else if (TFHourToggle.IsOn == false && SecondsToggle.IsOn == false)
             {
                 DefaultTaskbar.timeType = "t";
+                settingIs24Hour = false;
+                settingSecondsEnabled = false;
             }
             else if (SecondsToggle.IsOn)
             {
                 DefaultTaskbar.timeType = "T";
+                settingIs24Hour = true;
+                settingSecondsEnabled = false;
             }
         }
 
@@ -58,17 +69,25 @@ namespace GyroShell.Settings
             if (TFHourToggle.IsOn == true && SecondsToggle.IsOn == true)
             {
                 DefaultTaskbar.timeType = "H:mm:ss";
+                settingIs24Hour = true;
+                settingSecondsEnabled = true;
             }
             else if (TFHourToggle.IsOn)
             {
                 DefaultTaskbar.timeType = "H:mm";
+                settingIs24Hour = true;
+                settingSecondsEnabled = false;
             }
             else if (TFHourToggle.IsOn == false && SecondsToggle.IsOn == true)
             {
+                settingIs24Hour = false;
+                settingSecondsEnabled = true;
                 DefaultTaskbar.timeType = "T";
             }
             else
             {
+                settingIs24Hour = false;
+                settingSecondsEnabled = false;
                 DefaultTaskbar.timeType = "t";
             }
         }
@@ -83,10 +102,10 @@ namespace GyroShell.Settings
                 {
                     case "Icon10":
                     default:
-                        
+                        settingIconType = 0;
                         break;
                     case "Icon11":
-                        
+                        settingIconType = 1;
                         break;
                 }
             }

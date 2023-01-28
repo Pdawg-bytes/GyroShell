@@ -18,6 +18,8 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using GyroShell.Settings;
 using static GyroShell.Helpers.Win32Interop;
+using Windows.Storage;
+using GyroShell.Helpers;
 
 namespace GyroShell
 {
@@ -28,13 +30,16 @@ namespace GyroShell
             this.InitializeComponent();
         }
 
-        protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
+        public static StorageFile settingsFile;
+
+        protected async override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
             m_window = new MainWindow();
             m_window.Activate();
 
             try
             {
+                settingsFile = await KnownFolders.DocumentsLibrary.CreateFileAsync("gshell_settings.json", CreationCollisionOption.ReplaceExisting);
                 if (Package.Current.InstalledLocation != null)
                 {
                     Package package = Package.Current;
@@ -77,6 +82,15 @@ namespace GyroShell
 
         private Window m_window;
 
-        // TODO: Add JSON stuff for accessors.
+        public static void SerializeSettings()
+        {
+            var model = new SettingsDataModel
+            {
+                IsSeconds = Customization.settingSecondsEnabled,
+                Is24HR = Customization.settingIs24Hour,
+                TransparencyType = Customization.settingTransparencyType,
+                IconType = Customization.settingIconType,
+            };
+        }
     }
 }
