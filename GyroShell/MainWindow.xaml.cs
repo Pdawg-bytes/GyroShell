@@ -77,7 +77,7 @@ namespace GyroShell
 
             // Init stuff
             MonitorSummon();
-            TrySetMicaBackdrop(MicaKind.BaseAlt);
+            SetBackdrop();
             TaskbarFrame.Navigate(typeof(Controls.DefaultTaskbar), null, new SuppressNavigationTransitionInfo());
            
             //Show GyroShell when everything is ready
@@ -122,6 +122,24 @@ namespace GyroShell
         MicaController micaController;
         DesktopAcrylicController acrylicController;
         SystemBackdropConfiguration m_configurationSource;
+
+        private void SetBackdrop()
+        {
+            int? transparencyType = App.localSettings.Values["transparencyType"] as int?;
+            switch (transparencyType)
+            {
+                case 0:
+                default:
+                    TrySetMicaBackdrop(MicaKind.BaseAlt);
+                    break;
+                case 1:
+                    TrySetMicaBackdrop(MicaKind.Base);
+                    break;
+                case 2:
+                    TrySetAcrylicBackdrop();
+                    break;
+            }
+        }
 
         bool TrySetMicaBackdrop(MicaKind micaKind)
         {

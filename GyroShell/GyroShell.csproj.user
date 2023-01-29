@@ -5,6 +5,14 @@
   </PropertyGroup>
   <PropertyGroup>
     <ActiveDebugProfile>GyroShell (Package)</ActiveDebugProfile>
+    <Source>G:\gyroshell_icon.png</Source>
+    <SmallTileSource>G:\gyroshell_icon.png</SmallTileSource>
+    <MediumTileSource>G:\gyroshell_icon.png</MediumTileSource>
+    <WideTileSource>G:\gyroshell_icon.png</WideTileSource>
+    <LargeTileSource>G:\gyroshell_icon.png</LargeTileSource>
+    <AppIconSource>G:\gyroshell_icon.png</AppIconSource>
+    <SplashScreenSource>G:\gyroshell_icon.png</SplashScreenSource>
+    <PackageLogoSource>G:\gyroshell_icon.png</PackageLogoSource>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <DebuggerFlavor>ProjectDebugger</DebuggerFlavor>
@@ -13,6 +21,9 @@
     <None Update="App.xaml">
       <SubType>Designer</SubType>
     </None>
+    <Page Update="Controls\RestartDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Controls\DefaultTaskbar.xaml">
       <SubType>Designer</SubType>
     </Page>

@@ -26,7 +26,6 @@
     <Content Include="Assets\Square150x150Logo.scale-200.png" />
     <Content Include="Assets\Square44x44Logo.scale-200.png" />
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
-    <Content Include="Assets\StoreLogo.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
     <Content Include="Assets\start_dark.png" />
     <Content Include="Assets\start_light.png" />
@@ -35,9 +34,8 @@
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.WinUI.Connectivity" Version="7.1.2" />
     <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.0.1" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.221209.1" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.230118.102" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
-    <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
 
@@ -69,11 +67,17 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove="Controls\DefaultTaskbar.xaml" />
+    <None Remove="Controls\RestartDialog.xaml" />
     <None Remove="Controls\StartWindow.xaml" />
     <None Remove="Settings\AboutPage.xaml" />
     <None Remove="Settings\BarSettings.xaml" />
     <None Remove="Settings\Customization.xaml" />
     <None Remove="Settings\SettingsWindow.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Controls\RestartDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Settings\AboutPage.xaml">

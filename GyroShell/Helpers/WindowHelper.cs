@@ -23,7 +23,6 @@ namespace GyroShell.Helpers
         {
             if (Windows.System.DispatcherQueue.GetForCurrentThread() != null)
             {
-                // one already exists, so we'll just use it.
                 return;
             }
 

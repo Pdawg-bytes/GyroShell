@@ -1,23 +1,11 @@
 using CommunityToolkit.WinUI.Connectivity;
 using GyroShell.Helpers;
-using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading;
 using Windows.Devices.Power;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Media.Devices;
 using Windows.UI.Core;
 using WindowsUdk.UI.Shell;
 
@@ -33,6 +21,7 @@ namespace GyroShell.Controls
         {
             this.InitializeComponent();
             TimeAndDate();
+            LoadSettings();
             DetectBatteryPresence();
             InternetUpdate();
             Battery.AggregateBattery.ReportUpdated += AggregateBattery_ReportUpdated;
@@ -58,7 +47,7 @@ namespace GyroShell.Controls
         {
             DispatcherTimer internetUpdate = new DispatcherTimer();
             internetUpdate.Tick += ITUpdateMethod;
-            internetUpdate.Interval = new TimeSpan(20000000);
+            internetUpdate.Interval = new TimeSpan(10000000);
             internetUpdate.Start();
         }
         private void ITUpdateMethod(object sender, object e)
@@ -191,6 +180,7 @@ namespace GyroShell.Controls
 
         #endregion
 
+        #region Bar Events
         private async void SystemControls_Click(object sender, RoutedEventArgs e)
         {
             if (SystemControls.IsChecked == true)
@@ -253,6 +243,12 @@ namespace GyroShell.Controls
             }
         }
 
+        private void ExitGyroShell_Click(object sender, RoutedEventArgs e)
+        {
+            App.Current.Exit();
+        }
+        #endregion
+
         public void UpdateIconService(bool Icon10Use)
         {
             if (Icon10Use)
@@ -269,9 +265,37 @@ namespace GyroShell.Controls
             }
         }
 
-        private void ExitGyroShell_Click(object sender, RoutedEventArgs e)
+        private void LoadSettings()
         {
-            App.Current.Exit();
+            // Clock
+            bool? secondsEnabled = App.localSettings.Values["isSeconds"] as bool?;
+            bool? is24HREnabled = App.localSettings.Values["is24HR"] as bool?;
+            if (secondsEnabled == true && is24HREnabled == true)
+            {
+                timeType = "H:mm:ss";
+            }
+            else if (secondsEnabled == true && is24HREnabled == false) 
+            {
+                timeType = "T";
+            }
+            else if (secondsEnabled == false && is24HREnabled == true)
+            {
+                timeType = "H:mm";
+            }
+            else if (secondsEnabled == false && is24HREnabled == false)
+            {
+                timeType = "t";
+            }
+
+            int? iconStyle = App.localSettings.Values["iconStyle"] as int?;
+            switch (iconStyle)
+            {
+                case 0:
+                default:
+                    break;
+                case 1:
+                    break;
+            }
         }
     }
 }
