@@ -12,6 +12,9 @@ namespace GyroShell.Settings
         public Customization()
         {
             this.InitializeComponent();
+            bool? secondsEnabled = App.localSettings.Values["isSeconds"] as bool?;
+            bool? is24HREnabled = App.localSettings.Values["is24HR"] as bool?;
+            // TODO: implemnent loading values
         }
 
         private async void TransparencyType_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -21,22 +24,21 @@ namespace GyroShell.Settings
             {
                 case "Mica Alt":
                     App.localSettings.Values["transparencyType"] = 0;
-                    try
-                    {
-                        ContentDialog dialog = new RestartDialog();
-                        dialog.XamlRoot = this.XamlRoot;
-                        await dialog.ShowAsync();
-                    }
-                    catch(Exception ex)
-                    {
-                        Debug.Write(ex.ToString());
-                    }
+                    ContentDialog dialog0 = new RestartDialog();
+                    dialog0.XamlRoot = this.XamlRoot;
+                    await dialog0.ShowAsync();
                     break;
                 case "Mica":
                     App.localSettings.Values["transparencyType"] = 1;
+                    ContentDialog dialog1 = new RestartDialog();
+                    dialog1.XamlRoot = this.XamlRoot;
+                    await dialog1.ShowAsync();
                     break;
                 case "Acrylic":
                     App.localSettings.Values["transparencyType"] = 2;
+                    ContentDialog dialog2 = new RestartDialog();
+                    dialog2.XamlRoot = this.XamlRoot;
+                    await dialog2.ShowAsync();
                     break;
             }
         }
