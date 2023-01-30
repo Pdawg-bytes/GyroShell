@@ -19,9 +19,8 @@
             </StackPanel>
         </Grid>
         <Grid x:Name="ContentGrid" Grid.Row="1">
-            <NavigationView x:Name="SettingNav" IsSettingsVisible="False" IsBackButtonVisible="Collapsed" SelectionChanged="SettingNav_SelectionChanged">   
+            <NavigationView x:Name="SettingNav" IsSettingsVisible="False" IsBackButtonVisible="Collapsed" SelectionChanged="SettingNav_SelectionChanged">
                 <NavigationView.MenuItems>
-                    <NavigationViewItem Icon="DockBottom" Content="Bar Settings" Tag="BarSettings" />
                     <NavigationViewItem Content="Customization" Tag="Customization">
                         <NavigationViewItem.Icon>
                             <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xEC87;"/>

@@ -29,7 +29,9 @@ namespace GyroShell
     public sealed partial class MainWindow : Window
     {
         AppWindow m_AppWindow;
- 
+
+        private int? finalA;
+
         public MainWindow()
         {
             this.InitializeComponent();
@@ -139,6 +141,9 @@ namespace GyroShell
                     TrySetAcrylicBackdrop();
                     break;
             }
+            int? alpha = App.localSettings.Values["aTint"] as int?;
+            finalA = alpha != null ? alpha : 255;
+            // TODO: Finish color stuff!
         }
 
         bool TrySetMicaBackdrop(MicaKind micaKind)
@@ -155,6 +160,8 @@ namespace GyroShell
                 SetConfigurationSourceTheme();
                 micaController = new Microsoft.UI.Composition.SystemBackdrops.MicaController();
                 micaController.Kind = micaKind;
+                micaController.TintColor = Color.FromArgb((byte)finalA, 0, 0, 0);
+                micaController.TintOpacity = 1f;
                 micaController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
                 micaController.SetSystemBackdropConfiguration(m_configurationSource);
                 return true;
@@ -174,9 +181,9 @@ namespace GyroShell
                 m_configurationSource.IsInputActive = true;
                 SetConfigurationSourceTheme();
                 acrylicController = new DesktopAcrylicController();
-                acrylicController.TintColor = Color.FromArgb(255, 52, 52, 52);
-                acrylicController.TintOpacity = 0.1f;
-                acrylicController.LuminosityOpacity = 1;
+                acrylicController.TintColor = Color.FromArgb(255, 0, 0, 0);
+                acrylicController.TintOpacity = 0.2f;
+                acrylicController.LuminosityOpacity = 0.4f;
                 ((FrameworkElement)this.Content).ActualThemeChanged += Window_ThemeChanged;
                 acrylicController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
                 acrylicController.SetSystemBackdropConfiguration(m_configurationSource);

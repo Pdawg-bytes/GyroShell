@@ -5,17 +5,35 @@
     xmlns:local="using:GyroShell.Settings"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    Loaded="Page_Loaded">
 
     <Grid>
         <ScrollViewer HorizontalScrollMode="Disabled" HorizontalAlignment="Stretch" Margin="10">
             <StackPanel>
                 <TextBlock Text="Customization" Style="{StaticResource TitleTextBlockStyle}" Margin="20" VerticalAlignment="Top" HorizontalAlignment="Left" TextWrapping="WrapWholeWords"/>
-                <ComboBox x:Name="TransparencyType" Header="Set GyroShell's bar transparency effect" Margin="20,20,0,0" SelectionChanged="TransparencyType_SelectionChanged">
-                    <x:String>Mica Alt</x:String>
-                    <x:String>Mica</x:String>
-                    <x:String>Acrylic</x:String>
-                </ComboBox>
+                <Expander x:Name="TransparencyExpander" HorizontalAlignment="Stretch" Margin="20,20,0,0" HorizontalContentAlignment="Left">
+                    <Expander.Header>
+                        <StackPanel Orientation="Horizontal" Padding="5,10,5,10">
+                            <TextBlock Text="&#xE81E;" FontFamily="Segoe MDL2 Assets" Margin="0,13,10,10" FontSize="22"/>
+                            <TextBlock Text="Transparency Settings" Margin="10,13,10,10"/>
+                        </StackPanel>
+                    </Expander.Header>
+                    <Expander.Content>
+                        <StackPanel Padding="48,0,48,0">
+                            <ComboBox x:Name="TransparencyType" Header="Set GyroShell's bar transparency effect" SelectionChanged="TransparencyType_SelectionChanged">
+                                <x:String>Mica Alt</x:String>
+                                <x:String>Mica</x:String>
+                                <x:String>Acrylic</x:String>
+                            </ComboBox>
+                            <TextBlock x:Name="TransparencySettingHeader" Text="Tint Settings" Margin="0,20,0,0" FontSize="20" FontWeight="Medium"/>
+                            <ColorPicker x:Name="TintColorPicker" Margin="0,10,0,0" ColorChanged="TintColorPicker_ColorChanged" ColorSpectrumShape="Box" IsAlphaSliderVisible="True" IsAlphaEnabled="True" IsMoreButtonVisible="True" IsColorSliderVisible="True" IsColorChannelTextInputVisible="True" IsHexInputVisible="True"/>
+                            <Slider Header="Luminosity Opacity" TickFrequency="10" x:Name="LuminSlider" ValueChanged="LuminSlider_ValueChanged"/>
+                            <Slider Header="Tint Opacity" TickFrequency="10" x:Name="TintSlider" ValueChanged="TintSlider_ValueChanged"/>
+                        </StackPanel>
+                    </Expander.Content>
+                </Expander>
+
                 <Expander x:Name="ClockExpander" HorizontalAlignment="Stretch" Margin="20,20,0,0" HorizontalContentAlignment="Left">
                     <Expander.Header>
                         <StackPanel Orientation="Horizontal" Padding="5,10,5,10">
@@ -46,5 +64,13 @@
                 </Expander>
             </StackPanel>
         </ScrollViewer>
+        <InfoBar Message="GyroShell needs to restart to apply these changes." IsClosable="True" IsOpen="False" Severity="Warning" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,20" x:Name="RestartInfo" Width="425" Background="{ThemeResource SystemControlAcrylicElementBrush}">
+            <InfoBar.Content>
+                <StackPanel Orientation="Horizontal">
+                    <Button x:Name="RestartNowInfo" Style="{ThemeResource AccentButtonStyle}" Content="Restart now" Margin="0,0,20,20" HorizontalAlignment="Stretch" Click="RestartNowInfo_Click" Width="145"/>
+                    <Button x:Name="RestartLaterInfo" Style="{ThemeResource DefaultButtonStyle}" Content="Restart later" Margin="0,0,0,20" HorizontalAlignment="Stretch" Width="145" Click="RestartLaterInfo_Click"/>
+                </StackPanel>
+            </InfoBar.Content>
+        </InfoBar>
     </Grid>
 </Page>

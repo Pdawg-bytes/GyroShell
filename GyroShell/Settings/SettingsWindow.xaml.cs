@@ -32,9 +32,7 @@ namespace GyroShell.Settings
             var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
 
             appWindow.MoveInZOrderAtTop();
-            appWindow.Resize(new SizeInt32 { Width = 1300, Height = 700});
-            appWindow.Move(new PointInt32 { X = 200, Y = 200 });
-            contentFrame.Navigate(typeof(BarSettings));
+            contentFrame.Navigate(typeof(Customization));
 
             ExtendsContentIntoTitleBar = true;
             Title = "GyroShell Settings";
@@ -138,11 +136,8 @@ namespace GyroShell.Settings
             {
                 switch (item.Tag.ToString())
                 {
-                    case "BarSettings":
-                    default:
-                        contentFrame.Navigate(typeof(BarSettings));
-                        break;
                     case "Customization":
+                    default:
                         contentFrame.Navigate(typeof(Customization));
                         break;
                     case "AboutPage":

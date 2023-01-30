@@ -21,9 +21,6 @@
     <None Update="App.xaml">
       <SubType>Designer</SubType>
     </None>
-    <Page Update="Controls\RestartDialog.xaml">
-      <SubType>Designer</SubType>
-    </Page>
     <Page Update="Controls\DefaultTaskbar.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -40,9 +37,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Settings\Customization.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Settings\BarSettings.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Settings\SettingsWindow.xaml">
