@@ -10,7 +10,7 @@
     >
 
     <Grid x:Name="MainShellGrid">
-        <Border Height="1" VerticalAlignment="Top" HorizontalAlignment="Stretch" Background="{ThemeResource SystemControlAcrylicElementBrush}" Margin="1,0,1,0" x:Name="BarBorder"/>
+        <Border Height="1" VerticalAlignment="Top" HorizontalAlignment="Stretch" x:Name="BarBorder" Opacity="0.6"/>
         <Frame Visibility="Collapsed" Background="{ThemeResource SystemControlAcrylicWindowBrush}">
             <MenuFlyout x:Name="StartFlyout" AreOpenCloseAnimationsEnabled="True" ShouldConstrainToRootBounds="False">
                 <MenuFlyoutItem Text="Shell Settings" Click="StartFlyout_Click" Tag="ShellSettings"/>

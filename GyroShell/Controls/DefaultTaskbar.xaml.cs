@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using System;
 using Windows.Devices.Power;
+using Windows.UI;
 using Windows.UI.Core;
 using WindowsUdk.UI.Shell;
 
@@ -25,6 +26,7 @@ namespace GyroShell.Controls
             DetectBatteryPresence();
             InternetUpdate();
             Battery.AggregateBattery.ReportUpdated += AggregateBattery_ReportUpdated;
+            BarBorder.Background = new SolidColorBrush(Color.FromArgb(255,66,63,74));
         }
 
         #region Clock

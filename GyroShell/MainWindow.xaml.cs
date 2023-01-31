@@ -30,7 +30,13 @@ namespace GyroShell
     {
         AppWindow m_AppWindow;
 
-        private int? finalA;
+        private bool finalOpt;
+        private byte finalA;
+        private byte finalR;
+        private byte finalG;
+        private byte finalB;
+        private float finalLO;
+        private float finalTO;
 
         public MainWindow()
         {
@@ -73,8 +79,8 @@ namespace GyroShell
             int barHeight = OSVersion.IsWin11() ? 50 : 40;
 
             Title = "GyroShell";
-            appWindow.Resize(new SizeInt32 { Width = screenWidth + 2, Height = barHeight });
-            appWindow.Move(new PointInt32 { X = -1, Y = screenHeight - barHeight });
+            appWindow.Resize(new SizeInt32 { Width = screenWidth, Height = barHeight });
+            appWindow.Move(new PointInt32 { X = 0, Y = screenHeight - barHeight });
             appWindow.MoveInZOrderAtTop();
 
             // Init stuff
@@ -127,6 +133,21 @@ namespace GyroShell
 
         private void SetBackdrop()
         {
+            bool? option = App.localSettings.Values["isCustomTransparency"] as bool?;
+            byte? alpha = App.localSettings.Values["aTint"] as byte?;
+            byte? red = App.localSettings.Values["rTint"] as byte?;
+            byte? green = App.localSettings.Values["gTint"] as byte?;
+            byte? blue = App.localSettings.Values["bTint"] as byte?;
+            float? luminOpacity = App.localSettings.Values["luminOpacity"] as float?;
+            float? tintOpacity = App.localSettings.Values["tintOpacity"] as float?;
+            finalOpt = option != null ? (bool)option : false;
+            finalA = alpha != null ? (byte)alpha : (byte)0;
+            finalR = red != null ? (byte)red : (byte)0;
+            finalG = green != null ? (byte)green : (byte)0;
+            finalB = blue != null ? (byte)blue : (byte)0;
+            finalLO = luminOpacity != null ? (float)luminOpacity : (float)0.8f;
+            finalTO = tintOpacity != null ? (float)tintOpacity : (float)0.0f;
+
             int? transparencyType = App.localSettings.Values["transparencyType"] as int?;
             switch (transparencyType)
             {
@@ -141,9 +162,6 @@ namespace GyroShell
                     TrySetAcrylicBackdrop();
                     break;
             }
-            int? alpha = App.localSettings.Values["aTint"] as int?;
-            finalA = alpha != null ? alpha : 255;
-            // TODO: Finish color stuff!
         }
 
         bool TrySetMicaBackdrop(MicaKind micaKind)
@@ -160,8 +178,11 @@ namespace GyroShell
                 SetConfigurationSourceTheme();
                 micaController = new Microsoft.UI.Composition.SystemBackdrops.MicaController();
                 micaController.Kind = micaKind;
-                micaController.TintColor = Color.FromArgb((byte)finalA, 0, 0, 0);
-                micaController.TintOpacity = 1f;
+                if (finalOpt == true)
+                {
+                    micaController.TintColor = Color.FromArgb(finalA, finalR, finalG, finalB);
+                    micaController.TintOpacity = finalTO;
+                }
                 micaController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
                 micaController.SetSystemBackdropConfiguration(m_configurationSource);
                 return true;
@@ -181,9 +202,9 @@ namespace GyroShell
                 m_configurationSource.IsInputActive = true;
                 SetConfigurationSourceTheme();
                 acrylicController = new DesktopAcrylicController();
-                acrylicController.TintColor = Color.FromArgb(255, 0, 0, 0);
-                acrylicController.TintOpacity = 0.2f;
-                acrylicController.LuminosityOpacity = 0.4f;
+                acrylicController.TintColor = Color.FromArgb(finalA, finalR, finalG, finalB);
+                acrylicController.TintOpacity = finalTO;
+                acrylicController.LuminosityOpacity = finalLO;
                 ((FrameworkElement)this.Content).ActualThemeChanged += Window_ThemeChanged;
                 acrylicController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
                 acrylicController.SetSystemBackdropConfiguration(m_configurationSource);
