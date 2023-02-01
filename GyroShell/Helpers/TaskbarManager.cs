@@ -58,6 +58,16 @@ namespace GyroShell.Helpers
             SendMessage(m_hTaskBar, /*WM_SYSCOMMAND*/ 0x0112, (IntPtr) /*SC_TASKLIST*/ 0xF130, (IntPtr)0);
         }
 
+        public static async Task ToggleSysControl()
+        {
+            ShellExecute(IntPtr.Zero, "open", "ms-actioncenter:controlcenter/&suppressAnimations=false&showFooter=true&allowPageNavigation=true", null, null, 1);
+        }
+
+        public static async Task ToggleActionCenter()
+        {
+            ShellExecute(IntPtr.Zero, "open", "ms-actioncenter:", null, null, 1);
+        }
+
         private static IntPtr m_hTaskBar;
         private static IntPtr m_hMultiTaskBar;
         private static IntPtr m_hStartMenu;

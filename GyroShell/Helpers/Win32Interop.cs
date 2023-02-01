@@ -60,9 +60,13 @@ namespace GyroShell.Helpers
         [DllImport("user32.dll")]
         public static extern IntPtr SendMessageW(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
 
+        [DllImport("Shell32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        public static extern IntPtr ShellExecute(IntPtr hwnd, string lpOperation, string lpFile, string lpParameters, string lpDirectory, int nShowCmd);
+
+
         // DWM API attrib
         public enum DWMWINDOWATTRIBUTE
-        {
+        { 
             DWMWA_WINDOW_CORNER_PREFERENCE = 33
         }
         // Copied from dwmapi.h

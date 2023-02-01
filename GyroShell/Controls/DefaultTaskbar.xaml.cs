@@ -4,7 +4,6 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
-using Microsoft.Web.WebView2.Core;
 using System;
 using Windows.ApplicationModel.Core;
 using Windows.Devices.Power;
@@ -12,6 +11,7 @@ using Windows.UI;
 using System.Diagnostics;
 using Windows.UI.Core;
 using static GyroShell.Helpers.Win32Interop;
+using Windows.System;
 
 namespace GyroShell.Controls
 {
@@ -190,8 +190,14 @@ namespace GyroShell.Controls
         {
             if (SystemControls.IsChecked == true)
             {
-                var uri = new Uri("ms-controlcenter://");
-                await Windows.System.Launcher.LaunchUriAsync(uri);
+                if (OSVersion.IsWin11())
+                {
+                    await TaskbarManager.ToggleSysControl();
+                }
+                else
+                {
+                    await TaskbarManager.ToggleActionCenter();
+                }
             }
         }
 
@@ -207,8 +213,7 @@ namespace GyroShell.Controls
         {
             if (ActionCenter.IsChecked == true)
             {
-                var uri = new Uri("ms-actioncenter://");
-                await Windows.System.Launcher.LaunchUriAsync(uri);
+                await TaskbarManager.ToggleActionCenter();
             }
         }
 
@@ -217,7 +222,7 @@ namespace GyroShell.Controls
             StartFlyout.ShowAt(StartButton);
         }
 
-        private void StartFlyout_Click(object sender, RoutedEventArgs e)
+        private async void StartFlyout_Click(object sender, RoutedEventArgs e)
         {
             if (sender is MenuFlyoutItem selectedItem)
             {
@@ -236,12 +241,10 @@ namespace GyroShell.Controls
                         App.Current.Exit();
                         break;
                     case "TaskMgr":
-                        // TODO: FIX ADMIN!!
-                        Process.Start("taskmgr.exe");
+                        Process.Start(ProcessStart.ProcessStartEx("taskmgr.exe", false, true));
                         break;
                     case "Settings":
-                        // TODO: FIX ADMIN!!
-                        Process.Start("ms-settings:");
+                        await Launcher.LaunchUriAsync(new Uri("ms-settings:"));
                         break;
                     case "FileExp":
                         Process.Start("explorer.exe");
@@ -268,13 +271,6 @@ namespace GyroShell.Controls
                 System.Diagnostics.Debug.WriteLine("Start closed!");
             }
         }
-
-        private void OnWindowCreated(CoreWindow window)
-        {
-            var titleBar = CoreApplication.GetCurrentView().TitleBar;
-            titleBar.IsVisibleChanged += StartMenuVisibilityChanged;
-        }
-
     #endregion
 
     public void UpdateIconService(bool Icon10Use)
