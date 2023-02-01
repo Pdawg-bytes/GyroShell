@@ -5,7 +5,6 @@ using System;
 using System.Runtime.InteropServices;
 using AppWindow = Microsoft.UI.Windowing.AppWindow;
 using Windows.Graphics;
-using WindowsUdk.UI.Shell;
 using GyroShell.Helpers;
 using Windows.UI.Core;
 using Windows.Devices.Power;

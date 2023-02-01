@@ -5,7 +5,6 @@ using System;
 using System.Runtime.InteropServices;
 using AppWindow = Microsoft.UI.Windowing.AppWindow;
 using Windows.Graphics;
-using WindowsUdk.UI.Shell;
 using GyroShell.Helpers;
 using Windows.UI.Core;
 using Windows.Devices.Power;
@@ -145,8 +144,8 @@ namespace GyroShell
             finalR = red != null ? (byte)red : (byte)0;
             finalG = green != null ? (byte)green : (byte)0;
             finalB = blue != null ? (byte)blue : (byte)0;
-            finalLO = luminOpacity != null ? (float)luminOpacity : (float)0.8f;
-            finalTO = tintOpacity != null ? (float)tintOpacity : (float)0.0f;
+            finalLO = luminOpacity != null ? (float)luminOpacity : (float)0.2f;
+            finalTO = tintOpacity != null ? (float)tintOpacity : (float)0.3f;
 
             int? transparencyType = App.localSettings.Values["transparencyType"] as int?;
             switch (transparencyType)
@@ -248,7 +247,7 @@ namespace GyroShell
             {
                 case ElementTheme.Dark: m_configurationSource.Theme = SystemBackdropTheme.Dark; if (acrylicController != null) { acrylicController.TintColor = Color.FromArgb(255, 0, 0, 0); } break;
                 case ElementTheme.Light: m_configurationSource.Theme = SystemBackdropTheme.Light; if (acrylicController != null) { acrylicController.TintColor = Color.FromArgb(255, 255, 255, 255); } break;
-                case ElementTheme.Default: m_configurationSource.Theme = SystemBackdropTheme.Default; if (acrylicController != null) { acrylicController.TintColor = Color.FromArgb(255, 50, 50, 50); } break;
+                case ElementTheme.Default: m_configurationSource.Theme = SystemBackdropTheme.Default; if (acrylicController != null) { acrylicController.TintColor = Color.FromArgb(255, 0, 0, 0); } break;
             }
         }
         #endregion

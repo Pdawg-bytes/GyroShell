@@ -57,6 +57,9 @@ namespace GyroShell.Helpers
         [DllImport("user32.dll")]
         public static extern int SendMessage(IntPtr hWnd, int wMsg, IntPtr wParam, IntPtr lParam);
 
+        [DllImport("user32.dll")]
+        public static extern IntPtr SendMessageW(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
+
         // DWM API attrib
         public enum DWMWINDOWATTRIBUTE
         {

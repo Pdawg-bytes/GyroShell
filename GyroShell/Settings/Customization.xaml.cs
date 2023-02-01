@@ -246,7 +246,16 @@ namespace GyroShell.Settings
 
         private void DefaultsButton_Click(object sender, RoutedEventArgs e)
         {
+            aTint = null;
+            rTint = null;
+            bTint = null;
+            gTint = null;
+            luminOpacity = null;
+            tintOpacity = null;
+            TintSlider.Value = 0;
+            LuminSlider.Value = 0;
             App.localSettings.Values["isCustomTransparency"] = false;
+            RestartInfo.IsOpen = true;
         }
     }
 }

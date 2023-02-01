@@ -1,17 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Runtime.InteropServices;
-using System.Diagnostics;
-using System.Security.Cryptography;
-using System.Runtime.CompilerServices;
 using static GyroShell.Helpers.Win32Interop;
-using System.Threading;
-using System.Reflection.Metadata;
-using WindowsUdk.UI.Shell;
-using Windows.UI.Core;
-using Windows.Foundation;
 using System.Threading.Tasks;
 
 namespace GyroShell.Helpers
@@ -67,15 +55,7 @@ namespace GyroShell.Helpers
 
         public static async Task ToggleStart()
         {
-            if (OSVersion.IsWin11())
-            {
-                ShellViewCoordinator startC = new ShellViewCoordinator(ShellView.Start);
-                await startC.TryShowAsync(new ShowShellViewOptions());
-            }
-            else
-            {
-                SendMessage(m_hTaskBar, /*WM_SYSCOMMAND*/ 0x0112, (IntPtr) /*SC_TASKLIST*/ 0xF130, (IntPtr)0);
-            }
+            SendMessage(m_hTaskBar, /*WM_SYSCOMMAND*/ 0x0112, (IntPtr) /*SC_TASKLIST*/ 0xF130, (IntPtr)0);
         }
 
         private static IntPtr m_hTaskBar;

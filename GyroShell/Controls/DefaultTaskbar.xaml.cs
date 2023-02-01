@@ -4,11 +4,14 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.Web.WebView2.Core;
 using System;
+using Windows.ApplicationModel.Core;
 using Windows.Devices.Power;
 using Windows.UI;
+using System.Diagnostics;
 using Windows.UI.Core;
-using WindowsUdk.UI.Shell;
+using static GyroShell.Helpers.Win32Interop;
 
 namespace GyroShell.Controls
 {
@@ -187,12 +190,8 @@ namespace GyroShell.Controls
         {
             if (SystemControls.IsChecked == true)
             {
-                ShellViewCoordinator controlsC = new ShellViewCoordinator(ShellView.ControlCenter);
-                await controlsC.TryShowAsync(new ShowShellViewOptions());
-            }
-            else
-            {
-
+                var uri = new Uri("ms-controlcenter://");
+                await Windows.System.Launcher.LaunchUriAsync(uri);
             }
         }
 
@@ -208,12 +207,8 @@ namespace GyroShell.Controls
         {
             if (ActionCenter.IsChecked == true)
             {
-                ShellViewCoordinator actionC = new ShellViewCoordinator(ShellView.ActionCenter);
-                await actionC.TryShowAsync(new ShowShellViewOptions());
-            }
-            else
-            {
-
+                var uri = new Uri("ms-actioncenter://");
+                await Windows.System.Launcher.LaunchUriAsync(uri);
             }
         }
 
@@ -237,6 +232,23 @@ namespace GyroShell.Controls
                             settingsWindow.Activate();
                         }
                         break;
+                    case "ExitGyroShell":
+                        App.Current.Exit();
+                        break;
+                    case "TaskMgr":
+                        // TODO: FIX ADMIN!!
+                        Process.Start("taskmgr.exe");
+                        break;
+                    case "Settings":
+                        // TODO: FIX ADMIN!!
+                        Process.Start("ms-settings:");
+                        break;
+                    case "FileExp":
+                        Process.Start("explorer.exe");
+                        break;
+                    case "Run":
+                        Process.Start("explorer.exe", "shell:::{2559a1f3-21d7-11d4-bdaf-00c04f60b9f0}");
+                        break;
                 }
             }
             else
@@ -245,13 +257,27 @@ namespace GyroShell.Controls
             }
         }
 
-        private void ExitGyroShell_Click(object sender, RoutedEventArgs e)
+        private void StartMenuVisibilityChanged(CoreApplicationViewTitleBar sender, object args)
         {
-            App.Current.Exit();
+            if (sender.IsVisible)
+            {
+                System.Diagnostics.Debug.WriteLine("Start open!");
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("Start closed!");
+            }
         }
-        #endregion
 
-        public void UpdateIconService(bool Icon10Use)
+        private void OnWindowCreated(CoreWindow window)
+        {
+            var titleBar = CoreApplication.GetCurrentView().TitleBar;
+            titleBar.IsVisibleChanged += StartMenuVisibilityChanged;
+        }
+
+    #endregion
+
+    public void UpdateIconService(bool Icon10Use)
         {
             if (Icon10Use)
             {

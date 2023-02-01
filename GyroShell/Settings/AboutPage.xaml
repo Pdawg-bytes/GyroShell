@@ -10,7 +10,10 @@
     <Grid>
         <ScrollViewer HorizontalScrollMode="Disabled" HorizontalAlignment="Stretch" Margin="10">
             <StackPanel>
-                <TextBlock Text="About GyroShell" Style="{StaticResource TitleTextBlockStyle}" Margin="20" VerticalAlignment="Top" HorizontalAlignment="Left" TextWrapping="WrapWholeWords"/>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="About GyroShell" Style="{StaticResource TitleTextBlockStyle}" Margin="20" VerticalAlignment="Top" HorizontalAlignment="Left" TextWrapping="WrapWholeWords"/>
+                    <Image Source="ms-appx:///Assets/Square150x150Logo.scale-200.png" Height="45" VerticalAlignment="Center" Margin="0,5,0,0"/>
+                </StackPanel>
                 <Expander ExpandDirection="Down" HorizontalAlignment="Stretch" Margin="20,20,20,0" VerticalAlignment="Top" HorizontalContentAlignment="Left">
                     <Expander.Header>
                         <StackPanel Orientation="Horizontal" Padding="5,10,5,10">

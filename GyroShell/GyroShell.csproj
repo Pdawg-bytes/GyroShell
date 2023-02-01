@@ -33,7 +33,6 @@
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.WinUI.Connectivity" Version="7.1.2" />
-    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.0.1" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.230118.102" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
     <Manifest Include="$(ApplicationManifest)" />
@@ -46,12 +45,6 @@
   -->
   <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <ProjectCapability Include="Msix" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="WindowsUdk.UI.Shell">
-      <HintPath>WinMD\windowsudk.winmd</HintPath>
-      <IsWinMDFile>true</IsWinMDFile>
-    </Reference>
   </ItemGroup>
 
   <!-- 
