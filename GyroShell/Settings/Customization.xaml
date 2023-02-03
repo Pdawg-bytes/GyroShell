@@ -38,7 +38,7 @@
                 <Expander x:Name="ClockExpander" HorizontalAlignment="Stretch" Margin="20,20,0,0" HorizontalContentAlignment="Left">
                     <Expander.Header>
                         <StackPanel Orientation="Horizontal" Padding="5,10,5,10">
-                            <TextBlock Text="&#xF182;" FontFamily="Segoe MDL2 Assets" Margin="0,13,10,10" FontSize="22"/>
+                            <TextBlock Text="&#xEC92;" FontFamily="Segoe MDL2 Assets" Margin="0,13,10,10" FontSize="22"/>
                             <TextBlock Text="Clock Settings" Margin="10,13,10,10"/>
                         </StackPanel>
                     </Expander.Header>
