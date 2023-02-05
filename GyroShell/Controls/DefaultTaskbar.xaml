@@ -25,13 +25,18 @@
             </MenuFlyout>
         </Frame>
         <StackPanel Orientation="Horizontal" x:Name="LeftControls">
-            <ToggleButton HorizontalAlignment="Left" Height="40" Width="40" Margin="5" Background="Transparent" BorderBrush="Transparent" x:Name="StartButton" Click="StartButton_Click" RightTapped="StartButton_RightTapped">
+            <ToggleButton HorizontalAlignment="Left" Height="40" Width="40" Margin="5,0,0,0" Background="Transparent" BorderBrush="Transparent" x:Name="StartButton" Click="StartButton_Click" RightTapped="StartButton_RightTapped">
                 <ToggleButton.Content>
                     <TextBlock FontFamily="HoloLens MDL2 Assets" Text="&#xE782;" VerticalAlignment="Center" Margin="0" FontSize="16"/>
                 </ToggleButton.Content>
             </ToggleButton>
         </StackPanel>
         <StackPanel x:Name="RightControls" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button x:Name="SysTray" HorizontalAlignment="Right" Height="40" Background="Transparent" BorderBrush="Transparent" Margin="5" Click="SysTray_Click">
+                <Button.Content>
+                    <TextBlock Text="&#xE70E;" FontFamily="Segoe MDL2 Assets" x:Name="TrayIcon" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                </Button.Content>
+            </Button>
             <ToggleButton x:Name="SystemControls" HorizontalAlignment="Right" Height="40" Background="Transparent" BorderBrush="Transparent" Click="SystemControls_Click">
                 <ToggleButton.Content>
                     <StackPanel Orientation="Horizontal">

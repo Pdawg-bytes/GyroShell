@@ -15,7 +15,7 @@
                 <Expander x:Name="TransparencyExpander" HorizontalAlignment="Stretch" Margin="20,20,0,0" HorizontalContentAlignment="Left">
                     <Expander.Header>
                         <StackPanel Orientation="Horizontal" Padding="5,10,5,10">
-                            <TextBlock Text="&#xE81E;" FontFamily="Segoe MDL2 Assets" Margin="0,13,10,10" FontSize="22"/>
+                            <TextBlock Text="&#xE81E;" FontFamily="Segoe MDL2 Assets" Margin="0,13,10,10" FontSize="22" x:Name="TransparencyIcon"/>
                             <TextBlock Text="Transparency Settings" Margin="10,13,10,10"/>
                         </StackPanel>
                     </Expander.Header>
@@ -38,7 +38,7 @@
                 <Expander x:Name="ClockExpander" HorizontalAlignment="Stretch" Margin="20,20,0,0" HorizontalContentAlignment="Left">
                     <Expander.Header>
                         <StackPanel Orientation="Horizontal" Padding="5,10,5,10">
-                            <TextBlock Text="&#xEC92;" FontFamily="Segoe MDL2 Assets" Margin="0,13,10,10" FontSize="22"/>
+                            <TextBlock Text="&#xEC92;" FontFamily="Segoe MDL2 Assets" Margin="0,13,10,10" FontSize="22" x:Name="ClockIcon"/>
                             <TextBlock Text="Clock Settings" Margin="10,13,10,10"/>
                         </StackPanel>
                     </Expander.Header>
@@ -52,7 +52,7 @@
                 <Expander x:Name="IconExpander" HorizontalAlignment="Stretch" Margin="20,20,0,0" HorizontalContentAlignment="Left">
                     <Expander.Header>
                         <StackPanel Orientation="Horizontal" Padding="5,10,5,10">
-                            <TextBlock Text="&#xE790;" FontFamily="Segoe MDL2 Assets" Margin="0,13,10,10" FontSize="22"/>
+                            <TextBlock Text="&#xE790;" FontFamily="Segoe MDL2 Assets" Margin="0,13,10,10" FontSize="22" x:Name="IconHeaderIcon"/>
                             <TextBlock Text="Icon Settings" Margin="10,13,10,10"/>
                         </StackPanel>
                     </Expander.Header>

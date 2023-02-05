@@ -14,7 +14,7 @@
         </Grid.RowDefinitions>
         <Grid x:Name="AppTitleBar" Grid.Row="0" Background="Transparent" Opacity="1">
             <StackPanel Orientation="Horizontal">
-                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE713;" Margin="16,15,0,0" FontSize="18"/>
+                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE713;" Margin="16,15,0,0" FontSize="18" x:Name="TopIcon"/>
                 <TextBlock Text="GyroShell Settings" Margin="16,16,0,0" Style="{StaticResource CaptionTextBlockStyle}" FontSize="12"/>
             </StackPanel>
         </Grid>

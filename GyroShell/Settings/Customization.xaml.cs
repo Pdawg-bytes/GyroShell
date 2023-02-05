@@ -7,6 +7,7 @@ using System.Diagnostics;
 using Microsoft.UI.Composition.SystemBackdrops;
 using System.Net;
 using Windows.UI;
+using Microsoft.UI.Xaml.Media;
 
 namespace GyroShell.Settings
 {
@@ -214,10 +215,16 @@ namespace GyroShell.Settings
                     default:
                         Icon10.IsChecked = true;
                         Icon11.IsChecked = false;
+                        TransparencyIcon.FontFamily = new FontFamily("Segoe MDL2 Assets");
+                        ClockIcon.FontFamily = new FontFamily("Segoe MDL2 Assets");
+                        IconHeaderIcon.FontFamily = new FontFamily("Segoe MDL2 Assets");
                         break;
                     case 1:
                         Icon10.IsChecked = false;
                         Icon11.IsChecked = true;
+                        TransparencyIcon.FontFamily = new FontFamily("Segoe Fluent Icons");
+                        ClockIcon.FontFamily = new FontFamily("Segoe Fluent Icons");
+                        IconHeaderIcon.FontFamily = new FontFamily("Segoe Fluent Icons");
                         break;
                 }
             }

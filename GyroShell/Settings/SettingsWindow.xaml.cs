@@ -1,21 +1,14 @@
-using Microsoft.UI.Windowing;
-using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using System;
-using System.Runtime.InteropServices;
-using AppWindow = Microsoft.UI.Windowing.AppWindow;
-using Windows.Graphics;
 using GyroShell.Helpers;
-using Windows.UI.Core;
-using Windows.Devices.Power;
 using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Xaml.Controls;
 using WinRT;
 using Windows.UI;
-using Microsoft.UI.Xaml.Input;
-using Windows.UI.WindowManagement;
-using Windows.ApplicationModel.Core;
 using GyroShell.Controls;
+using Microsoft.UI.Xaml.Media;
+using System.IO;
+using Windows.ApplicationModel;
 
 namespace GyroShell.Settings
 {
@@ -33,10 +26,25 @@ namespace GyroShell.Settings
             appWindow.MoveInZOrderAtTop();
             contentFrame.Navigate(typeof(Customization));
 
+            int? iconStyle = App.localSettings.Values["iconStyle"] as int?;
             ExtendsContentIntoTitleBar = true;
             Title = "GyroShell Settings";
             SetTitleBar(AppTitleBar);
             TrySetMicaBackdrop();
+
+            if (iconStyle != null)
+            {
+                switch (iconStyle)
+                {
+                    case 0:
+                    default:
+                        TopIcon.FontFamily = new FontFamily("Segoe MDL2 Assets");
+                        break;
+                    case 1:
+                        TopIcon.FontFamily = new FontFamily("Segoe Fluent Icons");
+                        break;
+                }
+            }
         }
 
         #region Backdrop Stuff

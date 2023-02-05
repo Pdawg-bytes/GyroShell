@@ -75,7 +75,7 @@ namespace GyroShell
 
             int screenWidth = GetSystemMetrics(SM_CXSCREEN);
             int screenHeight = GetSystemMetrics(SM_CYSCREEN);
-            int barHeight = OSVersion.IsWin11() ? 50 : 40;
+            int barHeight = OSVersion.IsWin11() ? 48 : 40;
 
             Title = "GyroShell";
             appWindow.Resize(new SizeInt32 { Width = screenWidth, Height = barHeight });

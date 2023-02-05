@@ -24,8 +24,8 @@ namespace GyroShell.Controls
         public DefaultTaskbar()
         {
             this.InitializeComponent();
-            TimeAndDate();
             LoadSettings();
+            TimeAndDate();
             DetectBatteryPresence();
             InternetUpdate();
             Battery.AggregateBattery.ReportUpdated += AggregateBattery_ReportUpdated;
@@ -271,26 +271,70 @@ namespace GyroShell.Controls
                 System.Diagnostics.Debug.WriteLine("Start closed!");
             }
         }
-    #endregion
 
-    public void UpdateIconService(bool Icon10Use)
+        private void SysTray_Click(object sender, RoutedEventArgs e)
         {
-            if (Icon10Use)
-            {
-                BattStatus.FontFamily = new FontFamily("Segoe MDL2 Assets");
-                WifiStatus.FontFamily = new FontFamily("Segoe MDL2 Assets");
-                SndStatus.FontFamily = new FontFamily("Segoe MDL2 Assets");
-            }
-            else
-            {
-                BattStatus.FontFamily = new FontFamily("Segoe Fluent Icons");
-                WifiStatus.FontFamily = new FontFamily("Segoe Fluent Icons");
-                SndStatus.FontFamily = new FontFamily("Segoe Fluent Icons");
-            }
+            // TODO: Implement
+            throw new NotImplementedException("Systray not ready yet.");
         }
+        #endregion
 
+        #region Settings
         private void LoadSettings()
         {
+            // Icons
+            int? iconStyle = App.localSettings.Values["iconStyle"] as int?;
+            switch (iconStyle)
+            {
+                case 0:
+                default:
+                    Thickness wifiMarginM = WifiStatus.Margin;
+                    wifiMarginM.Left = 5;
+                    wifiMarginM.Top = -2;
+                    wifiMarginM.Right = 5;
+                    wifiMarginM.Bottom = 0;
+                    WifiStatus.Margin = wifiMarginM;
+                    WifiStatus.FontFamily = new FontFamily("Segoe MDL2 Assets");
+                    Thickness sndMarginM = SndStatus.Margin;
+                    sndMarginM.Left = 5;
+                    sndMarginM.Top = 0;
+                    sndMarginM.Right = 0;
+                    sndMarginM.Bottom = 0;
+                    SndStatus.Margin = sndMarginM;
+                    SndStatus.FontFamily = new FontFamily("Segoe MDL2 Assets");
+                    Thickness battMarginM = BattStatus.Margin;
+                    battMarginM.Left = 0;
+                    battMarginM.Top = 4;
+                    battMarginM.Right = 3;
+                    battMarginM.Bottom = 0;
+                    BattStatus.Margin = battMarginM;
+                    BattStatus.FontFamily = new FontFamily("Segoe MDL2 Assets");
+                    break;
+                case 1:
+                    Thickness wifiMarginF = WifiStatus.Margin;
+                    wifiMarginF.Left = 5;
+                    wifiMarginF.Top = 2;
+                    wifiMarginF.Right = 5;
+                    wifiMarginF.Bottom = 0;
+                    WifiStatus.Margin = wifiMarginF;
+                    WifiStatus.FontFamily = new FontFamily("Segoe Fluent Icons");
+                    Thickness sndMarginF = SndStatus.Margin;
+                    sndMarginF.Left = 5;
+                    sndMarginF.Top = 0;
+                    sndMarginF.Right = 0;
+                    sndMarginF.Bottom = 0;
+                    SndStatus.Margin = sndMarginF;
+                    SndStatus.FontFamily = new FontFamily("Segoe Fluent Icons");
+                    Thickness battMarginF = BattStatus.Margin;
+                    battMarginF.Left = 0;
+                    battMarginF.Top = 3;
+                    battMarginF.Right = 7;
+                    battMarginF.Bottom = 0;
+                    BattStatus.Margin = battMarginF;
+                    BattStatus.FontFamily = new FontFamily("Segoe Fluent Icons");
+                    break;
+            }
+
             // Clock
             bool? secondsEnabled = App.localSettings.Values["isSeconds"] as bool?;
             bool? is24HREnabled = App.localSettings.Values["is24HR"] as bool?;
@@ -310,16 +354,7 @@ namespace GyroShell.Controls
             {
                 timeType = "t";
             }
-
-            int? iconStyle = App.localSettings.Values["iconStyle"] as int?;
-            switch (iconStyle)
-            {
-                case 0:
-                default:
-                    break;
-                case 1:
-                    break;
-            }
         }
+        #endregion
     }
 }

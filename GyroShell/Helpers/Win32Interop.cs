@@ -63,7 +63,6 @@ namespace GyroShell.Helpers
         [DllImport("Shell32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern IntPtr ShellExecute(IntPtr hwnd, string lpOperation, string lpFile, string lpParameters, string lpDirectory, int nShowCmd);
 
-
         // DWM API attrib
         public enum DWMWINDOWATTRIBUTE
         { 

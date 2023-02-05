@@ -59,6 +59,9 @@
     <PRIResource Remove="Commands\**" />
   </ItemGroup>
   <ItemGroup>
+    <Content Remove="Assets\WindowIcon.ico" />
+  </ItemGroup>
+  <ItemGroup>
     <None Remove="Controls\DefaultTaskbar.xaml" />
     <None Remove="Controls\StartWindow.xaml" />
     <None Remove="Settings\AboutPage.xaml" />
