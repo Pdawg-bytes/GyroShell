@@ -32,9 +32,9 @@
             </ToggleButton>
         </StackPanel>
         <StackPanel x:Name="RightControls" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button x:Name="SysTray" HorizontalAlignment="Right" Height="40" Background="Transparent" BorderBrush="Transparent" Margin="5" Click="SysTray_Click">
+            <Button x:Name="SysTray" HorizontalAlignment="Right" Height="40" Background="Transparent" BorderBrush="Transparent" Margin="4" Click="SysTray_Click" Padding="4">
                 <Button.Content>
-                    <TextBlock Text="&#xE70E;" FontFamily="Segoe MDL2 Assets" x:Name="TrayIcon" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Text="&#xE70E;" FontFamily="Segoe MDL2 Assets" x:Name="TrayIcon" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,2,0,0" FontSize="12"/>
                 </Button.Content>
             </Button>
             <ToggleButton x:Name="SystemControls" HorizontalAlignment="Right" Height="40" Background="Transparent" BorderBrush="Transparent" Click="SystemControls_Click">

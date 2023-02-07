@@ -2,26 +2,15 @@
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using System;
-using System.Runtime.InteropServices;
 using AppWindow = Microsoft.UI.Windowing.AppWindow;
 using Windows.Graphics;
 using GyroShell.Helpers;
-using Windows.UI.Core;
-using Windows.Devices.Power;
 using Microsoft.UI.Composition.SystemBackdrops;
-using Microsoft.UI.Xaml.Controls;
 using WinRT;
 using Windows.UI;
-using Microsoft.UI.Xaml.Input;
-using CommunityToolkit.WinUI.Connectivity;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using Microsoft.UI.Xaml.Media.Animation;
-using System.Reflection;
 using System.Threading;
-using Windows.Perception.Spatial.Preview;
 using static GyroShell.Helpers.Win32Interop;
-using System.Diagnostics;
 
 namespace GyroShell
 {
@@ -86,12 +75,13 @@ namespace GyroShell
             MonitorSummon();
             SetBackdrop();
             TaskbarFrame.Navigate(typeof(Controls.DefaultTaskbar), null, new SuppressNavigationTransitionInfo());
-           
+
             //Show GyroShell when everything is ready
             m_AppWindow.Show();
             TaskbarManager.HideTaskbar();
         }
 
+        #region Window Handling
         private void OnProcessExit(object sender, EventArgs e)
         {
             TaskbarManager.ShowTaskbar();
@@ -123,6 +113,7 @@ namespace GyroShell
 
             EnumDisplayMonitors(IntPtr.Zero, IntPtr.Zero, MonitorEnumProc, IntPtr.Zero);
         }
+        #endregion
 
         #region Backdrop Stuff
         WindowsSystemDispatcherQueueHelper m_wsdqHelper;

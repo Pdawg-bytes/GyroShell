@@ -260,18 +260,6 @@ namespace GyroShell.Controls
             }
         }
 
-        private void StartMenuVisibilityChanged(CoreApplicationViewTitleBar sender, object args)
-        {
-            if (sender.IsVisible)
-            {
-                System.Diagnostics.Debug.WriteLine("Start open!");
-            }
-            else
-            {
-                System.Diagnostics.Debug.WriteLine("Start closed!");
-            }
-        }
-
         private void SysTray_Click(object sender, RoutedEventArgs e)
         {
             // TODO: Implement
@@ -289,7 +277,7 @@ namespace GyroShell.Controls
                 case 0:
                 default:
                     Thickness wifiMarginM = WifiStatus.Margin;
-                    wifiMarginM.Left = 5;
+                    wifiMarginM.Left = 0;
                     wifiMarginM.Top = -2;
                     wifiMarginM.Right = 5;
                     wifiMarginM.Bottom = 0;
@@ -304,15 +292,15 @@ namespace GyroShell.Controls
                     SndStatus.FontFamily = new FontFamily("Segoe MDL2 Assets");
                     Thickness battMarginM = BattStatus.Margin;
                     battMarginM.Left = 0;
-                    battMarginM.Top = 4;
-                    battMarginM.Right = 3;
+                    battMarginM.Top = 2;
+                    battMarginM.Right = 10;
                     battMarginM.Bottom = 0;
                     BattStatus.Margin = battMarginM;
                     BattStatus.FontFamily = new FontFamily("Segoe MDL2 Assets");
                     break;
                 case 1:
                     Thickness wifiMarginF = WifiStatus.Margin;
-                    wifiMarginF.Left = 5;
+                    wifiMarginF.Left = 0;
                     wifiMarginF.Top = 2;
                     wifiMarginF.Right = 5;
                     wifiMarginF.Bottom = 0;
@@ -328,7 +316,7 @@ namespace GyroShell.Controls
                     Thickness battMarginF = BattStatus.Margin;
                     battMarginF.Left = 0;
                     battMarginF.Top = 3;
-                    battMarginF.Right = 7;
+                    battMarginF.Right = 12;
                     battMarginF.Bottom = 0;
                     BattStatus.Margin = battMarginF;
                     BattStatus.FontFamily = new FontFamily("Segoe Fluent Icons");
