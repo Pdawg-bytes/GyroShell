@@ -323,6 +323,32 @@ namespace GyroShell.Controls
                     break;
             }
 
+            // Button sizes
+            if (!OSVersion.IsWin11())
+            {
+                // Start
+                StartButton.CornerRadius = new CornerRadius(0);
+                Thickness startMargin = StartButton.Margin;
+                startMargin.Left = 0;
+                StartButton.Margin = startMargin;
+
+                // Controls & action center
+                SystemControls.CornerRadius = new CornerRadius(0);
+                ActionCenter.CornerRadius = new CornerRadius(0);
+                Thickness actionMargin = ActionCenter.Margin;
+                actionMargin.Right = 0;
+                ActionCenter.Margin = actionMargin;
+
+                // Systray
+                SysTray.CornerRadius = new CornerRadius(0);
+                Thickness trayMargin = SysTray.Margin;
+                trayMargin.Left = 4;
+                trayMargin.Top = 0;
+                trayMargin.Right = 4;
+                trayMargin.Bottom = 0;
+                SysTray.Margin = trayMargin;
+            }
+
             // Clock
             bool? secondsEnabled = App.localSettings.Values["isSeconds"] as bool?;
             bool? is24HREnabled = App.localSettings.Values["is24HR"] as bool?;

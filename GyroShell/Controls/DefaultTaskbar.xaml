@@ -32,7 +32,7 @@
             </ToggleButton>
         </StackPanel>
         <StackPanel x:Name="RightControls" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button x:Name="SysTray" HorizontalAlignment="Right" Height="40" Background="Transparent" BorderBrush="Transparent" Margin="4" Click="SysTray_Click" Padding="4">
+            <Button x:Name="SysTray" HorizontalAlignment="Right" VerticalAlignment="Center" Height="40" Background="Transparent" BorderBrush="Transparent" Margin="4" Click="SysTray_Click" Padding="4">
                 <Button.Content>
                     <TextBlock Text="&#xE70E;" FontFamily="Segoe MDL2 Assets" x:Name="TrayIcon" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,2,0,0" FontSize="12"/>
                 </Button.Content>
@@ -46,7 +46,7 @@
                     </StackPanel>
                 </ToggleButton.Content>
             </ToggleButton>
-            <ToggleButton HorizontalAlignment="Right" Height="40" Margin="5" Background="Transparent" BorderBrush="Transparent" x:Name="ActionCenter" Click="ActionCenter_Click">
+            <ToggleButton HorizontalAlignment="Right" Height="40" Margin="5,0,5,0" Background="Transparent" BorderBrush="Transparent" x:Name="ActionCenter" Click="ActionCenter_Click">
                 <ToggleButton.Content>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock FontSize="14" VerticalAlignment="Center" x:Name="TimeText" Margin="0,0,0,2"/>
