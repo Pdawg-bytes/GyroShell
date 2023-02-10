@@ -46,13 +46,13 @@
                     </StackPanel>
                 </ToggleButton.Content>
             </ToggleButton>
-            <Border x:Name="RightClockSeperator" Height="26" VerticalAlignment="Center" Width="1" Opacity="0.4" CornerRadius="1"/>
+            <Border x:Name="RightClockSeperator" Height="28" VerticalAlignment="Center" Width="1" Opacity="0.4" CornerRadius="1"/>
             <ToggleButton HorizontalAlignment="Right" VerticalAlignment="Center" Height="40" Margin="5,0,5,0" Background="Transparent" BorderBrush="Transparent" x:Name="ActionCenter" Click="ActionCenter_Click">
                 <ToggleButton.Content>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock FontSize="14" VerticalAlignment="Center" x:Name="TimeText" Margin="0,0,0,2"/>
-                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE1F5;" VerticalAlignment="Center" Margin="8" FontSize="8"/>
-                        <TextBlock FontSize="14" VerticalAlignment="Center" x:Name="DateText" Margin="0,0,0,2"/>
+                        <TextBlock FontSize="14" VerticalAlignment="Center" x:Name="TimeText" Margin="0,4,0,2"/>
+                        <TextBlock Text="" VerticalAlignment="Center" Margin="8" FontSize="16"/>
+                        <TextBlock FontSize="14" VerticalAlignment="Center" x:Name="DateText" Margin="0,3,0,2"/>
                     </StackPanel>
                 </ToggleButton.Content>
             </ToggleButton>
