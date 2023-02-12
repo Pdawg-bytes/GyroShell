@@ -27,8 +27,6 @@
     <Content Include="Assets\Square44x44Logo.scale-200.png" />
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
-    <Content Include="Assets\start_dark.png" />
-    <Content Include="Assets\start_light.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -59,6 +57,7 @@
     <PRIResource Remove="Commands\**" />
   </ItemGroup>
   <ItemGroup>
+    <Content Remove="Assets\win11_start_color.svg" />
     <Content Remove="Assets\WindowIcon.ico" />
   </ItemGroup>
   <ItemGroup>

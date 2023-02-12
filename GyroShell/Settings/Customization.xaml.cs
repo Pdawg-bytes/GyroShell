@@ -13,6 +13,7 @@ namespace GyroShell.Settings
 {
     public sealed partial class Customization : Page
     {
+        bool? transparencyCustom = App.localSettings.Values["isCustomTransparency"] as bool?;
         bool? secondsEnabled = App.localSettings.Values["isSeconds"] as bool?;
         bool? is24HREnabled = App.localSettings.Values["is24HR"] as bool?;
         int? transparencyType = App.localSettings.Values["transparencyType"] as int?;
@@ -37,16 +38,28 @@ namespace GyroShell.Settings
                 case "Mica Alt":
                     App.localSettings.Values["transparencyType"] = 0;
                     LuminSlider.IsEnabled = false;
+                    if(transparencyCustom != null && transparencyCustom == false)
+                    {
+                        DefaultExtern();
+                    }
                     RestartInfo.IsOpen = true;
                     break;
                 case "Mica":
                     App.localSettings.Values["transparencyType"] = 1;
                     LuminSlider.IsEnabled = false;
+                    if (transparencyCustom != null && transparencyCustom == false)
+                    {
+                        DefaultExtern();
+                    }
                     RestartInfo.IsOpen = true;
                     break;
                 case "Acrylic":
                     App.localSettings.Values["transparencyType"] = 2;
                     LuminSlider.IsEnabled = true;
+                    if (transparencyCustom != null && transparencyCustom == false)
+                    {
+                        DefaultExtern();
+                    }
                     RestartInfo.IsOpen = true;
                     break;
             }
@@ -253,6 +266,11 @@ namespace GyroShell.Settings
 
         private void DefaultsButton_Click(object sender, RoutedEventArgs e)
         {
+            DefaultExtern();
+            RestartInfo.IsOpen = true;
+        }
+        private void DefaultExtern()
+        {
             aTint = null;
             rTint = null;
             bTint = null;
@@ -262,7 +280,6 @@ namespace GyroShell.Settings
             TintSlider.Value = 0;
             LuminSlider.Value = 0;
             App.localSettings.Values["isCustomTransparency"] = false;
-            RestartInfo.IsOpen = true;
         }
     }
 }

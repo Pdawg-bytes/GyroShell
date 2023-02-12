@@ -300,27 +300,54 @@ namespace GyroShell.Controls
                     BattStatus.FontFamily = new FontFamily("Segoe MDL2 Assets");
                     break;
                 case 1:
-                    Thickness wifiMarginF = WifiStatus.Margin;
-                    wifiMarginF.Left = 0;
-                    wifiMarginF.Top = 2;
-                    wifiMarginF.Right = 7;
-                    wifiMarginF.Bottom = 0;
-                    WifiStatus.Margin = wifiMarginF;
-                    WifiStatus.FontFamily = new FontFamily("Segoe Fluent Icons");
-                    Thickness sndMarginF = SndStatus.Margin;
-                    sndMarginF.Left = 5;
-                    sndMarginF.Top = 0;
-                    sndMarginF.Right = 0;
-                    sndMarginF.Bottom = 0;
-                    SndStatus.Margin = sndMarginF;
-                    SndStatus.FontFamily = new FontFamily("Segoe Fluent Icons");
-                    Thickness battMarginF = BattStatus.Margin;
-                    battMarginF.Left = 0;
-                    battMarginF.Top = 3;
-                    battMarginF.Right = 14;
-                    battMarginF.Bottom = 0;
-                    BattStatus.Margin = battMarginF;
-                    BattStatus.FontFamily = new FontFamily("Segoe Fluent Icons");
+                    if(OSVersion.IsWin11())
+                    {
+                        Thickness wifiMarginF = WifiStatus.Margin;
+                        wifiMarginF.Left = 0;
+                        wifiMarginF.Top = 2;
+                        wifiMarginF.Right = 7;
+                        wifiMarginF.Bottom = 0;
+                        WifiStatus.Margin = wifiMarginF;
+                        WifiStatus.FontFamily = new FontFamily("Segoe Fluent Icons");
+                        Thickness sndMarginF = SndStatus.Margin;
+                        sndMarginF.Left = 5;
+                        sndMarginF.Top = 0;
+                        sndMarginF.Right = 0;
+                        sndMarginF.Bottom = 0;
+                        SndStatus.Margin = sndMarginF;
+                        SndStatus.FontFamily = new FontFamily("Segoe Fluent Icons");
+                        Thickness battMarginF = BattStatus.Margin;
+                        battMarginF.Left = 0;
+                        battMarginF.Top = 3;
+                        battMarginF.Right = 14;
+                        battMarginF.Bottom = 0;
+                        BattStatus.Margin = battMarginF;
+                        BattStatus.FontFamily = new FontFamily("Segoe Fluent Icons");
+                    }
+                    else
+                    {
+                        Thickness wifiMarginM1 = WifiStatus.Margin;
+                        wifiMarginM1.Left = 0;
+                        wifiMarginM1.Top = -4;
+                        wifiMarginM1.Right = 7;
+                        wifiMarginM1.Bottom = 0;
+                        WifiStatus.Margin = wifiMarginM1;
+                        WifiStatus.FontFamily = new FontFamily("Segoe MDL2 Assets");
+                        Thickness sndMarginM1 = SndStatus.Margin;
+                        sndMarginM1.Left = 5;
+                        sndMarginM1.Top = 0;
+                        sndMarginM1.Right = 0;
+                        sndMarginM1.Bottom = 0;
+                        SndStatus.Margin = sndMarginM1;
+                        SndStatus.FontFamily = new FontFamily("Segoe MDL2 Assets");
+                        Thickness battMarginM1 = BattStatus.Margin;
+                        battMarginM1.Left = 0;
+                        battMarginM1.Top = 2;
+                        battMarginM1.Right = 12;
+                        battMarginM1.Bottom = 0;
+                        BattStatus.Margin = battMarginM1;
+                        BattStatus.FontFamily = new FontFamily("Segoe MDL2 Assets");
+                    }
                     break;
             }
 
