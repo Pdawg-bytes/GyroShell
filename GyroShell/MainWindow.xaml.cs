@@ -33,7 +33,7 @@ namespace GyroShell
 
             TaskbarManager.Init();
 
-            // Removes titlebar
+            // Removes titlebar and creates overlayed presenter
             var presenter = GetAppWindowAndPresenter();
             presenter.IsMaximizable = false;
             presenter.IsMinimizable = false;
