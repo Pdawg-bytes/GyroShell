@@ -52,7 +52,11 @@
                     <StackPanel Orientation="Horizontal">
                         <TextBlock FontSize="14" VerticalAlignment="Center" x:Name="TimeText" Margin="0,1,0,0"/>
                         <TextBlock Text="" VerticalAlignment="Center" Margin="5" FontSize="16"/>
-                        <TextBlock FontSize="14" VerticalAlignment="Center" x:Name="DateText" Margin="0,1,0,0"/>
+                        <TextBlock FontSize="14" VerticalAlignment="Center" x:Name="DateText" Margin="0,1,5,0"/>
+                        <Grid>
+                            <TextBlock Text="&#xE7E7;" FontFamily="Segoe MDL2 Assets" FontSize="16" x:Name="NotifText" Margin="3,7,-8,0"/>
+                            <Ellipse Fill="{ThemeResource SystemAccentColor}" Height="9" Width="9" Margin="14,0,-8,13" x:Name="NotifCircle" Visibility="Collapsed"/>
+                        </Grid>
                     </StackPanel>
                 </ToggleButton.Content>
             </ToggleButton>

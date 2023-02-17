@@ -12,6 +12,11 @@ using System.Diagnostics;
 using Windows.UI.Core;
 using static GyroShell.Helpers.Win32Interop;
 using Windows.System;
+using Windows.UI.Notifications.Management;
+using Windows.Foundation.Metadata;
+using System.Collections.Generic;
+using Windows.UI.Notifications;
+using GyroShell.Settings;
 
 namespace GyroShell.Controls
 {
@@ -28,6 +33,7 @@ namespace GyroShell.Controls
             TimeAndDate();
             DetectBatteryPresence();
             InternetUpdate();
+            InitNotifcation();
             Battery.AggregateBattery.ReportUpdated += AggregateBattery_ReportUpdated;
             BarBorder.Background = new SolidColorBrush(Color.FromArgb(255,66,63,74));
             RightClockSeperator.Background = new SolidColorBrush(Color.FromArgb(255,120,120,120));
@@ -56,6 +62,8 @@ namespace GyroShell.Controls
             internetUpdate.Interval = new TimeSpan(10000000);
             internetUpdate.Start();
         }
+        private string[] wifiIcons = { "\uE871", "\uE872", "\uE873", "\uE874", "\uE701" };
+        private string[] dataIcons = { "\uEC37", "\uEC38", "\uEC39", "\uEC3A", "\uEC3B" };
         private void ITUpdateMethod(object sender, object e)
         {
             if (NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable)
@@ -63,69 +71,25 @@ namespace GyroShell.Controls
                 switch (NetworkHelper.Instance.ConnectionInformation.ConnectionType)
                 {
                     case ConnectionType.Ethernet:
-                        Thickness EthMargin = WifiStatus.Margin;
-                        EthMargin.Top = 1;
                         WifiStatus.Text = "\uE839";
                         break;
                     case ConnectionType.WiFi:
-                        Thickness WifiMargin = WifiStatus.Margin;
-                        WifiMargin.Top = -2;
                         int WifiSignalBars = NetworkHelper.Instance.ConnectionInformation.SignalStrength.GetValueOrDefault(0);
-                        switch (WifiSignalBars)
-                        {
-                            case 0:
-                            default:
-                                WifiStatus.Text = "\uE871";
-                                break;
-                            case 1:
-                                WifiStatus.Text = "\uE872";
-                                break;
-                            case 2:
-                                WifiStatus.Text = "\uE873";
-                                break;
-                            case 3:
-                                WifiStatus.Text = "\uE874";
-                                break;
-                            case 4:
-                                WifiStatus.Text = "\uE701";
-                                break;
-                        }
+                        WifiStatus.Text = wifiIcons[WifiSignalBars];
                         break;
                     case ConnectionType.Data:
-                        Thickness DataMargin = WifiStatus.Margin;
-                        DataMargin.Top = -2;
                         int DataSignalBars = NetworkHelper.Instance.ConnectionInformation.SignalStrength.GetValueOrDefault(0);
-                        switch (DataSignalBars)
-                        {
-                            case 1:
-                            default:
-                                WifiStatus.Text = "\uEC37";
-                                break;
-                            case 2:
-                                WifiStatus.Text = "\uEC38";
-                                break;
-                            case 3:
-                                WifiStatus.Text = "\uEC39";
-                                break;
-                            case 4:
-                                WifiStatus.Text = "\uEC3A";
-                                break;
-                            case 5:
-                                WifiStatus.Text = "\uEC3B";
-                                break;
-                        }
+                        WifiStatus.Text = dataIcons[DataSignalBars];
                         break;
                     case ConnectionType.Unknown:
                     default:
-                        Thickness UnknownMargin = WifiStatus.Margin;
-                        UnknownMargin.Top = 0;
                         WifiStatus.Text = "\uE774";
                         break;
                 }
             }
             else
             {
-                WifiStatus.Text = "\uF140";
+                WifiStatus.Text = "\uEB55";
             }
         }
         #endregion
@@ -261,10 +225,54 @@ namespace GyroShell.Controls
             }
         }
 
-        private void SysTray_Click(object sender, RoutedEventArgs e)
+        private async void SysTray_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: Implement
             throw new NotImplementedException("Systray not ready yet.");
+            //await TaskbarManager.ShowSysTray(); /* Does nothing, no action lol*/
+        }
+        #endregion
+
+        #region Notifications
+        UserNotificationListener notifListener = UserNotificationListener.Current;
+        private void InitNotifcation()
+        {
+            notifListener.NotificationChanged += Listener_NotificationChanged;
+        }
+        private async void Listener_NotificationChanged(UserNotificationListener sender, UserNotificationChangedEventArgs args)
+        {
+            if (ApiInformation.IsTypePresent("Windows.UI.Notifications.Management.UserNotificationListener"))
+            {
+                UserNotificationListenerAccessStatus accessStatus = await notifListener.RequestAccessAsync();
+                switch (accessStatus)
+                {
+                    case UserNotificationListenerAccessStatus.Allowed:
+                        Customization.NotifError = false;
+                        IReadOnlyList<UserNotification> notifsToast = await notifListener.GetNotificationsAsync(NotificationKinds.Toast);
+                        IReadOnlyList<UserNotification> notifsOther = await notifListener.GetNotificationsAsync(NotificationKinds.Unknown);
+                        if (notifsToast.Count > 0 || notifsOther.Count > 0)
+                        {
+                            DispatcherQueue.TryEnqueue((Microsoft.UI.Dispatching.DispatcherQueuePriority)CoreDispatcherPriority.Normal, () =>
+                            {
+                                NotifCircle.Visibility = Visibility.Visible;
+                            });
+                        }
+                        else
+                        {
+                            DispatcherQueue.TryEnqueue((Microsoft.UI.Dispatching.DispatcherQueuePriority)CoreDispatcherPriority.Normal, () =>
+                            {
+                                NotifCircle.Visibility = Visibility.Collapsed;
+                            });
+                        }
+                        break;
+                    case UserNotificationListenerAccessStatus.Denied:
+                        NotifCircle.Visibility = Visibility.Collapsed;
+                        Customization.NotifError = true;
+                        break;
+                    case UserNotificationListenerAccessStatus.Unspecified:
+                        Customization.NotifError = true;
+                        break;
+                }
+            }
         }
         #endregion
 
@@ -298,6 +306,7 @@ namespace GyroShell.Controls
                     battMarginM.Bottom = 0;
                     BattStatus.Margin = battMarginM;
                     BattStatus.FontFamily = new FontFamily("Segoe MDL2 Assets");
+                    NotifText.FontFamily = new FontFamily("Segoe MDL2 Assets");
                     break;
                 case 1:
                     if(OSVersion.IsWin11())
@@ -323,6 +332,7 @@ namespace GyroShell.Controls
                         battMarginF.Bottom = 0;
                         BattStatus.Margin = battMarginF;
                         BattStatus.FontFamily = new FontFamily("Segoe Fluent Icons");
+                        NotifText.FontFamily = new FontFamily("Segoe Fluent Icons");
                     }
                     else
                     {
@@ -347,6 +357,7 @@ namespace GyroShell.Controls
                         battMarginM1.Bottom = 0;
                         BattStatus.Margin = battMarginM1;
                         BattStatus.FontFamily = new FontFamily("Segoe MDL2 Assets");
+                        NotifText.FontFamily = new FontFamily("Segoe MDL2 Assets");
                     }
                     break;
             }

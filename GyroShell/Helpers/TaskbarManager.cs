@@ -58,6 +58,14 @@ namespace GyroShell.Helpers
             SendMessage(m_hTaskBar, /*WM_SYSCOMMAND*/ 0x0112, (IntPtr) /*SC_TASKLIST*/ 0xF130, (IntPtr)0);
         }
 
+        private const int WM_COMMAND = 0x0111;
+        private const int ID_TRAY_SHOW_OVERFLOW = 0x028a;
+        private const int ID_TRAY_HIDE_OVERFLOW = 0x028b;
+        public static async Task ShowSysTray()
+        {
+            SendMessage(m_hTaskBar, WM_COMMAND, (IntPtr)ID_TRAY_SHOW_OVERFLOW, IntPtr.Zero);
+        }
+
         public static async Task ToggleSysControl()
         {
             ShellExecute(IntPtr.Zero, "open", "ms-actioncenter:controlcenter/&suppressAnimations=false&showFooter=true&allowPageNavigation=true" /* CNTRLCTR, bool, bool, bool */, null, null, 1);

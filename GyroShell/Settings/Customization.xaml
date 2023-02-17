@@ -65,13 +65,23 @@
                 </Expander>
             </StackPanel>
         </ScrollViewer>
-        <InfoBar Message="GyroShell needs to restart to apply these changes." IsClosable="True" IsOpen="False" Severity="Warning" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,20" x:Name="RestartInfo" Width="425">
-            <InfoBar.Content>
-                <StackPanel Orientation="Horizontal">
-                    <Button x:Name="RestartNowInfo" Style="{ThemeResource AccentButtonStyle}" Content="Restart now" Margin="0,0,20,20" HorizontalAlignment="Stretch" Click="RestartNowInfo_Click" Width="145"/>
-                    <Button x:Name="RestartLaterInfo" Style="{ThemeResource DefaultButtonStyle}" Content="Restart later" Margin="0,0,0,20" HorizontalAlignment="Stretch" Width="145" Click="RestartLaterInfo_Click"/>
-                </StackPanel>
-            </InfoBar.Content>
-        </InfoBar>
+        <StackPanel VerticalAlignment="Bottom">
+            <InfoBar Message="GyroShell needs permission to access your notifications. Please enable it in Windows Settings." IsClosable="True" Severity="Error" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,20" x:Name="NotifInfo" Width="425">
+                <InfoBar.Content>
+                    <StackPanel Orientation="Horizontal">
+                        <Button x:Name="OpenSettingsInfo" Style="{ThemeResource AccentButtonStyle}" Content="Open settings" Margin="0,0,20,20" HorizontalAlignment="Stretch" Width="145" Click="OpenSettingsInfo_Click"/>
+                        <Button x:Name="IgnoreInfo" Style="{ThemeResource DefaultButtonStyle}" Content="Later" Margin="0,0,0,20" HorizontalAlignment="Stretch" Width="145" Click="IgnoreInfo_Click"/>
+                    </StackPanel>
+                </InfoBar.Content>
+            </InfoBar>
+            <InfoBar Message="GyroShell needs to restart to apply these changes." IsClosable="True" IsOpen="False" Severity="Warning" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,20" x:Name="RestartInfo" Width="425">
+                <InfoBar.Content>
+                    <StackPanel Orientation="Horizontal">
+                        <Button x:Name="RestartNowInfo" Style="{ThemeResource AccentButtonStyle}" Content="Restart now" Margin="0,0,20,20" HorizontalAlignment="Stretch" Click="RestartNowInfo_Click" Width="145"/>
+                        <Button x:Name="RestartLaterInfo" Style="{ThemeResource DefaultButtonStyle}" Content="Restart later" Margin="0,0,0,20" HorizontalAlignment="Stretch" Width="145" Click="RestartLaterInfo_Click"/>
+                    </StackPanel>
+                </InfoBar.Content>
+            </InfoBar>
+        </StackPanel>
     </Grid>
 </Page>

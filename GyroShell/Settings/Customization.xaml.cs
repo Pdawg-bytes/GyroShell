@@ -1,13 +1,12 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using GyroShell.Controls;
-using CommunityToolkit.WinUI.Helpers;
+using Windows.System;
 using System;
-using System.Diagnostics;
-using Microsoft.UI.Composition.SystemBackdrops;
-using System.Net;
 using Windows.UI;
 using Microsoft.UI.Xaml.Media;
+using CommunityToolkit.WinUI.Helpers;
+using GyroShell.Helpers;
 
 namespace GyroShell.Settings
 {
@@ -24,6 +23,7 @@ namespace GyroShell.Settings
         byte? rTint = App.localSettings.Values["rTint"] as byte?;
         byte? gTint = App.localSettings.Values["gTint"] as byte?;
         byte? bTint = App.localSettings.Values["bTint"] as byte?;
+        public static bool NotifError;
 
         public Customization()
         {
@@ -161,7 +161,7 @@ namespace GyroShell.Settings
 
         private void RestartNowInfo_Click(object sender, RoutedEventArgs e)
         {
-
+            // TODO: restart shell
         }
 
         private void RestartLaterInfo_Click(object sender, RoutedEventArgs e)
@@ -181,6 +181,21 @@ namespace GyroShell.Settings
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            if(NotifError)
+            {
+                NotifInfo.IsOpen = true;
+            }
+            else
+            {
+                NotifInfo.IsOpen = false;
+            }
+
+            if(!Helpers.OSVersion.IsWin11())
+            {
+                Icon11.IsEnabled = false;
+                Icon11.IsChecked = false;
+            }
+
             if (transparencyType != null)
             {
                 switch (transparencyType)
@@ -280,6 +295,16 @@ namespace GyroShell.Settings
             TintSlider.Value = 0;
             LuminSlider.Value = 0;
             App.localSettings.Values["isCustomTransparency"] = false;
+        }
+
+        private async void OpenSettingsInfo_Click(object sender, RoutedEventArgs e)
+        {
+            await Launcher.LaunchUriAsync(new Uri("ms-settings:notifications"));
+        }
+
+        private void IgnoreInfo_Click(object sender, RoutedEventArgs e)
+        {
+            NotifInfo.IsOpen = false;
         }
     }
 }
