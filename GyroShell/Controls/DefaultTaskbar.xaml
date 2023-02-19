@@ -25,13 +25,70 @@
             </MenuFlyout>
         </Frame>
         <StackPanel Orientation="Horizontal" x:Name="LeftControls">
+            <StackPanel.ChildrenTransitions>
+                <TransitionCollection>
+                    <EntranceThemeTransition IsStaggeringEnabled="True" />
+                </TransitionCollection>
+            </StackPanel.ChildrenTransitions>
             <ToggleButton HorizontalAlignment="Left" Height="40" Width="40" Margin="5,0,0,0" Background="Transparent" BorderBrush="Transparent" x:Name="StartButton" Click="StartButton_Click" RightTapped="StartButton_RightTapped">
                 <ToggleButton.Content>
                     <TextBlock FontFamily="HoloLens MDL2 Assets" Text="&#xE782;" VerticalAlignment="Center" Margin="0" FontSize="16"/>
                 </ToggleButton.Content>
             </ToggleButton>
+            <Button HorizontalAlignment="Left" Height="40" Width="40" Margin="5,0,0,0" Background="Transparent" BorderBrush="Transparent" x:Name="SearchButton">
+                <Button.Content>
+                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE721;" VerticalAlignment="Center" Margin="0" FontSize="16"/>
+                </Button.Content>
+            </Button>
+            <Button HorizontalAlignment="Left" Height="40" Width="40" Margin="5,0,10,0" Background="Transparent" BorderBrush="Transparent" x:Name="TaskView" Padding="0">
+                <Button.Content>
+                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE7C4;" VerticalAlignment="Center" Margin="0" FontSize="24"/>
+                </Button.Content>
+            </Button>
+            <Border x:Name="LeftControlsSeperator" Height="28" VerticalAlignment="Center" Width="1" Opacity="0.3" CornerRadius="1"/>
+            <StackPanel x:Name="EntranceStackPanel" Orientation="Horizontal" Margin="10,0,0,0" VerticalAlignment="Center">
+                <StackPanel.ChildrenTransitions>
+                    <TransitionCollection>
+                        <EntranceThemeTransition IsStaggeringEnabled="True" />
+                    </TransitionCollection>
+                </StackPanel.ChildrenTransitions>
+                <Button Width="38" Height="38" Margin="5,1,5,0" Background="{ThemeResource LayerOnAccentAcrylicFillColorDefault}" CornerRadius="4" Padding="0" BorderBrush="Transparent" BorderThickness="0">
+                    <Grid>
+                        <Image Source="ms-appx:///Assets/StoreLogo.backup.png" Height="26" Width="26" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <Border Width="20" Height="3" Background="MediumPurple" CornerRadius="2" VerticalAlignment="Bottom" Margin="0,0,0,-5"/>
+                    </Grid>
+                </Button>
+                <Button Width="38" Height="38" Margin="5,1,5,0" Background="{ThemeResource LayerOnAccentAcrylicFillColorDefault}" CornerRadius="4" Padding="0" BorderBrush="Transparent" BorderThickness="0">
+                    <Grid>
+                        <Image Source="ms-appx:///Assets/StoreLogo.backup.png" Height="26" Width="26" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <Border Width="10" Height="3" Background="Gray" CornerRadius="2" VerticalAlignment="Bottom" Margin="0,0,0,-5"/>
+                    </Grid>
+                </Button>
+                <Button Width="38" Height="38" Margin="5,1,5,0" Background="{ThemeResource LayerOnAccentAcrylicFillColorDefault}" CornerRadius="4" Padding="0" BorderBrush="Transparent" BorderThickness="0">
+                    <Grid>
+                        <Image Source="ms-appx:///Assets/StoreLogo.backup.png" Height="26" Width="26" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <Border Width="10" Height="3" Background="Gray" CornerRadius="2" VerticalAlignment="Bottom" Margin="0,0,0,-5"/>
+                    </Grid>
+                </Button>
+                <Button Width="38" Height="38" Margin="5,1,5,0" Background="{ThemeResource LayerOnAccentAcrylicFillColorDefault}" CornerRadius="4" Padding="0" BorderBrush="Transparent" BorderThickness="0">
+                    <Grid>
+                        <Image Source="ms-appx:///Assets/StoreLogo.backup.png" Height="26" Width="26" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <Border Width="10" Height="3" Background="Gray" CornerRadius="2" VerticalAlignment="Bottom" Margin="0,0,0,-5"/>
+                    </Grid>
+                </Button>
+                <Button Width="38" Height="38" Margin="5,1,5,0" Background="Transparent" CornerRadius="4" Padding="0" BorderBrush="Transparent" BorderThickness="0">
+                    <Grid>
+                        <Image Source="ms-appx:///Assets/StoreLogo.backup.png" Height="26" Width="26" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    </Grid>
+                </Button>
+            </StackPanel>
         </StackPanel>
         <StackPanel x:Name="RightControls" Orientation="Horizontal" HorizontalAlignment="Right">
+            <StackPanel.ChildrenTransitions>
+                <TransitionCollection>
+                    <EntranceThemeTransition IsStaggeringEnabled="True" />
+                </TransitionCollection>
+            </StackPanel.ChildrenTransitions>
             <Button x:Name="SysTray" HorizontalAlignment="Right" VerticalAlignment="Center" Height="40" Background="Transparent" BorderBrush="Transparent" Margin="4" Click="SysTray_Click" Padding="4">
                 <Button.Content>
                     <TextBlock Text="&#xE70E;" FontFamily="Segoe MDL2 Assets" x:Name="TrayIcon" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,2,0,0" FontSize="12"/>
@@ -54,8 +111,8 @@
                         <TextBlock Text="" VerticalAlignment="Center" Margin="5" FontSize="16"/>
                         <TextBlock FontSize="14" VerticalAlignment="Center" x:Name="DateText" Margin="0,1,5,0"/>
                         <Grid>
-                            <TextBlock Text="&#xE7E7;" FontFamily="Segoe MDL2 Assets" FontSize="16" x:Name="NotifText" Margin="3,7,-8,0"/>
-                            <Ellipse Fill="{ThemeResource SystemAccentColor}" Height="9" Width="9" Margin="14,0,-8,13" x:Name="NotifCircle" Visibility="Collapsed"/>
+                            <TextBlock Text="&#xE7E7;" FontFamily="Segoe MDL2 Assets" FontSize="16" x:Name="NotifText" Margin="3,7,-2,0"/>
+                            <Ellipse Fill="{ThemeResource SystemAccentColor}" Height="9" Width="9" Margin="12,0,-8,13" x:Name="NotifCircle" Visibility="Collapsed"/>
                         </Grid>
                     </StackPanel>
                 </ToggleButton.Content>
