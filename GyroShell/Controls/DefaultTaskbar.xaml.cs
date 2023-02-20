@@ -280,85 +280,48 @@ namespace GyroShell.Controls
         #region Settings
         private void LoadSettings()
         {
+            FontFamily SegoeMDL2 = new FontFamily("Segoe MDL2 Assets");
+            FontFamily SegoeFluent = new FontFamily("Segoe Fluent Icons");
             // Icons
             int? iconStyle = App.localSettings.Values["iconStyle"] as int?;
             switch (iconStyle)
             {
                 case 0:
                 default:
-                    Thickness wifiMarginM = WifiStatus.Margin;
-                    wifiMarginM.Left = 0;
-                    wifiMarginM.Top = -4;
-                    wifiMarginM.Right = 7;
-                    wifiMarginM.Bottom = 0;
-                    WifiStatus.Margin = wifiMarginM;
-                    WifiStatus.FontFamily = new FontFamily("Segoe MDL2 Assets");
-                    Thickness sndMarginM = SndStatus.Margin;
-                    sndMarginM.Left = 5;
-                    sndMarginM.Top = 0;
-                    sndMarginM.Right = 0;
-                    sndMarginM.Bottom = 0;
-                    SndStatus.Margin = sndMarginM;
-                    SndStatus.FontFamily = new FontFamily("Segoe MDL2 Assets");
-                    Thickness battMarginM = BattStatus.Margin;
-                    battMarginM.Left = 0;
-                    battMarginM.Top = 2;
-                    battMarginM.Right = 12;
-                    battMarginM.Bottom = 0;
-                    BattStatus.Margin = battMarginM;
-                    BattStatus.FontFamily = new FontFamily("Segoe MDL2 Assets");
-                    NotifText.FontFamily = new FontFamily("Segoe MDL2 Assets");
+                    WifiStatus.Margin = new Thickness(0, -4, 7, 0);
+                    WifiStatus.FontFamily = SegoeMDL2;
+                    SndStatus.Margin = new Thickness(5, 0, 0, 0);
+                    SndStatus.FontFamily = SegoeMDL2;
+                    BattStatus.Margin = new Thickness(0, 2, 12, 0);
+                    BattStatus.FontFamily = SegoeMDL2;
+                    NotifText.FontFamily = SegoeMDL2;
+                    SearchIcon.FontFamily = SegoeMDL2;
+                    TaskViewIcon.FontFamily = SegoeMDL2;
                     break;
                 case 1:
                     if(OSVersion.IsWin11())
                     {
-                        Thickness wifiMarginF = WifiStatus.Margin;
-                        wifiMarginF.Left = 0;
-                        wifiMarginF.Top = 2;
-                        wifiMarginF.Right = 7;
-                        wifiMarginF.Bottom = 0;
-                        WifiStatus.Margin = wifiMarginF;
-                        WifiStatus.FontFamily = new FontFamily("Segoe Fluent Icons");
-                        Thickness sndMarginF = SndStatus.Margin;
-                        sndMarginF.Left = 5;
-                        sndMarginF.Top = 0;
-                        sndMarginF.Right = 0;
-                        sndMarginF.Bottom = 0;
-                        SndStatus.Margin = sndMarginF;
-                        SndStatus.FontFamily = new FontFamily("Segoe Fluent Icons");
-                        Thickness battMarginF = BattStatus.Margin;
-                        battMarginF.Left = 0;
-                        battMarginF.Top = 3;
-                        battMarginF.Right = 14;
-                        battMarginF.Bottom = 0;
-                        BattStatus.Margin = battMarginF;
-                        BattStatus.FontFamily = new FontFamily("Segoe Fluent Icons");
-                        NotifText.FontFamily = new FontFamily("Segoe Fluent Icons");
+                        WifiStatus.Margin = new Thickness(0, 2, 7, 0);
+                        WifiStatus.FontFamily = SegoeFluent;
+                        SndStatus.Margin = new Thickness(5, 0, 0, 0);
+                        SndStatus.FontFamily = SegoeFluent;
+                        BattStatus.Margin = new Thickness(0, 3, 14, 0);
+                        BattStatus.FontFamily = SegoeFluent;
+                        NotifText.FontFamily = SegoeFluent;
+                        SearchIcon.FontFamily = SegoeFluent;
+                        TaskViewIcon.FontFamily = SegoeFluent;
                     }
                     else
                     {
-                        Thickness wifiMarginM1 = WifiStatus.Margin;
-                        wifiMarginM1.Left = 0;
-                        wifiMarginM1.Top = -4;
-                        wifiMarginM1.Right = 7;
-                        wifiMarginM1.Bottom = 0;
-                        WifiStatus.Margin = wifiMarginM1;
-                        WifiStatus.FontFamily = new FontFamily("Segoe MDL2 Assets");
-                        Thickness sndMarginM1 = SndStatus.Margin;
-                        sndMarginM1.Left = 5;
-                        sndMarginM1.Top = 0;
-                        sndMarginM1.Right = 0;
-                        sndMarginM1.Bottom = 0;
-                        SndStatus.Margin = sndMarginM1;
-                        SndStatus.FontFamily = new FontFamily("Segoe MDL2 Assets");
-                        Thickness battMarginM1 = BattStatus.Margin;
-                        battMarginM1.Left = 0;
-                        battMarginM1.Top = 2;
-                        battMarginM1.Right = 12;
-                        battMarginM1.Bottom = 0;
-                        BattStatus.Margin = battMarginM1;
-                        BattStatus.FontFamily = new FontFamily("Segoe MDL2 Assets");
-                        NotifText.FontFamily = new FontFamily("Segoe MDL2 Assets");
+                        WifiStatus.Margin = new Thickness(0, -4, 7, 0);
+                        WifiStatus.FontFamily = SegoeMDL2;
+                        SndStatus.Margin = new Thickness(5, 0, 0, 0);
+                        SndStatus.FontFamily = SegoeMDL2;
+                        BattStatus.Margin = new Thickness(0, 2, 12, 0);
+                        BattStatus.FontFamily = SegoeMDL2;
+                        NotifText.FontFamily = SegoeMDL2;
+                        SearchIcon.FontFamily = SegoeMDL2;
+                        TaskViewIcon.FontFamily = SegoeMDL2;
                     }
                     break;
             }
