@@ -17,6 +17,10 @@ using Windows.Foundation.Metadata;
 using System.Collections.Generic;
 using Windows.UI.Notifications;
 using GyroShell.Settings;
+using Microsoft.UI.Windowing;
+using System.Collections.ObjectModel;
+using System.Runtime.InteropServices.ComTypes;
+using System.Linq;
 
 namespace GyroShell.Controls
 {
@@ -26,9 +30,14 @@ namespace GyroShell.Controls
         bool reportRequested = false;
         public static string timeType = "t";
 
+        public ObservableCollection<IconModel> TbIconCollection { get; set; }
+
         public DefaultTaskbar()
         {
             this.InitializeComponent();
+
+            TbIconCollection = new ObservableCollection<IconModel>();
+
             LoadSettings();
             TimeAndDate();
             DetectBatteryPresence();
@@ -325,6 +334,7 @@ namespace GyroShell.Controls
                     }
                     break;
             }
+            
 
             // Button sizes
             if (!OSVersion.IsWin11())
@@ -373,5 +383,19 @@ namespace GyroShell.Controls
             }
         }
         #endregion
+
+        private void AddItem_Click(object sender, RoutedEventArgs e)
+        {
+            TbIconCollection.Add(new IconModel { IconName = "test" });
+        }
+
+        private void RemItem_Click(object sender, RoutedEventArgs e)
+        {
+            var itemToRemove = TbIconCollection.LastOrDefault<IconModel>();
+            if (itemToRemove != null)
+            {
+                TbIconCollection.Remove(itemToRemove);
+            }
+        }
     }
 }

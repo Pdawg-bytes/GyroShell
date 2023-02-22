@@ -14,6 +14,11 @@
             <SolidColorBrush x:Key="WindowCaptionBackgroundDisabled">Transparent</SolidColorBrush>
             <SolidColorBrush x:Key="WindowCaptionForeground">Gray</SolidColorBrush>
             <SolidColorBrush x:Key="WindowCaptionForegroundDisabled">DarkGray</SolidColorBrush>
+
+            <SolidColorBrush x:Key="GridViewItemSelectedBackgroundThemeBrush" Color="Transparent"></SolidColorBrush>
+            <SolidColorBrush x:Key="GridViewItemPointerOverBackgroundThemeBrush" Color="Transparent"></SolidColorBrush>
+            <SolidColorBrush x:Key="GridViewItemSelectedPointerOverBackgroundThemeBrush" Color="Transparent"></SolidColorBrush>
+            <SolidColorBrush x:Key="GridViewItemSelectedPointerOverBorderThemeBrush" Color="Transparent"></SolidColorBrush>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

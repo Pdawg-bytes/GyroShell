@@ -25,70 +25,68 @@
             </MenuFlyout>
         </Frame>
         <StackPanel Orientation="Horizontal" x:Name="LeftControls">
-            <StackPanel.ChildrenTransitions>
-                <TransitionCollection>
-                    <EntranceThemeTransition IsStaggeringEnabled="True" />
-                </TransitionCollection>
-            </StackPanel.ChildrenTransitions>
-            <ToggleButton HorizontalAlignment="Left" Height="40" Width="40" Margin="5,0,0,0" Background="Transparent" BorderBrush="Transparent" x:Name="StartButton" Click="StartButton_Click" RightTapped="StartButton_RightTapped">
-                <ToggleButton.Content>
-                    <TextBlock FontFamily="HoloLens MDL2 Assets" Text="&#xE782;" VerticalAlignment="Center" Margin="0" FontSize="16"/>
-                </ToggleButton.Content>
-            </ToggleButton>
-            <Button HorizontalAlignment="Left" Height="40" Width="40" Margin="5,0,0,0" Background="Transparent" BorderBrush="Transparent" x:Name="SearchButton">
-                <Button.Content>
-                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE721;" VerticalAlignment="Center" Margin="0" FontSize="16" x:Name="SearchIcon"/>
-                </Button.Content>
-            </Button>
-            <Button HorizontalAlignment="Left" Height="40" Width="40" Margin="5,0,10,0" Background="Transparent" BorderBrush="Transparent" x:Name="TaskView" Padding="0">
-                <Button.Content>
-                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE7C4;" VerticalAlignment="Center" Margin="0" FontSize="16" x:Name="TaskViewIcon"/>
-                </Button.Content>
-            </Button>
-            <Border x:Name="LeftControlsSeperator" Height="28" VerticalAlignment="Center" Width="1" Opacity="0.3" CornerRadius="1"/>
-            <StackPanel x:Name="EntranceStackPanel" Orientation="Horizontal" Margin="10,0,0,0" VerticalAlignment="Center">
                 <StackPanel.ChildrenTransitions>
                     <TransitionCollection>
                         <EntranceThemeTransition IsStaggeringEnabled="True" />
                     </TransitionCollection>
                 </StackPanel.ChildrenTransitions>
-                <Button Width="38" Height="38" Margin="5,1,5,0" Background="{ThemeResource LayerOnAccentAcrylicFillColorDefault}" CornerRadius="4" Padding="0" BorderBrush="Transparent" BorderThickness="0">
-                    <Grid>
-                        <Image Source="ms-appx:///Assets/StoreLogo.backup.png" Height="26" Width="26" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                        <Border Width="20" Height="3" Background="MediumPurple" CornerRadius="2" VerticalAlignment="Bottom" Margin="0,0,0,-5"/>
-                    </Grid>
+                <ToggleButton HorizontalAlignment="Left" Height="40" Width="40" Margin="5,0,0,0" Background="Transparent" BorderBrush="Transparent" x:Name="StartButton" Click="StartButton_Click" RightTapped="StartButton_RightTapped">
+                    <ToggleButton.Content>
+                        <TextBlock FontFamily="HoloLens MDL2 Assets" Text="&#xE782;" VerticalAlignment="Center" Margin="0" FontSize="16"/>
+                    </ToggleButton.Content>
+                </ToggleButton>
+                <Button HorizontalAlignment="Left" Height="40" Width="40" Margin="5,0,0,0" Background="Transparent" BorderBrush="Transparent" x:Name="SearchButton">
+                    <Button.Content>
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE721;" VerticalAlignment="Center" Margin="0" FontSize="16" x:Name="SearchIcon"/>
+                    </Button.Content>
                 </Button>
-                <Button Width="38" Height="38" Margin="5,1,5,0" Background="{ThemeResource LayerOnAccentAcrylicFillColorDefault}" CornerRadius="4" Padding="0" BorderBrush="Transparent" BorderThickness="0">
-                    <Grid>
-                        <Image Source="ms-appx:///Assets/StoreLogo.backup.png" Height="26" Width="26" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                        <Border Width="10" Height="3" Background="Gray" CornerRadius="2" VerticalAlignment="Bottom" Margin="0,0,0,-5"/>
-                    </Grid>
+                <Button HorizontalAlignment="Left" Height="40" Width="40" Margin="5,0,10,0" Background="Transparent" BorderBrush="Transparent" x:Name="TaskView" Padding="0">
+                    <Button.Content>
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE7C4;" VerticalAlignment="Center" Margin="0" FontSize="16" x:Name="TaskViewIcon"/>
+                    </Button.Content>
                 </Button>
-                <Button Width="38" Height="38" Margin="5,1,5,0" Background="{ThemeResource LayerOnAccentAcrylicFillColorDefault}" CornerRadius="4" Padding="0" BorderBrush="Transparent" BorderThickness="0">
-                    <Grid>
-                        <Image Source="ms-appx:///Assets/StoreLogo.backup.png" Height="26" Width="26" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                        <Border Width="10" Height="3" Background="Gray" CornerRadius="2" VerticalAlignment="Bottom" Margin="0,0,0,-5"/>
-                    </Grid>
-                </Button>
-                <Button Width="38" Height="38" Margin="5,1,5,0" Background="{ThemeResource LayerOnAccentAcrylicFillColorDefault}" CornerRadius="4" Padding="0" BorderBrush="Transparent" BorderThickness="0">
-                    <Grid>
-                        <Image Source="ms-appx:///Assets/StoreLogo.backup.png" Height="26" Width="26" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                        <Border Width="10" Height="3" Background="Gray" CornerRadius="2" VerticalAlignment="Bottom" Margin="0,0,0,-5"/>
-                    </Grid>
-                </Button>
-                <Button Width="38" Height="38" Margin="5,1,5,0" Background="Transparent" CornerRadius="4" Padding="0" BorderBrush="Transparent" BorderThickness="0">
-                    <Grid>
-                        <Image Source="ms-appx:///Assets/StoreLogo.backup.png" Height="26" Width="26" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    </Grid>
-                </Button>
+                <Border x:Name="LeftControlsSeperator" Height="28" VerticalAlignment="Center" Width="1" Opacity="0.3" CornerRadius="1"/>
+                <GridView x:Name="TbOpenGrid" ItemsSource="{x:Bind TbIconCollection}" Height="48" Background="Transparent" SelectionMode="Single" Padding="0" VerticalAlignment="Center" Margin="0,0,0,2" CanReorderItems="True">
+                    <GridView.ItemContainerTransitions>
+                        <TransitionCollection>
+                            <ReorderThemeTransition/>
+                            <EntranceThemeTransition IsStaggeringEnabled="True" />
+                            <RepositionThemeTransition/>
+                        </TransitionCollection>
+                    </GridView.ItemContainerTransitions>
+                    <GridView.ItemContainerStyle>
+                        <Style TargetType="GridViewItem">
+                            <Setter Property="FocusVisualMargin" Value="0" />
+                            <Setter Property="IsHitTestVisible" Value="False"/>
+                        </Style>
+                    </GridView.ItemContainerStyle>
+                    <GridView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" Padding="0" Background="Transparent">
+                                <StackPanel.ChildrenTransitions>
+                                    <TransitionCollection>
+                                        <EntranceThemeTransition IsStaggeringEnabled="True"/>
+                                    </TransitionCollection>
+                                </StackPanel.ChildrenTransitions>
+                                <Border Width="36" Height="36" Margin="5,5,0,0" Background="{ThemeResource LayerOnAccentAcrylicFillColorDefault}" CornerRadius="4" Padding="0" BorderBrush="Transparent" BorderThickness="0" VerticalAlignment="Center" ToolTipService.ToolTip="{Binding IconName}" ToolTipService.Placement="Top">
+                                    <Grid>
+                                        <Image Source="ms-appx:///Assets/StoreLogo.backup.png" Height="24" Width="24" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <Border Width="20" Height="3" CornerRadius="2" Background="MediumPurple" VerticalAlignment="Bottom" Margin="0,0,0,0"/>
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+                </GridView>
             </StackPanel>
-        </StackPanel>
         <StackPanel x:Name="RightControls" Orientation="Horizontal" HorizontalAlignment="Right">
             <StackPanel.ChildrenTransitions>
                 <TransitionCollection>
                     <EntranceThemeTransition IsStaggeringEnabled="True" />
                 </TransitionCollection>
             </StackPanel.ChildrenTransitions>
+            <Button Content="Add item" HorizontalAlignment="Right" VerticalAlignment="Center" Height="30" x:Name="AddItem" Click="AddItem_Click"/>
+            <Button Content="Remove item" HorizontalAlignment="Right" VerticalAlignment="Center" Height="30" x:Name="RemItem" Click="RemItem_Click"/>
             <Button x:Name="SysTray" HorizontalAlignment="Right" VerticalAlignment="Center" Height="40" Background="Transparent" BorderBrush="Transparent" Margin="4" Click="SysTray_Click" Padding="4">
                 <Button.Content>
                     <TextBlock Text="&#xE70E;" FontFamily="Segoe MDL2 Assets" x:Name="TrayIcon" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,2,0,0" FontSize="12"/>

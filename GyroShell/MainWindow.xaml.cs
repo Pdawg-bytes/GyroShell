@@ -143,10 +143,24 @@ namespace GyroShell
             {
                 case 0:
                 default:
-                    TrySetMicaBackdrop(MicaKind.BaseAlt);
+                    if(Helpers.OSVersion.IsWin11())
+                    {
+                        TrySetMicaBackdrop(MicaKind.BaseAlt);
+                    }
+                    else
+                    {
+                        TrySetAcrylicBackdrop();
+                    }
                     break;
                 case 1:
-                    TrySetMicaBackdrop(MicaKind.Base);
+                    if (Helpers.OSVersion.IsWin11())
+                    {
+                        TrySetMicaBackdrop(MicaKind.Base);
+                    }
+                    else
+                    {
+                        TrySetAcrylicBackdrop();
+                    }
                     break;
                 case 2:
                     TrySetAcrylicBackdrop();
