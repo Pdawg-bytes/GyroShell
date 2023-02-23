@@ -69,6 +69,7 @@ namespace GyroShell.Controls
         {
             DispatcherTimer internetUpdate = new DispatcherTimer();
             internetUpdate.Tick += ITUpdateMethod;
+            // TODO: work on imporving efficiency. use value comp(?)
             internetUpdate.Interval = new TimeSpan(10000000);
             internetUpdate.Start();
         }
