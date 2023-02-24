@@ -21,6 +21,7 @@ using Microsoft.UI.Windowing;
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices.ComTypes;
 using System.Linq;
+using Windows.Networking.Connectivity;
 
 namespace GyroShell.Controls
 {
@@ -41,8 +42,9 @@ namespace GyroShell.Controls
             LoadSettings();
             TimeAndDate();
             DetectBatteryPresence();
-            InternetUpdate();
             InitNotifcation();
+            UpdateNetworkStatus();
+            NetworkInformation.NetworkStatusChanged += NetworkInformation_NetworkStatusChanged;
             Battery.AggregateBattery.ReportUpdated += AggregateBattery_ReportUpdated;
             BarBorder.Background = new SolidColorBrush(Color.FromArgb(255,66,63,74));
             RightClockSeperator.Background = new SolidColorBrush(Color.FromArgb(255,120,120,120));
@@ -65,17 +67,16 @@ namespace GyroShell.Controls
         #endregion
 
         #region Internet
-        private void InternetUpdate()
+        private void NetworkInformation_NetworkStatusChanged(object sender)
         {
-            DispatcherTimer internetUpdate = new DispatcherTimer();
-            internetUpdate.Tick += ITUpdateMethod;
-            // TODO: work on imporving efficiency. use value comp(?)
-            internetUpdate.Interval = new TimeSpan(10000000);
-            internetUpdate.Start();
+            DispatcherQueue.TryEnqueue((Microsoft.UI.Dispatching.DispatcherQueuePriority)CoreDispatcherPriority.Normal, () =>
+            {
+                UpdateNetworkStatus();
+            });
         }
         private string[] wifiIcons = { "\uE871", "\uE872", "\uE873", "\uE874", "\uE701" };
         private string[] dataIcons = { "\uEC37", "\uEC38", "\uEC39", "\uEC3A", "\uEC3B" };
-        private void ITUpdateMethod(object sender, object e)
+        private void UpdateNetworkStatus()
         {
             if (NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable)
             {
