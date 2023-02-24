@@ -10,6 +10,7 @@ using WinRT;
 using Windows.UI;
 using Microsoft.UI.Xaml.Media.Animation;
 using System.Threading;
+using Windows.Graphics.Display;
 using static GyroShell.Helpers.Win32Interop;
 
 namespace GyroShell
@@ -46,7 +47,7 @@ namespace GyroShell
             // Resize Window
             IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
             var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
-            var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
+            var appWindow = AppWindow.GetFromWindowId(windowId);
             if (OSVersion.IsWin11())
             {   
                 var attribute = DWMWINDOWATTRIBUTE.DWMWA_WINDOW_CORNER_PREFERENCE;
@@ -73,8 +74,8 @@ namespace GyroShell
 
             // Init stuff
             MonitorSummon();
-            SetBackdrop();
             TaskbarFrame.Navigate(typeof(Controls.DefaultTaskbar), null, new SuppressNavigationTransitionInfo());
+            SetBackdrop();
 
             //Show GyroShell when everything is ready
             m_AppWindow.Show();
