@@ -56,19 +56,18 @@
                     </GridView.ItemContainerTransitions>
                     <GridView.ItemContainerStyle>
                         <Style TargetType="GridViewItem">
-                            <Setter Property="FocusVisualMargin" Value="0" />
-                            <Setter Property="IsHitTestVisible" Value="False"/>
-                        </Style>
+                        <Setter Property="FocusVisualMargin" Value="0" />
+                    </Style>
                     </GridView.ItemContainerStyle>
                     <GridView.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel Orientation="Horizontal" Padding="0" Background="Transparent">
+                            <StackPanel Orientation="Horizontal" Padding="0" Background="Transparent" Margin="0">
                                 <StackPanel.ChildrenTransitions>
                                     <TransitionCollection>
                                         <EntranceThemeTransition IsStaggeringEnabled="True"/>
                                     </TransitionCollection>
                                 </StackPanel.ChildrenTransitions>
-                                <Border Width="36" Height="36" Margin="5,5,0,0" Background="{ThemeResource LayerOnAccentAcrylicFillColorDefault}" CornerRadius="4" Padding="0" BorderBrush="Transparent" BorderThickness="0" VerticalAlignment="Center" ToolTipService.ToolTip="{Binding IconName}" ToolTipService.Placement="Top">
+                                <Border Width="36" Height="36" Margin="0,0,0,0" Background="{ThemeResource LayerOnAccentAcrylicFillColorDefault}" CornerRadius="4" Padding="0" BorderBrush="Transparent" BorderThickness="0" VerticalAlignment="Center" ToolTipService.ToolTip="{Binding IconName}" ToolTipService.Placement="Top">
                                     <Grid>
                                         <Image Source="ms-appx:///Assets/StoreLogo.backup.png" Height="24" Width="24" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                         <Border Width="20" Height="3" CornerRadius="2" Background="MediumPurple" VerticalAlignment="Bottom" Margin="0,0,0,0"/>
