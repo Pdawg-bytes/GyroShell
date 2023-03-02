@@ -56,7 +56,7 @@ namespace GyroShell.Controls
         {
             DispatcherTimer dateTimeUpdate = new DispatcherTimer();
             dateTimeUpdate.Tick += DTUpdateMethod;
-            dateTimeUpdate.Interval = new TimeSpan(100000);
+            dateTimeUpdate.Interval = new TimeSpan(400000);
             dateTimeUpdate.Start();
         }
         private void DTUpdateMethod(object sender, object e)
