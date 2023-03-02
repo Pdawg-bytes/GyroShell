@@ -210,7 +210,7 @@ namespace GyroShell.Controls
                         SettingInstances++;
                         if (SettingInstances <= 1)
                         {
-                            Settings.SettingsWindow settingsWindow = new Settings.SettingsWindow();
+                            SettingsWindow settingsWindow = new SettingsWindow();
                             settingsWindow.Activate();
                         }
                         break;
@@ -241,6 +241,11 @@ namespace GyroShell.Controls
         {
             throw new NotImplementedException("Systray not ready yet.");
             //await TaskbarManager.ShowSysTray(); /* Does nothing, no action lol*/
+        }
+
+        private void TbOpenGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Debug.WriteLine(TbOpenGrid.SelectedItem);
         }
         #endregion
 
@@ -335,33 +340,6 @@ namespace GyroShell.Controls
                         TaskViewIcon.FontFamily = SegoeMDL2;
                     }
                     break;
-            }
-            
-
-            // Button sizes
-            if (!OSVersion.IsWin11())
-            {
-                // Start
-                StartButton.CornerRadius = new CornerRadius(0);
-                Thickness startMargin = StartButton.Margin;
-                startMargin.Left = 0;
-                StartButton.Margin = startMargin;
-
-                // Controls & action center
-                SystemControls.CornerRadius = new CornerRadius(0);
-                ActionCenter.CornerRadius = new CornerRadius(0);
-                Thickness actionMargin = ActionCenter.Margin;
-                actionMargin.Right = 0;
-                ActionCenter.Margin = actionMargin;
-
-                // Systray
-                SysTray.CornerRadius = new CornerRadius(0);
-                Thickness trayMargin = SysTray.Margin;
-                trayMargin.Left = 4;
-                trayMargin.Top = 0;
-                trayMargin.Right = 4;
-                trayMargin.Bottom = 0;
-                SysTray.Margin = trayMargin;
             }
 
             // Clock
