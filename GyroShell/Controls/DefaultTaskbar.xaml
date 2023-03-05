@@ -46,7 +46,7 @@
                     </Button.Content>
                 </Button>
                 <Border x:Name="LeftControlsSeperator" Height="28" VerticalAlignment="Center" Width="1" Opacity="0.3" CornerRadius="1"/>
-                <GridView x:Name="TbOpenGrid" ItemsSource="{x:Bind TbIconCollection}" Height="48" Background="Transparent" SelectionMode="Single" Padding="0" VerticalAlignment="Center" Margin="5,0,0,2" CanReorderItems="True" SelectionChanged="TbOpenGrid_SelectionChanged">
+                <GridView x:Name="TbOpenGrid" ItemsSource="{x:Bind TbIconCollection}" Height="52" Background="Transparent" SelectionMode="Single" Padding="0" VerticalAlignment="Center" Margin="5,0,0,2" CanReorderItems="True" SelectionChanged="TbOpenGrid_SelectionChanged">
                     <GridView.ItemContainerTransitions>
                         <TransitionCollection>
                             <ReorderThemeTransition/>
@@ -58,7 +58,7 @@
                         <Style TargetType="GridViewItem">
                             <Setter Property="FocusVisualMargin" Value="0" />
                             <Setter Property="IsHitTestVisible" Value="True"/>
-                    </Style>
+                        </Style>
                     </GridView.ItemContainerStyle>
                     <GridView.ItemTemplate>
                         <DataTemplate>
@@ -68,10 +68,10 @@
                                         <EntranceThemeTransition IsStaggeringEnabled="True"/>
                                     </TransitionCollection>
                                 </StackPanel.ChildrenTransitions>
-                                <Border Width="44" Height="48" Margin="0,0,0,0" Background="Transparent" Padding="0" BorderBrush="Transparent" BorderThickness="0" VerticalAlignment="Center" ToolTipService.ToolTip="{Binding IconName}" ToolTipService.Placement="Top">
+                                <Border Width="44" Height="48" Margin="0,1,0,0" Background="Transparent" Padding="0" BorderBrush="Transparent" BorderThickness="0" VerticalAlignment="Center" ToolTipService.ToolTip="{Binding IconName}" ToolTipService.Placement="Top">
                                     <Grid>
-                                        <Image Source="ms-appx:///Assets/StoreLogo.backup.png" Height="26" Width="26" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,2,0,0"/>
-                                        <Border Width="20" Height="3" CornerRadius="2" Background="MediumPurple" VerticalAlignment="Bottom" Margin="0,0,0,1"/>
+                                        <Image Source="ms-appx:///Assets/StoreLogo.backup.png" Height="26" Width="26" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,5,0,0"/>
+                                        <Border Width="20" Height="3" CornerRadius="2" Background="MediumPurple" VerticalAlignment="Bottom" Margin="0,0,0,0"/>
                                     </Grid>
                                 </Border>
                             </StackPanel>
