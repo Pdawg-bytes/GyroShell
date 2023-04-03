@@ -62,7 +62,7 @@ namespace GyroShell.Controls
         private void DTUpdateMethod(object sender, object e)
         {
             TimeText.Text = DateTime.Now.ToString(timeType);
-            DateText.Text = DateTime.Now.ToString("M");
+            DateText.Text = DateTime.Now.ToString("M/d/yyyy");
         }
         #endregion
 
