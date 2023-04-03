@@ -22,6 +22,7 @@ using System.Collections.ObjectModel;
 using System.Runtime.InteropServices.ComTypes;
 using System.Linq;
 using Windows.Networking.Connectivity;
+using CoreAudio;
 
 namespace GyroShell.Controls
 {
@@ -45,6 +46,7 @@ namespace GyroShell.Controls
             InitNotifcation();
             UpdateNetworkStatus();
             NetworkInformation.NetworkStatusChanged += NetworkInformation_NetworkStatusChanged;
+            AudioBackend.audioDevice.AudioEndpointVolume.OnVolumeNotification += new AudioEndpointVolumeNotificationDelegate(AudioEndpointVolume_OnVolumeNotification);
             Battery.AggregateBattery.ReportUpdated += AggregateBattery_ReportUpdated;
             BarBorder.Background = new SolidColorBrush(Color.FromArgb(255,66,63,74));
             RightClockSeperator.Background = new SolidColorBrush(Color.FromArgb(255,120,120,120));
@@ -159,7 +161,10 @@ namespace GyroShell.Controls
         #endregion
 
         #region Sound
-
+        private void AudioEndpointVolume_OnVolumeNotification(AudioVolumeNotificationData data)
+        {
+            Debug.WriteLine(Math.Ceiling(AudioBackend.audioDevice.AudioEndpointVolume.MasterVolumeLevelScalar * 100));
+        }
         #endregion
 
         #region Bar Events
