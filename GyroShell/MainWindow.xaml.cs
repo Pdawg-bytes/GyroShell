@@ -12,6 +12,7 @@ using Microsoft.UI.Xaml.Media.Animation;
 using System.Threading;
 using Windows.Graphics.Display;
 using static GyroShell.Helpers.Win32Interop;
+using System.Runtime.InteropServices;
 
 namespace GyroShell
 {
@@ -19,6 +20,9 @@ namespace GyroShell
     {
         AppWindow m_AppWindow;
 
+        internal static IntPtr hWnd;
+        internal static int uCallBack;
+        internal static bool fBarRegistered = false;
         private bool finalOpt;
         private byte finalA;
         private byte finalR;
@@ -38,14 +42,14 @@ namespace GyroShell
             var presenter = GetAppWindowAndPresenter();
             presenter.IsMaximizable = false;
             presenter.IsMinimizable = false;
-            presenter.IsAlwaysOnTop = true;
+            presenter.IsAlwaysOnTop = false;
             presenter.IsResizable = false;
             presenter.SetBorderAndTitleBar(false, false);
             m_AppWindow = GetAppWindowForCurrentWindow();
             m_AppWindow.SetPresenter(AppWindowPresenterKind.Default);
 
             // Resize Window
-            IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+            hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
             var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
             var appWindow = AppWindow.GetFromWindowId(windowId);
             if (OSVersion.IsWin11())
@@ -73,6 +77,7 @@ namespace GyroShell
             appWindow.MoveInZOrderAtTop();
 
             // Init stuff
+            RegisterBar();
             MonitorSummon();
             TaskbarFrame.Navigate(typeof(Controls.DefaultTaskbar), null, new SuppressNavigationTransitionInfo());
             SetBackdrop();
@@ -225,6 +230,7 @@ namespace GyroShell
 
         private void Window_Closed(object sender, WindowEventArgs args)
         {
+            RegisterBar();
             if (micaController != null)
             {
                 micaController.Dispose();
@@ -254,6 +260,30 @@ namespace GyroShell
                 case ElementTheme.Dark: m_configurationSource.Theme = SystemBackdropTheme.Dark; if (acrylicController != null) { acrylicController.TintColor = Color.FromArgb(255, 0, 0, 0); } break;
                 case ElementTheme.Light: m_configurationSource.Theme = SystemBackdropTheme.Light; if (acrylicController != null) { acrylicController.TintColor = Color.FromArgb(255, 255, 255, 255); } break;
                 case ElementTheme.Default: m_configurationSource.Theme = SystemBackdropTheme.Default; if (acrylicController != null) { acrylicController.TintColor = Color.FromArgb(255, 0, 0, 0); } break;
+            }
+        }
+        #endregion
+
+        #region AppBar
+        internal static void RegisterBar()
+        {
+            APPBARDATA abd = new APPBARDATA();
+            abd.cbSize = Marshal.SizeOf(abd);
+            abd.hWnd = hWnd;
+            if (!fBarRegistered)
+            {
+                uCallBack = RegisterWindowMessage("AppBarMessage");
+                abd.uCallbackMessage = uCallBack;
+
+                uint ret = SHAppBarMessage((int)ABMsg.ABM_NEW, ref abd);
+                fBarRegistered = true;
+
+                //ABSetPos();
+            }
+            else
+            {
+                SHAppBarMessage((int)ABMsg.ABM_REMOVE, ref abd);
+                fBarRegistered = false;
             }
         }
         #endregion
