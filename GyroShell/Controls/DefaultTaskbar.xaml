@@ -24,7 +24,7 @@
                 <MenuFlyoutItem Text="Shut down or sign out" Tag="Shutdown" Click="StartFlyout_Click"/>
             </MenuFlyout>
         </Frame>
-        <StackPanel Orientation="Horizontal" x:Name="LeftControls">
+        <StackPanel Orientation="Horizontal" x:Name="LeftControls" HorizontalAlignment="Center" >
                 <StackPanel.ChildrenTransitions>
                     <TransitionCollection>
                         <EntranceThemeTransition IsStaggeringEnabled="True" />
@@ -45,7 +45,7 @@
                         <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE7C4;" VerticalAlignment="Center" Margin="0" FontSize="16" x:Name="TaskViewIcon"/>
                     </Button.Content>
                 </Button>
-                <Border x:Name="LeftControlsSeperator" Height="28" VerticalAlignment="Center" Width="1" Opacity="0.3" CornerRadius="1"/>
+                <!--<Border x:Name="LeftControlsSeperator" Height="28" VerticalAlignment="Center" Width="1" Opacity="0.3" CornerRadius="1"/>-->
                 <GridView x:Name="TbOpenGrid" ItemsSource="{x:Bind TbIconCollection}" Height="52" Background="Transparent" SelectionMode="Single" Padding="0" VerticalAlignment="Center" Margin="5,0,0,2" CanReorderItems="True" SelectionChanged="TbOpenGrid_SelectionChanged">
                     <GridView.ItemContainerTransitions>
                         <TransitionCollection>
@@ -57,7 +57,7 @@
                     <GridView.ItemContainerStyle>
                         <Style TargetType="GridViewItem">
                             <Setter Property="FocusVisualMargin" Value="0" />
-                            <Setter Property="IsHitTestVisible" Value="True"/>
+                            <Setter Property="IsHitTestVisible" Value="False"/>
                         </Style>
                     </GridView.ItemContainerStyle>
                     <GridView.ItemTemplate>
@@ -92,7 +92,7 @@
                     <TextBlock Text="&#xE70E;" FontFamily="Segoe MDL2 Assets" x:Name="TrayIcon" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,2,0,0" FontSize="12"/>
                 </Button.Content>
             </Button>
-            <ToggleButton VerticalAlignment="Center" x:Name="SystemControls" HorizontalAlignment="Right" Height="40" Background="Transparent" BorderBrush="Transparent" Click="SystemControls_Click" Margin="0,0,5,0">
+            <ToggleButton VerticalAlignment="Center" x:Name="SystemControls" HorizontalAlignment="Right" Height="40" Background="Transparent" BorderBrush="Transparent" Click="SystemControls_Click" Margin="0,0,2,0">
                 <ToggleButton.Content>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xEBAA;" VerticalAlignment="Center" Margin="0,4,3,0" FontSize="16" x:Name="BattStatus" Visibility="Visible"/>
@@ -101,8 +101,8 @@
                     </StackPanel>
                 </ToggleButton.Content>
             </ToggleButton>
-            <Border x:Name="RightClockSeperator" Height="28" VerticalAlignment="Center" Width="1" Opacity="0.3" CornerRadius="1"/>
-            <ToggleButton HorizontalAlignment="Right" VerticalAlignment="Center" Height="40" Margin="5,0,5,0" Background="Transparent" BorderBrush="Transparent" x:Name="ActionCenter" Click="ActionCenter_Click">
+            <!--<Border x:Name="RightClockSeperator" Height="28" VerticalAlignment="Center" Width="1" Opacity="0.3" CornerRadius="1"/>-->
+            <ToggleButton HorizontalAlignment="Right" VerticalAlignment="Center" Height="40" Margin="0,0,5,0" Background="Transparent" BorderBrush="Transparent" x:Name="ActionCenter" Click="ActionCenter_Click">
                 <ToggleButton.Content>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock FontSize="14" VerticalAlignment="Center" x:Name="TimeText" Margin="0,1,0,0"/>

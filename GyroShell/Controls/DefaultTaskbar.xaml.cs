@@ -49,8 +49,6 @@ namespace GyroShell.Controls
             AudioBackend.audioDevice.AudioEndpointVolume.OnVolumeNotification += new AudioEndpointVolumeNotificationDelegate(AudioEndpointVolume_OnVolumeNotification);
             Battery.AggregateBattery.ReportUpdated += AggregateBattery_ReportUpdated;
             BarBorder.Background = new SolidColorBrush(Color.FromArgb(255,66,63,74));
-            RightClockSeperator.Background = new SolidColorBrush(Color.FromArgb(255,100,100,100));
-            LeftControlsSeperator.Background = new SolidColorBrush(Color.FromArgb(255, 100, 100, 100));
         }
 
         #region Clock

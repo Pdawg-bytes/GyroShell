@@ -1,5 +1,7 @@
-﻿using System;
+﻿using ABI.Windows.Foundation;
+using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.Runtime.InteropServices;
 
 namespace GyroShell.Helpers
@@ -148,6 +150,17 @@ namespace GyroShell.Helpers
             ABE_RIGHT,
             ABE_BOTTOM
         }
+        [StructLayout(LayoutKind.Sequential)]
+        public struct Message
+        {
+            public IntPtr HWnd;
+            public int Msg;
+            public IntPtr WParam;
+            public IntPtr LParam;
+            public int Time;
+            public System.Drawing.Point Point;
+        }
+
         [DllImport("shell32.dll", CallingConvention = CallingConvention.StdCall)]
         public static extern uint SHAppBarMessage(int dwMessage, ref APPBARDATA pData);
 
@@ -155,5 +168,8 @@ namespace GyroShell.Helpers
         public static extern bool MoveWindow(IntPtr hWnd, int x, int y, int cx, int cy, bool repaint);
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern int RegisterWindowMessage(string msg);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
     }
 }

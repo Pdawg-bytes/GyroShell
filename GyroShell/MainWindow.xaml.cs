@@ -13,6 +13,7 @@ using System.Threading;
 using Windows.Graphics.Display;
 using static GyroShell.Helpers.Win32Interop;
 using System.Runtime.InteropServices;
+using System.Reflection.Metadata;
 
 namespace GyroShell
 {
@@ -38,7 +39,7 @@ namespace GyroShell
 
             TaskbarManager.Init();
 
-            // Removes titlebar and creates overlayed presenter
+            // Presenter handling code
             var presenter = GetAppWindowAndPresenter();
             presenter.IsMaximizable = false;
             presenter.IsMinimizable = false;
@@ -75,6 +76,9 @@ namespace GyroShell
             appWindow.Resize(new SizeInt32 { Width = screenWidth, Height = barHeight });
             appWindow.Move(new PointInt32 { X = 0, Y = screenHeight - barHeight });
             appWindow.MoveInZOrderAtTop();
+            /*IntPtr nWinHandle = FindWindowEx(IntPtr.Zero, IntPtr.Zero, "WorkerW", null);
+            nWinHandle = FindWindowEx(nWinHandle, IntPtr.Zero, "SysHeader32", null);
+            SetParent(hWnd, nWinHandle);*/
 
             // Init stuff
             RegisterBar();
@@ -82,7 +86,7 @@ namespace GyroShell
             TaskbarFrame.Navigate(typeof(Controls.DefaultTaskbar), null, new SuppressNavigationTransitionInfo());
             SetBackdrop();
 
-            //Show GyroShell when everything is ready
+            // Show GyroShell when everything is ready
             m_AppWindow.Show();
             TaskbarManager.HideTaskbar();
         }
@@ -286,6 +290,19 @@ namespace GyroShell
                 fBarRegistered = false;
             }
         }
+
+        /*protected override void WndProc(ref System.Windows.Forms.Message m)
+        {
+            if (m.Msg == uCallBack)
+            {
+                switch (m.WParam.ToInt32())
+                {
+
+                }
+            }
+
+            base.WndProc(ref m);
+        }*/
         #endregion
     }
 }
