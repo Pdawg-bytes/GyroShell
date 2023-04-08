@@ -32,6 +32,7 @@ namespace GyroShell.Helpers
         public const int SPI_GETWORKAREA = 0x0030;
         public const int SPIF_UPDATEINIFILE = 1;
 
+        public const int GWLP_WNDPROC = -4;
         public const int SM_CXSCREEN = 0;
         public const int SM_CYSCREEN = 1;
 
@@ -58,8 +59,14 @@ namespace GyroShell.Helpers
         [DllImport("User32.dll")]
         public static extern int GetSystemMetrics(int nIndex);
 
-        [DllImport("user32.dll")]
+        [DllImport("user32.dll", EntryPoint = "SetWindowLong")] // 32-bit Eq. of SetWindowLongPtr
+        public static extern IntPtr SetWindowLong(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
+
+        [DllImport("user32.dll", EntryPoint = "SetWindowLongPtr")]
         public static extern IntPtr SetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        public static extern IntPtr CallWindowProc(IntPtr lpPrevWndFunc, IntPtr hwnd, uint msg, IntPtr wParam, IntPtr lParam);
 
         [DllImport("user32.dll")]
         public static extern IntPtr GetWindowLongPtr(IntPtr hWnd, int nIndex);
@@ -150,16 +157,8 @@ namespace GyroShell.Helpers
             ABE_RIGHT,
             ABE_BOTTOM
         }
-        [StructLayout(LayoutKind.Sequential)]
-        public struct Message
-        {
-            public IntPtr HWnd;
-            public int Msg;
-            public IntPtr WParam;
-            public IntPtr LParam;
-            public int Time;
-            public System.Drawing.Point Point;
-        }
+
+        public delegate IntPtr WndProcDelegate(IntPtr hwnd, uint message, IntPtr wParam, IntPtr lParam);
 
         [DllImport("shell32.dll", CallingConvention = CallingConvention.StdCall)]
         public static extern uint SHAppBarMessage(int dwMessage, ref APPBARDATA pData);

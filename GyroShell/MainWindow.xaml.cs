@@ -14,6 +14,7 @@ using Windows.Graphics.Display;
 using static GyroShell.Helpers.Win32Interop;
 using System.Runtime.InteropServices;
 using System.Reflection.Metadata;
+using System.Diagnostics;
 
 namespace GyroShell
 {
@@ -21,6 +22,7 @@ namespace GyroShell
     {
         AppWindow m_AppWindow;
 
+        private IntPtr _oldWndProc;
         internal static IntPtr hWnd;
         internal static int uCallBack;
         internal static bool fBarRegistered = false;
@@ -54,7 +56,7 @@ namespace GyroShell
             var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
             var appWindow = AppWindow.GetFromWindowId(windowId);
             if (OSVersion.IsWin11())
-            {   
+            {
                 var attribute = DWMWINDOWATTRIBUTE.DWMWA_WINDOW_CORNER_PREFERENCE;
                 var preference = DWM_WINDOW_CORNER_PREFERENCE.DWMWCP_DONOTROUND;
                 DwmSetWindowAttribute(hWnd, attribute, ref preference, sizeof(uint));
@@ -82,6 +84,7 @@ namespace GyroShell
 
             // Init stuff
             RegisterBar();
+            _oldWndProc = SetWndProc(WindowProcess);
             MonitorSummon();
             TaskbarFrame.Navigate(typeof(Controls.DefaultTaskbar), null, new SuppressNavigationTransitionInfo());
             SetBackdrop();
@@ -153,7 +156,7 @@ namespace GyroShell
             {
                 case 0:
                 default:
-                    if(Helpers.OSVersion.IsWin11())
+                    if (Helpers.OSVersion.IsWin11())
                     {
                         TrySetMicaBackdrop(MicaKind.BaseAlt);
                     }
@@ -281,8 +284,6 @@ namespace GyroShell
 
                 uint ret = SHAppBarMessage((int)ABMsg.ABM_NEW, ref abd);
                 fBarRegistered = true;
-
-                //ABSetPos();
             }
             else
             {
@@ -291,18 +292,28 @@ namespace GyroShell
             }
         }
 
-        /*protected override void WndProc(ref System.Windows.Forms.Message m)
+        private static WndProcDelegate _currDelegate = null;
+        public static IntPtr SetWndProc(WndProcDelegate newProc)
         {
-            if (m.Msg == uCallBack)
+            _currDelegate = newProc;
+
+            IntPtr newWndProcPtr = Marshal.GetFunctionPointerForDelegate(newProc);
+
+            if (IntPtr.Size == 8)
             {
-                switch (m.WParam.ToInt32())
-                {
-
-                }
+                return SetWindowLongPtr(hWnd, GWLP_WNDPROC, newWndProcPtr);
             }
+            else
+            {
+                return SetWindowLong(hWnd, GWLP_WNDPROC, newWndProcPtr);
+            }
+        }
+        private IntPtr WindowProcess(IntPtr hwnd, uint message, IntPtr wParam, IntPtr lParam)
+        {
+            Debug.WriteLine("WndProc event!");
 
-            base.WndProc(ref m);
-        }*/
+            return CallWindowProc(_oldWndProc, hwnd, message, wParam, lParam);
+        }
         #endregion
     }
 }
