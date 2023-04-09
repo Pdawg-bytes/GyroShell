@@ -12,6 +12,7 @@ using Microsoft.UI.Xaml.Media.Animation;
 using System.Threading;
 using Windows.Graphics.Display;
 using static GyroShell.Helpers.Win32Interop;
+using static GyroShell.Helpers.WindowMessage;
 using System.Runtime.InteropServices;
 using System.Reflection.Metadata;
 using System.Diagnostics;
@@ -271,7 +272,7 @@ namespace GyroShell
         }
         #endregion
 
-        #region AppBar
+        #region Callbacks
         internal static void RegisterBar()
         {
             APPBARDATA abd = new APPBARDATA();
@@ -310,7 +311,13 @@ namespace GyroShell
         }
         private IntPtr WindowProcess(IntPtr hwnd, uint message, IntPtr wParam, IntPtr lParam)
         {
-            Debug.WriteLine("WndProc event!");
+            Debug.WriteLine("------------");
+            Debug.WriteLine("MESSAGE: " + (WM_CODE)message);
+
+            /*if(message == 134)
+            {
+                Debug.WriteLine("taskbar menu");
+            }*/
 
             return CallWindowProc(_oldWndProc, hwnd, message, wParam, lParam);
         }
