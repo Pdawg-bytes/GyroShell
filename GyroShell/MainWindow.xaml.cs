@@ -313,6 +313,8 @@ namespace GyroShell
         {
             Debug.WriteLine("------------");
             Debug.WriteLine("MESSAGE: " + (WM_CODE)message);
+            Debug.WriteLine(wParam);
+            Debug.WriteLine(lParam);
 
             /*if(message == 134)
             {
