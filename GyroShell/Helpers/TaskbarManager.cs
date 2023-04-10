@@ -1,11 +1,17 @@
 ﻿using System;
 using static GyroShell.Helpers.Win32Interop;
 using System.Threading.Tasks;
+using System.Net;
 
 namespace GyroShell.Helpers
 {
     public class TaskbarManager
     {
+        private const int WM_COMMAND = 0x0111;
+        private const int ID_TRAY_SHOW_OVERFLOW = 0x028a;
+        private const int ID_TRAY_HIDE_OVERFLOW = 0x028b;
+        private const uint EVENT_MODIFY_STATE = 0x0002;
+
         public static void Init()
         {
             m_hTaskBar = FindWindow("Shell_TrayWnd", null);
@@ -58,12 +64,22 @@ namespace GyroShell.Helpers
             SendMessage(m_hTaskBar, /*WM_SYSCOMMAND*/ 0x0112, (IntPtr) /*SC_TASKLIST*/ 0xF130, (IntPtr)0);
         }
 
-        private const int WM_COMMAND = 0x0111;
-        private const int ID_TRAY_SHOW_OVERFLOW = 0x028a;
-        private const int ID_TRAY_HIDE_OVERFLOW = 0x028b;
         public static async Task ShowSysTray()
         {
             SendMessage(m_hTaskBar, WM_COMMAND, (IntPtr)ID_TRAY_SHOW_OVERFLOW, IntPtr.Zero);
+        }
+        /// <summary>
+        /// Signal to Winlogon that the shell has started and the login screen can be dismissed
+        /// </summary>
+        /// <returns></returns>
+        public static void SendWinlogonShowShell()
+        {
+            IntPtr handle = OpenEvent(EVENT_MODIFY_STATE, false, "msgina: ShellReadyEvent");
+            if(handle != IntPtr.Zero)
+            {
+                SetEvent(handle);
+                CloseHandle(handle);
+            }
         }
 
         public static async Task ToggleSysControl()

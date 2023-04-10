@@ -46,6 +46,12 @@ namespace GyroShell.Helpers
 
         [DllImport("user32.dll")]
         public static extern int ShowWindow(IntPtr hwnd, int nCmdShow);
+        [DllImport("Kernel32.dll", SetLastError = true)]
+        public static extern IntPtr OpenEvent(uint dwDesiredAccess, bool bInheritHandle, string lpName);
+        [DllImport("kernel32.dll")]
+        public static extern bool SetEvent(IntPtr hEvent);
+        [DllImport("kernel32", SetLastError = true)]
+        public static extern bool CloseHandle(IntPtr hObject);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]

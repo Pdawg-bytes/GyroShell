@@ -48,7 +48,9 @@ namespace GyroShell.Controls
             NetworkInformation.NetworkStatusChanged += NetworkInformation_NetworkStatusChanged;
             AudioBackend.audioDevice.AudioEndpointVolume.OnVolumeNotification += new AudioEndpointVolumeNotificationDelegate(AudioEndpointVolume_OnVolumeNotification);
             Battery.AggregateBattery.ReportUpdated += AggregateBattery_ReportUpdated;
-            BarBorder.Background = new SolidColorBrush(Color.FromArgb(255,66,63,74));
+            BarBorder.Background = new SolidColorBrush(Color.FromArgb(255, 66, 63, 74));
+
+            TaskbarManager.SendWinlogonShowShell();
         }
 
         #region Clock
