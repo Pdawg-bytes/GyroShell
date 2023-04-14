@@ -79,9 +79,6 @@ namespace GyroShell
             appWindow.Resize(new SizeInt32 { Width = screenWidth, Height = barHeight });
             appWindow.Move(new PointInt32 { X = 0, Y = screenHeight - barHeight });
             appWindow.MoveInZOrderAtTop();
-            /*IntPtr nWinHandle = FindWindowEx(IntPtr.Zero, IntPtr.Zero, "WorkerW", null);
-            nWinHandle = FindWindowEx(nWinHandle, IntPtr.Zero, "SysHeader32", null);
-            SetParent(hWnd, nWinHandle);*/
 
             // Init stuff
             RegisterBar();

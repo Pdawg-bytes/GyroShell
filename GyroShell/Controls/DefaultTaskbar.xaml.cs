@@ -316,7 +316,7 @@ namespace GyroShell.Controls
                     BattStatus.Margin = new Thickness(0, 2, 12, 0);
                     BattStatus.FontFamily = SegoeMDL2;
                     NotifText.FontFamily = SegoeMDL2;
-                    SearchIcon.FontFamily = SegoeMDL2;
+                    //SearchIcon.FontFamily = SegoeMDL2;
                     TaskViewIcon.FontFamily = SegoeMDL2;
                     break;
                 case 1:
@@ -329,7 +329,7 @@ namespace GyroShell.Controls
                         BattStatus.Margin = new Thickness(0, 3, 14, 0);
                         BattStatus.FontFamily = SegoeFluent;
                         NotifText.FontFamily = SegoeFluent;
-                        SearchIcon.FontFamily = SegoeFluent;
+                        //SearchIcon.FontFamily = SegoeFluent;
                         TaskViewIcon.FontFamily = SegoeFluent;
                     }
                     else
@@ -341,7 +341,7 @@ namespace GyroShell.Controls
                         BattStatus.Margin = new Thickness(0, 2, 12, 0);
                         BattStatus.FontFamily = SegoeMDL2;
                         NotifText.FontFamily = SegoeMDL2;
-                        SearchIcon.FontFamily = SegoeMDL2;
+                        //SearchIcon.FontFamily = SegoeMDL2;
                         TaskViewIcon.FontFamily = SegoeMDL2;
                     }
                     break;
@@ -369,18 +369,23 @@ namespace GyroShell.Controls
         }
         #endregion
 
+        /*int i;
         private void AddItem_Click(object sender, RoutedEventArgs e)
         {
-            TbIconCollection.Add(new IconModel { IconName = "test" });
+            i++;
+            TbIconCollection.Add(new IconModel { IconName = "test", Id = i });
         }
 
         private void RemItem_Click(object sender, RoutedEventArgs e)
         {
-            var itemToRemove = TbIconCollection.LastOrDefault<IconModel>();
-            if (itemToRemove != null)
+            try
             {
-                TbIconCollection.Remove(itemToRemove);
+                TbIconCollection.Remove(TbIconCollection.Where(param => param.Id == i).Single());
             }
-        }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+        }*/
     }
 }

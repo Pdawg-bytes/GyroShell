@@ -10,5 +10,6 @@ namespace GyroShell.Helpers
     public class IconModel
     {
         public string IconName { get; set; }
+        public int Id { get; set; }
     }
 }

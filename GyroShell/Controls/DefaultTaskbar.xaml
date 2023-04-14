@@ -35,11 +35,7 @@
                         <TextBlock FontFamily="HoloLens MDL2 Assets" Text="&#xE782;" VerticalAlignment="Center" Margin="0" FontSize="16"/>
                     </ToggleButton.Content>
                 </ToggleButton>
-                <Button HorizontalAlignment="Left" Height="40" Width="40" Margin="5,0,0,0" Background="Transparent" BorderBrush="Transparent" x:Name="SearchButton">
-                    <Button.Content>
-                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE721;" VerticalAlignment="Center" Margin="0" FontSize="16" x:Name="SearchIcon"/>
-                    </Button.Content>
-                </Button>
+                <TextBox Height="32" PlaceholderText="Type here to search..." Width="200" Margin="5,0,0,0" CornerRadius="15" BorderThickness="0"/>
                 <Button HorizontalAlignment="Left" Height="40" Width="40" Margin="5,0,10,0" Background="Transparent" BorderBrush="Transparent" x:Name="TaskView" Padding="0">
                     <Button.Content>
                         <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE7C4;" VerticalAlignment="Center" Margin="0" FontSize="16" x:Name="TaskViewIcon"/>
@@ -85,9 +81,9 @@
                     <EntranceThemeTransition IsStaggeringEnabled="True" />
                 </TransitionCollection>
             </StackPanel.ChildrenTransitions>
-            <Button Content="Add item" HorizontalAlignment="Right" VerticalAlignment="Center" Height="30" x:Name="AddItem" Click="AddItem_Click"/>
-            <Button Content="Remove item" HorizontalAlignment="Right" VerticalAlignment="Center" Height="30" x:Name="RemItem" Click="RemItem_Click"/>
-            <Button x:Name="SysTray" HorizontalAlignment="Right" VerticalAlignment="Center" Height="40" Background="Transparent" BorderBrush="Transparent" Margin="4" Click="SysTray_Click" Padding="4">
+            <!--<Button Content="Add item" HorizontalAlignment="Right" VerticalAlignment="Center" Height="30" x:Name="AddItem" Click="AddItem_Click"/>
+            <Button Content="Remove item" HorizontalAlignment="Right" VerticalAlignment="Center" Height="30" x:Name="RemItem" Click="RemItem_Click"/>-->
+            <Button x:Name="SysTray" HorizontalAlignment="Right" VerticalAlignment="Center" Height="40" Background="Transparent" BorderBrush="Transparent" Margin="4,4,10,4" Click="SysTray_Click" Padding="4">
                 <Button.Content>
                     <TextBlock Text="&#xE70E;" FontFamily="Segoe MDL2 Assets" x:Name="TrayIcon" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,2,0,0" FontSize="12"/>
                 </Button.Content>
@@ -105,7 +101,7 @@
             <ToggleButton HorizontalAlignment="Right" VerticalAlignment="Center" Height="40" Margin="0,0,5,0" Background="Transparent" BorderBrush="Transparent" x:Name="ActionCenter" Click="ActionCenter_Click">
                 <ToggleButton.Content>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock FontSize="14" VerticalAlignment="Center" x:Name="TimeText" Margin="0,1,0,0"/>
+                        <TextBlock FontSize="14" VerticalAlignment="Center" x:Name="TimeText" Margin="-4,1,0,0"/>
                         <TextBlock Text="" VerticalAlignment="Center" Margin="5" FontSize="16"/>
                         <TextBlock FontSize="14" VerticalAlignment="Center" x:Name="DateText" Margin="0,1,5,0"/>
                         <Grid>
