@@ -32,6 +32,7 @@
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.WinUI.Connectivity" Version="7.1.2" />
     <PackageReference Include="CoreAudio" Version="1.27.0" />
+    <PackageReference Include="ManagedShell" Version="0.0.200" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.230118.102" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
     <Manifest Include="$(ApplicationManifest)" />

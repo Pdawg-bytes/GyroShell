@@ -6,6 +6,9 @@ using GyroShell.Settings;
 using static GyroShell.Helpers.Win32Interop;
 using Windows.Storage;
 using GyroShell.Helpers;
+using ManagedShell;
+using ManagedShell.AppBar;
+using GyroShell.Controls;
 
 namespace GyroShell
 {

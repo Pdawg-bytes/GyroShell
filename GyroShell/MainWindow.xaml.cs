@@ -14,8 +14,8 @@ using Windows.Graphics.Display;
 using static GyroShell.Helpers.Win32Interop;
 using static GyroShell.Helpers.WindowMessage;
 using System.Runtime.InteropServices;
-using System.Reflection.Metadata;
 using System.Diagnostics;
+using ManagedShell.AppBar;
 
 namespace GyroShell
 {
@@ -69,7 +69,7 @@ namespace GyroShell
             SetWindowLongPtr(hWnd, -20, (IntPtr)exStyle);
 
             TaskbarManager.SetHeight(0, 0, 0, 48);
-            Thread.Sleep(1000); //TODO: Stop the window message from moving our window into the wokring area
+            Thread.Sleep(20); //TODO: Stop the window message from moving our window into the wokring area
 
             int screenWidth = GetSystemMetrics(SM_CXSCREEN);
             int screenHeight = GetSystemMetrics(SM_CYSCREEN);

@@ -1,7 +1,7 @@
 ﻿using System;
 using static GyroShell.Helpers.Win32Interop;
 using System.Threading.Tasks;
-using System.Net;
+using System.Runtime.InteropServices;
 
 namespace GyroShell.Helpers
 {
@@ -50,15 +50,26 @@ namespace GyroShell.Helpers
             SetVisibility(false);
         }
 
+        /// <summary>
+        /// Sets visibility of taskbar
+        /// </summary>
         private static void SetVisibility(bool isVisible)
         {
             int nCmd = isVisible ? SW_SHOW : SW_HIDE;
+
+            if(!isVisible)
+            {
+                /*SetWindowPos(m_hTaskBar, (IntPtr)WindowZOrder.HWND_BOTTOM, 0, 0, 0, 0, swp | (int)SWPFlags.SWP_NOMOVE | (int)SWPFlags.SWP_NOSIZE | (int)SWPFlags.SWP_NOACTIVATE);*/
+            }
 
             ShowWindow(m_hTaskBar, nCmd);
             ShowWindow(m_hStartMenu, nCmd);
             ShowWindow(m_hMultiTaskBar, nCmd);
         }
 
+        /// <summary>
+        /// Opens start menu
+        /// </summary>
         public static async Task ToggleStart()
         {
             SendMessage(m_hTaskBar, /*WM_SYSCOMMAND*/ 0x0112, (IntPtr) /*SC_TASKLIST*/ 0xF130, (IntPtr)0);
@@ -71,7 +82,6 @@ namespace GyroShell.Helpers
         /// <summary>
         /// Signal to Winlogon that the shell has started and the login screen can be dismissed
         /// </summary>
-        /// <returns></returns>
         public static void SendWinlogonShowShell()
         {
             IntPtr handle = OpenEvent(EVENT_MODIFY_STATE, false, "msgina: ShellReadyEvent");
