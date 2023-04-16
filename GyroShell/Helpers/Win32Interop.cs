@@ -168,7 +168,7 @@ namespace GyroShell.Helpers
 
         public delegate IntPtr WndProcDelegate(IntPtr hwnd, uint message, IntPtr wParam, IntPtr lParam);
 
-        [DllImport("shell32.dll", CallingConvention = CallingConvention.StdCall)]
+        [DllImport("SHELL32", CallingConvention = CallingConvention.StdCall)]
         public static extern uint SHAppBarMessage(int dwMessage, ref APPBARDATA pData);
 
         [DllImport("user32.dll", ExactSpelling = true, CharSet = System.Runtime.InteropServices.CharSet.Auto)]
@@ -200,6 +200,12 @@ namespace GyroShell.Helpers
             SWP_DEFERERASE = 0x2000,
             SWP_ASYNCWINDOWPOS = 0x4000
         }
-
+        public enum WindowZOrder
+        {
+            HWND_TOP = 0,
+            HWND_BOTTOM = 1,
+            HWND_TOPMOST = -1,
+            HWND_NOTOPMOST = -2,
+        }
     }
 }

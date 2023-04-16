@@ -2,12 +2,12 @@
 using static GyroShell.Helpers.Win32Interop;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
+using ManagedShell.Common.Helpers;
 
 namespace GyroShell.Helpers
 {
     public class TaskbarManager
     {
-        private const int WM_COMMAND = 0x0111;
         private const int ID_TRAY_SHOW_OVERFLOW = 0x028a;
         private const int ID_TRAY_HIDE_OVERFLOW = 0x028b;
         private const uint EVENT_MODIFY_STATE = 0x0002;
@@ -59,12 +59,21 @@ namespace GyroShell.Helpers
 
             if(!isVisible)
             {
-                /*SetWindowPos(m_hTaskBar, (IntPtr)WindowZOrder.HWND_BOTTOM, 0, 0, 0, 0, swp | (int)SWPFlags.SWP_NOMOVE | (int)SWPFlags.SWP_NOSIZE | (int)SWPFlags.SWP_NOACTIVATE);*/
+                APPBARDATA abd = new APPBARDATA
+                {
+                    cbSize = Marshal.SizeOf(typeof(APPBARDATA)),
+                    hWnd = m_hTaskBar,
+                    lParam = (IntPtr)ABMsg.ABM_SETAUTOHIDEBAR
+                };
+
+                SHAppBarMessage((int)ABMsg.ABM_SETSTATE, ref abd);
+
+                //SetWindowPos(m_hTaskBar, (IntPtr)WindowZOrder.HWND_BOTTOM, 0, 0, 0, 0, (int)SWPFlags.SWP_HIDEWINDOW | (int)SWPFlags.SWP_NOMOVE | (int)SWPFlags.SWP_NOSIZE | (int)SWPFlags.SWP_NOACTIVATE);
             }
 
-            ShowWindow(m_hTaskBar, nCmd);
-            ShowWindow(m_hStartMenu, nCmd);
-            ShowWindow(m_hMultiTaskBar, nCmd);
+            //ShowWindow(m_hTaskBar, nCmd);
+            //ShowWindow(m_hStartMenu, nCmd);
+            //ShowWindow(m_hMultiTaskBar, nCmd);
         }
 
         /// <summary>
@@ -77,29 +86,36 @@ namespace GyroShell.Helpers
 
         public static async Task ShowSysTray()
         {
-            SendMessage(m_hTaskBar, WM_COMMAND, (IntPtr)ID_TRAY_SHOW_OVERFLOW, IntPtr.Zero);
+            SendMessage(m_hTaskBar, /*WM_COMMAND*/ 0x0111, (IntPtr)ID_TRAY_SHOW_OVERFLOW, IntPtr.Zero);
         }
+
+        /// <summary>
+        /// Opens control center
+        /// </summary>
+        public static async Task ToggleSysControl()
+        {
+            ShellExecute(IntPtr.Zero, "open", "ms-actioncenter:controlcenter/&suppressAnimations=false&showFooter=true&allowPageNavigation=true" /* CNTRLCTR, bool, bool, bool */, null, null, 1);
+        }
+
+        /// <summary>
+        /// Opens action center
+        /// </summary>
+        public static async Task ToggleActionCenter()
+        {
+            ShellExecute(IntPtr.Zero, "open", "ms-actioncenter:" /* ACTION CENTER */, null, null, 1);
+        }
+
         /// <summary>
         /// Signal to Winlogon that the shell has started and the login screen can be dismissed
         /// </summary>
         public static void SendWinlogonShowShell()
         {
             IntPtr handle = OpenEvent(EVENT_MODIFY_STATE, false, "msgina: ShellReadyEvent");
-            if(handle != IntPtr.Zero)
+            if (handle != IntPtr.Zero)
             {
                 SetEvent(handle);
                 CloseHandle(handle);
             }
-        }
-
-        public static async Task ToggleSysControl()
-        {
-            ShellExecute(IntPtr.Zero, "open", "ms-actioncenter:controlcenter/&suppressAnimations=false&showFooter=true&allowPageNavigation=true" /* CNTRLCTR, bool, bool, bool */, null, null, 1);
-        }
-
-        public static async Task ToggleActionCenter()
-        {
-            ShellExecute(IntPtr.Zero, "open", "ms-actioncenter:" /* ACTION CENTER */, null, null, 1);
         }
 
         private static IntPtr m_hTaskBar;
