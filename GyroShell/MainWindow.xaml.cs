@@ -280,7 +280,7 @@ namespace GyroShell
                 uCallBack = RegisterWindowMessage("AppBarMessage");
                 abd.uCallbackMessage = uCallBack;
 
-                uint ret = SHAppBarMessage((int)ABMsg.ABM_NEW, ref abd);
+                //uint ret = SHAppBarMessage((int)ABMsg.ABM_NEW, ref abd);
                 fBarRegistered = true;
             }
             else
@@ -308,7 +308,7 @@ namespace GyroShell
         }
         private IntPtr WindowProcess(IntPtr hwnd, uint message, IntPtr wParam, IntPtr lParam)
         {
-            Debug.WriteLine("------------");
+            /*Debug.WriteLine("------------");
             Debug.WriteLine("MESSAGE: " + (WM_CODE)message);
             Debug.WriteLine(wParam);
             Debug.WriteLine(lParam);

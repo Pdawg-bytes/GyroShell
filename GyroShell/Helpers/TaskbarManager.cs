@@ -3,6 +3,7 @@ using static GyroShell.Helpers.Win32Interop;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using ManagedShell.Common.Helpers;
+using System.Diagnostics;
 
 namespace GyroShell.Helpers
 {
@@ -66,9 +67,10 @@ namespace GyroShell.Helpers
                     lParam = (IntPtr)ABMsg.ABM_SETAUTOHIDEBAR
                 };
 
-                SHAppBarMessage((int)ABMsg.ABM_SETSTATE, ref abd);
+                uint ret = SHAppBarMessage((int)ABMsg.ABM_SETSTATE, ref abd);
+                Debug.WriteLine(ret);
 
-                //SetWindowPos(m_hTaskBar, (IntPtr)WindowZOrder.HWND_BOTTOM, 0, 0, 0, 0, (int)SWPFlags.SWP_HIDEWINDOW | (int)SWPFlags.SWP_NOMOVE | (int)SWPFlags.SWP_NOSIZE | (int)SWPFlags.SWP_NOACTIVATE);
+                SetWindowPos(m_hTaskBar, (IntPtr)WindowZOrder.HWND_BOTTOM, 0, 0, 0, 0, (int)SWPFlags.SWP_HIDEWINDOW | (int)SWPFlags.SWP_NOMOVE | (int)SWPFlags.SWP_NOSIZE | (int)SWPFlags.SWP_NOACTIVATE);
             }
 
             //ShowWindow(m_hTaskBar, nCmd);
