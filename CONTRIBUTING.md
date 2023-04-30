@@ -9,6 +9,26 @@ To make it easier for us to verify your PR and review it, we request that you pl
 3. Try and use proper grammar and avoid typos. Don't name the commit "add wifdow management in defaurttaskbar"
 4. Keep it clean. Don't use swear words or other vulgar language as it's not needed.
 ```
+**Naming Convention**
+So know that you know how to name your commits, lets break it down. Commits, PRs, and Issues should all follow a naming scheme as follows:
+
+> [PROJECT -> Module] Commit message.
+<br/>
+
+**PROJECT** Replacements
+- 📱 GyroShell.csproj - App 
+- 🗂️ Repository - GitHub
+
+**MODULE** Replacements <br/>
+Whatever you are modifying. For example, let's say you're moving the clock around. You'd replace MODULE with `Control`, as your PR is for changing one of the controls that the app uses.
+<br/>
+
+**Commit Message** Replacement <br/>
+Lastly, your commit message should be a message that adheres to the guidelines above.
+<br/>
+
+***Example:*** `[App -> View] Move the clock to the left of the taskbar.`
+
 That's it for the naming guidelines!
 
 # 2. Testing
@@ -82,12 +102,12 @@ Let's get one more example in here. This next prompt is based on #1.
 
 **Bad Code:**
 ```cs
-private void InternetUpdate()
+private void BatteryUpdate()
 {
     DispatcherTimer battUpdate = new DispatcherTimer();
     battUpdate.Tick += BattUpdateMethod;
     battUpdate.Interval = new TimeSpan(10000000);
-    batttUpdate.Start();
+    battUpdate.Start();
 }
 // This code is very inefficient because it runs a timer and just checks, even if the battery level hasn't changed at all. Always avoid using timers.
 ```
