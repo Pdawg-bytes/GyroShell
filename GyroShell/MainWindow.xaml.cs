@@ -280,12 +280,14 @@ namespace GyroShell
                 uCallBack = RegisterWindowMessage("AppBarMessage");
                 abd.uCallbackMessage = uCallBack;
 
-                //uint ret = SHAppBarMessage((int)ABMsg.ABM_NEW, ref abd);
+                uint ret = SHAppBarMessage((int)ABMsg.ABM_NEW, ref abd);
+                bool regShellHook = RegisterShellHookWindow(hWnd);
                 fBarRegistered = true;
             }
             else
             {
                 SHAppBarMessage((int)ABMsg.ABM_REMOVE, ref abd);
+                bool deRegShellHook = DeregisterShellHookWindow(hWnd);
                 fBarRegistered = false;
             }
         }
@@ -311,12 +313,8 @@ namespace GyroShell
             /*Debug.WriteLine("------------");
             Debug.WriteLine("MESSAGE: " + (WM_CODE)message);
             Debug.WriteLine(wParam);
-            Debug.WriteLine(lParam);
-
-            /*if(message == 134)
-            {
-                Debug.WriteLine("taskbar menu");
-            }*/
+            Debug.WriteLine(lParam);*/
+            
 
             return CallWindowProc(_oldWndProc, hwnd, message, wParam, lParam);
         }

@@ -88,6 +88,11 @@ namespace GyroShell.Helpers
         [DllImport("Shell32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern IntPtr ShellExecute(IntPtr hwnd, string lpOperation, string lpFile, string lpParameters, string lpDirectory, int nShowCmd);
 
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool RegisterShellHookWindow(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        public static extern bool DeregisterShellHookWindow(IntPtr hWnd);
 
         // DWM API attrib
         public enum DWMWINDOWATTRIBUTE
