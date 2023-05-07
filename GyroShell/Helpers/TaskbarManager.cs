@@ -60,17 +60,11 @@ namespace GyroShell.Helpers
 
             if(!isVisible)
             {
-                APPBARDATA abd = new APPBARDATA
-                {
-                    cbSize = Marshal.SizeOf(typeof(APPBARDATA)),
-                    hWnd = m_hTaskBar,
-                    lParam = (IntPtr)ABMsg.ABM_SETAUTOHIDEBAR
-                };
-
-                uint ret = SHAppBarMessage((int)ABMsg.ABM_SETSTATE, ref abd);
-                Debug.WriteLine(ret);
-
                 SetWindowPos(m_hTaskBar, (IntPtr)WindowZOrder.HWND_BOTTOM, 0, 0, 0, 0, (int)SWPFlags.SWP_HIDEWINDOW | (int)SWPFlags.SWP_NOMOVE | (int)SWPFlags.SWP_NOSIZE | (int)SWPFlags.SWP_NOACTIVATE);
+            }
+            else
+            {
+                SetWindowPos(m_hTaskBar, (IntPtr)WindowZOrder.HWND_TOPMOST, 0, 48, 0, 0, (int)SWPFlags.SWP_SHOWWINDOW);
             }
 
             //ShowWindow(m_hTaskBar, nCmd);
