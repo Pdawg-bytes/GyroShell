@@ -7,6 +7,8 @@ using Windows.UI;
 using Microsoft.UI.Xaml.Media;
 using CommunityToolkit.WinUI.Helpers;
 using GyroShell.Helpers;
+using System.Diagnostics;
+using Windows.ApplicationModel.Core;
 
 namespace GyroShell.Settings
 {
@@ -161,7 +163,14 @@ namespace GyroShell.Settings
 
         private void RestartNowInfo_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: restart shell
+            try
+            {
+                AppRestartFailureReason ret = Microsoft.Windows.AppLifecycle.AppInstance.Restart("");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
         }
 
         private void RestartLaterInfo_Click(object sender, RoutedEventArgs e)
