@@ -1,9 +1,9 @@
 ﻿using System;
 using static GyroShell.Helpers.Win32Interop;
 using System.Threading.Tasks;
-using System.Runtime.InteropServices;
-using ManagedShell.Common.Helpers;
 using System.Diagnostics;
+using Windows.Media.Capture;
+using System.Runtime.InteropServices;
 
 namespace GyroShell.Helpers
 {
@@ -25,7 +25,7 @@ namespace GyroShell.Helpers
             }
         }
 
-        public static void SetHeight(int left, int right, int top, int bottom)
+        /*public static void SetHeight(int left, int right, int top, int bottom)
         {
             int screenWidth = GetSystemMetrics(SM_CXSCREEN);
             int screenHeight = GetSystemMetrics(SM_CYSCREEN);
@@ -39,7 +39,7 @@ namespace GyroShell.Helpers
 
             //Probably will need rework when using more than 1 monitor
             SystemParametersInfoA(SPI_SETWORKAREA, 0, ref workArea, SPIF_UPDATEINIFILE);
-        }
+        }*/
 
         public static void ShowTaskbar()
         {
@@ -111,6 +111,31 @@ namespace GyroShell.Helpers
             {
                 SetEvent(handle);
                 CloseHandle(handle);
+            }
+        }
+
+        internal static void AutoHideExplorer(bool doHide)
+        {
+            if(doHide)
+            {
+                // MainBar
+                APPBARDATA abd = new APPBARDATA();
+                abd.cbSize = Marshal.SizeOf(abd);
+                abd.hWnd = m_hTaskBar;
+                abd.lParam = (IntPtr)ABState.ABS_AUTOHIDE;
+
+                //SHAppBarMessage((int)ABMsg.ABM_SETSTATE, ref abd);
+
+                // MultiBar
+                /*if(m_hTaskBar != IntPtr.Zero)
+                {
+                    APPBARDATA abdM = new APPBARDATA();
+                    abd.cbSize = Marshal.SizeOf(abdM);
+                    abd.hWnd = m_hMultiTaskBar;
+                    abd.lParam = (IntPtr)ABState.ABS_AUTOHIDE;
+
+                    SHAppBarMessage((int)ABMsg.ABM_SETSTATE, ref abdM);
+                }*/
             }
         }
 

@@ -13,9 +13,12 @@ using System.Threading;
 using Windows.Graphics.Display;
 using static GyroShell.Helpers.Win32Interop;
 using static GyroShell.Helpers.WindowMessage;
+using static GyroShell.Helpers.TaskbarManager;
+using static GyroShell.Helpers.ScreenValues;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using ManagedShell.AppBar;
+using CommunityToolkit.WinUI.Helpers;
 
 namespace GyroShell
 {
@@ -46,7 +49,7 @@ namespace GyroShell
             var presenter = GetAppWindowAndPresenter();
             presenter.IsMaximizable = false;
             presenter.IsMinimizable = false;
-            presenter.IsAlwaysOnTop = false;
+            presenter.IsAlwaysOnTop = true;
             presenter.IsResizable = false;
             presenter.SetBorderAndTitleBar(false, false);
             m_AppWindow = GetAppWindowForCurrentWindow();
@@ -56,7 +59,7 @@ namespace GyroShell
             hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
             var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
             var appWindow = AppWindow.GetFromWindowId(windowId);
-            if (OSVersion.IsWin11())
+            if (GyroShell.Helpers.OSVersion.IsWin11())
             {
                 var attribute = DWMWINDOWATTRIBUTE.DWMWA_WINDOW_CORNER_PREFERENCE;
                 var preference = DWM_WINDOW_CORNER_PREFERENCE.DWMWCP_DONOTROUND;
@@ -68,7 +71,6 @@ namespace GyroShell
             exStyle |= 128;
             SetWindowLongPtr(hWnd, -20, (IntPtr)exStyle);
 
-            TaskbarManager.SetHeight(0, 0, 0, 48);
             Thread.Sleep(20); //TODO: Stop the window message from moving our window into the wokring area
 
             int screenWidth = GetSystemMetrics(SM_CXSCREEN);
@@ -89,7 +91,6 @@ namespace GyroShell
 
             // Show GyroShell when everything is ready
             m_AppWindow.Show();
-            TaskbarManager.HideTaskbar();
         }
 
         #region Window Handling
@@ -283,6 +284,10 @@ namespace GyroShell
                 uint ret = SHAppBarMessage((int)ABMsg.ABM_NEW, ref abd);
                 bool regShellHook = RegisterShellHookWindow(hWnd);
                 fBarRegistered = true;
+
+                AutoHideExplorer(true);
+                HideTaskbar();
+                ABSetPos();
             }
             else
             {
@@ -290,6 +295,48 @@ namespace GyroShell
                 bool deRegShellHook = DeregisterShellHookWindow(hWnd);
                 fBarRegistered = false;
             }
+        }
+
+        private static void ABSetPos()
+        {
+            APPBARDATA abd = new APPBARDATA();
+            abd.cbSize = Marshal.SizeOf(abd);
+            abd.hWnd = hWnd;
+            abd.uEdge = (int)ABEdge.ABE_BOTTOM;
+
+            abd.rc.left = 0;
+            abd.rc.right = GetScreenWidth();
+            if (abd.uEdge == (int)ABEdge.ABE_TOP)
+            {
+                abd.rc.top = 0;
+                abd.rc.bottom = 48;
+            }
+            else
+            {
+                abd.rc.bottom = GetScreenHeight();
+                abd.rc.top = abd.rc.bottom - 48;
+            }
+
+            SHAppBarMessage((int)ABMsg.ABM_QUERYPOS, ref abd);
+
+            switch (abd.uEdge)
+            {
+                case (int)ABEdge.ABE_LEFT:
+                    abd.rc.right = abd.rc.left + 48;
+                    break;
+                case (int)ABEdge.ABE_RIGHT:
+                    abd.rc.left = abd.rc.right - 48;
+                    break;
+                case (int)ABEdge.ABE_TOP:
+                    abd.rc.bottom = abd.rc.top + 48;
+                    break;
+                case (int)ABEdge.ABE_BOTTOM:
+                    abd.rc.top = abd.rc.bottom - 48;
+                    break;
+            }
+
+            SHAppBarMessage((int)ABMsg.ABM_SETPOS, ref abd);
+            MoveWindow(abd.hWnd, abd.rc.left, abd.rc.top, abd.rc.right - abd.rc.left, abd.rc.bottom - abd.rc.top, true);
         }
 
         private static WndProcDelegate _currDelegate = null;

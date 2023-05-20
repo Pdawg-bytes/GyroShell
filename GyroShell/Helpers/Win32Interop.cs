@@ -171,6 +171,12 @@ namespace GyroShell.Helpers
             ABE_BOTTOM
         }
 
+        public enum ABState
+        {
+            ABS_TOP = 0x00,
+            ABS_AUTOHIDE = 0x01
+        }
+
         public delegate IntPtr WndProcDelegate(IntPtr hwnd, uint message, IntPtr wParam, IntPtr lParam);
 
         [DllImport("SHELL32", CallingConvention = CallingConvention.StdCall)]
