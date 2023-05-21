@@ -285,7 +285,7 @@ namespace GyroShell
                 bool regShellHook = RegisterShellHookWindow(hWnd);
                 fBarRegistered = true;
 
-                AutoHideExplorer(true);
+                //AutoHideExplorer(true);
                 HideTaskbar();
                 ABSetPos();
             }

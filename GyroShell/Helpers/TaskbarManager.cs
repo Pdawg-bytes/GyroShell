@@ -124,7 +124,7 @@ namespace GyroShell.Helpers
                 abd.hWnd = m_hTaskBar;
                 abd.lParam = (IntPtr)ABState.ABS_AUTOHIDE;
 
-                //SHAppBarMessage((int)ABMsg.ABM_SETSTATE, ref abd);
+                SHAppBarMessage((int)ABMsg.ABM_SETSTATE, ref abd);
 
                 // MultiBar
                 /*if(m_hTaskBar != IntPtr.Zero)
