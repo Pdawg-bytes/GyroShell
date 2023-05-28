@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using Windows.Media.Capture;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace GyroShell.Helpers
 {
@@ -61,10 +62,12 @@ namespace GyroShell.Helpers
             if(!isVisible)
             {
                 SetWindowPos(m_hTaskBar, (IntPtr)WindowZOrder.HWND_BOTTOM, 0, 0, 0, 0, (int)SWPFlags.SWP_HIDEWINDOW | (int)SWPFlags.SWP_NOMOVE | (int)SWPFlags.SWP_NOSIZE | (int)SWPFlags.SWP_NOACTIVATE);
+                SetWindowPos(m_hMultiTaskBar, (IntPtr)WindowZOrder.HWND_BOTTOM, 0, 0, 0, 0, (int)SWPFlags.SWP_HIDEWINDOW | (int)SWPFlags.SWP_NOMOVE | (int)SWPFlags.SWP_NOSIZE | (int)SWPFlags.SWP_NOACTIVATE);
             }
             else
             {
                 SetWindowPos(m_hTaskBar, (IntPtr)WindowZOrder.HWND_TOPMOST, 0, 48, 0, 0, (int)SWPFlags.SWP_SHOWWINDOW);
+                SetWindowPos(m_hMultiTaskBar, (IntPtr)WindowZOrder.HWND_TOPMOST, 0, 48, 0, 0, (int)SWPFlags.SWP_SHOWWINDOW);
             }
 
             //ShowWindow(m_hTaskBar, nCmd);
@@ -137,11 +140,31 @@ namespace GyroShell.Helpers
                     SHAppBarMessage((int)ABMsg.ABM_SETSTATE, ref abdM);
                 }*/
             }
+            else
+            {
+                // MainBar
+                APPBARDATA abd = new APPBARDATA();
+                abd.cbSize = Marshal.SizeOf(abd);
+                abd.hWnd = m_hTaskBar;
+                abd.lParam = (IntPtr)ABState.ABS_TOP;
+
+                SHAppBarMessage((int)ABMsg.ABM_SETSTATE, ref abd);
+
+                // MultiBar
+                if(m_hTaskBar != IntPtr.Zero)
+                {
+                    APPBARDATA abdM = new APPBARDATA();
+                    abd.cbSize = Marshal.SizeOf(abdM);
+                    abd.hWnd = m_hMultiTaskBar;
+                    abd.lParam = (IntPtr)ABState.ABS_TOP;
+
+                    SHAppBarMessage((int)ABMsg.ABM_SETSTATE, ref abdM);
+                }
+            }
         }
 
         private static IntPtr m_hTaskBar;
         private static IntPtr m_hMultiTaskBar;
         private static IntPtr m_hStartMenu;
-
     }
 }

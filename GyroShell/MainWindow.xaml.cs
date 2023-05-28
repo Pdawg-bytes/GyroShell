@@ -285,9 +285,11 @@ namespace GyroShell
                 bool regShellHook = RegisterShellHookWindow(hWnd);
                 fBarRegistered = true;
 
-                //AutoHideExplorer(true);
-                HideTaskbar();
+                AutoHideExplorer(true);
                 ABSetPos();
+                AutoHideExplorer(false);
+                HideTaskbar();
+                SetWindowPos(hWnd, (IntPtr)WindowZOrder.HWND_TOPMOST, 0, 0, 0, 0, (int)SWPFlags.SWP_NOMOVE | (int)SWPFlags.SWP_NOSIZE | (int)SWPFlags.SWP_SHOWWINDOW);
             }
             else
             {
@@ -314,7 +316,7 @@ namespace GyroShell
             else
             {
                 abd.rc.bottom = GetScreenHeight();
-                abd.rc.top = abd.rc.bottom - 48;
+                abd.rc.top = abd.rc.bottom - 46;
             }
 
             SHAppBarMessage((int)ABMsg.ABM_QUERYPOS, ref abd);
