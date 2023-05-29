@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GyroShell.Helpers
+namespace GyroShell.Helpers.Win32
 {
     internal static class WindowMessage
     {

@@ -10,15 +10,16 @@ using WinRT;
 using Windows.UI;
 using Microsoft.UI.Xaml.Media.Animation;
 using System.Threading;
-using Windows.Graphics.Display;
-using static GyroShell.Helpers.Win32Interop;
-using static GyroShell.Helpers.WindowMessage;
+using static GyroShell.Helpers.Win32.Win32Interop;
+using static GyroShell.Helpers.Win32.WindowMessage;
+using static GyroShell.Helpers.Win32.GetWindowName;
 using static GyroShell.Helpers.TaskbarManager;
-using static GyroShell.Helpers.ScreenValues;
+using static GyroShell.Helpers.Win32.ScreenValues;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
-using ManagedShell.AppBar;
-using CommunityToolkit.WinUI.Helpers;
+using System.Windows.Documents;
+using System.Collections.Generic;
+using Windows.Media.Capture;
 using System.Windows.Automation;
 
 namespace GyroShell
@@ -29,15 +30,21 @@ namespace GyroShell
 
         private IntPtr _oldWndProc;
         internal static IntPtr hWnd;
+
         internal static int uCallBack;
+
         internal static bool fBarRegistered = false;
         private bool finalOpt;
+
         private byte finalA;
         private byte finalR;
         private byte finalG;
         private byte finalB;
+
         private float finalLO;
         private float finalTO;
+
+        private static string name;
 
         public MainWindow()
         {
@@ -85,7 +92,7 @@ namespace GyroShell
 
             // Init stuff
             RegisterBar();
-            RegisterWinEventHook();
+            //RegisterWinEventHook();
             _oldWndProc = SetWndProc(WindowProcess);
             MonitorSummon();
             TaskbarFrame.Navigate(typeof(Controls.DefaultTaskbar), null, new SuppressNavigationTransitionInfo());
@@ -272,7 +279,7 @@ namespace GyroShell
         }
         #endregion
 
-        #region Callbacks
+        #region AppBar
         internal static void RegisterBar()
         {
             APPBARDATA abd = new APPBARDATA();
@@ -342,17 +349,33 @@ namespace GyroShell
             SHAppBarMessage((int)ABMsg.ABM_SETPOS, ref abd);
             MoveWindow(abd.hWnd, abd.rc.left, abd.rc.top, abd.rc.right - abd.rc.left, abd.rc.bottom - abd.rc.top, true);
         }
+#endregion
 
+        #region Callbacks
+
+        #region SetWinEventHook Init
         private static readonly WinEventDelegate callback = WinEventCallback;
         private static void RegisterWinEventHook()
         {
             SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, callback, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
         }
-        private static void WinEventCallback(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
+        #endregion
+
+        // SetWinEventHook Callback
+        internal static void WinEventCallback(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
         {
-            Debug.WriteLine(hwnd);
+            name = (GetWindowTitle(hwnd));
+            if (name.Length > 0)
+            {
+                Debug.WriteLine(hwnd);
+                Debug.WriteLine(eventType);
+   
+                Debug.WriteLine(name);
+                Debug.WriteLine("--------------");
+            }
         }
 
+        #region WndProc Init
         private static WndProcDelegate _currDelegate = null;
         public static IntPtr SetWndProc(WndProcDelegate newProc)
         {
@@ -369,6 +392,9 @@ namespace GyroShell
                 return SetWindowLong(hWnd, GWLP_WNDPROC, newWndProcPtr);
             }
         }
+        #endregion
+
+        // WNDPROC Callback
         private IntPtr WindowProcess(IntPtr hwnd, uint message, IntPtr wParam, IntPtr lParam)
         {
             /*Debug.WriteLine("------------");

@@ -10,7 +10,8 @@ using Windows.Devices.Power;
 using Windows.UI;
 using System.Diagnostics;
 using Windows.UI.Core;
-using static GyroShell.Helpers.Win32Interop;
+using static GyroShell.Helpers.Win32.Win32Interop;
+using static GyroShell.Helpers.Win32.GetWindowName;
 using Windows.System;
 using Windows.UI.Notifications.Management;
 using Windows.Foundation.Metadata;
@@ -24,6 +25,8 @@ using System.Linq;
 using Windows.Networking.Connectivity;
 using CoreAudio;
 using ManagedShell.AppBar;
+using Microsoft.VisualBasic;
+using System.Xml.Linq;
 
 namespace GyroShell.Controls
 {
@@ -33,7 +36,7 @@ namespace GyroShell.Controls
         bool reportRequested = false;
         public static string timeType = "t";
 
-        public ObservableCollection<IconModel> TbIconCollection { get; set; }
+        public ObservableCollection<IconModel> TbIconCollection;
 
         public DefaultTaskbar()
         {
@@ -321,7 +324,7 @@ namespace GyroShell.Controls
                     TaskViewIcon.FontFamily = SegoeMDL2;
                     break;
                 case 1:
-                    if(OSVersion.IsWin11())
+                    if (OSVersion.IsWin11())
                     {
                         WifiStatus.Margin = new Thickness(0, 2, 7, 0);
                         WifiStatus.FontFamily = SegoeFluent;
@@ -355,7 +358,7 @@ namespace GyroShell.Controls
             {
                 timeType = "H:mm:ss";
             }
-            else if (secondsEnabled == true && is24HREnabled == false) 
+            else if (secondsEnabled == true && is24HREnabled == false)
             {
                 timeType = "T";
             }

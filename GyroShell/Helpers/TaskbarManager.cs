@@ -1,5 +1,5 @@
 ﻿using System;
-using static GyroShell.Helpers.Win32Interop;
+using static GyroShell.Helpers.Win32.Win32Interop;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using Windows.Media.Capture;
