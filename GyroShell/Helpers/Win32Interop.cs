@@ -38,10 +38,21 @@ namespace GyroShell.Helpers
         public const int SM_CXSCREEN = 0;
         public const int SM_CYSCREEN = 1;
 
+        internal const uint WINEVENT_OUTOFCONTEXT = 0x0000;
+        internal const uint WINEVENT_SKIPOWNTHREAD = 0x0001;
+        internal const uint EVENT_SYSTEM_DESKTOPSWITCH = 0x0020;
+        internal const int WINEVENT_INCONTEXT = 4;
+        internal const int WINEVENT_SKIPOWNPROCESS = 2;
+        internal const int EVENT_SYSTEM_FOREGROUND = 3;
+
         public delegate bool EnumThreadProc(IntPtr hwnd, IntPtr lParam);
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+
+        public delegate void WinEventDelegate(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime);
+        [DllImport("user32.dll")]
+        public static extern IntPtr SetWinEventHook(uint eventMin, uint eventMax, IntPtr hmodWinEventProc, WinEventDelegate lpfnWinEventProc, uint idProcess, uint idThread, uint dwFlags);
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern IntPtr FindWindowEx(IntPtr parentHandle, IntPtr childAfter, string className, string windowTitle);

@@ -19,6 +19,7 @@ using System.Runtime.InteropServices;
 using System.Diagnostics;
 using ManagedShell.AppBar;
 using CommunityToolkit.WinUI.Helpers;
+using System.Windows.Automation;
 
 namespace GyroShell
 {
@@ -84,6 +85,7 @@ namespace GyroShell
 
             // Init stuff
             RegisterBar();
+            RegisterWinEventHook();
             _oldWndProc = SetWndProc(WindowProcess);
             MonitorSummon();
             TaskbarFrame.Navigate(typeof(Controls.DefaultTaskbar), null, new SuppressNavigationTransitionInfo());
@@ -341,6 +343,16 @@ namespace GyroShell
             MoveWindow(abd.hWnd, abd.rc.left, abd.rc.top, abd.rc.right - abd.rc.left, abd.rc.bottom - abd.rc.top, true);
         }
 
+        private static readonly WinEventDelegate callback = WinEventCallback;
+        private static void RegisterWinEventHook()
+        {
+            SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, callback, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
+        }
+        private static void WinEventCallback(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
+        {
+            Debug.WriteLine(hwnd);
+        }
+
         private static WndProcDelegate _currDelegate = null;
         public static IntPtr SetWndProc(WndProcDelegate newProc)
         {
@@ -367,6 +379,7 @@ namespace GyroShell
 
             return CallWindowProc(_oldWndProc, hwnd, message, wParam, lParam);
         }
+
         #endregion
     }
 }
