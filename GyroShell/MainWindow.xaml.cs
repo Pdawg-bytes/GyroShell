@@ -13,14 +13,11 @@ using System.Threading;
 using static GyroShell.Helpers.Win32.Win32Interop;
 using static GyroShell.Helpers.Win32.WindowMessage;
 using static GyroShell.Helpers.Win32.GetWindowName;
+using static GyroShell.Helpers.Win32.WindowChecks;
 using static GyroShell.Helpers.TaskbarManager;
 using static GyroShell.Helpers.Win32.ScreenValues;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
-using System.Windows.Documents;
-using System.Collections.Generic;
-using Windows.Media.Capture;
-using System.Windows.Automation;
 
 namespace GyroShell
 {
@@ -364,14 +361,18 @@ namespace GyroShell
         // SetWinEventHook Callback
         internal static void WinEventCallback(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
         {
-            name = (GetWindowTitle(hwnd));
-            if (name.Length > 0 && name != "Task Switching")
+            name = GetWindowTitle(hwnd);
+
+            if (eventType == EVENT_SYSTEM_FOREGROUND)
             {
-                Debug.WriteLine(hwnd);
-                Debug.WriteLine(eventType);
-   
-                Debug.WriteLine(name);
-                Debug.WriteLine("--------------");
+                if (name.Length > 0 && name != "Task Switching")
+                {
+                    Debug.WriteLine(hwnd);
+                    Debug.WriteLine(eventType);
+
+                    Debug.WriteLine(name);
+                    Debug.WriteLine("--------------");
+                }
             }
         }
 

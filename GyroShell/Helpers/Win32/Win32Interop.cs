@@ -34,6 +34,12 @@ namespace GyroShell.Helpers.Win32
         public const int SPI_GETWORKAREA = 0x0030;
         public const int SPIF_UPDATEINIFILE = 1;
         public const int GWL_EXSTYLE = -20;
+        public const int GWL_STYLE = -16;
+        public const int DWMWA_CLOAKED = 14;
+        public const int WS_CHILD = 0x40000000;
+        public const uint GA_PARENT = 1;
+        public const uint GA_ROOT = 2;
+        public const uint GA_ROOTOWNER = 3;
         public const int WS_EX_APPWINDOW = 0x00040000;
 
         public const int GWLP_WNDPROC = -4;
@@ -44,14 +50,65 @@ namespace GyroShell.Helpers.Win32
         internal const uint WINEVENT_SKIPOWNTHREAD = 0x0001;
         internal const uint EVENT_SYSTEM_DESKTOPSWITCH = 0x0020;
         internal const int EVENT_OBJECT_NAMECHANGED = 0x800C;
+        internal const int EVENT_OBJECT_DESTROY = 0x8001;
         internal const int WINEVENT_INCONTEXT = 4;
         internal const int WINEVENT_SKIPOWNPROCESS = 2;
         internal const int EVENT_SYSTEM_FOREGROUND = 3;
+        internal const int WH_SHELL = 10;
+        internal const int HSHELL_WINDOWCREATED = 1;
+
 
         public delegate bool EnumThreadProc(IntPtr hwnd, IntPtr lParam);
 
+        [DllImport("dwmapi.dll")]
+        public static extern int DwmGetWindowAttribute(IntPtr hwnd, int dwAttribute, out int pvAttribute, int cbAttribute);
+
+        [DllImport("user32.dll", ExactSpelling = true)]
+        public static extern IntPtr GetAncestor(IntPtr hwnd, GetAncestorFlags flags);
+        public enum GetAncestorFlags
+        {
+            /// <summary>
+            /// Retrieves the parent window. This does not include the owner, as it does with the GetParent function.
+            /// </summary>
+            GetParent = 1,
+            /// <summary>
+            /// Retrieves the root window by walking the chain of parent windows.
+            /// </summary>
+            GetRoot = 2,
+            /// <summary>
+            /// Retrieves the owned root window by walking the chain of parent and owner windows returned by GetParent.
+            /// </summary>
+            GetRootOwner = 3
+        }
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool IsWindowVisible(IntPtr hWnd);
+
+        public delegate IntPtr ShellProc(int code, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr SetWindowsHookEx(int idHook, ShellProc lpfn, IntPtr hMod, uint dwThreadId);
+
+        [DllImport("user32.dll")]
+        public static extern bool UnhookWindowsHookEx(IntPtr hhk);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool IsTopLevelWindow(IntPtr hWnd);
+
         [DllImport("user32.dll", SetLastError = true)]
         public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool IsWindow(IntPtr hWnd);
+
+        [DllImport("user32.dll", EntryPoint = "GetWindowLongPtr")]
+        public static extern IntPtr GetWindowLongPtr(IntPtr hWnd, int nIndex);
 
         public delegate void WinEventDelegate(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime);
         [DllImport("user32.dll")]
@@ -95,9 +152,6 @@ namespace GyroShell.Helpers.Win32
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern IntPtr CallWindowProc(IntPtr lpPrevWndFunc, IntPtr hwnd, uint msg, IntPtr wParam, IntPtr lParam);
-
-        [DllImport("user32.dll")]
-        public static extern IntPtr GetWindowLongPtr(IntPtr hWnd, int nIndex);
 
         [DllImport("user32.dll")]
         public static extern int SendMessage(IntPtr hWnd, int wMsg, IntPtr wParam, IntPtr lParam);

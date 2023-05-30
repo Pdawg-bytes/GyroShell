@@ -24,7 +24,6 @@ using System.Runtime.InteropServices.ComTypes;
 using System.Linq;
 using Windows.Networking.Connectivity;
 using CoreAudio;
-using ManagedShell.AppBar;
 using Microsoft.VisualBasic;
 using System.Xml.Linq;
 
