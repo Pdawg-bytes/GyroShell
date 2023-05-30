@@ -92,7 +92,7 @@ namespace GyroShell
 
             // Init stuff
             RegisterBar();
-            //RegisterWinEventHook();
+            RegisterWinEventHook();
             _oldWndProc = SetWndProc(WindowProcess);
             MonitorSummon();
             TaskbarFrame.Navigate(typeof(Controls.DefaultTaskbar), null, new SuppressNavigationTransitionInfo());
@@ -365,7 +365,7 @@ namespace GyroShell
         internal static void WinEventCallback(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
         {
             name = (GetWindowTitle(hwnd));
-            if (name.Length > 0)
+            if (name.Length > 0 && name != "Task Switching")
             {
                 Debug.WriteLine(hwnd);
                 Debug.WriteLine(eventType);
