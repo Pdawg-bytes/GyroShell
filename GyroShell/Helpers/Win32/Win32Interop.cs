@@ -56,6 +56,7 @@ namespace GyroShell.Helpers.Win32
         internal const int EVENT_SYSTEM_FOREGROUND = 3;
         internal const int WH_SHELL = 10;
         internal const int HSHELL_WINDOWCREATED = 1;
+        internal const long OBJID_WINDOW = 0x00000000L;
 
 
         public delegate bool EnumThreadProc(IntPtr hwnd, IntPtr lParam);

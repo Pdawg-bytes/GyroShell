@@ -355,6 +355,7 @@ namespace GyroShell
         private static void RegisterWinEventHook()
         {
             SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, callback, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
+            // TODO: start implementing window destroy/creation hooks
         }
         #endregion
 
@@ -367,11 +368,8 @@ namespace GyroShell
             {
                 if (name.Length > 0 && name != "Task Switching")
                 {
-                    Debug.WriteLine(hwnd);
-                    Debug.WriteLine(eventType);
-
-                    Debug.WriteLine(name);
-                    Debug.WriteLine("--------------");
+                    Debug.WriteLine("Foreground window changed: " + name);
+                    Debug.WriteLine("-------------------------------------");
                 }
             }
         }
