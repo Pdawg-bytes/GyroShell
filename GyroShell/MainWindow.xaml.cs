@@ -364,7 +364,7 @@ namespace GyroShell
         {
             name = GetWindowTitle(hwnd);
 
-            if (eventType == EVENT_SYSTEM_FOREGROUND)
+            if (eventType == EVENT_SYSTEM_FOREGROUND && isUserWindow(hwnd))
             {
                 if (name.Length > 0 && name != "Task Switching")
                 {

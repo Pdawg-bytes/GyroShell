@@ -56,6 +56,7 @@ namespace GyroShell.Helpers.Win32
         internal const int EVENT_SYSTEM_FOREGROUND = 3;
         internal const int WH_SHELL = 10;
         internal const int HSHELL_WINDOWCREATED = 1;
+        internal const int GW_OWNER = 4;
         internal const long OBJID_WINDOW = 0x00000000L;
 
 
@@ -63,6 +64,34 @@ namespace GyroShell.Helpers.Win32
 
         [DllImport("dwmapi.dll")]
         public static extern int DwmGetWindowAttribute(IntPtr hwnd, int dwAttribute, out int pvAttribute, int cbAttribute);
+        public enum DwmWindowAttribute : int
+        {
+            NCRenderingEnabled = 1,
+            NCRenderingPolicy,
+            TransitionsForceDisabled,
+            AllowNCPaint,
+            CaptionButtonBounds,
+            NonClientRtlLayout,
+            ForceIconicRepresentation,
+            Flip3DPolicy,
+            ExtendedFrameBounds,
+            HasIconicBitmap,
+            DisallowPeek,
+            ExcludedFromPeek,
+            Cloak,
+            Cloaked,
+            FreezeRepresentation,
+            PassiveUpdateMode,
+            UseHostBackdropBrush,
+            UseImmersiveDarkMode = 20,
+            WindowCornerPreference = 33,
+            BorderColor,
+            CaptionColor,
+            TextColor,
+            VisibleFrameBorderThickness,
+            SystemBackdropType,
+            Last
+        }
 
         [DllImport("user32.dll", ExactSpelling = true)]
         public static extern IntPtr GetAncestor(IntPtr hwnd, GetAncestorFlags flags);
@@ -80,6 +109,19 @@ namespace GyroShell.Helpers.Win32
             /// Retrieves the owned root window by walking the chain of parent and owner windows returned by GetParent.
             /// </summary>
             GetRootOwner = 3
+        }
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr GetWindow(IntPtr hWnd, GetWindowType uCmd);
+        public enum GetWindowType : uint
+        {
+            GW_HWNDFIRST = 0,
+            GW_HWNDLAST = 1,
+            GW_HWNDNEXT = 2,
+            GW_HWNDPREV = 3,
+            GW_OWNER = 4,
+            GW_CHILD = 5,
+            GW_ENABLEDPOPUP = 6
         }
 
         [DllImport("user32.dll")]
