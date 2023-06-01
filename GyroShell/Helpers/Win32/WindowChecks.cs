@@ -12,7 +12,7 @@ namespace GyroShell.Helpers.Win32
         private static int attributeSize = Marshal.SizeOf(typeof(int));
         internal static bool isUserWindow(IntPtr hWnd)
         {
-            if (IsWindow(hWnd) && IsWindowVisible(hWnd) && !isCloaked(hWnd) && GetAncestor(hWnd, (GetAncestorFlags)GA_ROOT) == hWnd && GetWindow(hWnd, (GetWindowType)GW_OWNER) == IntPtr.Zero)
+            if (IsWindow(hWnd) && IsWindowVisible(hWnd) && !isCloaked(hWnd) && GetAncestor(hWnd, (GetAncestorFlags)GA_ROOT) == hWnd && GetWindow(hWnd, (GetWindowType)GW_OWNER) == IntPtr.Zero && isAppWindow(hWnd))
             {
                 return true;
             }
@@ -20,6 +20,12 @@ namespace GyroShell.Helpers.Win32
             {
                 return false;
             }
+        }
+
+        private static bool isAppWindow(IntPtr hWnd)
+        {
+            int exStyle = (int)GetWindowLongPtr(hWnd, GWL_EXSTYLE);
+            return (exStyle & WS_EX_APPWINDOW) == WS_EX_APPWINDOW;
         }
 
         private static bool isCloaked(IntPtr hWnd)
