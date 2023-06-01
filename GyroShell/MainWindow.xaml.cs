@@ -18,6 +18,7 @@ using static GyroShell.Helpers.TaskbarManager;
 using static GyroShell.Helpers.Win32.ScreenValues;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace GyroShell
 {
@@ -27,6 +28,9 @@ namespace GyroShell
 
         private IntPtr _oldWndProc;
         internal static IntPtr hWnd;
+        private static List<IntPtr> indexedWindows = new List<IntPtr>();
+        private static IntPtr foregroundHook;
+        private static IntPtr createHook;
 
         internal static int uCallBack;
 
@@ -103,6 +107,8 @@ namespace GyroShell
         private void OnProcessExit(object sender, EventArgs e)
         {
             TaskbarManager.ShowTaskbar();
+            UnhookWinEvent(foregroundHook);
+            UnhookWinEvent(createHook);
         }
 
         private OverlappedPresenter GetAppWindowAndPresenter()
@@ -354,7 +360,8 @@ namespace GyroShell
         private static readonly WinEventDelegate callback = WinEventCallback;
         private static void RegisterWinEventHook()
         {
-            SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, callback, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
+            foregroundHook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, callback, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
+            createHook = SetWinEventHook(EVENT_OBJECT_CREATE, EVENT_OBJECT_CREATE, IntPtr.Zero, callback, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
             // TODO: start implementing window destroy/creation hooks
         }
         #endregion
@@ -363,8 +370,14 @@ namespace GyroShell
         internal static void WinEventCallback(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
         {
             name = GetWindowTitle(hwnd);
+            if (eventType == EVENT_OBJECT_CREATE && isUserWindow(hwnd))
+            {
+                indexedWindows.Add(hwnd);
+                Debug.WriteLine($"Window added: {name}, HWND: {hwnd}\n-------------------------------");
+            }
 
-            if (eventType == EVENT_SYSTEM_FOREGROUND && isUserWindow(hwnd))
+
+            if (eventType == EVENT_SYSTEM_FOREGROUND)
             {
                 if (name.Length > 0 && name != "Task Switching")
                 {

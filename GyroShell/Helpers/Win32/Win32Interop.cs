@@ -51,6 +51,7 @@ namespace GyroShell.Helpers.Win32
         internal const uint EVENT_SYSTEM_DESKTOPSWITCH = 0x0020;
         internal const int EVENT_OBJECT_NAMECHANGED = 0x800C;
         internal const int EVENT_OBJECT_DESTROY = 0x8001;
+        internal const int EVENT_OBJECT_CREATE = 0x8000;
         internal const int WINEVENT_INCONTEXT = 4;
         internal const int WINEVENT_SKIPOWNPROCESS = 2;
         internal const int EVENT_SYSTEM_FOREGROUND = 3;
@@ -156,6 +157,9 @@ namespace GyroShell.Helpers.Win32
         public delegate void WinEventDelegate(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime);
         [DllImport("user32.dll")]
         public static extern IntPtr SetWinEventHook(uint eventMin, uint eventMax, IntPtr hmodWinEventProc, WinEventDelegate lpfnWinEventProc, uint idProcess, uint idThread, uint dwFlags);
+
+        [DllImport("user32.dll")]
+        public static extern bool UnhookWinEvent(IntPtr hWinEventHook);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
