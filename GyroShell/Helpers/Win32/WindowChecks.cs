@@ -8,11 +8,10 @@ namespace GyroShell.Helpers.Win32
 {
     internal class WindowChecks
     {
-        private static int attributeValue;
         private static int attributeSize = Marshal.SizeOf(typeof(int));
         internal static bool isUserWindow(IntPtr hWnd)
         {
-            if (IsWindow(hWnd) && IsWindowVisible(hWnd) && !isCloaked(hWnd) && GetAncestor(hWnd, (GetAncestorFlags)GA_ROOT) == hWnd && GetWindow(hWnd, (GetWindowType)GW_OWNER) == IntPtr.Zero && isAppWindow(hWnd))
+            if (IsWindow(hWnd) && IsWindowVisible(hWnd) && !isCloaked(hWnd) && GetAncestor(hWnd, (GetAncestorFlags)GA_ROOT) == hWnd && GetWindow(hWnd, (GetWindowType)GW_OWNER) == IntPtr.Zero && flagCheck(hWnd))
             {
                 return true;
             }
@@ -22,15 +21,17 @@ namespace GyroShell.Helpers.Win32
             }
         }
 
-        private static bool isAppWindow(IntPtr hWnd)
+        private static bool flagCheck(IntPtr hWnd)
         {
             int exStyle = (int)GetWindowLongPtr(hWnd, GWL_EXSTYLE);
-            return (exStyle & WS_EX_APPWINDOW) == WS_EX_APPWINDOW;
+            return (exStyle & WS_EX_APPWINDOW) == WS_EX_APPWINDOW || (exStyle & (WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE)) != 0;
         }
 
         private static bool isCloaked(IntPtr hWnd)
         {
+            int attributeValue;
             DwmGetWindowAttribute(hWnd, (int)(DWMWINDOWATTRIBUTE)DWMWA_CLOAKED, out attributeValue, attributeSize);
+
             if (attributeValue == 0)
             {
                 return false;

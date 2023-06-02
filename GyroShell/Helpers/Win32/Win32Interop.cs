@@ -32,15 +32,25 @@ namespace GyroShell.Helpers.Win32
 
         public const int SPI_SETWORKAREA = 0x002F;
         public const int SPI_GETWORKAREA = 0x0030;
+
         public const int SPIF_UPDATEINIFILE = 1;
+
         public const int GWL_EXSTYLE = -20;
         public const int GWL_STYLE = -16;
+
         public const int DWMWA_CLOAKED = 14;
+
         public const int WS_CHILD = 0x40000000;
+
         public const uint GA_PARENT = 1;
         public const uint GA_ROOT = 2;
         public const uint GA_ROOTOWNER = 3;
+
         public const int WS_EX_APPWINDOW = 0x00040000;
+        internal const int WS_EX_TOOLWINDOW = 0x00000080;
+        internal const int WS_EX_NOACTIVATE = 0x08000000;
+
+
 
         public const int GWLP_WNDPROC = -4;
         public const int SM_CXSCREEN = 0;
