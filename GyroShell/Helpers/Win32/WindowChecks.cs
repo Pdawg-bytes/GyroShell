@@ -24,7 +24,7 @@ namespace GyroShell.Helpers.Win32
         private static bool flagCheck(IntPtr hWnd)
         {
             int exStyle = (int)GetWindowLongPtr(hWnd, GWL_EXSTYLE);
-            return (exStyle & WS_EX_APPWINDOW) == WS_EX_APPWINDOW || (exStyle & (WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE)) != 0;
+            return (exStyle & WS_EX_APPWINDOW) == WS_EX_APPWINDOW || (exStyle & (WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE)) == 0;
         }
 
         private static bool isCloaked(IntPtr hWnd)
