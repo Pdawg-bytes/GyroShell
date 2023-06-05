@@ -264,11 +264,6 @@ namespace GyroShell.Helpers.Win32
 
         [DllImport("shell32.dll", SetLastError = true, EntryPoint ="#188")]
         public static extern bool ShellDDEInit(bool init);
-
-        [DllImport("user32.dll", SetLastError = true)]
-        public static extern bool SetShellWindow(IntPtr hwnd);
-        [DllImport("user32.dll", SetLastError = true)]
-        public static extern bool SetProgmanWindow(IntPtr hwnd);
         [DllImport("shell32.dll", SetLastError = true, EntryPoint ="#181")]
         public static extern bool RegisterShellHook(IntPtr hwnd, int fInstall);
         [StructLayout(LayoutKind.Sequential)]

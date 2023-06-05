@@ -98,7 +98,6 @@ namespace GyroShell
             MonitorSummon();
             TaskbarFrame.Navigate(typeof(Controls.DefaultTaskbar), null, new SuppressNavigationTransitionInfo());
             SetBackdrop();
-            //Initialize stuff
             ShellDDEInit(true);
           
 
