@@ -62,6 +62,7 @@ namespace GyroShell.Helpers.Win32
         public const int HSHELL_ENDTASK = 10;
         public const int HSHELL_ACCESSIBILITYSTATE = 11;
         public const int HSHELL_APPCOMMAND = 12;
+        public const int FAPPCOMMAND_MASK = 0xF000;
         public const int HSHELL_WINDOWREPLACED = 13;
         public const int HSHELL_WINDOWREPLACING = 14;
         public const int HSHELL_MONITORCHANGED = 16; //A window is moved to a different monitor.

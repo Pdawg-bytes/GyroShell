@@ -427,6 +427,11 @@ namespace GyroShell
                 case HSHELL_ACTIVATESHELLWINDOW:
                     //todo
                     break;
+                case HSHELL_APPCOMMAND:
+                    var appcommand = ((short)((((uint)hwnd) >> 16) & 0xffff)) & ~FAPPCOMMAND_MASK;
+                    Debug.WriteLine("App command: "+ appcommand);
+
+                    break;
                 case 16:
                     return new IntPtr(1);
                     break;
