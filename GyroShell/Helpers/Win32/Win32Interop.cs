@@ -1,4 +1,4 @@
-﻿using ABI.Windows.Foundation;
+using ABI.Windows.Foundation;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -50,6 +50,22 @@ namespace GyroShell.Helpers.Win32
         internal const int WS_EX_TOOLWINDOW = 0x00000080;
         internal const int WS_EX_NOACTIVATE = 0x08000000;
 
+        public const int HSHELL_WINDOWCREATED = 1;
+        public const int HSHELL_WINDOWDESTROYED = 2;
+        public const int HSHELL_ACTIVATESHELLWINDOW = 3;
+        public const int HSHELL_WINDOWACTIVATED = 4;
+        public const int HSHELL_GETMINRECT = 5;
+        public const int HSHELL_REDRAW = 6;
+        public const int HSHELL_TASKMAN = 7;
+        public const int HSHELL_LANGUAGE = 8;
+        public const int HSHELL_SYSMENU = 9;
+        public const int HSHELL_ENDTASK = 10;
+        public const int HSHELL_ACCESSIBILITYSTATE = 11;
+        public const int HSHELL_APPCOMMAND = 12;
+        public const int HSHELL_WINDOWREPLACED = 13;
+        public const int HSHELL_WINDOWREPLACING = 14;
+        public const int HSHELL_MONITORCHANGED = 16; //A window is moved to a different monitor.
+
 
 
         public const int GWLP_WNDPROC = -4;
@@ -66,7 +82,6 @@ namespace GyroShell.Helpers.Win32
         internal const int WINEVENT_SKIPOWNPROCESS = 2;
         internal const int EVENT_SYSTEM_FOREGROUND = 3;
         internal const int WH_SHELL = 10;
-        internal const int HSHELL_WINDOWCREATED = 1;
         internal const int GW_OWNER = 4;
         internal const long OBJID_WINDOW = 0x00000000L;
 
@@ -246,6 +261,15 @@ namespace GyroShell.Helpers.Win32
         [DllImport("kernel32.dll")]
         public static extern void GetNativeSystemInfo(out SYSTEM_INFO lpSystemInfo);
 
+        [DllImport("shell32.dll", SetLastError = true, EntryPoint ="#188")]
+        public static extern bool ShellDDEInit(bool init);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool SetShellWindow(IntPtr hwnd);
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool SetProgmanWindow(IntPtr hwnd);
+        [DllImport("shell32.dll", SetLastError = true, EntryPoint ="#181")]
+        public static extern bool RegisterShellHook(IntPtr hwnd, int fInstall);
         [StructLayout(LayoutKind.Sequential)]
         public struct SYSTEM_INFO
         {
