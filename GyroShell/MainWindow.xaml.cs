@@ -406,40 +406,59 @@ namespace GyroShell
             switch (iCode)
             {
                 case HSHELL_GETMINRECT: //HSHELL_GETMINRECT
-                                        //todo
                     return new IntPtr(1);
                     break;
                 case (4 | 0x8000): // HSHELL_RUDEAPPACTIVATED
-                case HSHELL_WINDOWACTIVATED: //HSHELL_WINDOWACTIVATED
-                    Debug.WriteLine("Window activated: "+ GetWindowTitle(hwnd));
+                case HSHELL_WINDOWACTIVATED:
+                    if (indexedWindows.Contains(hwnd))
+                    {
+                        Debug.WriteLine("Foreground window changed: " + GetWindowTitle(hwnd) + " | Handle: " + (hwnd));
+                    }
                     break;
-                case HSHELL_WINDOWREPLACING: //HSHELL_WINDOWREPLACING
+                case HSHELL_WINDOWREPLACING:
                     break;
                 case HSHELL_WINDOWREPLACED:
                     break;
                 case HSHELL_WINDOWCREATED:
-                    Debug.WriteLine("Window created: "+ GetWindowTitle(hwnd));
+                    if (isUserWindow(hwnd))
+                    {
+                        Debug.WriteLine("Window created: " + GetWindowTitle(hwnd) + " | Handle: " + (hwnd));
+                        Debug.WriteLine("isUserWindow? " + isUserWindow(hwnd));
+                        indexedWindows.Add(hwnd);
+                    }
                     break;
                 case HSHELL_WINDOWDESTROYED:
-                    Debug.WriteLine("Window destroyed: " + GetWindowTitle(hwnd));
+                    if (indexedWindows.Contains(hwnd))
+                    {
+                        Debug.WriteLine("Window destroyed: " + GetWindowTitle(hwnd) + " | Handle: " + (hwnd));
+                        indexedWindows.Remove(hwnd);
+                    }
                     break;
                 case HSHELL_ACTIVATESHELLWINDOW:
-                    //todo
                     break;
                 case HSHELL_APPCOMMAND:
-                    var appcommand = ((short)((((uint)hwnd) >> 16) & 0xffff)) & ~FAPPCOMMAND_MASK;
-                    Debug.WriteLine("App command: "+ appcommand);
-
+                    var appCommand = ((short)((((uint)hwnd) >> 16) & ushort.MaxValue)) & ~FAPPCOMMAND_MASK;
+                    //Debug.WriteLine("App command: "+ appCommand);
+                    if(appCommand == 10)
+                    {
+                        Debug.WriteLine("Volume up");
+                    }
+                    else if(appCommand == 9)
+                    {
+                        Debug.WriteLine("Volume down");
+                    }
+                    else if(appCommand == 8)
+                    {
+                        Debug.WriteLine("Volume muted");
+                    }
                     break;
                 case 16:
                     return new IntPtr(1);
                     break;
                 default:
-                    Debug.WriteLine("unknown shell hook code: " + iCode+" with window "+GetWindowTitle(hwnd));
+                    Debug.WriteLine("Unknown shhook code: " + iCode + " with window: " + GetWindowTitle(hwnd));
                     break;
             }
-
-
             return IntPtr.Zero;
         }
 
