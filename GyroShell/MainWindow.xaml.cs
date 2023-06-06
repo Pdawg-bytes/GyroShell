@@ -98,6 +98,8 @@ namespace GyroShell
             MonitorSummon();
             TaskbarFrame.Navigate(typeof(Controls.DefaultTaskbar), null, new SuppressNavigationTransitionInfo());
             SetBackdrop();
+            ShellDDEInit(true);
+          
 
             // Show GyroShell when everything is ready
             m_AppWindow.Show();
@@ -352,40 +354,18 @@ namespace GyroShell
             SHAppBarMessage((int)ABMsg.ABM_SETPOS, ref abd);
             MoveWindow(abd.hWnd, abd.rc.left, abd.rc.top, abd.rc.right - abd.rc.left, abd.rc.bottom - abd.rc.top, true);
         }
-#endregion
+        #endregion
 
         #region Callbacks
 
         #region SetWinEventHook Init
-        private static readonly WinEventDelegate callback = WinEventCallback;
-        private static void RegisterWinEventHook()
+        private int WM_ShellHook;
+        private void RegisterWinEventHook()
         {
-            foregroundHook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, callback, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
-            createHook = SetWinEventHook(EVENT_OBJECT_CREATE, EVENT_OBJECT_CREATE, IntPtr.Zero, callback, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
-            // TODO: start implementing window destroy/creation hooks
+            WM_ShellHook = RegisterWindowMessage("SHELLHOOK");
+            RegisterShellHook(hWnd, 3);
         }
         #endregion
-
-        // SetWinEventHook Callback
-        internal static void WinEventCallback(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
-        {
-            name = GetWindowTitle(hwnd);
-            if (eventType == EVENT_OBJECT_CREATE && isUserWindow(hwnd))
-            {
-                indexedWindows.Add(hwnd);
-                Debug.WriteLine($"Window added: {name}, HWND: {hwnd}\n-------------------------------");
-            }
-
-
-            if (eventType == EVENT_SYSTEM_FOREGROUND)
-            {
-                if (name.Length > 0 && name != "Task Switching")
-                {
-                    Debug.WriteLine("Foreground window changed: " + name);
-                    Debug.WriteLine("-------------------------------------");
-                }
-            }
-        }
 
         #region WndProc Init
         private static WndProcDelegate _currDelegate = null;
@@ -413,9 +393,54 @@ namespace GyroShell
             Debug.WriteLine("MESSAGE: " + (WM_CODE)message);
             Debug.WriteLine(wParam);
             Debug.WriteLine(lParam);*/
-            
+            if (message == WM_ShellHook)
+            {
+                return HandleShellHook(wParam.ToInt32(), lParam);
+            }
 
             return CallWindowProc(_oldWndProc, hwnd, message, wParam, lParam);
+        }
+
+        private IntPtr HandleShellHook(int iCode, IntPtr hwnd)
+        {
+            switch (iCode)
+            {
+                case HSHELL_GETMINRECT: //HSHELL_GETMINRECT
+                                        //todo
+                    return new IntPtr(1);
+                    break;
+                case (4 | 0x8000): // HSHELL_RUDEAPPACTIVATED
+                case HSHELL_WINDOWACTIVATED: //HSHELL_WINDOWACTIVATED
+                    Debug.WriteLine("Window activated: "+ GetWindowTitle(hwnd));
+                    break;
+                case HSHELL_WINDOWREPLACING: //HSHELL_WINDOWREPLACING
+                    break;
+                case HSHELL_WINDOWREPLACED:
+                    break;
+                case HSHELL_WINDOWCREATED:
+                    Debug.WriteLine("Window created: "+ GetWindowTitle(hwnd));
+                    break;
+                case HSHELL_WINDOWDESTROYED:
+                    Debug.WriteLine("Window destroyed: " + GetWindowTitle(hwnd));
+                    break;
+                case HSHELL_ACTIVATESHELLWINDOW:
+                    //todo
+                    break;
+                case HSHELL_APPCOMMAND:
+                    var appcommand = ((short)((((uint)hwnd) >> 16) & 0xffff)) & ~FAPPCOMMAND_MASK;
+                    Debug.WriteLine("App command: "+ appcommand);
+
+                    break;
+                case 16:
+                    return new IntPtr(1);
+                    break;
+                default:
+                    Debug.WriteLine("unknown shell hook code: " + iCode+" with window "+GetWindowTitle(hwnd));
+                    break;
+            }
+
+
+            return IntPtr.Zero;
         }
 
         #endregion
