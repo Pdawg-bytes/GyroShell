@@ -99,7 +99,6 @@ namespace GyroShell
             TaskbarFrame.Navigate(typeof(Controls.DefaultTaskbar), null, new SuppressNavigationTransitionInfo());
             SetBackdrop();
             ShellDDEInit(true);
-          
 
             // Show GyroShell when everything is ready
             m_AppWindow.Show();
@@ -409,15 +408,9 @@ namespace GyroShell
                     return new IntPtr(1);
                     break;
                 case (4 | 0x8000): // HSHELL_RUDEAPPACTIVATED
+                    break;
                 case HSHELL_WINDOWACTIVATED:
-                    if (indexedWindows.Contains(hwnd))
-                    {
-                        Debug.WriteLine("Foreground window changed: " + GetWindowTitle(hwnd) + " | Handle: " + (hwnd));
-                    }
-                    break;
-                case HSHELL_WINDOWREPLACING:
-                    break;
-                case HSHELL_WINDOWREPLACED:
+                    Debug.WriteLine("Foreground window changed: " + GetWindowTitle(hwnd) + " | Handle: " + (hwnd));
                     break;
                 case HSHELL_WINDOWCREATED:
                     if (isUserWindow(hwnd))
@@ -434,11 +427,9 @@ namespace GyroShell
                         indexedWindows.Remove(hwnd);
                     }
                     break;
-                case HSHELL_ACTIVATESHELLWINDOW:
-                    break;
                 case HSHELL_APPCOMMAND:
                     var appCommand = ((short)((((uint)hwnd) >> 16) & ushort.MaxValue)) & ~FAPPCOMMAND_MASK;
-                    //Debug.WriteLine("App command: "+ appCommand);
+                    Debug.WriteLine("App command: "+ appCommand);
                     if(appCommand == 10)
                     {
                         Debug.WriteLine("Volume up");
@@ -454,6 +445,15 @@ namespace GyroShell
                     break;
                 case 16:
                     return new IntPtr(1);
+                    break;
+                case HSHELL_REDRAW:
+                    Debug.WriteLine("Window redraw: " + GetWindowTitle(hwnd) + " | Handle: " + (hwnd));
+                    break;
+                case HSHELL_FULLSCREEN_ENABLED:
+                    m_AppWindow.Hide();
+                    break;
+                case HSHELL_FULLSCREEN_DISABLED:
+                    m_AppWindow.Show();
                     break;
                 default:
                     Debug.WriteLine("Unknown shhook code: " + iCode + " with window: " + GetWindowTitle(hwnd));

@@ -27,51 +27,53 @@ namespace GyroShell.Helpers.Win32
             public int bottom;
         }
 
-        public const int SW_SHOW = 5;
-        public const int SW_HIDE = 0;
+        internal const int SW_SHOW = 5;
+        internal const int SW_HIDE = 0;
 
-        public const int SPI_SETWORKAREA = 0x002F;
-        public const int SPI_GETWORKAREA = 0x0030;
+        internal const int SPI_SETWORKAREA = 0x002F;
+        internal const int SPI_GETWORKAREA = 0x0030;
 
-        public const int SPIF_UPDATEINIFILE = 1;
+        internal const int SPIF_UPDATEINIFILE = 1;
 
-        public const int GWL_EXSTYLE = -20;
-        public const int GWL_STYLE = -16;
+        internal const int GWL_EXSTYLE = -20;
+        internal const int GWL_STYLE = -16;
 
-        public const int DWMWA_CLOAKED = 14;
+        internal const int DWMWA_CLOAKED = 14;
 
-        public const int WS_CHILD = 0x40000000;
+        internal const int WS_CHILD = 0x40000000;
 
-        public const uint GA_PARENT = 1;
-        public const uint GA_ROOT = 2;
-        public const uint GA_ROOTOWNER = 3;
+        internal const uint GA_PARENT = 1;
+        internal const uint GA_ROOT = 2;
+        internal const uint GA_ROOTOWNER = 3;
 
-        public const int WS_EX_APPWINDOW = 0x00040000;
+        internal const int WS_EX_APPWINDOW = 0x00040000;
         internal const int WS_EX_TOOLWINDOW = 0x00000080;
         internal const int WS_EX_NOACTIVATE = 0x08000000;
 
-        public const int HSHELL_WINDOWCREATED = 1;
-        public const int HSHELL_WINDOWDESTROYED = 2;
-        public const int HSHELL_ACTIVATESHELLWINDOW = 3;
-        public const int HSHELL_WINDOWACTIVATED = 4;
-        public const int HSHELL_GETMINRECT = 5;
-        public const int HSHELL_REDRAW = 6;
-        public const int HSHELL_TASKMAN = 7;
-        public const int HSHELL_LANGUAGE = 8;
-        public const int HSHELL_SYSMENU = 9;
-        public const int HSHELL_ENDTASK = 10;
-        public const int HSHELL_ACCESSIBILITYSTATE = 11;
-        public const int HSHELL_APPCOMMAND = 12;
-        public const int FAPPCOMMAND_MASK = 0xF000;
-        public const int HSHELL_WINDOWREPLACED = 13;
-        public const int HSHELL_WINDOWREPLACING = 14;
-        public const int HSHELL_MONITORCHANGED = 16; //A window is moved to a different monitor.
+        internal const int HSHELL_WINDOWCREATED = 1;
+        internal const int HSHELL_WINDOWDESTROYED = 2;
+        internal const int HSHELL_ACTIVATESHELLWINDOW = 3;
+        internal const int HSHELL_WINDOWACTIVATED = 4;
+        internal const int HSHELL_GETMINRECT = 5;
+        internal const int HSHELL_REDRAW = 6;
+        internal const int HSHELL_TASKMAN = 7;
+        internal const int HSHELL_LANGUAGE = 8;
+        internal const int HSHELL_SYSMENU = 9;
+        internal const int HSHELL_ENDTASK = 10;
+        internal const int HSHELL_ACCESSIBILITYSTATE = 11;
+        internal const int HSHELL_APPCOMMAND = 12;
+        internal const int FAPPCOMMAND_MASK = 0xF000;
+        internal const int HSHELL_WINDOWREPLACED = 13;
+        internal const int HSHELL_WINDOWREPLACING = 14;
+        internal const int HSHELL_MONITORCHANGED = 16; //A window is moved to a different monitor.
 
+        // Unofficial HSHELL codes
+        internal const int HSHELL_FULLSCREEN_ENABLED = 53;
+        internal const int HSHELL_FULLSCREEN_DISABLED = 54;
 
-
-        public const int GWLP_WNDPROC = -4;
-        public const int SM_CXSCREEN = 0;
-        public const int SM_CYSCREEN = 1;
+        internal const int GWLP_WNDPROC = -4;
+        internal const int SM_CXSCREEN = 0;
+        internal const int SM_CYSCREEN = 1;
 
         internal const uint WINEVENT_OUTOFCONTEXT = 0x0000;
         internal const uint WINEVENT_SKIPOWNTHREAD = 0x0001;
