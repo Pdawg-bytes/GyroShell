@@ -19,6 +19,7 @@ using static GyroShell.Helpers.Win32.ScreenValues;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Text;
 
 namespace GyroShell
 {
@@ -416,7 +417,6 @@ namespace GyroShell
                     if (isUserWindow(hwnd))
                     {
                         Debug.WriteLine("Window created: " + GetWindowTitle(hwnd) + " | Handle: " + (hwnd));
-                        Debug.WriteLine("isUserWindow? " + isUserWindow(hwnd));
                         indexedWindows.Add(hwnd);
                     }
                     break;
@@ -430,15 +430,7 @@ namespace GyroShell
                 case HSHELL_APPCOMMAND:
                     var appCommand = ((short)((((uint)hwnd) >> 16) & ushort.MaxValue)) & ~FAPPCOMMAND_MASK;
                     Debug.WriteLine("App command: "+ appCommand);
-                    if(appCommand == 10)
-                    {
-                        Debug.WriteLine("Volume up");
-                    }
-                    else if(appCommand == 9)
-                    {
-                        Debug.WriteLine("Volume down");
-                    }
-                    else if(appCommand == 8)
+                    if(appCommand == 8)
                     {
                         Debug.WriteLine("Volume muted");
                     }
@@ -450,10 +442,10 @@ namespace GyroShell
                     Debug.WriteLine("Window redraw: " + GetWindowTitle(hwnd) + " | Handle: " + (hwnd));
                     break;
                 case HSHELL_FULLSCREEN_ENABLED:
-                    m_AppWindow.Hide();
+                    //m_AppWindow.Hide();
                     break;
                 case HSHELL_FULLSCREEN_DISABLED:
-                    m_AppWindow.Show();
+                    //m_AppWindow.Show();
                     break;
                 default:
                     Debug.WriteLine("Unknown shhook code: " + iCode + " with window: " + GetWindowTitle(hwnd));

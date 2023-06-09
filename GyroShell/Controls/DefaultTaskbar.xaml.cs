@@ -26,13 +26,17 @@ using Windows.Networking.Connectivity;
 using CoreAudio;
 using Microsoft.VisualBasic;
 using System.Xml.Linq;
+using Windows.Media.PlayTo;
 
 namespace GyroShell.Controls
 {
     public sealed partial class DefaultTaskbar : Page
     {
         public static int SettingInstances = 0;
+        private int currentVolume;
+
         bool reportRequested = false;
+
         public static string timeType = "t";
 
         public ObservableCollection<IconModel> TbIconCollection;
@@ -166,7 +170,42 @@ namespace GyroShell.Controls
         #region Sound
         private void AudioEndpointVolume_OnVolumeNotification(AudioVolumeNotificationData data)
         {
-            Debug.WriteLine(Math.Ceiling(AudioBackend.audioDevice.AudioEndpointVolume.MasterVolumeLevelScalar * 100));
+            currentVolume = (int)Math.Ceiling(AudioBackend.audioDevice.AudioEndpointVolume.MasterVolumeLevelScalar * 100) - 1;
+            if (currentVolume == 0 || currentVolume == -1)
+            {
+                DispatcherQueue.TryEnqueue((Microsoft.UI.Dispatching.DispatcherQueuePriority)CoreDispatcherPriority.Normal, () =>
+                {
+                    SndStatus.Text = "\uE992";
+                });
+            }
+            else if (currentVolume <= 33)
+            {
+                DispatcherQueue.TryEnqueue((Microsoft.UI.Dispatching.DispatcherQueuePriority)CoreDispatcherPriority.Normal, () =>
+                {
+                    SndStatus.Text = "\uE993";
+                });
+            }
+            else if (currentVolume <= 66)
+            {
+                DispatcherQueue.TryEnqueue((Microsoft.UI.Dispatching.DispatcherQueuePriority)CoreDispatcherPriority.Normal, () =>
+                {
+                    SndStatus.Text = "\uE994";
+                });
+            }
+            else if (currentVolume <= 100)
+            {
+                DispatcherQueue.TryEnqueue((Microsoft.UI.Dispatching.DispatcherQueuePriority)CoreDispatcherPriority.Normal, () =>
+                {
+                    SndStatus.Text = "\uE995";
+                });
+            }
+            else
+            {
+                DispatcherQueue.TryEnqueue((Microsoft.UI.Dispatching.DispatcherQueuePriority)CoreDispatcherPriority.Normal, () =>
+                {
+                    SndStatus.Text = "\uEA85";
+                });
+            }
         }
         #endregion
 
