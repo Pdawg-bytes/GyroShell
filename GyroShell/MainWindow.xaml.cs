@@ -30,8 +30,8 @@ namespace GyroShell
         private IntPtr _oldWndProc;
         internal static IntPtr hWnd;
         private static List<IntPtr> indexedWindows = new List<IntPtr>();
-        private static IntPtr foregroundHook;
-        private static IntPtr createHook;
+        private IntPtr foregroundHook;
+        private IntPtr cloakedHook;
 
         internal static int uCallBack;
 
@@ -47,6 +47,8 @@ namespace GyroShell
         private float finalTO;
 
         private static string name;
+
+        private readonly WinEventDelegate callback;
 
         public MainWindow()
         {
@@ -94,6 +96,7 @@ namespace GyroShell
 
             // Init stuff
             RegisterBar();
+            callback = WinEventCallback;
             RegisterWinEventHook();
             _oldWndProc = SetWndProc(WindowProcess);
             MonitorSummon();
@@ -110,7 +113,7 @@ namespace GyroShell
         {
             TaskbarManager.ShowTaskbar();
             UnhookWinEvent(foregroundHook);
-            UnhookWinEvent(createHook);
+            UnhookWinEvent(cloakedHook);
         }
 
         private OverlappedPresenter GetAppWindowAndPresenter()
@@ -360,10 +363,14 @@ namespace GyroShell
 
         #region SetWinEventHook Init
         private int WM_ShellHook;
+
         private void RegisterWinEventHook()
         {
             WM_ShellHook = RegisterWindowMessage("SHELLHOOK");
             RegisterShellHook(hWnd, 3);
+
+            foregroundHook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, callback, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
+            cloakedHook = SetWinEventHook(EVENT_OBJECT_CLOAKED, EVENT_OBJECT_UNCLOAKED, IntPtr.Zero, callback, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
         }
         #endregion
 
@@ -401,6 +408,7 @@ namespace GyroShell
             return CallWindowProc(_oldWndProc, hwnd, message, wParam, lParam);
         }
 
+        // WM_ShellHook Callback
         private IntPtr HandleShellHook(int iCode, IntPtr hwnd)
         {
             switch (iCode)
@@ -411,7 +419,6 @@ namespace GyroShell
                 case (4 | 0x8000): // HSHELL_RUDEAPPACTIVATED
                     break;
                 case HSHELL_WINDOWACTIVATED:
-                    Debug.WriteLine("Foreground window changed: " + GetWindowTitle(hwnd) + " | Handle: " + (hwnd));
                     break;
                 case HSHELL_WINDOWCREATED:
                     if (isUserWindow(hwnd))
@@ -439,7 +446,7 @@ namespace GyroShell
                     return new IntPtr(1);
                     break;
                 case HSHELL_REDRAW:
-                    Debug.WriteLine("Window redraw: " + GetWindowTitle(hwnd) + " | Handle: " + (hwnd));
+                    //Debug.WriteLine("Window redraw: " + GetWindowTitle(hwnd) + " | Handle: " + (hwnd));
                     break;
                 case HSHELL_FULLSCREEN_ENABLED:
                     //m_AppWindow.Hide();
@@ -454,6 +461,28 @@ namespace GyroShell
             return IntPtr.Zero;
         }
 
+        // WinEvent Callbacks
+        private void WinEventCallback(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
+        {
+            if (indexedWindows.Contains(hwnd))
+            {
+                switch (eventType)
+                {
+                    case EVENT_OBJECT_NAMECHANGED:
+                        Debug.WriteLine("Window namechange: " + GetWindowTitle(hwnd) + " | Handle: " + hwnd);
+                        break;
+                    case EVENT_SYSTEM_FOREGROUND:
+                        Debug.WriteLine("Foreground changed: " + GetWindowTitle(hwnd) + " | Handle: " + hwnd);
+                        break;
+                    case EVENT_OBJECT_CLOAKED:
+                        Debug.WriteLine("Window cloaked: " + GetWindowTitle(hwnd) + " | Handle: " + hwnd);
+                        break;
+                    case EVENT_OBJECT_UNCLOAKED:
+                        Debug.WriteLine("Window uncloaked: " + GetWindowTitle(hwnd) + " | Handle: " + hwnd);
+                        break;
+                }
+            }
+        }
         #endregion
     }
 }

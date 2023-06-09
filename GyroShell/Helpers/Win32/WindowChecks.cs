@@ -20,13 +20,15 @@ namespace GyroShell.Helpers.Win32
         private static StringBuilder className = new StringBuilder(256);
 
         private static int attributeSize = Marshal.SizeOf(typeof(int));
+        private static int attributeValue = 0;
+        private static int hr;
 
         internal static bool isUserWindow(IntPtr hWnd)
         {
             // Debug code, each is declared so I can find value on breakpoint.
             /*isWindow = IsWindow(hWnd);
             isWindowVisible = IsWindowVisible(hWnd);
-            cloakedCheck = isCloaked(hWnd);
+            cloakedCheck = !isCloaked(hWnd);
             gaCheck = GetAncestor(hWnd, (GetAncestorFlags)GA_ROOT) == hWnd;
             gwCheck = GetWindow(hWnd, (GetWindowType)GW_OWNER) == IntPtr.Zero;
             flagCheckT = flagCheck(hWnd);
@@ -35,7 +37,7 @@ namespace GyroShell.Helpers.Win32
             if(isWindow && isWindowVisible && cloakedCheck || classCheck && gaCheck && gwCheck && flagCheckT) { return true; }
             else { return false; }*/
 
-            if (IsWindow(hWnd) && IsWindowVisible(hWnd) && isCloaked(hWnd) && GetAncestor(hWnd, (GetAncestorFlags)GA_ROOT) == hWnd && GetWindow(hWnd, (GetWindowType)GW_OWNER) == IntPtr.Zero && flagCheck(hWnd))
+            if (IsWindow(hWnd) && IsWindowVisible(hWnd) && !isCloaked(hWnd) && GetAncestor(hWnd, (GetAncestorFlags)GA_ROOT) == hWnd && GetWindow(hWnd, (GetWindowType)GW_OWNER) == IntPtr.Zero && flagCheck(hWnd))
             {
                 return true;
             }
@@ -53,15 +55,21 @@ namespace GyroShell.Helpers.Win32
 
         private static bool isCloaked(IntPtr hWnd)
         {
-            int attributeValue;
-            DwmGetWindowAttribute(hWnd, (int)(DWMWINDOWATTRIBUTE)DWMWA_CLOAKED, out attributeValue, attributeSize);
-
-            if (attributeValue == 0)
+            hr = DwmGetWindowAttribute(hWnd, (int)(DWMWINDOWATTRIBUTE)DWMWA_CLOAKED, out attributeValue, attributeSize);
+            if (hr >= 0)
             {
-                return true;
+                if (attributeValue == 0)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
             }
             else
             {
+                Debug.WriteLine("WindowChecks: [-] Failed to get cloaked attribute.");
                 return false;
             }
         }

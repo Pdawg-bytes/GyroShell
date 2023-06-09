@@ -78,6 +78,8 @@ namespace GyroShell.Helpers.Win32
         internal const uint WINEVENT_OUTOFCONTEXT = 0x0000;
         internal const uint WINEVENT_SKIPOWNTHREAD = 0x0001;
         internal const uint EVENT_SYSTEM_DESKTOPSWITCH = 0x0020;
+        internal const uint EVENT_OBJECT_CLOAKED = 0x8017;
+        internal const uint EVENT_OBJECT_UNCLOAKED = 0x8018;
         internal const int EVENT_OBJECT_NAMECHANGED = 0x800C;
         internal const int EVENT_OBJECT_DESTROY = 0x8001;
         internal const int EVENT_OBJECT_CREATE = 0x8000;
