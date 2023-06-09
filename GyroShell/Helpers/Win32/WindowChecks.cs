@@ -26,7 +26,7 @@ namespace GyroShell.Helpers.Win32
             // Debug code, each is declared so I can find value on breakpoint.
             /*isWindow = IsWindow(hWnd);
             isWindowVisible = IsWindowVisible(hWnd);
-            cloakedCheck = !isCloaked(hWnd);
+            cloakedCheck = isCloaked(hWnd);
             gaCheck = GetAncestor(hWnd, (GetAncestorFlags)GA_ROOT) == hWnd;
             gwCheck = GetWindow(hWnd, (GetWindowType)GW_OWNER) == IntPtr.Zero;
             flagCheckT = flagCheck(hWnd);
@@ -35,7 +35,7 @@ namespace GyroShell.Helpers.Win32
             if(isWindow && isWindowVisible && cloakedCheck || classCheck && gaCheck && gwCheck && flagCheckT) { return true; }
             else { return false; }*/
 
-            if (IsWindow(hWnd) && IsWindowVisible(hWnd) && !isCloaked(hWnd) && GetAncestor(hWnd, (GetAncestorFlags)GA_ROOT) == hWnd && GetWindow(hWnd, (GetWindowType)GW_OWNER) == IntPtr.Zero && flagCheck(hWnd))
+            if (IsWindow(hWnd) && IsWindowVisible(hWnd) && isCloaked(hWnd) && GetAncestor(hWnd, (GetAncestorFlags)GA_ROOT) == hWnd && GetWindow(hWnd, (GetWindowType)GW_OWNER) == IntPtr.Zero && flagCheck(hWnd))
             {
                 return true;
             }
@@ -58,11 +58,11 @@ namespace GyroShell.Helpers.Win32
 
             if (attributeValue == 0)
             {
-                return false;
+                return true;
             }
             else
             {
-                return true;
+                return false;
             }
         }
 
