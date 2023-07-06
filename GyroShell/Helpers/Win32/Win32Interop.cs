@@ -8,23 +8,23 @@ using System.Text;
 
 namespace GyroShell.Helpers.Win32
 {
-    public static class Win32Interop
+    internal static class Win32Interop
     {
         [StructLayout(LayoutKind.Sequential)]
-        public struct NativeRect
+        internal struct NativeRect
         {
-            public int Left;
-            public int Top;
-            public int Right;
-            public int Bottom;
+            internal int Left;
+            internal int Top;
+            internal int Right;
+            internal int Bottom;
         }
         [StructLayout(LayoutKind.Sequential)]
-        public struct RECT
+        internal struct RECT
         {
-            public int left;
-            public int top;
-            public int right;
-            public int bottom;
+            internal int left;
+            internal int top;
+            internal int right;
+            internal int bottom;
         }
 
         internal const int SW_SHOW = 5;
@@ -91,11 +91,11 @@ namespace GyroShell.Helpers.Win32
         internal const long OBJID_WINDOW = 0x00000000L;
 
 
-        public delegate bool EnumThreadProc(IntPtr hwnd, IntPtr lParam);
+        internal delegate bool EnumThreadProc(IntPtr hwnd, IntPtr lParam);
 
         [DllImport("dwmapi.dll")]
-        public static extern int DwmGetWindowAttribute(IntPtr hwnd, int dwAttribute, out int pvAttribute, int cbAttribute);
-        public enum DwmWindowAttribute : int
+        internal static extern int DwmGetWindowAttribute(IntPtr hwnd, int dwAttribute, out int pvAttribute, int cbAttribute);
+        internal enum DwmWindowAttribute : int
         {
             NCRenderingEnabled = 1,
             NCRenderingPolicy,
@@ -125,8 +125,8 @@ namespace GyroShell.Helpers.Win32
         }
 
         [DllImport("user32.dll", ExactSpelling = true)]
-        public static extern IntPtr GetAncestor(IntPtr hwnd, GetAncestorFlags flags);
-        public enum GetAncestorFlags
+        internal static extern IntPtr GetAncestor(IntPtr hwnd, GetAncestorFlags flags);
+        internal enum GetAncestorFlags
         {
             /// <summary>
             /// Retrieves the parent window. This does not include the owner, as it does with the GetParent function.
@@ -143,8 +143,8 @@ namespace GyroShell.Helpers.Win32
         }
 
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern IntPtr GetWindow(IntPtr hWnd, GetWindowType uCmd);
-        public enum GetWindowType : uint
+        internal static extern IntPtr GetWindow(IntPtr hWnd, GetWindowType uCmd);
+        internal enum GetWindowType : uint
         {
             GW_HWNDFIRST = 0,
             GW_HWNDLAST = 1,
@@ -154,108 +154,111 @@ namespace GyroShell.Helpers.Win32
             GW_CHILD = 5,
             GW_ENABLEDPOPUP = 6
         }
-        
+
+        [DllImport("user32.dll")]
+        internal static extern bool EnumWindows(EnumWindowsCallback lpEnumFunc, IntPtr lParam);
+        internal delegate bool EnumWindowsCallback(IntPtr hwnd, IntPtr lParam);
 
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        public static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
+        internal static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool IsWindowVisible(IntPtr hWnd);
+        internal static extern bool IsWindowVisible(IntPtr hWnd);
 
-        public delegate IntPtr ShellProc(int code, IntPtr wParam, IntPtr lParam);
-
-        [DllImport("user32.dll")]
-        public static extern IntPtr SetWindowsHookEx(int idHook, ShellProc lpfn, IntPtr hMod, uint dwThreadId);
+        internal delegate IntPtr ShellProc(int code, IntPtr wParam, IntPtr lParam);
 
         [DllImport("user32.dll")]
-        public static extern bool UnhookWindowsHookEx(IntPtr hhk);
+        internal static extern IntPtr SetWindowsHookEx(int idHook, ShellProc lpfn, IntPtr hMod, uint dwThreadId);
 
         [DllImport("user32.dll")]
-        public static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
+        internal static extern bool UnhookWindowsHookEx(IntPtr hhk);
+
+        [DllImport("user32.dll")]
+        internal static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool IsTopLevelWindow(IntPtr hWnd);
+        internal static extern bool IsTopLevelWindow(IntPtr hWnd);
 
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+        internal static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool IsWindow(IntPtr hWnd);
+        internal static extern bool IsWindow(IntPtr hWnd);
 
         [DllImport("user32.dll", EntryPoint = "GetWindowLongPtr")]
-        public static extern IntPtr GetWindowLongPtr(IntPtr hWnd, int nIndex);
+        internal static extern IntPtr GetWindowLongPtr(IntPtr hWnd, int nIndex);
 
-        public delegate void WinEventDelegate(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime);
+        internal delegate void WinEventDelegate(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime);
         [DllImport("user32.dll")]
-        public static extern IntPtr SetWinEventHook(uint eventMin, uint eventMax, IntPtr hmodWinEventProc, WinEventDelegate lpfnWinEventProc, uint idProcess, uint idThread, uint dwFlags);
+        internal static extern IntPtr SetWinEventHook(uint eventMin, uint eventMax, IntPtr hmodWinEventProc, WinEventDelegate lpfnWinEventProc, uint idProcess, uint idThread, uint dwFlags);
 
         [DllImport("user32.dll")]
-        public static extern bool UnhookWinEvent(IntPtr hWinEventHook);
+        internal static extern bool UnhookWinEvent(IntPtr hWinEventHook);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        public static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
+        internal static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
 
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        public static extern int GetWindowTextLength(IntPtr hWnd);
+        internal static extern int GetWindowTextLength(IntPtr hWnd);
 
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern IntPtr FindWindowEx(IntPtr parentHandle, IntPtr childAfter, string className, string windowTitle);
+        internal static extern IntPtr FindWindowEx(IntPtr parentHandle, IntPtr childAfter, string className, string windowTitle);
 
         [DllImport("user32.dll")]
-        public static extern int ShowWindow(IntPtr hwnd, int nCmdShow);
+        internal static extern int ShowWindow(IntPtr hwnd, int nCmdShow);
         [DllImport("Kernel32.dll", SetLastError = true)]
-        public static extern IntPtr OpenEvent(uint dwDesiredAccess, bool bInheritHandle, string lpName);
+        internal static extern IntPtr OpenEvent(uint dwDesiredAccess, bool bInheritHandle, string lpName);
         [DllImport("kernel32.dll")]
-        public static extern bool SetEvent(IntPtr hEvent);
+        internal static extern bool SetEvent(IntPtr hEvent);
         [DllImport("kernel32", SetLastError = true)]
-        public static extern bool CloseHandle(IntPtr hObject);
+        internal static extern bool CloseHandle(IntPtr hObject);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool SystemParametersInfoA(uint uiAction, uint uiParam, ref NativeRect pvParam, uint fWinIni);
+        internal static extern bool SystemParametersInfoA(uint uiAction, uint uiParam, ref NativeRect pvParam, uint fWinIni);
 
-        public delegate bool MonitorEnumProc(IntPtr hMonitor, IntPtr hdcMonitor, ref NativeRect lprcMonitor, IntPtr dwData);
-
-        [DllImport("User32.dll")]
-        public static extern bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip, MonitorEnumProc lpfnEnum, IntPtr dwData);
+        internal delegate bool MonitorEnumProc(IntPtr hMonitor, IntPtr hdcMonitor, ref NativeRect lprcMonitor, IntPtr dwData);
 
         [DllImport("User32.dll")]
-        public static extern int GetSystemMetrics(int nIndex);
+        internal static extern bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip, MonitorEnumProc lpfnEnum, IntPtr dwData);
+
+        [DllImport("User32.dll")]
+        internal static extern int GetSystemMetrics(int nIndex);
 
         [DllImport("user32.dll", EntryPoint = "SetWindowLong")] // 32-bit Eq. of SetWindowLongPtr
-        public static extern IntPtr SetWindowLong(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
+        internal static extern IntPtr SetWindowLong(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
 
         [DllImport("user32.dll", EntryPoint = "SetWindowLongPtr")]
-        public static extern IntPtr SetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
+        internal static extern IntPtr SetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        public static extern IntPtr CallWindowProc(IntPtr lpPrevWndFunc, IntPtr hwnd, uint msg, IntPtr wParam, IntPtr lParam);
+        internal static extern IntPtr CallWindowProc(IntPtr lpPrevWndFunc, IntPtr hwnd, uint msg, IntPtr wParam, IntPtr lParam);
 
         [DllImport("user32.dll")]
-        public static extern int SendMessage(IntPtr hWnd, int wMsg, IntPtr wParam, IntPtr lParam);
+        internal static extern int SendMessage(IntPtr hWnd, int wMsg, IntPtr wParam, IntPtr lParam);
 
         [DllImport("user32.dll")]
-        public static extern IntPtr SendMessageW(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
+        internal static extern IntPtr SendMessageW(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
 
         [DllImport("Shell32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        public static extern IntPtr ShellExecute(IntPtr hwnd, string lpOperation, string lpFile, string lpParameters, string lpDirectory, int nShowCmd);
+        internal static extern IntPtr ShellExecute(IntPtr hwnd, string lpOperation, string lpFile, string lpParameters, string lpDirectory, int nShowCmd);
 
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern bool RegisterShellHookWindow(IntPtr hWnd);
+        internal static extern bool RegisterShellHookWindow(IntPtr hWnd);
 
         [DllImport("user32.dll")]
-        public static extern bool DeregisterShellHookWindow(IntPtr hWnd);
+        internal static extern bool DeregisterShellHookWindow(IntPtr hWnd);
 
         // DWM API attrib
-        public enum DWMWINDOWATTRIBUTE
+        internal enum DWMWINDOWATTRIBUTE
         {
             DWMWA_WINDOW_CORNER_PREFERENCE = 33
         }
         // Copied from dwmapi.h
-        public enum DWM_WINDOW_CORNER_PREFERENCE
+        internal enum DWM_WINDOW_CORNER_PREFERENCE
         {
             DWMWCP_DEFAULT = 0,
             DWMWCP_DONOTROUND = 1,
@@ -264,44 +267,44 @@ namespace GyroShell.Helpers.Win32
         }
         // DwmSetWindowAttribute
         [DllImport("dwmapi.dll", CharSet = CharSet.Unicode, PreserveSig = false)]
-        public static extern void DwmSetWindowAttribute(IntPtr hwnd, DWMWINDOWATTRIBUTE attribute, ref DWM_WINDOW_CORNER_PREFERENCE pvAttribute, uint cbAttribute);
+        internal static extern void DwmSetWindowAttribute(IntPtr hwnd, DWMWINDOWATTRIBUTE attribute, ref DWM_WINDOW_CORNER_PREFERENCE pvAttribute, uint cbAttribute);
 
         // Proc info API for unpackaged
         [DllImport("kernel32.dll")]
-        public static extern void GetNativeSystemInfo(out SYSTEM_INFO lpSystemInfo);
+        internal static extern void GetNativeSystemInfo(out SYSTEM_INFO lpSystemInfo);
 
         [DllImport("shell32.dll", SetLastError = true, EntryPoint ="#188")]
-        public static extern bool ShellDDEInit(bool init);
+        internal static extern bool ShellDDEInit(bool init);
         [DllImport("shell32.dll", SetLastError = true, EntryPoint ="#181")]
-        public static extern bool RegisterShellHook(IntPtr hwnd, int fInstall);
+        internal static extern bool RegisterShellHook(IntPtr hwnd, int fInstall);
         [StructLayout(LayoutKind.Sequential)]
-        public struct SYSTEM_INFO
+        internal struct SYSTEM_INFO
         {
-            public ushort wProcessorArchitecture;
-            public ushort wReserved;
-            public uint dwPageSize;
-            public IntPtr lpMinimumApplicationAddress;
-            public IntPtr lpMaximumApplicationAddress;
-            public IntPtr dwActiveProcessorMask;
-            public uint dwNumberOfProcessors;
-            public uint dwProcessorType;
-            public uint dwAllocationGranularity;
-            public ushort wProcessorLevel;
-            public ushort wProcessorRevision;
+            internal ushort wProcessorArchitecture;
+            internal ushort wReserved;
+            internal uint dwPageSize;
+            internal IntPtr lpMinimumApplicationAddress;
+            internal IntPtr lpMaximumApplicationAddress;
+            internal IntPtr dwActiveProcessorMask;
+            internal uint dwNumberOfProcessors;
+            internal uint dwProcessorType;
+            internal uint dwAllocationGranularity;
+            internal ushort wProcessorLevel;
+            internal ushort wProcessorRevision;
         }
 
         // APPBAR code
         [StructLayout(LayoutKind.Sequential)]
-        public struct APPBARDATA
+        internal struct APPBARDATA
         {
-            public int cbSize;
-            public IntPtr hWnd;
-            public int uCallbackMessage;
-            public int uEdge;
-            public RECT rc;
-            public IntPtr lParam;
+            internal int cbSize;
+            internal IntPtr hWnd;
+            internal int uCallbackMessage;
+            internal int uEdge;
+            internal RECT rc;
+            internal IntPtr lParam;
         }
-        public enum ABMsg : int
+        internal enum ABMsg : int
         {
             ABM_NEW = 0,
             ABM_REMOVE,
@@ -315,14 +318,14 @@ namespace GyroShell.Helpers.Win32
             ABM_WINDOWPOSCHANGED,
             ABM_SETSTATE
         }
-        public enum ABNotify : int
+        internal enum ABNotify : int
         {
             ABN_STATECHANGE = 0,
             ABN_POSCHANGED,
             ABN_FULLSCREENAPP,
             ABN_WINDOWARRANGE
         }
-        public enum ABEdge : int
+        internal enum ABEdge : int
         {
             ABE_LEFT = 0,
             ABE_TOP,
@@ -330,29 +333,29 @@ namespace GyroShell.Helpers.Win32
             ABE_BOTTOM
         }
 
-        public enum ABState
+        internal enum ABState
         {
             ABS_TOP = 0x00,
             ABS_AUTOHIDE = 0x01
         }
 
-        public delegate IntPtr WndProcDelegate(IntPtr hwnd, uint message, IntPtr wParam, IntPtr lParam);
+        internal delegate IntPtr WndProcDelegate(IntPtr hwnd, uint message, IntPtr wParam, IntPtr lParam);
 
         [DllImport("SHELL32", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint SHAppBarMessage(int dwMessage, ref APPBARDATA pData);
+        internal static extern uint SHAppBarMessage(int dwMessage, ref APPBARDATA pData);
 
         [DllImport("user32.dll", ExactSpelling = true, CharSet = CharSet.Auto)]
-        public static extern bool MoveWindow(IntPtr hWnd, int x, int y, int cx, int cy, bool repaint);
+        internal static extern bool MoveWindow(IntPtr hWnd, int x, int y, int cx, int cy, bool repaint);
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        public static extern int RegisterWindowMessage(string msg);
+        internal static extern int RegisterWindowMessage(string msg);
 
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
+        internal static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
 
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
+        internal static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
 
-        public enum SWPFlags
+        internal enum SWPFlags
         {
             SWP_NOSIZE = 0x0001,
             SWP_NOMOVE = 0x0002,
@@ -370,7 +373,7 @@ namespace GyroShell.Helpers.Win32
             SWP_DEFERERASE = 0x2000,
             SWP_ASYNCWINDOWPOS = 0x4000
         }
-        public enum WindowZOrder
+        internal enum WindowZOrder
         {
             HWND_TOP = 0,
             HWND_BOTTOM = 1,

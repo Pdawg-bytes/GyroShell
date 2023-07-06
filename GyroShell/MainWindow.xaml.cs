@@ -20,18 +20,18 @@ using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Text;
+using Windows.ApplicationModel.VoiceCommands;
+using Windows.ApplicationModel.Activation;
 
 namespace GyroShell
 {
-    public sealed partial class MainWindow : Window
+    internal sealed partial class MainWindow : Window
     {
         AppWindow m_AppWindow;
 
         private IntPtr _oldWndProc;
         internal static IntPtr hWnd;
         private static List<IntPtr> indexedWindows = new List<IntPtr>();
-        private IntPtr foregroundHook;
-        private IntPtr cloakedHook;
 
         internal static int uCallBack;
 
@@ -50,7 +50,7 @@ namespace GyroShell
 
         private readonly WinEventDelegate callback;
 
-        public MainWindow()
+        internal MainWindow()
         {
             this.InitializeComponent();
             AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
@@ -97,6 +97,7 @@ namespace GyroShell
             // Init stuff
             RegisterBar();
             callback = WinEventCallback;
+            GetCurrentWindows();
             RegisterWinEventHook();
             _oldWndProc = SetWndProc(WindowProcess);
             MonitorSummon();
@@ -114,6 +115,12 @@ namespace GyroShell
             TaskbarManager.ShowTaskbar();
             UnhookWinEvent(foregroundHook);
             UnhookWinEvent(cloakedHook);
+            UnhookWinEvent(nameChangeHook);
+        }
+
+        private void GetCurrentWindows()
+        {
+            EnumWindows(EnumWindowsCallbackMethod, IntPtr.Zero);
         }
 
         private OverlappedPresenter GetAppWindowAndPresenter()
@@ -132,7 +139,7 @@ namespace GyroShell
             return AppWindow.GetFromWindowId(WndIdApp);
         }
 
-        public void MonitorSummon()
+        internal void MonitorSummon()
         {
 
             bool MonitorEnumProc(IntPtr hMonitor, IntPtr hdcMonitor, ref NativeRect lprcMonitor, IntPtr dwData)
@@ -363,6 +370,10 @@ namespace GyroShell
 
         #region SetWinEventHook Init
         private int WM_ShellHook;
+        private IntPtr foregroundHook;
+        private IntPtr cloakedHook;
+        private IntPtr nameChangeHook;
+        private IntPtr cdWindowHook;
 
         private void RegisterWinEventHook()
         {
@@ -371,12 +382,14 @@ namespace GyroShell
 
             foregroundHook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, callback, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
             cloakedHook = SetWinEventHook(EVENT_OBJECT_CLOAKED, EVENT_OBJECT_UNCLOAKED, IntPtr.Zero, callback, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
+            nameChangeHook = SetWinEventHook(EVENT_OBJECT_NAMECHANGED, EVENT_OBJECT_NAMECHANGED, IntPtr.Zero, callback, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
+            cdWindowHook = SetWinEventHook(EVENT_OBJECT_CREATE, EVENT_OBJECT_DESTROY, IntPtr.Zero, callback, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
         }
         #endregion
 
         #region WndProc Init
         private static WndProcDelegate _currDelegate = null;
-        public static IntPtr SetWndProc(WndProcDelegate newProc)
+        internal static IntPtr SetWndProc(WndProcDelegate newProc)
         {
             _currDelegate = newProc;
 
@@ -402,7 +415,7 @@ namespace GyroShell
             Debug.WriteLine(lParam);*/
             if (message == WM_ShellHook)
             {
-                return HandleShellHook(wParam.ToInt32(), lParam);
+                //return HandleShellHook(wParam.ToInt32(), lParam);
             }
 
             return CallWindowProc(_oldWndProc, hwnd, message, wParam, lParam);
@@ -464,6 +477,10 @@ namespace GyroShell
         // WinEvent Callbacks
         private void WinEventCallback(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
         {
+            if (eventType == EVENT_OBJECT_CREATE)
+            {
+                if (isUserWindow(hwnd)) { indexedWindows.Add(hwnd); Debug.WriteLine("Window create: " + GetWindowTitle(hwnd) + " | Handle: " + hwnd); }
+            }
             if (indexedWindows.Contains(hwnd))
             {
                 switch (eventType)
@@ -480,8 +497,17 @@ namespace GyroShell
                     case EVENT_OBJECT_UNCLOAKED:
                         Debug.WriteLine("Window uncloaked: " + GetWindowTitle(hwnd) + " | Handle: " + hwnd);
                         break;
+                    case EVENT_OBJECT_DESTROY:
+                        Debug.WriteLine("Window destroy: " + GetWindowTitle(hwnd) + " | Handle: " + hwnd);
+                        break;
                 }
             }
+        }
+
+        private bool EnumWindowsCallbackMethod(IntPtr hwnd, IntPtr lParam)
+        {
+            if (isUserWindow(hwnd)) { indexedWindows.Add(hwnd); }
+            return true;
         }
         #endregion
     }
