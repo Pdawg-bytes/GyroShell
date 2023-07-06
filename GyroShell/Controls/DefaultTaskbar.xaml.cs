@@ -5,28 +5,24 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using System;
-using Windows.ApplicationModel.Core;
 using Windows.Devices.Power;
 using Windows.UI;
 using System.Diagnostics;
 using Windows.UI.Core;
 using static GyroShell.Helpers.Win32.Win32Interop;
 using static GyroShell.Helpers.Win32.GetWindowName;
+using static GyroShell.Helpers.Win32.WindowChecks;
 using Windows.System;
 using Windows.UI.Notifications.Management;
 using Windows.Foundation.Metadata;
 using System.Collections.Generic;
 using Windows.UI.Notifications;
 using GyroShell.Settings;
-using Microsoft.UI.Windowing;
 using System.Collections.ObjectModel;
-using System.Runtime.InteropServices.ComTypes;
-using System.Linq;
 using Windows.Networking.Connectivity;
 using CoreAudio;
-using Microsoft.VisualBasic;
-using System.Xml.Linq;
-using Windows.Media.PlayTo;
+using System.Threading;
+using System.Linq;
 
 namespace GyroShell.Controls
 {
@@ -40,6 +36,9 @@ namespace GyroShell.Controls
         public static string timeType = "t";
 
         public ObservableCollection<IconModel> TbIconCollection;
+        internal static List<IntPtr> indexedWindows = new List<IntPtr>();
+
+        private readonly WinEventDelegate callback;
 
         public DefaultTaskbar()
         {
@@ -57,6 +56,9 @@ namespace GyroShell.Controls
             Battery.AggregateBattery.ReportUpdated += AggregateBattery_ReportUpdated;
             BarBorder.Background = new SolidColorBrush(Color.FromArgb(255, 66, 63, 74));
 
+            callback = WinEventCallback;
+            GetCurrentWindows();
+            RegisterWinEventHook();
             TaskbarManager.SendWinlogonShowShell();
         }
 
@@ -411,23 +413,85 @@ namespace GyroShell.Controls
         }
         #endregion
 
-        /*int i;
-        private void AddItem_Click(object sender, RoutedEventArgs e)
+        #region Callbacks
+        private void GetCurrentWindows()
         {
-            i++;
-            TbIconCollection.Add(new IconModel { IconName = "test", Id = i });
+            EnumWindows(EnumWindowsCallbackMethod, IntPtr.Zero);
         }
 
-        private void RemItem_Click(object sender, RoutedEventArgs e)
+        private IntPtr foregroundHook;
+        private IntPtr cloakedHook;
+        private IntPtr nameChangeHook;
+        private IntPtr cdWindowHook;
+        private void RegisterWinEventHook()
         {
-            try
+            foregroundHook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, callback, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
+            cloakedHook = SetWinEventHook(EVENT_OBJECT_CLOAKED, EVENT_OBJECT_UNCLOAKED, IntPtr.Zero, callback, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
+            nameChangeHook = SetWinEventHook(EVENT_OBJECT_NAMECHANGED, EVENT_OBJECT_NAMECHANGED, IntPtr.Zero, callback, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
+            cdWindowHook = SetWinEventHook(EVENT_OBJECT_CREATE, EVENT_OBJECT_DESTROY, IntPtr.Zero, callback, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
+        }
+
+        // WinEvent Callbacks
+        private void WinEventCallback(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
+        {
+            string windowName = GetWindowTitle(hwnd);
+            if (!indexedWindows.Contains(hwnd)) 
             {
-                TbIconCollection.Remove(TbIconCollection.Where(param => param.Id == i).Single());
+                if(isUserWindow(hwnd))
+                {
+                    indexedWindows.Add(hwnd);
+                }
             }
-            catch (Exception ex)
+            if (indexedWindows.Contains(hwnd) && hwnd != (IntPtr)2819800)
             {
-                Debug.WriteLine(ex);
+                switch (eventType)
+                {
+                    case EVENT_OBJECT_CREATE:
+                        Thread.Sleep(1);
+                        indexedWindows.Add(hwnd); TbIconCollection.Add(new IconModel { IconName = windowName, Id = hwnd });
+                        break;
+                    case EVENT_OBJECT_NAMECHANGED:
+                        Debug.WriteLine("Window namechange: " + windowName + " | Handle: " + hwnd);
+                        break;
+                    case EVENT_SYSTEM_FOREGROUND:
+                        Debug.WriteLine("Foreground changed: " + windowName + " | Handle: " + hwnd);
+                        try
+                        {
+                            IconModel icon = TbIconCollection.First(param => param.IconName == windowName);
+                            icon.IconName = windowName;
+                        }
+                        catch
+                        {
+                            Debug.WriteLine("[-] WinEventHook: Value not found in rename list.");
+                        }
+                        break;
+                    case EVENT_OBJECT_CLOAKED:
+                        Debug.WriteLine("Window cloaked: " + windowName + " | Handle: " + hwnd);
+                        break;
+                    case EVENT_OBJECT_UNCLOAKED:
+                        Debug.WriteLine("Window uncloaked: " + windowName + " | Handle: " + hwnd);
+                        break;
+                    case EVENT_OBJECT_DESTROY:
+                        Debug.WriteLine("Window destroy: " + windowName + " | Handle: " + hwnd);
+                        indexedWindows.Remove(hwnd);
+                        try
+                        {
+                            TbIconCollection.Remove(TbIconCollection.First(param => param.Id == hwnd));
+                        }
+                        catch
+                        {
+                            Debug.WriteLine("[-] WinEventHook: Value not found in list.");
+                        }
+                        break;
+                }
             }
-        }*/
+        }
+
+        private bool EnumWindowsCallbackMethod(IntPtr hwnd, IntPtr lParam)
+        {
+            if (isUserWindow(hwnd)) { indexedWindows.Add(hwnd); }
+            return true;
+        }
+        #endregion
     }
 }

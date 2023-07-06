@@ -53,7 +53,7 @@
                     <GridView.ItemContainerStyle>
                         <Style TargetType="GridViewItem">
                             <Setter Property="FocusVisualMargin" Value="0" />
-                            <Setter Property="IsHitTestVisible" Value="False"/>
+                            <Setter Property="IsHitTestVisible" Value="True"/>
                         </Style>
                     </GridView.ItemContainerStyle>
                     <GridView.ItemTemplate>
@@ -64,9 +64,9 @@
                                         <EntranceThemeTransition IsStaggeringEnabled="True"/>
                                     </TransitionCollection>
                                 </StackPanel.ChildrenTransitions>
-                                <Border Width="44" Height="48" Margin="0,1,0,0" Background="Transparent" Padding="0" BorderBrush="Transparent" BorderThickness="0" VerticalAlignment="Center" ToolTipService.ToolTip="{Binding IconName}" ToolTipService.Placement="Top">
+                            <Border Width="44" Height="48" Margin="0,1,0,0" Background="Transparent" Padding="0" BorderBrush="Transparent" BorderThickness="0" VerticalAlignment="Center" ToolTipService.Placement="Top" ToolTipService.ToolTip="{Binding IconName}">
                                     <Grid>
-                                        <Image Source="ms-appx:///Assets/StoreLogo.backup.png" Height="26" Width="26" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,5,0,0"/>
+                                        <Image Source="ms-appx:///Assets/StoreLogo.backup.png" Height="26" Width="26" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,5,0,0" />
                                         <Border Width="20" Height="3" CornerRadius="2" Background="MediumPurple" VerticalAlignment="Bottom" Margin="0,0,0,0"/>
                                     </Grid>
                                 </Border>

@@ -50,6 +50,7 @@ namespace GyroShell.Helpers.Win32
         private static bool flagCheck(IntPtr hWnd)
         {
             int exStyle = (int)GetWindowLongPtr(hWnd, GWL_EXSTYLE);
+            //return ((IntPtr)exStyle != IntPtr.Zero && ((exStyle & WS_EX_APPWINDOW) != 0 || ((exStyle & (WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE)) == 0)) && GetPropA(hWnd, "ITaskList_Deleted") == null);
             return (exStyle & WS_EX_APPWINDOW) == WS_EX_APPWINDOW || (exStyle & (WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE)) == 0;
         }
 

@@ -156,6 +156,9 @@ namespace GyroShell.Helpers.Win32
         }
 
         [DllImport("user32.dll")]
+        internal static extern IntPtr GetPropA(IntPtr hwnd, string name);
+
+        [DllImport("user32.dll")]
         internal static extern bool EnumWindows(EnumWindowsCallback lpEnumFunc, IntPtr lParam);
         internal delegate bool EnumWindowsCallback(IntPtr hwnd, IntPtr lParam);
 
