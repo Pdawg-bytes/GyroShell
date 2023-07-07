@@ -53,6 +53,7 @@ namespace GyroShell.Controls
             UpdateNetworkStatus();
             NetworkInformation.NetworkStatusChanged += NetworkInformation_NetworkStatusChanged;
             AudioBackend.audioDevice.AudioEndpointVolume.OnVolumeNotification += new AudioEndpointVolumeNotificationDelegate(AudioEndpointVolume_OnVolumeNotification);
+            AudioCheck();
             Battery.AggregateBattery.ReportUpdated += AggregateBattery_ReportUpdated;
             BarBorder.Background = new SolidColorBrush(Color.FromArgb(255, 66, 63, 74));
 
@@ -171,6 +172,10 @@ namespace GyroShell.Controls
 
         #region Sound
         private void AudioEndpointVolume_OnVolumeNotification(AudioVolumeNotificationData data)
+        {
+            AudioCheck();
+        }
+        private void AudioCheck()
         {
             currentVolume = (int)Math.Ceiling(AudioBackend.audioDevice.AudioEndpointVolume.MasterVolumeLevelScalar * 100) - 1;
             if (currentVolume == 0 || currentVolume == -1)
@@ -440,29 +445,48 @@ namespace GyroShell.Controls
                 if(isUserWindow(hwnd))
                 {
                     indexedWindows.Add(hwnd);
+                    Thread.Sleep(10);
                 }
             }
-            if (indexedWindows.Contains(hwnd) && hwnd != (IntPtr)2819800)
+            if (indexedWindows.Contains(hwnd))
             {
                 switch (eventType)
                 {
                     case EVENT_OBJECT_CREATE:
                         Thread.Sleep(1);
-                        indexedWindows.Add(hwnd); TbIconCollection.Add(new IconModel { IconName = windowName, Id = hwnd });
+                        if (!indexedWindows.Contains(hwnd))
+                        {
+                            indexedWindows.Add(hwnd);
+                            TbIconCollection.Add(new IconModel { IconName = windowName, Id = hwnd });
+                        }
                         break;
                     case EVENT_OBJECT_NAMECHANGED:
                         Debug.WriteLine("Window namechange: " + windowName + " | Handle: " + hwnd);
-                        break;
-                    case EVENT_SYSTEM_FOREGROUND:
-                        Debug.WriteLine("Foreground changed: " + windowName + " | Handle: " + hwnd);
                         try
                         {
-                            IconModel icon = TbIconCollection.First(param => param.IconName == windowName);
+                            IconModel icon = TbIconCollection.First(param => param.Id == hwnd);
                             icon.IconName = windowName;
                         }
                         catch
                         {
+                            if (!TbIconCollection.Any(item => item.Id == hwnd))
+                            {
+                                TbIconCollection.Add(new IconModel { IconName = windowName, Id = hwnd });
+                            }
                             Debug.WriteLine("[-] WinEventHook: Value not found in rename list.");
+                        }
+                        break;
+                    case EVENT_SYSTEM_FOREGROUND:
+                        IconModel targetItem = TbIconCollection.FirstOrDefault(item => item.Id == hwnd);
+                        TbOpenGrid.SelectedItem = targetItem;
+
+                        foreach (var item in TbOpenGrid.Items)
+                        {
+                            var container = TbOpenGrid.ContainerFromItem(item) as GridViewItem;
+                            if (container != null)
+                            {
+                                VisualStateManager.GoToState(container, item == TbOpenGrid.SelectedItem ? "Pressed" : "Normal", true);
+                            }
                         }
                         break;
                     case EVENT_OBJECT_CLOAKED:
@@ -489,9 +513,19 @@ namespace GyroShell.Controls
 
         private bool EnumWindowsCallbackMethod(IntPtr hwnd, IntPtr lParam)
         {
-            if (isUserWindow(hwnd)) { indexedWindows.Add(hwnd); }
+            if (isUserWindow(hwnd)) { indexedWindows.Add(hwnd); TbIconCollection.Add(new IconModel { IconName = GetWindowTitle(hwnd), Id = hwnd }); }
             return true;
         }
         #endregion
+
+        private void Icon_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            IconModel iconModel = ((FrameworkElement)sender).DataContext as IconModel;
+            SetForegroundWindow(iconModel.Id);
+            if (IsIconic(iconModel.Id))
+            {
+                ShowWindow(iconModel.Id, SW_RESTORE);
+            }
+        }
     }
 }

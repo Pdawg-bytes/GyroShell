@@ -36,13 +36,13 @@
                     </ToggleButton.Content>
                 </ToggleButton>
                 <TextBox Height="32" PlaceholderText="Type here to search..." Width="200" Margin="5,0,0,0" CornerRadius="15" BorderThickness="0"/>
-                <Button HorizontalAlignment="Left" Height="40" Width="40" Margin="5,0,10,0" Background="Transparent" BorderBrush="Transparent" x:Name="TaskView" Padding="0">
+                <Button HorizontalAlignment="Left" Height="40" Width="40" Margin="5,0,10,0" Background="Transparent" BorderBrush="Transparent" x:Name="TaskView" Padding="0" ToolTipService.ToolTip="Task View">
                     <Button.Content>
                         <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE7C4;" VerticalAlignment="Center" Margin="0" FontSize="16" x:Name="TaskViewIcon"/>
                     </Button.Content>
                 </Button>
                 <!--<Border x:Name="LeftControlsSeperator" Height="28" VerticalAlignment="Center" Width="1" Opacity="0.3" CornerRadius="1"/>-->
-                <GridView x:Name="TbOpenGrid" ItemsSource="{x:Bind TbIconCollection}" Height="52" Background="Transparent" SelectionMode="Single" Padding="0" VerticalAlignment="Center" Margin="5,0,0,2" CanReorderItems="True" SelectionChanged="TbOpenGrid_SelectionChanged">
+                <GridView ScrollViewer.VerticalScrollMode="Disabled" ScrollViewer.VerticalScrollBarVisibility="Hidden"  x:Name="TbOpenGrid" ItemsSource="{x:Bind TbIconCollection}" Height="48" Background="Transparent" SelectionMode="Single" Padding="0" VerticalAlignment="Center" Margin="5,0,0,0" CanReorderItems="True" SelectionChanged="TbOpenGrid_SelectionChanged">
                     <GridView.ItemContainerTransitions>
                         <TransitionCollection>
                             <ReorderThemeTransition/>
@@ -54,20 +54,55 @@
                         <Style TargetType="GridViewItem">
                             <Setter Property="FocusVisualMargin" Value="0" />
                             <Setter Property="IsHitTestVisible" Value="True"/>
-                        </Style>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="GridViewItem">
+                                    <Grid Background="{TemplateBinding Background}">
+                                        <VisualStateManager.VisualStateGroups>
+                                            <VisualStateGroup x:Name="CommonStates">
+                                                <VisualState x:Name="Normal" />
+                                                <VisualState x:Name="PointerOver">
+                                                    <Storyboard>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="#42525252" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                    </Storyboard>
+                                                </VisualState>
+                                                <VisualState x:Name="Pressed">
+                                                    <Storyboard>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="#42707070" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                    </Storyboard>
+                                                </VisualState>
+                                            </VisualStateGroup>
+                                        </VisualStateManager.VisualStateGroups>
+                                        <ContentPresenter x:Name="ContentPresenter"
+                                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                                              ContentTransitions="{TemplateBinding ContentTransitions}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              Background="Transparent" 
+                                              CornerRadius="4"
+                                              Margin="0,3,0,0"/>
+                                    </Grid>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
                     </GridView.ItemContainerStyle>
                     <GridView.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel Orientation="Horizontal" Padding="0" Background="Transparent" Margin="0">
+                            <StackPanel Orientation="Horizontal" Padding="0" Background="Transparent" Margin="0,0,0,0" Height="43">
                                 <StackPanel.ChildrenTransitions>
                                     <TransitionCollection>
                                         <EntranceThemeTransition IsStaggeringEnabled="True"/>
                                     </TransitionCollection>
                                 </StackPanel.ChildrenTransitions>
-                            <Border Width="44" Height="48" Margin="0,1,0,0" Background="Transparent" Padding="0" BorderBrush="Transparent" BorderThickness="0" VerticalAlignment="Center" ToolTipService.Placement="Top" ToolTipService.ToolTip="{Binding IconName}">
+                                <Border Tapped="Icon_Tapped" Width="43" Height="43" Margin="0,0,0,0" Background="Transparent" Padding="0" BorderBrush="Transparent" BorderThickness="0" VerticalAlignment="Center" ToolTipService.Placement="Top" ToolTipService.ToolTip="{Binding IconName}">
                                     <Grid>
-                                        <Image Source="ms-appx:///Assets/StoreLogo.backup.png" Height="26" Width="26" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,5,0,0" />
-                                        <Border Width="20" Height="3" CornerRadius="2" Background="MediumPurple" VerticalAlignment="Bottom" Margin="0,0,0,0"/>
+                                        <Image Source="ms-appx:///Assets/StoreLogo.backup.png" Height="26" Width="26" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,0" />
+                                        <Border Width="20" Height="3" CornerRadius="2" Background="MediumPurple" VerticalAlignment="Bottom" Margin="0,2,0,0" HorizontalAlignment="Center"/>
                                     </Grid>
                                 </Border>
                             </StackPanel>
@@ -83,12 +118,12 @@
             </StackPanel.ChildrenTransitions>
             <!--<Button Content="Add item" HorizontalAlignment="Right" VerticalAlignment="Center" Height="30" x:Name="AddItem" Click="AddItem_Click"/>
             <Button Content="Remove item" HorizontalAlignment="Right" VerticalAlignment="Center" Height="30" x:Name="RemItem" Click="RemItem_Click"/>-->
-            <Button x:Name="SysTray" HorizontalAlignment="Right" VerticalAlignment="Center" Height="40" Background="Transparent" BorderBrush="Transparent" Margin="4,4,10,4" Click="SysTray_Click" Padding="4">
+            <Button x:Name="SysTray" HorizontalAlignment="Right" VerticalAlignment="Center" Height="40" Background="Transparent" BorderBrush="Transparent" Margin="4,4,10,4" Click="SysTray_Click" Padding="4" ToolTipService.ToolTip="System Tray">
                 <Button.Content>
                     <TextBlock Text="&#xE70E;" FontFamily="Segoe MDL2 Assets" x:Name="TrayIcon" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,2,0,0" FontSize="12"/>
                 </Button.Content>
             </Button>
-            <ToggleButton VerticalAlignment="Center" x:Name="SystemControls" HorizontalAlignment="Right" Height="40" Background="Transparent" BorderBrush="Transparent" Click="SystemControls_Click" Margin="0,0,2,0">
+            <ToggleButton VerticalAlignment="Center" x:Name="SystemControls" HorizontalAlignment="Right" Height="40" Background="Transparent" BorderBrush="Transparent" Click="SystemControls_Click" Margin="0,0,2,0" ToolTipService.ToolTip="Control Center">
                 <ToggleButton.Content>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xEBAA;" VerticalAlignment="Center" Margin="0,4,3,0" FontSize="16" x:Name="BattStatus" Visibility="Visible"/>
@@ -98,7 +133,7 @@
                 </ToggleButton.Content>
             </ToggleButton>
             <!--<Border x:Name="RightClockSeperator" Height="28" VerticalAlignment="Center" Width="1" Opacity="0.3" CornerRadius="1"/>-->
-            <ToggleButton HorizontalAlignment="Right" VerticalAlignment="Center" Height="40" Margin="0,0,5,0" Background="Transparent" BorderBrush="Transparent" x:Name="ActionCenter" Click="ActionCenter_Click">
+            <ToggleButton HorizontalAlignment="Right" VerticalAlignment="Center" Height="40" Margin="0,0,5,0" Background="Transparent" BorderBrush="Transparent" x:Name="ActionCenter" Click="ActionCenter_Click" ToolTipService.ToolTip="Notification Center">
                 <ToggleButton.Content>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock FontSize="14" VerticalAlignment="Center" x:Name="TimeText" Margin="-4,1,0,0"/>

@@ -27,6 +27,7 @@ namespace GyroShell.Helpers.Win32
             internal int bottom;
         }
 
+        internal const int SW_RESTORE = 9;
         internal const int SW_SHOW = 5;
         internal const int SW_HIDE = 0;
 
@@ -154,6 +155,12 @@ namespace GyroShell.Helpers.Win32
             GW_CHILD = 5,
             GW_ENABLEDPOPUP = 6
         }
+
+        [DllImport("user32.dll")]
+        internal static extern bool IsIconic(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        internal static extern bool SetForegroundWindow(IntPtr hWnd);
 
         [DllImport("user32.dll")]
         internal static extern IntPtr GetPropA(IntPtr hwnd, string name);
