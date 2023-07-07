@@ -1,33 +1,30 @@
-﻿using Microsoft.UI.Windowing;
+﻿using GyroShell.Helpers;
 using Microsoft.UI;
-using Microsoft.UI.Xaml;
-using System;
-using AppWindow = Microsoft.UI.Windowing.AppWindow;
-using Windows.Graphics;
-using GyroShell.Helpers;
 using Microsoft.UI.Composition.SystemBackdrops;
-using WinRT;
-using Windows.UI;
+using Microsoft.UI.Windowing;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Animation;
-using System.Threading;
-using static GyroShell.Helpers.Win32.Win32Interop;
-using static GyroShell.Helpers.Win32.WindowMessage;
-using static GyroShell.Helpers.Win32.GetWindowName;
-using static GyroShell.Helpers.Win32.WindowChecks;
-using static GyroShell.Helpers.TaskbarManager;
-using static GyroShell.Helpers.Win32.ScreenValues;
-using System.Runtime.InteropServices;
+using System;
 using System.Diagnostics;
-using System.Collections.Generic;
-using System.Text;
-using Windows.ApplicationModel.VoiceCommands;
-using Windows.ApplicationModel.Activation;
+using System.Runtime.InteropServices;
+using System.Threading;
+using Windows.Graphics;
+using Windows.UI;
+using WinRT;
+
+using static GyroShell.Helpers.TaskbarManager;
+using static GyroShell.Helpers.Win32.GetWindowName;
+using static GyroShell.Helpers.Win32.ScreenValues;
+using static GyroShell.Helpers.Win32.Win32Interop;
+using static GyroShell.Helpers.Win32.WindowChecks;
+
+using AppWindow = Microsoft.UI.Windowing.AppWindow;
 
 namespace GyroShell
 {
     internal sealed partial class MainWindow : Window
     {
-        AppWindow m_AppWindow;
+        private AppWindow m_AppWindow;
 
         private IntPtr _oldWndProc;
         internal static IntPtr hWnd;
@@ -66,9 +63,9 @@ namespace GyroShell
 
             // Resize Window
             hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
-            var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
+            var windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
             var appWindow = AppWindow.GetFromWindowId(windowId);
-            if (GyroShell.Helpers.OSVersion.IsWin11())
+            if (OSVersion.IsWin11())
             {
                 var attribute = DWMWINDOWATTRIBUTE.DWMWA_WINDOW_CORNER_PREFERENCE;
                 var preference = DWM_WINDOW_CORNER_PREFERENCE.DWMWCP_DONOTROUND;
@@ -131,7 +128,6 @@ namespace GyroShell
 
         internal void MonitorSummon()
         {
-
             bool MonitorEnumProc(IntPtr hMonitor, IntPtr hdcMonitor, ref NativeRect lprcMonitor, IntPtr dwData)
             {
                 return true;
@@ -220,6 +216,7 @@ namespace GyroShell
             TrySetAcrylicBackdrop();
             return false;
         }
+
         bool TrySetAcrylicBackdrop()
         {
             if (DesktopAcrylicController.IsSupported())
@@ -370,6 +367,7 @@ namespace GyroShell
 
         #region WndProc Init
         private static WndProcDelegate _currDelegate = null;
+
         internal static IntPtr SetWndProc(WndProcDelegate newProc)
         {
             _currDelegate = newProc;
@@ -409,7 +407,6 @@ namespace GyroShell
             {
                 case HSHELL_GETMINRECT: //HSHELL_GETMINRECT
                     return new IntPtr(1);
-                    break;
                 case (4 | 0x8000): // HSHELL_RUDEAPPACTIVATED
                     break;
                 case HSHELL_WINDOWACTIVATED:
@@ -430,15 +427,14 @@ namespace GyroShell
                     break;
                 case HSHELL_APPCOMMAND:
                     var appCommand = ((short)((((uint)hwnd) >> 16) & ushort.MaxValue)) & ~FAPPCOMMAND_MASK;
-                    Debug.WriteLine("App command: "+ appCommand);
-                    if(appCommand == 8)
+                    Debug.WriteLine("App command: " + appCommand);
+                    if (appCommand == 8)
                     {
                         Debug.WriteLine("Volume muted");
                     }
                     break;
                 case 16:
                     return new IntPtr(1);
-                    break;
                 case HSHELL_REDRAW:
                     //Debug.WriteLine("Window redraw: " + GetWindowTitle(hwnd) + " | Handle: " + (hwnd));
                     break;
