@@ -1,7 +1,4 @@
-﻿using Microsoft.UI.Xaml;
-using System;
-using System.Runtime.InteropServices;
-using static GyroShell.MainWindow;
+﻿using System.Runtime.InteropServices;
 
 namespace GyroShell.Helpers
 {

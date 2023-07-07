@@ -1,8 +1,4 @@
-using ABI.Windows.Foundation;
 using System;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -18,6 +14,7 @@ namespace GyroShell.Helpers.Win32
             internal int Right;
             internal int Bottom;
         }
+
         [StructLayout(LayoutKind.Sequential)]
         internal struct RECT
         {
@@ -98,11 +95,11 @@ namespace GyroShell.Helpers.Win32
         internal const int GW_OWNER = 4;
         internal const long OBJID_WINDOW = 0x00000000L;
 
-
         internal delegate bool EnumThreadProc(IntPtr hwnd, IntPtr lParam);
 
         [DllImport("dwmapi.dll")]
         internal static extern int DwmGetWindowAttribute(IntPtr hwnd, int dwAttribute, out int pvAttribute, int cbAttribute);
+
         internal enum DwmWindowAttribute : int
         {
             NCRenderingEnabled = 1,
@@ -134,6 +131,7 @@ namespace GyroShell.Helpers.Win32
 
         [DllImport("user32.dll", ExactSpelling = true)]
         internal static extern IntPtr GetAncestor(IntPtr hwnd, GetAncestorFlags flags);
+
         internal enum GetAncestorFlags
         {
             /// <summary>
@@ -152,6 +150,7 @@ namespace GyroShell.Helpers.Win32
 
         [DllImport("user32.dll", SetLastError = true)]
         internal static extern IntPtr GetWindow(IntPtr hWnd, GetWindowType uCmd);
+
         internal enum GetWindowType : uint
         {
             GW_HWNDFIRST = 0,
@@ -201,6 +200,7 @@ namespace GyroShell.Helpers.Win32
 
         [DllImport("user32.dll")]
         internal static extern bool EnumWindows(EnumWindowsCallback lpEnumFunc, IntPtr lParam);
+
         internal delegate bool EnumWindowsCallback(IntPtr hwnd, IntPtr lParam);
 
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
@@ -236,6 +236,7 @@ namespace GyroShell.Helpers.Win32
         internal static extern IntPtr GetWindowLongPtr(IntPtr hWnd, int nIndex);
 
         internal delegate void WinEventDelegate(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime);
+
         [DllImport("user32.dll")]
         internal static extern IntPtr SetWinEventHook(uint eventMin, uint eventMax, IntPtr hmodWinEventProc, WinEventDelegate lpfnWinEventProc, uint idProcess, uint idThread, uint dwFlags);
 
@@ -253,10 +254,13 @@ namespace GyroShell.Helpers.Win32
 
         [DllImport("user32.dll")]
         internal static extern int ShowWindow(IntPtr hwnd, int nCmdShow);
+
         [DllImport("Kernel32.dll", SetLastError = true)]
         internal static extern IntPtr OpenEvent(uint dwDesiredAccess, bool bInheritHandle, string lpName);
+
         [DllImport("kernel32.dll")]
         internal static extern bool SetEvent(IntPtr hEvent);
+
         [DllImport("kernel32", SetLastError = true)]
         internal static extern bool CloseHandle(IntPtr hObject);
 
@@ -304,6 +308,7 @@ namespace GyroShell.Helpers.Win32
         {
             DWMWA_WINDOW_CORNER_PREFERENCE = 33
         }
+
         // Copied from dwmapi.h
         internal enum DWM_WINDOW_CORNER_PREFERENCE
         {
@@ -312,6 +317,7 @@ namespace GyroShell.Helpers.Win32
             DWMWCP_ROUND = 2,
             DWMWCP_ROUNDSMALL = 3
         }
+
         // DwmSetWindowAttribute
         [DllImport("dwmapi.dll", CharSet = CharSet.Unicode, PreserveSig = false)]
         internal static extern void DwmSetWindowAttribute(IntPtr hwnd, DWMWINDOWATTRIBUTE attribute, ref DWM_WINDOW_CORNER_PREFERENCE pvAttribute, uint cbAttribute);
@@ -320,10 +326,12 @@ namespace GyroShell.Helpers.Win32
         [DllImport("kernel32.dll")]
         internal static extern void GetNativeSystemInfo(out SYSTEM_INFO lpSystemInfo);
 
-        [DllImport("shell32.dll", SetLastError = true, EntryPoint ="#188")]
+        [DllImport("shell32.dll", SetLastError = true, EntryPoint = "#188")]
         internal static extern bool ShellDDEInit(bool init);
-        [DllImport("shell32.dll", SetLastError = true, EntryPoint ="#181")]
+
+        [DllImport("shell32.dll", SetLastError = true, EntryPoint = "#181")]
         internal static extern bool RegisterShellHook(IntPtr hwnd, int fInstall);
+
         [StructLayout(LayoutKind.Sequential)]
         internal struct SYSTEM_INFO
         {
@@ -351,6 +359,7 @@ namespace GyroShell.Helpers.Win32
             internal RECT rc;
             internal IntPtr lParam;
         }
+
         internal enum ABMsg : int
         {
             ABM_NEW = 0,
@@ -365,6 +374,7 @@ namespace GyroShell.Helpers.Win32
             ABM_WINDOWPOSCHANGED,
             ABM_SETSTATE
         }
+
         internal enum ABNotify : int
         {
             ABN_STATECHANGE = 0,
@@ -372,6 +382,7 @@ namespace GyroShell.Helpers.Win32
             ABN_FULLSCREENAPP,
             ABN_WINDOWARRANGE
         }
+
         internal enum ABEdge : int
         {
             ABE_LEFT = 0,
@@ -393,6 +404,7 @@ namespace GyroShell.Helpers.Win32
 
         [DllImport("user32.dll", ExactSpelling = true, CharSet = CharSet.Auto)]
         internal static extern bool MoveWindow(IntPtr hWnd, int x, int y, int cx, int cy, bool repaint);
+
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         internal static extern int RegisterWindowMessage(string msg);
 

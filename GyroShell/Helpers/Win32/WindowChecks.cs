@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
-using Windows.ApplicationModel.Chat;
 using static GyroShell.Helpers.Win32.Win32Interop;
 
 namespace GyroShell.Helpers.Win32

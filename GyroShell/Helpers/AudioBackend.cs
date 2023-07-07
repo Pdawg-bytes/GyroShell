@@ -1,10 +1,10 @@
-﻿using System;
-using CoreAudio;
+﻿using CoreAudio;
+using System;
 
 namespace GyroShell.Helpers
 {
-   internal class AudioBackend
-   {
+    internal class AudioBackend
+    {
         internal static MMDeviceEnumerator devEnum = new MMDeviceEnumerator(Guid.Empty);
         internal static MMDevice audioDevice = devEnum.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
    } 
