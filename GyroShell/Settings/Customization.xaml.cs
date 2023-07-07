@@ -1,14 +1,12 @@
+using GyroShell.Controls;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using GyroShell.Controls;
-using Windows.System;
-using System;
-using Windows.UI;
 using Microsoft.UI.Xaml.Media;
-using CommunityToolkit.WinUI.Helpers;
-using GyroShell.Helpers;
+using System;
 using System.Diagnostics;
 using Windows.ApplicationModel.Core;
+using Windows.System;
+using Windows.UI;
 
 namespace GyroShell.Settings
 {
@@ -25,6 +23,7 @@ namespace GyroShell.Settings
         byte? rTint = App.localSettings.Values["rTint"] as byte?;
         byte? gTint = App.localSettings.Values["gTint"] as byte?;
         byte? bTint = App.localSettings.Values["bTint"] as byte?;
+
         public static bool NotifError;
 
         public Customization()
@@ -35,13 +34,14 @@ namespace GyroShell.Settings
         private void TransparencyType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             string materialName = e.AddedItems[0].ToString();
+
             switch (materialName)
             {
                 case "Mica Alt":
                     App.localSettings.Values["transparencyType"] = 0;
                     LuminSlider.Value = 0;
                     LuminSlider.IsEnabled = false;
-                    if(transparencyCustom != null && transparencyCustom == false)
+                    if (transparencyCustom != null && transparencyCustom == false)
                     {
                         DefaultExtern();
                     }
@@ -129,6 +129,7 @@ namespace GyroShell.Settings
         private void Icon_Checked(object sender, RoutedEventArgs e)
         {
             RadioButton irb = sender as RadioButton;
+
             if (irb != null)
             {
                 switch (irb.Name)
@@ -149,16 +150,20 @@ namespace GyroShell.Settings
         private void TintSlider_ValueChanged(object sender, Microsoft.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
         {
             float tintOpacity = (float)e.NewValue / 100;
+
             App.localSettings.Values["tintOpacity"] = tintOpacity;
             App.localSettings.Values["isCustomTransparency"] = true;
+
             RestartInfo.IsOpen = true;
         }
 
         private void LuminSlider_ValueChanged(object sender, Microsoft.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
         {
             float luminOpacity = (float)e.NewValue / 100;
+
             App.localSettings.Values["luminOpacity"] = luminOpacity;
             App.localSettings.Values["isCustomTransparency"] = true;
+
             RestartInfo.IsOpen = true;
         }
 
@@ -186,12 +191,13 @@ namespace GyroShell.Settings
             App.localSettings.Values["gTint"] = TintColorPicker.Color.G;
             App.localSettings.Values["bTint"] = TintColorPicker.Color.B;
             App.localSettings.Values["isCustomTransparency"] = true;
+
             RestartInfo.IsOpen = true;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            if(NotifError)
+            if (NotifError)
             {
                 NotifInfo.IsOpen = true;
             }
@@ -200,7 +206,7 @@ namespace GyroShell.Settings
                 NotifInfo.IsOpen = false;
             }
 
-            if(!Helpers.OSVersion.IsWin11())
+            if (!Helpers.OSVersion.IsWin11())
             {
                 Icon11.IsEnabled = false;
                 Icon11.IsChecked = false;
@@ -253,6 +259,7 @@ namespace GyroShell.Settings
                     default:
                         Icon10.IsChecked = true;
                         Icon11.IsChecked = false;
+
                         TransparencyIcon.FontFamily = new FontFamily("Segoe MDL2 Assets");
                         ClockIcon.FontFamily = new FontFamily("Segoe MDL2 Assets");
                         IconHeaderIcon.FontFamily = new FontFamily("Segoe MDL2 Assets");
@@ -260,6 +267,7 @@ namespace GyroShell.Settings
                     case 1:
                         Icon10.IsChecked = false;
                         Icon11.IsChecked = true;
+
                         TransparencyIcon.FontFamily = new FontFamily("Segoe Fluent Icons");
                         ClockIcon.FontFamily = new FontFamily("Segoe Fluent Icons");
                         IconHeaderIcon.FontFamily = new FontFamily("Segoe Fluent Icons");
@@ -270,6 +278,7 @@ namespace GyroShell.Settings
             if (aTint != null && rTint != null && gTint != null && bTint != null)
             {
                 TintColorPicker.Color = Color.FromArgb((byte)aTint, (byte)rTint, (byte)gTint, (byte)bTint);
+
                 App.localSettings.Values["isCustomTransparency"] = true;
             }
             else
@@ -292,6 +301,7 @@ namespace GyroShell.Settings
         private void DefaultsButton_Click(object sender, RoutedEventArgs e)
         {
             DefaultExtern();
+
             RestartInfo.IsOpen = true;
         }
         private void DefaultExtern()
@@ -300,10 +310,13 @@ namespace GyroShell.Settings
             rTint = null;
             bTint = null;
             gTint = null;
+
             luminOpacity = null;
             tintOpacity = null;
+
             TintSlider.Value = 0;
             LuminSlider.Value = 0;
+
             App.localSettings.Values["isCustomTransparency"] = false;
         }
 
