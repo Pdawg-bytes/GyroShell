@@ -42,6 +42,13 @@ namespace GyroShell.Helpers.Win32
         internal const int DWMWA_CLOAKED = 14;
 
         internal const int WS_CHILD = 0x40000000;
+        internal const int GCL_HICONSM = -34;
+        internal const int GCL_HICON = -14;
+
+        internal const int ICON_SMALL = 0;
+        internal const int ICON_BIG = 1;
+        internal const int ICON_SMALL2 = 2;
+        internal const int WM_GETICON = 0x7F;
 
         internal const uint GA_PARENT = 1;
         internal const uint GA_ROOT = 2;
@@ -156,6 +163,33 @@ namespace GyroShell.Helpers.Win32
             GW_ENABLEDPOPUP = 6
         }
 
+        [DllImport("user32.dll", SetLastError = true)]
+        internal static extern IntPtr LoadIcon(IntPtr hInstance, IntPtr lpIconName);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        internal static extern IntPtr GetClassLongPtr(IntPtr hWnd, int nIndex);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        internal static extern IntPtr GetWindow(IntPtr hWnd, GetWindowCmd uCmd);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        internal static extern IntPtr GetWindowIcon(IntPtr hWnd, int flags);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        internal static extern bool DestroyIcon(IntPtr hIcon);
+
+        internal enum GetWindowCmd : uint
+        {
+            GW_HWNDFIRST = 0,
+            GW_HWNDLAST = 1,
+            GW_HWNDNEXT = 2,
+            GW_HWNDPREV = 3,
+            GW_OWNER = 4,
+            GW_CHILD = 5,
+            GW_ENABLEDPOPUP = 6
+        }
+
+
         [DllImport("user32.dll")]
         internal static extern bool IsIconic(IntPtr hWnd);
 
@@ -249,6 +283,9 @@ namespace GyroShell.Helpers.Win32
 
         [DllImport("user32.dll")]
         internal static extern int SendMessage(IntPtr hWnd, int wMsg, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = false)]
+        internal static extern IntPtr SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
 
         [DllImport("user32.dll")]
         internal static extern IntPtr SendMessageW(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);

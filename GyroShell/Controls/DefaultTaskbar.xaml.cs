@@ -96,6 +96,7 @@ namespace GyroShell.Controls
                 {
                     case ConnectionType.Ethernet:
                         WifiStatus.Text = "\uE839";
+                        WifiStatus.Margin = new Thickness(0, 2, 7, 0);
                         break;
                     case ConnectionType.WiFi:
                         int WifiSignalBars = NetworkHelper.Instance.ConnectionInformation.SignalStrength.GetValueOrDefault(0);
@@ -296,11 +297,6 @@ namespace GyroShell.Controls
             throw new NotImplementedException("Systray not ready yet.");
             //await TaskbarManager.ShowSysTray(); /* Does nothing, no action lol*/
         }
-
-        private void TbOpenGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            Debug.WriteLine(TbOpenGrid.SelectedItem);
-        }
         #endregion
 
         #region Notifications
@@ -358,9 +354,9 @@ namespace GyroShell.Controls
             {
                 case 0:
                 default:
-                    WifiStatus.Margin = new Thickness(0, -4, 7, 0);
+                    WifiStatus.Margin = new Thickness(0, -2, 7, 0);
                     WifiStatus.FontFamily = SegoeMDL2;
-                    SndStatus.Margin = new Thickness(5, 0, 0, 0);
+                    SndStatus.Margin = new Thickness(6, 1, 0, 0);
                     SndStatus.FontFamily = SegoeMDL2;
                     BattStatus.Margin = new Thickness(0, 2, 12, 0);
                     BattStatus.FontFamily = SegoeMDL2;
@@ -383,9 +379,9 @@ namespace GyroShell.Controls
                     }
                     else
                     {
-                        WifiStatus.Margin = new Thickness(0, -4, 7, 0);
+                        WifiStatus.Margin = new Thickness(0, -2, 7, 0);
                         WifiStatus.FontFamily = SegoeMDL2;
-                        SndStatus.Margin = new Thickness(5, 0, 0, 0);
+                        SndStatus.Margin = new Thickness(6, 1, 0, 0);
                         SndStatus.FontFamily = SegoeMDL2;
                         BattStatus.Margin = new Thickness(0, 2, 12, 0);
                         BattStatus.FontFamily = SegoeMDL2;
@@ -461,7 +457,6 @@ namespace GyroShell.Controls
                         }
                         break;
                     case EVENT_OBJECT_NAMECHANGED:
-                        Debug.WriteLine("Window namechange: " + windowName + " | Handle: " + hwnd);
                         try
                         {
                             IconModel icon = TbIconCollection.First(param => param.Id == hwnd);
@@ -475,14 +470,15 @@ namespace GyroShell.Controls
                             }
                             Debug.WriteLine("[-] WinEventHook: Value not found in rename list.");
                         }
+                        Debug.WriteLine("Window namechange: " + windowName + " | Handle: " + hwnd);
                         break;
                     case EVENT_SYSTEM_FOREGROUND:
                         IconModel targetItem = TbIconCollection.FirstOrDefault(item => item.Id == hwnd);
                         TbOpenGrid.SelectedItem = targetItem;
 
-                        foreach (var item in TbOpenGrid.Items)
+                        foreach (IconModel item in TbOpenGrid.Items)
                         {
-                            var container = TbOpenGrid.ContainerFromItem(item) as GridViewItem;
+                            GridViewItem container = TbOpenGrid.ContainerFromItem(item) as GridViewItem;
                             if (container != null)
                             {
                                 VisualStateManager.GoToState(container, item == TbOpenGrid.SelectedItem ? "Pressed" : "Normal", true);
@@ -490,13 +486,6 @@ namespace GyroShell.Controls
                         }
                         break;
                     case EVENT_OBJECT_CLOAKED:
-                        Debug.WriteLine("Window cloaked: " + windowName + " | Handle: " + hwnd);
-                        break;
-                    case EVENT_OBJECT_UNCLOAKED:
-                        Debug.WriteLine("Window uncloaked: " + windowName + " | Handle: " + hwnd);
-                        break;
-                    case EVENT_OBJECT_DESTROY:
-                        Debug.WriteLine("Window destroy: " + windowName + " | Handle: " + hwnd);
                         indexedWindows.Remove(hwnd);
                         try
                         {
@@ -504,8 +493,24 @@ namespace GyroShell.Controls
                         }
                         catch
                         {
-                            Debug.WriteLine("[-] WinEventHook: Value not found in list.");
+                            Debug.WriteLine("[-] WinEventHook EOC: Value not found in list.");
                         }
+                        Debug.WriteLine("Window cloaked: " + windowName + " | Handle: " + hwnd);
+                        break;
+                    case EVENT_OBJECT_UNCLOAKED:
+                        Debug.WriteLine("Window uncloaked: " + windowName + " | Handle: " + hwnd);
+                        break;
+                    case EVENT_OBJECT_DESTROY:
+                        indexedWindows.Remove(hwnd);
+                        try
+                        {
+                            TbIconCollection.Remove(TbIconCollection.First(param => param.Id == hwnd));
+                        }
+                        catch
+                        {
+                            Debug.WriteLine("[-] WinEventHook EOD: Value not found in list.");
+                        }
+                        Debug.WriteLine("Window destroy: " + windowName + " | Handle: " + hwnd);
                         break;
                 }
             }
@@ -526,6 +531,11 @@ namespace GyroShell.Controls
             {
                 ShowWindow(iconModel.Id, SW_RESTORE);
             }
+        }
+
+        private void Icon_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+
         }
     }
 }

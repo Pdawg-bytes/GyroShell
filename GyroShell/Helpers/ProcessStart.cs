@@ -3,10 +3,9 @@ using System.Diagnostics;
 
 namespace GyroShell.Helpers
 {
-    public class ProcessStart
+    internal class ProcessStart
     {
-        
-        public static ProcessStartInfo ProcessStartEx(string procName, bool createNoWindow, bool useShellEx)
+        internal static ProcessStartInfo ProcessStartEx(string procName, bool createNoWindow, bool useShellEx)
         {
             ProcessStartInfo startInfo = new ProcessStartInfo();
 

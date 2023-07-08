@@ -24,92 +24,126 @@
                 <MenuFlyoutItem Text="Shut down or sign out" Tag="Shutdown" Click="StartFlyout_Click"/>
             </MenuFlyout>
         </Frame>
+        <!--<Frame Visibility="Collapsed" Background="{ThemeResource SystemControlAcrylicWindowBrush}">
+            <MenuFlyout x:Name="IconRightFlyout" AreOpenCloseAnimationsEnabled="True" ShouldConstrainToRootBounds="False">
+                <MenuFlyoutItem Text="Close window" Icon="Close"/>
+            </MenuFlyout>
+        </Frame>-->
         <StackPanel Orientation="Horizontal" x:Name="LeftControls" HorizontalAlignment="Center" >
-                <StackPanel.ChildrenTransitions>
-                    <TransitionCollection>
-                        <EntranceThemeTransition IsStaggeringEnabled="True" />
+            <StackPanel.ChildrenTransitions>
+                <TransitionCollection>
+                    <EntranceThemeTransition IsStaggeringEnabled="True" />
                     </TransitionCollection>
-                </StackPanel.ChildrenTransitions>
-                <ToggleButton HorizontalAlignment="Left" Height="40" Width="40" Margin="5,0,0,0" Background="Transparent" BorderBrush="Transparent" x:Name="StartButton" Click="StartButton_Click" RightTapped="StartButton_RightTapped">
-                    <ToggleButton.Content>
-                        <TextBlock FontFamily="HoloLens MDL2 Assets" Text="&#xE782;" VerticalAlignment="Center" Margin="0" FontSize="16"/>
-                    </ToggleButton.Content>
-                </ToggleButton>
-                <TextBox Height="32" PlaceholderText="Type here to search..." Width="200" Margin="5,0,0,0" CornerRadius="15" BorderThickness="0"/>
-                <Button HorizontalAlignment="Left" Height="40" Width="40" Margin="5,0,10,0" Background="Transparent" BorderBrush="Transparent" x:Name="TaskView" Padding="0" ToolTipService.ToolTip="Task View">
-                    <Button.Content>
-                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE7C4;" VerticalAlignment="Center" Margin="0" FontSize="16" x:Name="TaskViewIcon"/>
-                    </Button.Content>
-                </Button>
-                <!--<Border x:Name="LeftControlsSeperator" Height="28" VerticalAlignment="Center" Width="1" Opacity="0.3" CornerRadius="1"/>-->
-                <GridView ScrollViewer.VerticalScrollMode="Disabled" ScrollViewer.VerticalScrollBarVisibility="Hidden"  x:Name="TbOpenGrid" ItemsSource="{x:Bind TbIconCollection}" Height="48" Background="Transparent" SelectionMode="Single" Padding="0" VerticalAlignment="Center" Margin="5,0,0,0" CanReorderItems="True" SelectionChanged="TbOpenGrid_SelectionChanged">
-                    <GridView.ItemContainerTransitions>
-                        <TransitionCollection>
-                            <ReorderThemeTransition/>
-                            <EntranceThemeTransition IsStaggeringEnabled="True" />
-                            <RepositionThemeTransition/>
-                        </TransitionCollection>
-                    </GridView.ItemContainerTransitions>
-                    <GridView.ItemContainerStyle>
-                        <Style TargetType="GridViewItem">
-                            <Setter Property="FocusVisualMargin" Value="0" />
-                            <Setter Property="IsHitTestVisible" Value="True"/>
+            </StackPanel.ChildrenTransitions>
+            <ToggleButton HorizontalAlignment="Left" Height="40" Width="40" Margin="5,0,0,0" Background="Transparent" BorderBrush="Transparent" x:Name="StartButton" Click="StartButton_Click" RightTapped="StartButton_RightTapped">
+                <ToggleButton.Content>
+                    <TextBlock FontFamily="HoloLens MDL2 Assets" Text="&#xE782;" VerticalAlignment="Center" Margin="0" FontSize="16"/>
+                </ToggleButton.Content>
+            </ToggleButton>
+            <TextBox Height="32" PlaceholderText="Type here to search..." Width="200" Margin="5,0,0,0" CornerRadius="15" BorderThickness="0"/>
+            <Button HorizontalAlignment="Left" Height="40" Width="40" Margin="5,0,10,0" Background="Transparent" BorderBrush="Transparent" x:Name="TaskView" Padding="0" ToolTipService.ToolTip="Task View">
+                <Button.Content>
+                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE7C4;" VerticalAlignment="Center" Margin="0" FontSize="16" x:Name="TaskViewIcon"/>
+                </Button.Content>
+            </Button>
+            <!--<Border x:Name="LeftControlsSeperator" Height="28" VerticalAlignment="Center" Width="1" Opacity="0.3" CornerRadius="1"/>-->
+            <GridView ScrollViewer.VerticalScrollMode="Disabled" ScrollViewer.VerticalScrollBarVisibility="Hidden"  x:Name="TbOpenGrid" ItemsSource="{x:Bind TbIconCollection}" Height="48" Background="Transparent" SelectionMode="Single" Padding="0" VerticalAlignment="Center" Margin="5,0,0,0" CanReorderItems="True">
+                <GridView.ItemContainerTransitions>
+                    <TransitionCollection>
+                        <ReorderThemeTransition/>
+                        <EntranceThemeTransition IsStaggeringEnabled="True" />
+                        <RepositionThemeTransition/>
+                    </TransitionCollection>
+                </GridView.ItemContainerTransitions>
+                <GridView.ItemContainerStyle>
+                    <Style TargetType="GridViewItem">
+                        <Setter Property="FocusVisualMargin" Value="0" />
+                        <Setter Property="IsHitTestVisible" Value="True"/>
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="GridViewItem">
                                     <Grid Background="{TemplateBinding Background}">
                                         <VisualStateManager.VisualStateGroups>
                                             <VisualStateGroup x:Name="CommonStates">
-                                                <VisualState x:Name="Normal" />
+                                                <VisualState x:Name="Normal">
+                                                    <Storyboard>
+                                                        <ColorAnimation Duration="0:0:0.15" To="#00707070" Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="(Control.Background).(SolidColorBrush.Color)">
+                                                            <ColorAnimation.EasingFunction>
+                                                                <CubicEase EasingMode="EaseInOut"/>
+                                                            </ColorAnimation.EasingFunction>
+                                                        </ColorAnimation>
+                                                        <ColorAnimation Duration="0:0:0.15" To="Gray" Storyboard.TargetName="HighlightBorder" Storyboard.TargetProperty="(Control.Background).(SolidColorBrush.Color)">
+                                                            <ColorAnimation.EasingFunction>
+                                                                <CubicEase EasingMode="EaseInOut"/>
+                                                            </ColorAnimation.EasingFunction>
+                                                        </ColorAnimation>
+                                                        <DoubleAnimation Duration="0:0:0.2" To="1" Storyboard.TargetName="HighlightBorderTransform" Storyboard.TargetProperty="ScaleX">
+                                                            <DoubleAnimation.EasingFunction>
+                                                                <CubicEase EasingMode="EaseInOut"/>
+                                                            </DoubleAnimation.EasingFunction>
+                                                        </DoubleAnimation>
+                                                    </Storyboard>
+                                                </VisualState>
                                                 <VisualState x:Name="PointerOver">
                                                     <Storyboard>
-                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
-                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="#42525252" />
-                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ColorAnimation Duration="0:0:0.15" From="#00525252" To="#42525252" Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="(Control.Background).(SolidColorBrush.Color)">
+                                                            <ColorAnimation.EasingFunction>
+                                                                <CubicEase EasingMode="EaseInOut"/>
+                                                            </ColorAnimation.EasingFunction>
+                                                        </ColorAnimation>
                                                     </Storyboard>
                                                 </VisualState>
                                                 <VisualState x:Name="Pressed">
                                                     <Storyboard>
-                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
-                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="#42707070" />
-                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ColorAnimation Duration="0:0:0.15" From="#00707070" To="#42707070" Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="(Control.Background).(SolidColorBrush.Color)">
+                                                            <ColorAnimation.EasingFunction>
+                                                                <CubicEase EasingMode="EaseInOut"/>
+                                                            </ColorAnimation.EasingFunction>
+                                                        </ColorAnimation>
+                                                        <ColorAnimation Duration="0:0:0.15" From="Gray" To="{StaticResource SystemAccentColor}" Storyboard.TargetName="HighlightBorder" Storyboard.TargetProperty="(Control.Background).(SolidColorBrush.Color)">
+                                                            <ColorAnimation.EasingFunction>
+                                                                <CubicEase EasingMode="EaseInOut"/>
+                                                            </ColorAnimation.EasingFunction>
+                                                        </ColorAnimation>
+                                                        <DoubleAnimation Duration="0:0:0.2" From="1" To="2" Storyboard.TargetName="HighlightBorderTransform" Storyboard.TargetProperty="ScaleX">
+                                                            <DoubleAnimation.EasingFunction>
+                                                                <CubicEase EasingMode="EaseInOut"/>
+                                                            </DoubleAnimation.EasingFunction>
+                                                        </DoubleAnimation>
                                                     </Storyboard>
                                                 </VisualState>
                                             </VisualStateGroup>
                                         </VisualStateManager.VisualStateGroups>
-                                        <ContentPresenter x:Name="ContentPresenter"
-                                              ContentTemplate="{TemplateBinding ContentTemplate}"
-                                              ContentTransitions="{TemplateBinding ContentTransitions}"
-                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                              Background="Transparent" 
-                                              CornerRadius="4"
-                                              Margin="0,3,0,0"/>
+                                        <ContentPresenter x:Name="ContentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Background="Transparent" CornerRadius="4" Margin="0,3,0,0"/>
+                                        <Border x:Name="HighlightBorder" Width="10" Height="3" CornerRadius="2" Background="Gray" VerticalAlignment="Bottom" Margin="0,2,0,0" HorizontalAlignment="Center" RenderTransformOrigin="0.4,0">
+                                            <Border.RenderTransform>
+                                                <ScaleTransform x:Name="HighlightBorderTransform" ScaleX="1" ScaleY="1"/>
+                                            </Border.RenderTransform>
+                                        </Border>
                                     </Grid>
                                 </ControlTemplate>
                             </Setter.Value>
                         </Setter>
                     </Style>
-                    </GridView.ItemContainerStyle>
-                    <GridView.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal" Padding="0" Background="Transparent" Margin="0,0,0,0" Height="43">
-                                <StackPanel.ChildrenTransitions>
-                                    <TransitionCollection>
-                                        <EntranceThemeTransition IsStaggeringEnabled="True"/>
-                                    </TransitionCollection>
-                                </StackPanel.ChildrenTransitions>
-                                <Border Tapped="Icon_Tapped" Width="43" Height="43" Margin="0,0,0,0" Background="Transparent" Padding="0" BorderBrush="Transparent" BorderThickness="0" VerticalAlignment="Center" ToolTipService.Placement="Top" ToolTipService.ToolTip="{Binding IconName}">
-                                    <Grid>
-                                        <Image Source="ms-appx:///Assets/StoreLogo.backup.png" Height="26" Width="26" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,0" />
-                                        <Border Width="20" Height="3" CornerRadius="2" Background="MediumPurple" VerticalAlignment="Bottom" Margin="0,2,0,0" HorizontalAlignment="Center"/>
-                                    </Grid>
-                                </Border>
-                            </StackPanel>
-                        </DataTemplate>
-                    </GridView.ItemTemplate>
-                </GridView>
-            </StackPanel>
+                </GridView.ItemContainerStyle>
+                <GridView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal" Padding="0" Background="Transparent" Margin="0,0,0,0" Height="43">
+                            <StackPanel.ChildrenTransitions>
+                                <TransitionCollection>
+                                    <EntranceThemeTransition IsStaggeringEnabled="True"/>
+                                </TransitionCollection>
+                            </StackPanel.ChildrenTransitions>
+                            <Border RightTapped="Icon_RightTapped" Tapped="Icon_Tapped" Width="43" Height="43" Margin="0,0,0,0" Background="Transparent" Padding="0" BorderBrush="Transparent" BorderThickness="0" VerticalAlignment="Center" ToolTipService.Placement="Top" ToolTipService.ToolTip="{Binding IconName}">
+                                <Grid>
+                                    <Image Source="ms-appx:///Assets/StoreLogo.backup.png" Height="26" Width="26" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,0" />
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </DataTemplate>
+                </GridView.ItemTemplate>
+            </GridView>
+        </StackPanel>
         <StackPanel x:Name="RightControls" Orientation="Horizontal" HorizontalAlignment="Right">
             <StackPanel.ChildrenTransitions>
                 <TransitionCollection>

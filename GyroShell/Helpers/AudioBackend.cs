@@ -7,9 +7,5 @@ namespace GyroShell.Helpers
    {
         internal static MMDeviceEnumerator devEnum = new MMDeviceEnumerator(Guid.Empty);
         internal static MMDevice audioDevice = devEnum.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
-        internal AudioBackend() 
-        {
-            // Implement event fire
-        }
    } 
 }

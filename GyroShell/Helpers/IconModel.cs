@@ -24,6 +24,7 @@ namespace GyroShell.Helpers
                 }
             }
         }
+
         public IntPtr Id { get; set; }
 
 
