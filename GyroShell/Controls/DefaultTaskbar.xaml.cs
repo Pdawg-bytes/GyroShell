@@ -12,6 +12,7 @@ using Windows.UI.Core;
 using static GyroShell.Helpers.Win32.Win32Interop;
 using static GyroShell.Helpers.Win32.GetWindowName;
 using static GyroShell.Helpers.Win32.WindowChecks;
+using static GyroShell.Helpers.Win32.GetHandleIcon;
 using Windows.System;
 using Windows.UI.Notifications.Management;
 using Windows.Foundation.Metadata;
@@ -35,7 +36,7 @@ namespace GyroShell.Controls
 
         public static string timeType = "t";
 
-        public ObservableCollection<IconModel> TbIconCollection;
+        internal ObservableCollection<IconModel> TbIconCollection;
         internal static List<IntPtr> indexedWindows = new List<IntPtr>();
 
         private readonly WinEventDelegate callback;
@@ -518,7 +519,14 @@ namespace GyroShell.Controls
 
         private bool EnumWindowsCallbackMethod(IntPtr hwnd, IntPtr lParam)
         {
-            if (isUserWindow(hwnd)) { indexedWindows.Add(hwnd); TbIconCollection.Add(new IconModel { IconName = GetWindowTitle(hwnd), Id = hwnd }); }
+            try
+            {
+                if (isUserWindow(hwnd)) { indexedWindows.Add(hwnd); TbIconCollection.Add(new IconModel { IconName = GetWindowTitle(hwnd), Id = hwnd }); }
+            }
+            catch(Exception ex)
+            { 
+                Debug.WriteLine(ex.Message);
+            }
             return true;
         }
         #endregion

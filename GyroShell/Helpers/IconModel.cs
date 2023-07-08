@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml.Media.Imaging;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -9,10 +10,10 @@ using static GyroShell.Helpers.Win32.Win32Interop;
 
 namespace GyroShell.Helpers
 {
-    public class IconModel : INotifyPropertyChanged
+    internal class IconModel : INotifyPropertyChanged
     {
         private string iconName;
-        public string IconName
+        internal string IconName
         {
             get { return iconName; }
             set
@@ -25,7 +26,21 @@ namespace GyroShell.Helpers
             }
         }
 
-        public IntPtr Id { get; set; }
+        /*private WriteableBitmap appIcon;
+        internal WriteableBitmap AppIcon
+        {
+            get { return appIcon; }
+            set
+            {
+                if (appIcon != value)
+                {
+                    appIcon = value;
+                    OnPropertyChanged();
+                }
+            }
+        }*/
+
+        internal IntPtr Id { get; set; }
 
 
         public event PropertyChangedEventHandler PropertyChanged;

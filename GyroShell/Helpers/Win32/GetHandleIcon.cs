@@ -78,7 +78,7 @@ namespace GyroShell.Helpers.Win32
             public IntPtr hbmColor;
         }
 
-        public async Task<WriteableBitmap> HIconToWriteableBitmap(IntPtr hIcon)
+        private static async Task<WriteableBitmap> HIconToWriteableBitmap(IntPtr hIcon)
         {
             ICONINFO iconInfo;
             GetIconInfo(hIcon, out iconInfo);
@@ -99,7 +99,14 @@ namespace GyroShell.Helpers.Win32
             int nBits = bm.bmWidth * bm.bmHeight;
             byte[] colorBits = new byte[nBits * 4];
 
-            GetDIBits(dc, iconInfo.hbmColor, 0, (uint)bm.bmHeight, colorBits, ref bmi, 0);
+            if (GetDIBits(dc, iconInfo.hbmColor, 0, (uint)bm.bmHeight, colorBits, ref bmi, 0) == 0)
+            {
+                ReleaseDC(IntPtr.Zero, dc);
+                DeleteObject(iconInfo.hbmColor);
+                DeleteObject(iconInfo.hbmMask);
+                DestroyIcon(hIcon);
+                return null;
+            }
 
             bool hasAlpha = false;
             for (int i = 3; i < nBits * 4; i += 4)
@@ -114,7 +121,14 @@ namespace GyroShell.Helpers.Win32
             if (!hasAlpha)
             {
                 byte[] maskBits = new byte[nBits * 4];
-                GetDIBits(dc, iconInfo.hbmMask, 0, (uint)bm.bmHeight, maskBits, ref bmi, 0);
+                if (GetDIBits(dc, iconInfo.hbmMask, 0, (uint)bm.bmHeight, maskBits, ref bmi, 0) == 0)
+                {
+                    ReleaseDC(IntPtr.Zero, dc);
+                    DeleteObject(iconInfo.hbmColor);
+                    DeleteObject(iconInfo.hbmMask);
+                    DestroyIcon(hIcon);
+                    return null;
+                }
 
                 for (int i = 3; i < nBits * 4; i += 4)
                 {
@@ -132,16 +146,17 @@ namespace GyroShell.Helpers.Win32
             DeleteObject(iconInfo.hbmMask);
             DestroyIcon(hIcon);
 
-            WriteableBitmap bitmap = new(bm.bmWidth, bm.bmHeight);
+            WriteableBitmap bitmap = new WriteableBitmap(bm.bmWidth, bm.bmHeight);
             using (Stream stream = bitmap.PixelBuffer.AsStream())
             {
-                await stream.WriteAsync(colorBits, 0, colorBits.Length);
+                IBuffer buffer = colorBits.AsBuffer();
+                await stream.WriteAsync(buffer.ToArray(), 0, (int)buffer.Length);
             }
 
             return bitmap;
         }
 
-        internal static IntPtr GetAppIcon(IntPtr hwnd)
+        internal static WriteableBitmap GetAppIcon(IntPtr hwnd)
         {
             IntPtr iconHandle = SendMessage(hwnd, WM_GETICON, ICON_SMALL2, 0);
             if (iconHandle == IntPtr.Zero)
@@ -154,11 +169,9 @@ namespace GyroShell.Helpers.Win32
                 iconHandle = GetClassLongPtr(hwnd, GCL_HICONSM);
 
             if (iconHandle == IntPtr.Zero)
-                return IntPtr.Zero;
+                return null;
 
-            //Icon icn = Icon.FromHandle(iconHandle);
-
-            return icn;
+            return HIconToWriteableBitmap(iconHandle).Result;
         }
     }
 }
