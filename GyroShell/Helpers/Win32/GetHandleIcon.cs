@@ -1,15 +1,11 @@
-﻿using System.Drawing;
+﻿using Microsoft.UI.Xaml.Media.Imaging;
 using System;
-using static GyroShell.Helpers.Win32.Win32Interop;
+using System.IO;
 using System.Runtime.InteropServices;
-using Windows.UI.Core;
-using Microsoft.UI.Dispatching;
-using Microsoft.UI.Xaml.Media.Imaging;
-using Windows.Foundation;
-using Windows.Storage.Streams;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using System.IO;
+using Windows.Storage.Streams;
+using static GyroShell.Helpers.Win32.Win32Interop;
 
 namespace GyroShell.Helpers.Win32
 {
