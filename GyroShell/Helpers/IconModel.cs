@@ -13,7 +13,7 @@ namespace GyroShell.Helpers
     internal class IconModel : INotifyPropertyChanged
     {
         private string iconName;
-        internal string IconName
+        public string IconName
         {
             get { return iconName; }
             set
@@ -40,7 +40,7 @@ namespace GyroShell.Helpers
             }
         }*/
 
-        internal IntPtr Id { get; set; }
+        public IntPtr Id { get; set; }
 
 
         public event PropertyChangedEventHandler PropertyChanged;

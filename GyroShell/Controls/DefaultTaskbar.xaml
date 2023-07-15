@@ -10,6 +10,11 @@
     >
 
     <Grid x:Name="MainShellGrid">
+        <Grid.Resources>
+            <MenuFlyout x:Name="IconRightFlyout" x:Key="IconRightFlyout" AreOpenCloseAnimationsEnabled="True" ShouldConstrainToRootBounds="False">
+                <MenuFlyoutItem Text="Close window"/>
+            </MenuFlyout>
+        </Grid.Resources>
         <Border Height="1" VerticalAlignment="Top" HorizontalAlignment="Stretch" x:Name="BarBorder" Opacity="0.6"/>
         <Frame Visibility="Collapsed" Background="{ThemeResource SystemControlAcrylicWindowBrush}">
             <MenuFlyout x:Name="StartFlyout" AreOpenCloseAnimationsEnabled="True" ShouldConstrainToRootBounds="False">
@@ -24,11 +29,6 @@
                 <MenuFlyoutItem Text="Shut down or sign out" Tag="Shutdown" Click="StartFlyout_Click"/>
             </MenuFlyout>
         </Frame>
-        <!--<Frame Visibility="Collapsed" Background="{ThemeResource SystemControlAcrylicWindowBrush}">
-            <MenuFlyout x:Name="IconRightFlyout" AreOpenCloseAnimationsEnabled="True" ShouldConstrainToRootBounds="False">
-                <MenuFlyoutItem Text="Close window" Icon="Close"/>
-            </MenuFlyout>
-        </Frame>-->
         <StackPanel Orientation="Horizontal" x:Name="LeftControls" HorizontalAlignment="Center" >
             <StackPanel.ChildrenTransitions>
                 <TransitionCollection>
@@ -134,7 +134,7 @@
                                     <EntranceThemeTransition IsStaggeringEnabled="True"/>
                                 </TransitionCollection>
                             </StackPanel.ChildrenTransitions>
-                            <Border RightTapped="Icon_RightTapped" Tapped="Icon_Tapped" Width="43" Height="43" Margin="0,0,0,0" Background="Transparent" Padding="0" BorderBrush="Transparent" BorderThickness="0" VerticalAlignment="Center" ToolTipService.Placement="Top" ToolTipService.ToolTip="{Binding IconName}">
+                            <Border ContextFlyout="{StaticResource IconRightFlyout}" RightTapped="Icon_RightTapped" ToolTipService.Placement="Top" ToolTipService.ToolTip="{Binding IconName}" Tapped="Icon_Tapped" Width="43" Height="43" Margin="0,0,0,0" Background="Transparent" Padding="0" BorderBrush="Transparent" BorderThickness="0" VerticalAlignment="Center">
                                 <Grid>
                                     <Image Source="ms-appx:///Assets/StoreLogo.backup.png" Height="26" Width="26" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,0" />
                                 </Grid>

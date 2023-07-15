@@ -425,6 +425,8 @@ namespace GyroShell.Controls
         private IntPtr cloakedHook;
         private IntPtr nameChangeHook;
         private IntPtr cdWindowHook;
+
+        private IntPtr lastWindow;
         private void RegisterWinEventHook()
         {
             foregroundHook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, callback, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
@@ -543,7 +545,7 @@ namespace GyroShell.Controls
 
         private void Icon_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
-
+            //IconRightFlyout.ShowAt((FrameworkElement)sender);
         }
     }
 }
