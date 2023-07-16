@@ -12,7 +12,7 @@
             <StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="About GyroShell" Style="{StaticResource TitleTextBlockStyle}" Margin="20" VerticalAlignment="Top" HorizontalAlignment="Left" TextWrapping="WrapWholeWords"/>
-                    <Image Source="ms-appx:///Assets/StoreLogo.scale-400.png" Height="40" VerticalAlignment="Center" Margin="0,5,0,0"/>
+                    <Image Source="ms-appx:///Assets/Square150x150Logo.scale-200.png" Height="45" VerticalAlignment="Center" Margin="0,5,0,0"/>
                 </StackPanel>
                 <Expander ExpandDirection="Down" HorizontalAlignment="Stretch" Margin="20,20,20,0" VerticalAlignment="Top" HorizontalContentAlignment="Left">
                     <Expander.Header>
