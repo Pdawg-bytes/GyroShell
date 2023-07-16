@@ -271,6 +271,7 @@ namespace GyroShell.Controls
                         }
                         break;
                     case "ExitGyroShell":
+                        DestroyHooks();
                         App.Current.Exit();
                         break;
                     case "TaskMgr":
@@ -434,7 +435,13 @@ namespace GyroShell.Controls
             nameChangeHook = SetWinEventHook(EVENT_OBJECT_NAMECHANGED, EVENT_OBJECT_NAMECHANGED, IntPtr.Zero, callback, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
             cdWindowHook = SetWinEventHook(EVENT_OBJECT_CREATE, EVENT_OBJECT_DESTROY, IntPtr.Zero, callback, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
         }
-
+        private void DestroyHooks()
+        {
+            UnhookWinEvent(foregroundHook);
+            UnhookWinEvent(cloakedHook);
+            UnhookWinEvent(nameChangeHook);
+            UnhookWinEvent(cdWindowHook);
+        }
         // WinEvent Callbacks
         private void WinEventCallback(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
         {
@@ -444,7 +451,7 @@ namespace GyroShell.Controls
                 if(isUserWindow(hwnd))
                 {
                     indexedWindows.Add(hwnd);
-                    Thread.Sleep(10);
+                    Thread.Sleep(1);
                 }
             }
             if (indexedWindows.Contains(hwnd))
@@ -467,9 +474,12 @@ namespace GyroShell.Controls
                         }
                         catch
                         {
-                            if (!TbIconCollection.Any(item => item.Id == hwnd))
+                            if (windowName != "Quick settings" && windowName != "Notification Center")
                             {
-                                TbIconCollection.Add(new IconModel { IconName = windowName, Id = hwnd });
+                                if (!TbIconCollection.Any(item => item.Id == hwnd))
+                                {
+                                    TbIconCollection.Add(new IconModel { IconName = windowName, Id = hwnd });
+                                }
                             }
                             Debug.WriteLine("[-] WinEventHook: Value not found in rename list.");
                         }
@@ -489,19 +499,57 @@ namespace GyroShell.Controls
                         }
                         break;
                     case EVENT_OBJECT_CLOAKED:
-                        indexedWindows.Remove(hwnd);
-                        try
+                        if (windowName == "Start")
                         {
-                            TbIconCollection.Remove(TbIconCollection.First(param => param.Id == hwnd));
+                            StartButton.IsChecked = false;
                         }
-                        catch
+                        else if (windowName == "Search")
                         {
-                            Debug.WriteLine("[-] WinEventHook EOC: Value not found in list.");
+
+                        }
+                        else if (windowName == "Quick settings")
+                        {
+                            SystemControls.IsChecked = false;
+                        }
+                        else if (windowName == "Notification Center")
+                        {
+                            ActionCenter.IsChecked = false;
+                        }
+                        else
+                        {
+                            indexedWindows.Remove(hwnd);
+                            try
+                            {
+                                TbIconCollection.Remove(TbIconCollection.First(param => param.Id == hwnd));
+                            }
+                            catch
+                            {
+                                Debug.WriteLine("[-] WinEventHook EOC: Value not found in list.");
+                            }
                         }
                         Debug.WriteLine("Window cloaked: " + windowName + " | Handle: " + hwnd);
                         break;
                     case EVENT_OBJECT_UNCLOAKED:
-                        TbIconCollection.Add(new IconModel { IconName = windowName, Id = hwnd });
+                        if (windowName == "Start")
+                        {
+                            StartButton.IsChecked = true;
+                        }
+                        else if (windowName == "Search")
+                        {
+                            
+                        }
+                        else if (windowName == "Quick settings")
+                        {
+                            SystemControls.IsChecked = true;
+                        }
+                        else if (windowName == "Notification Center")
+                        {
+                            ActionCenter.IsChecked = true;
+                        }
+                        else
+                        {
+                            TbIconCollection.Add(new IconModel { IconName = windowName, Id = hwnd });
+                        }
                         Debug.WriteLine("Window uncloaked: " + windowName + " | Handle: " + hwnd);
                         break;
                     case EVENT_OBJECT_DESTROY:
