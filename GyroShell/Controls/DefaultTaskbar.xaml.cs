@@ -501,6 +501,7 @@ namespace GyroShell.Controls
                         Debug.WriteLine("Window cloaked: " + windowName + " | Handle: " + hwnd);
                         break;
                     case EVENT_OBJECT_UNCLOAKED:
+                        TbIconCollection.Add(new IconModel { IconName = windowName, Id = hwnd });
                         Debug.WriteLine("Window uncloaked: " + windowName + " | Handle: " + hwnd);
                         break;
                     case EVENT_OBJECT_DESTROY:
