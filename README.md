@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Pdawg-bytes/GyroShell/appbar-dev/GyroShell/Assets/StoreLogo.scale-400.png"></img>
+  <img src="https://raw.githubusercontent.com/Pdawg-bytes/GyroShell/main/GyroShell/Assets/Square150x150Logo.scale-200.png"></img>
 </p>
 
 # GyroShell
