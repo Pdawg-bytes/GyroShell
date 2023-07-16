@@ -451,7 +451,7 @@ namespace GyroShell.Controls
                 if(isUserWindow(hwnd))
                 {
                     indexedWindows.Add(hwnd);
-                    Thread.Sleep(1);
+                    Thread.Sleep(10);
                 }
             }
             if (indexedWindows.Contains(hwnd))
