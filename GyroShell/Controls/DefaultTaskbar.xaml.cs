@@ -134,8 +134,8 @@ namespace GyroShell.Controls
         #region Battery
         private void DetectBatteryPresence()
         {
-            var aggDetectBattery = Battery.AggregateBattery;
-            var report = aggDetectBattery.GetReport();
+            Battery aggDetectBattery = Battery.AggregateBattery;
+            BatteryReport report = aggDetectBattery.GetReport();
             string ReportResult = report.Status.ToString();
 
             if (ReportResult == "NotPresent")
@@ -156,8 +156,8 @@ namespace GyroShell.Controls
 
         private void AggregateBattery()
         {
-            var aggBattery = Battery.AggregateBattery;
-            var report = aggBattery.GetReport();
+            Battery aggBattery = Battery.AggregateBattery;
+            BatteryReport report = aggBattery.GetReport();
             string charging = report.Status.ToString();
             double fullCharge = Convert.ToDouble(report.FullChargeCapacityInMilliwattHours);
             double currentCharge = Convert.ToDouble(report.RemainingCapacityInMilliwattHours);

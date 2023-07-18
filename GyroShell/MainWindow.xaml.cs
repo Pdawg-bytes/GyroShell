@@ -52,7 +52,7 @@ namespace GyroShell
             TaskbarManager.Init();
 
             // Presenter handling code
-            var presenter = GetAppWindowAndPresenter();
+            OverlappedPresenter presenter = GetAppWindowAndPresenter();
             presenter.IsMaximizable = false;
             presenter.IsMinimizable = false;
             presenter.IsAlwaysOnTop = true;
@@ -63,12 +63,12 @@ namespace GyroShell
 
             // Resize Window
             hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
-            var windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
-            var appWindow = AppWindow.GetFromWindowId(windowId);
+            WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
+            AppWindow appWindow = AppWindow.GetFromWindowId(windowId);
             if (OSVersion.IsWin11())
             {
-                var attribute = DWMWINDOWATTRIBUTE.DWMWA_WINDOW_CORNER_PREFERENCE;
-                var preference = DWM_WINDOW_CORNER_PREFERENCE.DWMWCP_DONOTROUND;
+                DWMWINDOWATTRIBUTE attribute = DWMWINDOWATTRIBUTE.DWMWA_WINDOW_CORNER_PREFERENCE;
+                DWM_WINDOW_CORNER_PREFERENCE preference = DWM_WINDOW_CORNER_PREFERENCE.DWMWCP_DONOTROUND;
                 DwmSetWindowAttribute(hWnd, attribute, ref preference, sizeof(uint));
             }
 
@@ -112,9 +112,9 @@ namespace GyroShell
 
         private OverlappedPresenter GetAppWindowAndPresenter()
         {
-            var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+            IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
             WindowId WndId = Win32Interop.GetWindowIdFromWindow(hWnd);
-            var _apw = AppWindow.GetFromWindowId(WndId);
+            AppWindow _apw = AppWindow.GetFromWindowId(WndId);
 
             return _apw.Presenter as OverlappedPresenter;
         }
@@ -478,7 +478,7 @@ namespace GyroShell
                     }*/
                     break;
                 case HSHELL_APPCOMMAND:
-                    var appCommand = ((short)((((uint)hwnd) >> 16) & ushort.MaxValue)) & ~FAPPCOMMAND_MASK;
+                    int appCommand = ((short)((((uint)hwnd) >> 16) & ushort.MaxValue)) & ~FAPPCOMMAND_MASK;
 
                     Debug.WriteLine("App command: " + appCommand);
 

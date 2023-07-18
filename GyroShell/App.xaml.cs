@@ -45,7 +45,7 @@ namespace GyroShell
                 SYSTEM_INFO sysInfo = new SYSTEM_INFO();
                 GetNativeSystemInfo(out sysInfo);
 
-                var arch = sysInfo.wProcessorArchitecture;
+                ushort arch = sysInfo.wProcessorArchitecture;
 
                 switch (arch)
                 {

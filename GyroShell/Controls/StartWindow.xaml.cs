@@ -14,7 +14,7 @@ namespace GyroShell.Controls
             this.InitializeComponent();
 
             // Removes titlebar
-            var presenter = GetAppWindowAndPresenter();
+            OverlappedPresenter presenter = GetAppWindowAndPresenter();
             presenter.IsMaximizable = false;
             presenter.IsMinimizable = false;
             presenter.IsAlwaysOnTop = true;
@@ -26,8 +26,8 @@ namespace GyroShell.Controls
 
             // Resize Window
             IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
-            var windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
-            var appWindow = AppWindow.GetFromWindowId(windowId);
+            WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
+            AppWindow appWindow = AppWindow.GetFromWindowId(windowId);
 
             Title = "GyroShell Start Host";
             appWindow.MoveInZOrderAtTop();
@@ -35,9 +35,9 @@ namespace GyroShell.Controls
 
         private OverlappedPresenter GetAppWindowAndPresenter()
         {
-            var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+            IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
             WindowId WndId = Win32Interop.GetWindowIdFromWindow(hWnd);
-            var _apw = AppWindow.GetFromWindowId(WndId);
+            AppWindow _apw = AppWindow.GetFromWindowId(WndId);
 
             return _apw.Presenter as OverlappedPresenter;
         }
