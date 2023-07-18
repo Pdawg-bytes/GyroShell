@@ -5,6 +5,7 @@ using Windows.ApplicationModel;
 using GyroShell.Settings;
 using static GyroShell.Helpers.Win32.Win32Interop;
 using Windows.Storage;
+using GyroShell.Helpers;
 using GyroShell.Controls;
 
 namespace GyroShell
