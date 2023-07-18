@@ -1,9 +1,10 @@
 ﻿using System;
-using static GyroShell.Helpers.Win32Interop;
+using static GyroShell.Helpers.Win32.Win32Interop;
 using System.Threading.Tasks;
-using System.Runtime.InteropServices;
-using ManagedShell.Common.Helpers;
 using System.Diagnostics;
+using Windows.Media.Capture;
+using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace GyroShell.Helpers
 {
@@ -25,7 +26,7 @@ namespace GyroShell.Helpers
             }
         }
 
-        public static void SetHeight(int left, int right, int top, int bottom)
+        /*public static void SetHeight(int left, int right, int top, int bottom)
         {
             int screenWidth = GetSystemMetrics(SM_CXSCREEN);
             int screenHeight = GetSystemMetrics(SM_CYSCREEN);
@@ -39,7 +40,7 @@ namespace GyroShell.Helpers
 
             //Probably will need rework when using more than 1 monitor
             SystemParametersInfoA(SPI_SETWORKAREA, 0, ref workArea, SPIF_UPDATEINIFILE);
-        }
+        }*/
 
         public static void ShowTaskbar()
         {
@@ -61,10 +62,12 @@ namespace GyroShell.Helpers
             if(!isVisible)
             {
                 SetWindowPos(m_hTaskBar, (IntPtr)WindowZOrder.HWND_BOTTOM, 0, 0, 0, 0, (int)SWPFlags.SWP_HIDEWINDOW | (int)SWPFlags.SWP_NOMOVE | (int)SWPFlags.SWP_NOSIZE | (int)SWPFlags.SWP_NOACTIVATE);
+                SetWindowPos(m_hMultiTaskBar, (IntPtr)WindowZOrder.HWND_BOTTOM, 0, 0, 0, 0, (int)SWPFlags.SWP_HIDEWINDOW | (int)SWPFlags.SWP_NOMOVE | (int)SWPFlags.SWP_NOSIZE | (int)SWPFlags.SWP_NOACTIVATE);
             }
             else
             {
                 SetWindowPos(m_hTaskBar, (IntPtr)WindowZOrder.HWND_TOPMOST, 0, 48, 0, 0, (int)SWPFlags.SWP_SHOWWINDOW);
+                SetWindowPos(m_hMultiTaskBar, (IntPtr)WindowZOrder.HWND_TOPMOST, 0, 48, 0, 0, (int)SWPFlags.SWP_SHOWWINDOW);
             }
 
             //ShowWindow(m_hTaskBar, nCmd);
@@ -114,9 +117,54 @@ namespace GyroShell.Helpers
             }
         }
 
+        internal static void AutoHideExplorer(bool doHide)
+        {
+            if(doHide)
+            {
+                // MainBar
+                APPBARDATA abd = new APPBARDATA();
+                abd.cbSize = Marshal.SizeOf(abd);
+                abd.hWnd = m_hTaskBar;
+                abd.lParam = (IntPtr)ABState.ABS_AUTOHIDE;
+
+                SHAppBarMessage((int)ABMsg.ABM_SETSTATE, ref abd);
+
+                // MultiBar
+                /*if(m_hTaskBar != IntPtr.Zero)
+                {
+                    APPBARDATA abdM = new APPBARDATA();
+                    abd.cbSize = Marshal.SizeOf(abdM);
+                    abd.hWnd = m_hMultiTaskBar;
+                    abd.lParam = (IntPtr)ABState.ABS_AUTOHIDE;
+
+                    SHAppBarMessage((int)ABMsg.ABM_SETSTATE, ref abdM);
+                }*/
+            }
+            else
+            {
+                // MainBar
+                APPBARDATA abd = new APPBARDATA();
+                abd.cbSize = Marshal.SizeOf(abd);
+                abd.hWnd = m_hTaskBar;
+                abd.lParam = (IntPtr)ABState.ABS_TOP;
+
+                SHAppBarMessage((int)ABMsg.ABM_SETSTATE, ref abd);
+
+                // MultiBar
+                if(m_hTaskBar != IntPtr.Zero)
+                {
+                    APPBARDATA abdM = new APPBARDATA();
+                    abd.cbSize = Marshal.SizeOf(abdM);
+                    abd.hWnd = m_hMultiTaskBar;
+                    abd.lParam = (IntPtr)ABState.ABS_TOP;
+
+                    SHAppBarMessage((int)ABMsg.ABM_SETSTATE, ref abdM);
+                }
+            }
+        }
+
         private static IntPtr m_hTaskBar;
         private static IntPtr m_hMultiTaskBar;
         private static IntPtr m_hStartMenu;
-
     }
 }

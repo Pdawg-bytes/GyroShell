@@ -5,35 +5,44 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using System;
-using Windows.ApplicationModel.Core;
 using Windows.Devices.Power;
 using Windows.UI;
 using System.Diagnostics;
 using Windows.UI.Core;
-using static GyroShell.Helpers.Win32Interop;
+using static GyroShell.Helpers.Win32.Win32Interop;
+using static GyroShell.Helpers.Win32.GetWindowName;
+using static GyroShell.Helpers.Win32.WindowChecks;
+using static GyroShell.Helpers.Win32.GetHandleIcon;
 using Windows.System;
 using Windows.UI.Notifications.Management;
 using Windows.Foundation.Metadata;
 using System.Collections.Generic;
 using Windows.UI.Notifications;
 using GyroShell.Settings;
-using Microsoft.UI.Windowing;
 using System.Collections.ObjectModel;
-using System.Runtime.InteropServices.ComTypes;
-using System.Linq;
 using Windows.Networking.Connectivity;
 using CoreAudio;
-using ManagedShell.AppBar;
+using System.Threading;
+using System.Linq;
+using Microsoft.UI.Xaml.Media.Imaging;
+using System.Threading.Tasks;
+using System.ComponentModel;
 
 namespace GyroShell.Controls
 {
     public sealed partial class DefaultTaskbar : Page
     {
         public static int SettingInstances = 0;
+        private int currentVolume;
+
         bool reportRequested = false;
+
         public static string timeType = "t";
 
-        public ObservableCollection<IconModel> TbIconCollection { get; set; }
+        internal ObservableCollection<IconModel> TbIconCollection;
+        internal static List<IntPtr> indexedWindows = new List<IntPtr>();
+
+        private readonly WinEventDelegate callback;
 
         public DefaultTaskbar()
         {
@@ -48,9 +57,13 @@ namespace GyroShell.Controls
             UpdateNetworkStatus();
             NetworkInformation.NetworkStatusChanged += NetworkInformation_NetworkStatusChanged;
             AudioBackend.audioDevice.AudioEndpointVolume.OnVolumeNotification += new AudioEndpointVolumeNotificationDelegate(AudioEndpointVolume_OnVolumeNotification);
+            AudioCheck();
             Battery.AggregateBattery.ReportUpdated += AggregateBattery_ReportUpdated;
             BarBorder.Background = new SolidColorBrush(Color.FromArgb(255, 66, 63, 74));
 
+            callback = WinEventCallback;
+            GetCurrentWindows();
+            RegisterWinEventHook();
             TaskbarManager.SendWinlogonShowShell();
         }
 
@@ -87,6 +100,7 @@ namespace GyroShell.Controls
                 {
                     case ConnectionType.Ethernet:
                         WifiStatus.Text = "\uE839";
+                        WifiStatus.Margin = new Thickness(0, 2, 7, 0);
                         break;
                     case ConnectionType.WiFi:
                         int WifiSignalBars = NetworkHelper.Instance.ConnectionInformation.SignalStrength.GetValueOrDefault(0);
@@ -164,7 +178,46 @@ namespace GyroShell.Controls
         #region Sound
         private void AudioEndpointVolume_OnVolumeNotification(AudioVolumeNotificationData data)
         {
-            Debug.WriteLine(Math.Ceiling(AudioBackend.audioDevice.AudioEndpointVolume.MasterVolumeLevelScalar * 100));
+            AudioCheck();
+        }
+        private void AudioCheck()
+        {
+            currentVolume = (int)Math.Ceiling(AudioBackend.audioDevice.AudioEndpointVolume.MasterVolumeLevelScalar * 100) - 1;
+            if (currentVolume == 0 || currentVolume == -1)
+            {
+                DispatcherQueue.TryEnqueue((Microsoft.UI.Dispatching.DispatcherQueuePriority)CoreDispatcherPriority.Normal, () =>
+                {
+                    SndStatus.Text = "\uE992";
+                });
+            }
+            else if (currentVolume <= 33)
+            {
+                DispatcherQueue.TryEnqueue((Microsoft.UI.Dispatching.DispatcherQueuePriority)CoreDispatcherPriority.Normal, () =>
+                {
+                    SndStatus.Text = "\uE993";
+                });
+            }
+            else if (currentVolume <= 66)
+            {
+                DispatcherQueue.TryEnqueue((Microsoft.UI.Dispatching.DispatcherQueuePriority)CoreDispatcherPriority.Normal, () =>
+                {
+                    SndStatus.Text = "\uE994";
+                });
+            }
+            else if (currentVolume <= 100)
+            {
+                DispatcherQueue.TryEnqueue((Microsoft.UI.Dispatching.DispatcherQueuePriority)CoreDispatcherPriority.Normal, () =>
+                {
+                    SndStatus.Text = "\uE995";
+                });
+            }
+            else
+            {
+                DispatcherQueue.TryEnqueue((Microsoft.UI.Dispatching.DispatcherQueuePriority)CoreDispatcherPriority.Normal, () =>
+                {
+                    SndStatus.Text = "\uEA85";
+                });
+            }
         }
         #endregion
 
@@ -221,6 +274,7 @@ namespace GyroShell.Controls
                         }
                         break;
                     case "ExitGyroShell":
+                        DestroyHooks();
                         App.Current.Exit();
                         break;
                     case "TaskMgr":
@@ -247,11 +301,6 @@ namespace GyroShell.Controls
         {
             throw new NotImplementedException("Systray not ready yet.");
             //await TaskbarManager.ShowSysTray(); /* Does nothing, no action lol*/
-        }
-
-        private void TbOpenGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            Debug.WriteLine(TbOpenGrid.SelectedItem);
         }
         #endregion
 
@@ -310,9 +359,9 @@ namespace GyroShell.Controls
             {
                 case 0:
                 default:
-                    WifiStatus.Margin = new Thickness(0, -4, 7, 0);
+                    WifiStatus.Margin = new Thickness(0, -2, 7, 0);
                     WifiStatus.FontFamily = SegoeMDL2;
-                    SndStatus.Margin = new Thickness(5, 0, 0, 0);
+                    SndStatus.Margin = new Thickness(6, 1, 0, 0);
                     SndStatus.FontFamily = SegoeMDL2;
                     BattStatus.Margin = new Thickness(0, 2, 12, 0);
                     BattStatus.FontFamily = SegoeMDL2;
@@ -321,7 +370,7 @@ namespace GyroShell.Controls
                     TaskViewIcon.FontFamily = SegoeMDL2;
                     break;
                 case 1:
-                    if(OSVersion.IsWin11())
+                    if (OSVersion.IsWin11())
                     {
                         WifiStatus.Margin = new Thickness(0, 2, 7, 0);
                         WifiStatus.FontFamily = SegoeFluent;
@@ -335,9 +384,9 @@ namespace GyroShell.Controls
                     }
                     else
                     {
-                        WifiStatus.Margin = new Thickness(0, -4, 7, 0);
+                        WifiStatus.Margin = new Thickness(0, -2, 7, 0);
                         WifiStatus.FontFamily = SegoeMDL2;
-                        SndStatus.Margin = new Thickness(5, 0, 0, 0);
+                        SndStatus.Margin = new Thickness(6, 1, 0, 0);
                         SndStatus.FontFamily = SegoeMDL2;
                         BattStatus.Margin = new Thickness(0, 2, 12, 0);
                         BattStatus.FontFamily = SegoeMDL2;
@@ -355,7 +404,7 @@ namespace GyroShell.Controls
             {
                 timeType = "H:mm:ss";
             }
-            else if (secondsEnabled == true && is24HREnabled == false) 
+            else if (secondsEnabled == true && is24HREnabled == false)
             {
                 timeType = "T";
             }
@@ -370,23 +419,185 @@ namespace GyroShell.Controls
         }
         #endregion
 
-        /*int i;
-        private void AddItem_Click(object sender, RoutedEventArgs e)
+        #region Callbacks
+        private void GetCurrentWindows()
         {
-            i++;
-            TbIconCollection.Add(new IconModel { IconName = "test", Id = i });
+            EnumWindows(EnumWindowsCallbackMethod, IntPtr.Zero);
         }
 
-        private void RemItem_Click(object sender, RoutedEventArgs e)
+        private IntPtr foregroundHook;
+        private IntPtr cloakedHook;
+        private IntPtr nameChangeHook;
+        private IntPtr cdWindowHook;
+
+        private IntPtr lastWindow;
+        private void RegisterWinEventHook()
+        {
+            foregroundHook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, callback, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
+            cloakedHook = SetWinEventHook(EVENT_OBJECT_CLOAKED, EVENT_OBJECT_UNCLOAKED, IntPtr.Zero, callback, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
+            nameChangeHook = SetWinEventHook(EVENT_OBJECT_NAMECHANGED, EVENT_OBJECT_NAMECHANGED, IntPtr.Zero, callback, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
+            cdWindowHook = SetWinEventHook(EVENT_OBJECT_CREATE, EVENT_OBJECT_DESTROY, IntPtr.Zero, callback, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
+        }
+        private void DestroyHooks()
+        {
+            UnhookWinEvent(foregroundHook);
+            UnhookWinEvent(cloakedHook);
+            UnhookWinEvent(nameChangeHook);
+            UnhookWinEvent(cdWindowHook);
+        }
+        // WinEvent Callbacks
+        private void WinEventCallback(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
+        {
+            string windowName = GetWindowTitle(hwnd);
+            if (!indexedWindows.Contains(hwnd)) 
+            {
+                if(isUserWindow(hwnd))
+                {
+                    indexedWindows.Add(hwnd);
+                    Thread.Sleep(10);
+                }
+            }
+            if (indexedWindows.Contains(hwnd))
+            {
+                switch (eventType)
+                {
+                    case EVENT_OBJECT_CREATE:
+                        Thread.Sleep(1);
+                        if (!indexedWindows.Contains(hwnd))
+                        {
+                            indexedWindows.Add(hwnd);
+                            TbIconCollection.Add(new IconModel { IconName = windowName, Id = hwnd, AppIcon = GetWinUI3BitmapSourceFromHIcon(GetIcon(hwnd)) });
+                        }
+                        break;
+                    case EVENT_OBJECT_NAMECHANGED:
+                        try
+                        {
+                            IconModel icon = TbIconCollection.First(param => param.Id == hwnd);
+                            icon.IconName = windowName;
+                        }
+                        catch
+                        {
+                            if (windowName != "Quick settings" && windowName != "Notification Center")
+                            {
+                                if (!TbIconCollection.Any(item => item.Id == hwnd))
+                                {
+                                    TbIconCollection.Add(new IconModel { IconName = windowName, Id = hwnd, AppIcon = GetWinUI3BitmapSourceFromHIcon(GetIcon(hwnd)) });
+                                }
+                            }
+                            Debug.WriteLine("[-] WinEventHook: Value not found in rename list.");
+                        }
+                        Debug.WriteLine("Window namechange: " + windowName + " | Handle: " + hwnd);
+                        break;
+                    case EVENT_SYSTEM_FOREGROUND:
+                        IconModel targetItem = TbIconCollection.FirstOrDefault(item => item.Id == hwnd);
+                        TbOpenGrid.SelectedItem = targetItem;
+
+                        foreach (IconModel item in TbOpenGrid.Items)
+                        {
+                            GridViewItem container = TbOpenGrid.ContainerFromItem(item) as GridViewItem;
+                            if (container != null)
+                            {
+                                VisualStateManager.GoToState(container, item == TbOpenGrid.SelectedItem ? "Pressed" : "Normal", true);
+                            }
+                        }
+                        break;
+                    case EVENT_OBJECT_CLOAKED:
+                        if (windowName == "Start")
+                        {
+                            StartButton.IsChecked = false;
+                        }
+                        else if (windowName == "Search")
+                        {
+
+                        }
+                        else if (windowName == "Quick settings")
+                        {
+                            SystemControls.IsChecked = false;
+                        }
+                        else if (windowName == "Notification Center")
+                        {
+                            ActionCenter.IsChecked = false;
+                        }
+                        else
+                        {
+                            indexedWindows.Remove(hwnd);
+                            try
+                            {
+                                TbIconCollection.Remove(TbIconCollection.First(param => param.Id == hwnd));
+                            }
+                            catch
+                            {
+                                Debug.WriteLine("[-] WinEventHook EOC: Value not found in list.");
+                            }
+                        }
+                        Debug.WriteLine("Window cloaked: " + windowName + " | Handle: " + hwnd);
+                        break;
+                    case EVENT_OBJECT_UNCLOAKED:
+                        if (windowName == "Start")
+                        {
+                            StartButton.IsChecked = true;
+                        }
+                        else if (windowName == "Search")
+                        {
+                            
+                        }
+                        else if (windowName == "Quick settings")
+                        {
+                            SystemControls.IsChecked = true;
+                        }
+                        else if (windowName == "Notification Center")
+                        {
+                            ActionCenter.IsChecked = true;
+                        }
+                        else
+                        {
+                            TbIconCollection.Add(new IconModel { IconName = windowName, Id = hwnd });
+                        }
+                        Debug.WriteLine("Window uncloaked: " + windowName + " | Handle: " + hwnd);
+                        break;
+                    case EVENT_OBJECT_DESTROY:
+                        indexedWindows.Remove(hwnd);
+                        try
+                        {
+                            TbIconCollection.Remove(TbIconCollection.First(param => param.Id == hwnd));
+                        }
+                        catch
+                        {
+                            Debug.WriteLine("[-] WinEventHook EOD: Value not found in list.");
+                        }
+                        Debug.WriteLine("Window destroy: " + windowName + " | Handle: " + hwnd);
+                        break;
+                }
+            }
+        }
+
+        private bool EnumWindowsCallbackMethod(IntPtr hwnd, IntPtr lParam)
         {
             try
             {
-                TbIconCollection.Remove(TbIconCollection.Where(param => param.Id == i).Single());
+                if (isUserWindow(hwnd)) { indexedWindows.Add(hwnd); TbIconCollection.Add(new IconModel { IconName = GetWindowTitle(hwnd), Id = hwnd, AppIcon = GetWinUI3BitmapSourceFromHIcon(GetIcon(hwnd)) }); }
             }
-            catch (Exception ex)
+            catch(Exception ex)
+            { 
+                Debug.WriteLine(ex.Message);
+            }
+            return true;
+        }
+        #endregion
+
+        private void Icon_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            IconModel iconModel = ((FrameworkElement)sender).DataContext as IconModel;
+            SetForegroundWindow(iconModel.Id);
+            if (IsIconic(iconModel.Id))
             {
-                Debug.WriteLine(ex);
+                ShowWindow(iconModel.Id, SW_RESTORE);
             }
-        }*/
+        }
+
+        private void Icon_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            //IconRightFlyout.ShowAt((FrameworkElement)sender);
+        }
     }
 }

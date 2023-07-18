@@ -39,6 +39,7 @@ namespace GyroShell.Settings
             {
                 case "Mica Alt":
                     App.localSettings.Values["transparencyType"] = 0;
+                    LuminSlider.Value = 0;
                     LuminSlider.IsEnabled = false;
                     if(transparencyCustom != null && transparencyCustom == false)
                     {
