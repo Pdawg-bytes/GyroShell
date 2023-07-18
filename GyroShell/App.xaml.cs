@@ -1,23 +1,24 @@
-﻿using Microsoft.UI.Xaml;
+﻿using GyroShell.Settings;
+using Microsoft.UI.Xaml;
 using System;
 using System.IO;
 using Windows.ApplicationModel;
-using GyroShell.Settings;
-using static GyroShell.Helpers.Win32.Win32Interop;
 using Windows.Storage;
-using GyroShell.Helpers;
-using GyroShell.Controls;
+
+using static GyroShell.Helpers.Win32.Win32Interop;
 
 namespace GyroShell
 {
     public partial class App : Application
     {
+        private Window m_window;
+
+        public static ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
+
         public App()
         {
             this.InitializeComponent();
         }
-
-        public static ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
 
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
@@ -30,10 +31,11 @@ namespace GyroShell
                 {
                     Package package = Package.Current;
                     AboutPage.PackageArch = package.Id.Architecture.ToString();
-                    package.Id.Version.ToString();
+
                     PackageVersion version = package.Id.Version;
                     AboutPage.PackageVer = string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
-                    string mainExecutablePath = System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "GyroShell.exe");
+
+                    string mainExecutablePath = Path.Combine(Package.Current.InstalledLocation.Path, "GyroShell.exe");
                     DateTime buildDate = File.GetLastWriteTime(mainExecutablePath);
                     AboutPage.PackageBuild = buildDate.ToString("MMMM dd, yyyy");
                 }
@@ -42,7 +44,9 @@ namespace GyroShell
             {
                 SYSTEM_INFO sysInfo = new SYSTEM_INFO();
                 GetNativeSystemInfo(out sysInfo);
+
                 var arch = sysInfo.wProcessorArchitecture;
+
                 switch (arch)
                 {
                     case 0:
@@ -61,11 +65,10 @@ namespace GyroShell
                         AboutPage.PackageArch = "Unknown Processor";
                         break;
                 }
+
                 AboutPage.PackageVer = "0.0.0.0";
                 AboutPage.PackageBuild = "February, 2023";
             }
         }
-
-        private Window m_window;
     }
 }

@@ -1,33 +1,30 @@
-﻿using Microsoft.UI.Windowing;
+﻿using GyroShell.Helpers;
 using Microsoft.UI;
-using Microsoft.UI.Xaml;
-using System;
-using AppWindow = Microsoft.UI.Windowing.AppWindow;
-using Windows.Graphics;
-using GyroShell.Helpers;
 using Microsoft.UI.Composition.SystemBackdrops;
-using WinRT;
-using Windows.UI;
+using Microsoft.UI.Windowing;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Animation;
-using System.Threading;
-using static GyroShell.Helpers.Win32.Win32Interop;
-using static GyroShell.Helpers.Win32.WindowMessage;
-using static GyroShell.Helpers.Win32.GetWindowName;
-using static GyroShell.Helpers.Win32.WindowChecks;
-using static GyroShell.Helpers.TaskbarManager;
-using static GyroShell.Helpers.Win32.ScreenValues;
-using System.Runtime.InteropServices;
+using System;
 using System.Diagnostics;
-using System.Collections.Generic;
-using System.Text;
-using Windows.ApplicationModel.VoiceCommands;
-using Windows.ApplicationModel.Activation;
+using System.Runtime.InteropServices;
+using System.Threading;
+using Windows.Graphics;
+using Windows.UI;
+using WinRT;
+
+using static GyroShell.Helpers.TaskbarManager;
+using static GyroShell.Helpers.Win32.GetWindowName;
+using static GyroShell.Helpers.Win32.ScreenValues;
+using static GyroShell.Helpers.Win32.Win32Interop;
+using static GyroShell.Helpers.Win32.WindowChecks;
+
+using AppWindow = Microsoft.UI.Windowing.AppWindow;
 
 namespace GyroShell
 {
     internal sealed partial class MainWindow : Window
     {
-        AppWindow m_AppWindow;
+        private AppWindow m_AppWindow;
 
         private IntPtr _oldWndProc;
         internal static IntPtr hWnd;
@@ -66,9 +63,9 @@ namespace GyroShell
 
             // Resize Window
             hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
-            var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
+            var windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
             var appWindow = AppWindow.GetFromWindowId(windowId);
-            if (GyroShell.Helpers.OSVersion.IsWin11())
+            if (OSVersion.IsWin11())
             {
                 var attribute = DWMWINDOWATTRIBUTE.DWMWA_WINDOW_CORNER_PREFERENCE;
                 var preference = DWM_WINDOW_CORNER_PREFERENCE.DWMWCP_DONOTROUND;
@@ -116,7 +113,7 @@ namespace GyroShell
         private OverlappedPresenter GetAppWindowAndPresenter()
         {
             var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
-            WindowId WndId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
+            WindowId WndId = Win32Interop.GetWindowIdFromWindow(hWnd);
             var _apw = AppWindow.GetFromWindowId(WndId);
 
             return _apw.Presenter as OverlappedPresenter;
@@ -124,7 +121,7 @@ namespace GyroShell
         private AppWindow GetAppWindowForCurrentWindow()
         {
             IntPtr hWndApp = WinRT.Interop.WindowNative.GetWindowHandle(this);
-            WindowId WndIdApp = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWndApp);
+            WindowId WndIdApp = Win32Interop.GetWindowIdFromWindow(hWndApp);
 
             return AppWindow.GetFromWindowId(WndIdApp);
         }
@@ -150,12 +147,15 @@ namespace GyroShell
         private void SetBackdrop()
         {
             bool? option = App.localSettings.Values["isCustomTransparency"] as bool?;
+
             byte? alpha = App.localSettings.Values["aTint"] as byte?;
             byte? red = App.localSettings.Values["rTint"] as byte?;
             byte? green = App.localSettings.Values["gTint"] as byte?;
             byte? blue = App.localSettings.Values["bTint"] as byte?;
+
             float? luminOpacity = App.localSettings.Values["luminOpacity"] as float?;
             float? tintOpacity = App.localSettings.Values["tintOpacity"] as float?;
+
             finalOpt = option != null ? (bool)option : false;
             finalA = alpha != null ? (byte)alpha : (byte)0;
             finalR = red != null ? (byte)red : (byte)0;
@@ -165,11 +165,12 @@ namespace GyroShell
             finalTO = tintOpacity != null ? (float)tintOpacity : (float)0.3f;
 
             int? transparencyType = App.localSettings.Values["transparencyType"] as int?;
+
             switch (transparencyType)
             {
                 case 0:
                 default:
-                    if (Helpers.OSVersion.IsWin11())
+                    if (OSVersion.IsWin11())
                     {
                         TrySetMicaBackdrop(MicaKind.BaseAlt);
                     }
@@ -179,7 +180,7 @@ namespace GyroShell
                     }
                     break;
                 case 1:
-                    if (Helpers.OSVersion.IsWin11())
+                    if (OSVersion.IsWin11())
                     {
                         TrySetMicaBackdrop(MicaKind.Base);
                     }
@@ -201,25 +202,35 @@ namespace GyroShell
                 m_wsdqHelper = new WindowsSystemDispatcherQueueHelper();
                 m_wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
                 m_configurationSource = new Microsoft.UI.Composition.SystemBackdrops.SystemBackdropConfiguration();
+
                 this.Activated += Window_Activated;
                 this.Closed += Window_Closed;
                 ((FrameworkElement)this.Content).ActualThemeChanged += Window_ThemeChanged;
+
                 m_configurationSource.IsInputActive = true;
+
                 SetConfigurationSourceTheme();
-                micaController = new Microsoft.UI.Composition.SystemBackdrops.MicaController();
+
+                micaController = new MicaController();
                 micaController.Kind = micaKind;
+
                 if (finalOpt == true)
                 {
                     micaController.TintColor = Color.FromArgb(finalA, finalR, finalG, finalB);
                     micaController.TintOpacity = finalTO;
                 }
+
                 micaController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
                 micaController.SetSystemBackdropConfiguration(m_configurationSource);
+
                 return true;
             }
+
             TrySetAcrylicBackdrop();
+
             return false;
         }
+
         bool TrySetAcrylicBackdrop()
         {
             if (DesktopAcrylicController.IsSupported())
@@ -227,19 +238,28 @@ namespace GyroShell
                 m_wsdqHelper = new WindowsSystemDispatcherQueueHelper();
                 m_wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
                 m_configurationSource = new SystemBackdropConfiguration();
+
                 this.Activated += Window_Activated;
                 this.Closed += Window_Closed;
+
                 m_configurationSource.IsInputActive = true;
+
                 SetConfigurationSourceTheme();
+
                 acrylicController = new DesktopAcrylicController();
+
                 acrylicController.TintColor = Color.FromArgb(finalA, finalR, finalG, finalB);
                 acrylicController.TintOpacity = finalTO;
                 acrylicController.LuminosityOpacity = finalLO;
+
                 ((FrameworkElement)this.Content).ActualThemeChanged += Window_ThemeChanged;
+
                 acrylicController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
                 acrylicController.SetSystemBackdropConfiguration(m_configurationSource);
+
                 return true;
             }
+
             return false;
         }
 
@@ -251,6 +271,7 @@ namespace GyroShell
         private void Window_Closed(object sender, WindowEventArgs args)
         {
             RegisterBar();
+
             if (micaController != null)
             {
                 micaController.Dispose();
@@ -261,6 +282,7 @@ namespace GyroShell
                 acrylicController.Dispose();
                 acrylicController = null;
             }
+
             this.Activated -= Window_Activated;
             m_configurationSource = null;
         }
@@ -277,9 +299,30 @@ namespace GyroShell
         {
             switch (((FrameworkElement)this.Content).ActualTheme)
             {
-                case ElementTheme.Dark: m_configurationSource.Theme = SystemBackdropTheme.Dark; if (acrylicController != null) { acrylicController.TintColor = Color.FromArgb(255, 0, 0, 0); } break;
-                case ElementTheme.Light: m_configurationSource.Theme = SystemBackdropTheme.Light; if (acrylicController != null) { acrylicController.TintColor = Color.FromArgb(255, 255, 255, 255); } break;
-                case ElementTheme.Default: m_configurationSource.Theme = SystemBackdropTheme.Default; if (acrylicController != null) { acrylicController.TintColor = Color.FromArgb(255, 0, 0, 0); } break;
+                case ElementTheme.Dark: 
+                    m_configurationSource.Theme = SystemBackdropTheme.Dark; 
+
+                    if (acrylicController != null) 
+                    { 
+                        acrylicController.TintColor = Color.FromArgb(255, 0, 0, 0); 
+                    } 
+                    break;
+                case ElementTheme.Light: 
+                    m_configurationSource.Theme = SystemBackdropTheme.Light; 
+
+                    if (acrylicController != null) 
+                    { 
+                        acrylicController.TintColor = Color.FromArgb(255, 255, 255, 255); 
+                    } 
+                    break;
+                case ElementTheme.Default:
+                    m_configurationSource.Theme = SystemBackdropTheme.Default; 
+
+                    if (acrylicController != null) 
+                    { 
+                        acrylicController.TintColor = Color.FromArgb(255, 0, 0, 0); 
+                    } 
+                    break;
             }
         }
         #endregion
@@ -288,8 +331,10 @@ namespace GyroShell
         internal static void RegisterBar()
         {
             APPBARDATA abd = new APPBARDATA();
+
             abd.cbSize = Marshal.SizeOf(abd);
             abd.hWnd = hWnd;
+
             if (!fBarRegistered)
             {
                 uCallBack = RegisterWindowMessage("AppBarMessage");
@@ -308,7 +353,9 @@ namespace GyroShell
             else
             {
                 SHAppBarMessage((int)ABMsg.ABM_REMOVE, ref abd);
+
                 bool deRegShellHook = DeregisterShellHookWindow(hWnd);
+
                 fBarRegistered = false;
             }
         }
@@ -316,12 +363,14 @@ namespace GyroShell
         private static void ABSetPos()
         {
             APPBARDATA abd = new APPBARDATA();
+
             abd.cbSize = Marshal.SizeOf(abd);
             abd.hWnd = hWnd;
             abd.uEdge = (int)ABEdge.ABE_BOTTOM;
 
             abd.rc.left = 0;
             abd.rc.right = GetScreenWidth();
+
             if (abd.uEdge == (int)ABEdge.ABE_TOP)
             {
                 abd.rc.top = 0;
@@ -364,6 +413,7 @@ namespace GyroShell
         private void RegisterWinEventHook()
         {
             WM_ShellHook = RegisterWindowMessage("SHELLHOOK");
+
             RegisterShellHook(hWnd, 3);
         }
         #endregion
@@ -409,7 +459,6 @@ namespace GyroShell
             {
                 case HSHELL_GETMINRECT: //HSHELL_GETMINRECT
                     return new IntPtr(1);
-                    break;
                 case (4 | 0x8000): // HSHELL_RUDEAPPACTIVATED
                     break;
                 case HSHELL_WINDOWACTIVATED:
@@ -430,15 +479,16 @@ namespace GyroShell
                     break;
                 case HSHELL_APPCOMMAND:
                     var appCommand = ((short)((((uint)hwnd) >> 16) & ushort.MaxValue)) & ~FAPPCOMMAND_MASK;
-                    Debug.WriteLine("App command: "+ appCommand);
-                    if(appCommand == 8)
+
+                    Debug.WriteLine("App command: " + appCommand);
+
+                    if (appCommand == 8)
                     {
                         Debug.WriteLine("Volume muted");
                     }
                     break;
                 case 16:
                     return new IntPtr(1);
-                    break;
                 case HSHELL_REDRAW:
                     //Debug.WriteLine("Window redraw: " + GetWindowTitle(hwnd) + " | Handle: " + (hwnd));
                     break;
