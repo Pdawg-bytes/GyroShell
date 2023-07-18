@@ -1,7 +1,4 @@
-﻿using Microsoft.UI.Xaml;
-using System;
-using System.Runtime.InteropServices;
-using static GyroShell.MainWindow;
+﻿using System.Runtime.InteropServices;
 
 namespace GyroShell.Helpers
 {
@@ -29,6 +26,7 @@ namespace GyroShell.Helpers
             if (m_dispatcherQueueController == null)
             {
                 DispatcherQueueOptions options;
+
                 options.dwSize = Marshal.SizeOf(typeof(DispatcherQueueOptions));
                 options.threadType = 2;
                 options.apartmentType = 2;
