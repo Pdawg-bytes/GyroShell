@@ -1,14 +1,12 @@
-using Microsoft.UI.Xaml;
-using System;
+using GyroShell.Controls;
 using GyroShell.Helpers;
 using Microsoft.UI.Composition.SystemBackdrops;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using WinRT;
-using Windows.UI;
-using GyroShell.Controls;
 using Microsoft.UI.Xaml.Media;
-using System.IO;
-using Windows.ApplicationModel;
+using System;
+using Windows.UI;
+using WinRT;
 
 namespace GyroShell.Settings
 {
@@ -27,9 +25,11 @@ namespace GyroShell.Settings
             contentFrame.Navigate(typeof(Customization));
 
             int? iconStyle = App.localSettings.Values["iconStyle"] as int?;
+
             ExtendsContentIntoTitleBar = true;
             Title = "GyroShell Settings";
             SetTitleBar(AppTitleBar);
+
             TrySetMicaBackdrop();
 
             if (iconStyle != null)
@@ -58,19 +58,26 @@ namespace GyroShell.Settings
             {
                 m_wsdqHelper = new WindowsSystemDispatcherQueueHelper();
                 m_wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
-                m_configurationSource = new Microsoft.UI.Composition.SystemBackdrops.SystemBackdropConfiguration();
+                m_configurationSource = new SystemBackdropConfiguration();
+
                 this.Activated += Window_Activated;
                 this.Closed += Window_Closed;
                 ((FrameworkElement)this.Content).ActualThemeChanged += Window_ThemeChanged;
+
                 m_configurationSource.IsInputActive = true;
                 SetConfigurationSourceTheme();
-                micaController = new Microsoft.UI.Composition.SystemBackdrops.MicaController();
-                micaController.Kind = Microsoft.UI.Composition.SystemBackdrops.MicaKind.Base;
+
+                micaController = new MicaController();
+
+                micaController.Kind = MicaKind.Base;
                 micaController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
                 micaController.SetSystemBackdropConfiguration(m_configurationSource);
+
                 return true;
             }
+
             TrySetAcrylicBackdrop();
+
             return false;
         }
         bool TrySetAcrylicBackdrop()
@@ -80,18 +87,26 @@ namespace GyroShell.Settings
                 m_wsdqHelper = new WindowsSystemDispatcherQueueHelper();
                 m_wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
                 m_configurationSource = new SystemBackdropConfiguration();
+
                 this.Activated += Window_Activated;
                 this.Closed += Window_Closed;
+
                 m_configurationSource.IsInputActive = true;
                 SetConfigurationSourceTheme();
+
                 acrylicController = new DesktopAcrylicController();
+
                 acrylicController.TintColor = Color.FromArgb(255, 0, 0, 0);
                 acrylicController.TintOpacity = 0;
+
                 ((FrameworkElement)this.Content).ActualThemeChanged += Window_ThemeChanged;
+
                 acrylicController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
                 acrylicController.SetSystemBackdropConfiguration(m_configurationSource);
+
                 return true;
             }
+
             return false;
         }
 
@@ -112,8 +127,10 @@ namespace GyroShell.Settings
                 acrylicController.Dispose();
                 acrylicController = null;
             }
+
             this.Activated -= Window_Activated;
             m_configurationSource = null;
+
             DefaultTaskbar.SettingInstances = 0;
         }
 
@@ -129,9 +146,27 @@ namespace GyroShell.Settings
         {
             switch (((FrameworkElement)this.Content).ActualTheme)
             {
-                case ElementTheme.Dark: m_configurationSource.Theme = SystemBackdropTheme.Dark; if (acrylicController != null) { acrylicController.TintColor = Color.FromArgb(255, 0, 0, 0); } break;
-                case ElementTheme.Light: m_configurationSource.Theme = SystemBackdropTheme.Light; if (acrylicController != null) { acrylicController.TintColor = Color.FromArgb(255, 255, 255, 255); } break;
-                case ElementTheme.Default: m_configurationSource.Theme = SystemBackdropTheme.Default; if (acrylicController != null) { acrylicController.TintColor = Color.FromArgb(255, 50, 50, 50); } break;
+                case ElementTheme.Dark: 
+                    m_configurationSource.Theme = SystemBackdropTheme.Dark; 
+                    if (acrylicController != null) 
+                    { 
+                        acrylicController.TintColor = Color.FromArgb(255, 0, 0, 0); 
+                    } 
+                    break;
+                case ElementTheme.Light: 
+                    m_configurationSource.Theme = SystemBackdropTheme.Light; 
+                    if (acrylicController != null) 
+                    { 
+                        acrylicController.TintColor = Color.FromArgb(255, 255, 255, 255); 
+                    } 
+                    break;
+                case ElementTheme.Default: 
+                    m_configurationSource.Theme = SystemBackdropTheme.Default; 
+                    if (acrylicController != null) 
+                    { 
+                        acrylicController.TintColor = Color.FromArgb(255, 50, 50, 50); 
+                    } 
+                    break;
             }
         }
         #endregion
@@ -139,6 +174,7 @@ namespace GyroShell.Settings
         private void SettingNav_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
             NavigationViewItem item = args.SelectedItem as NavigationViewItem;
+
             if (item != null)
             {
                 switch (item.Tag.ToString())

@@ -1,48 +1,45 @@
 using CommunityToolkit.WinUI.Connectivity;
+using CoreAudio;
 using GyroShell.Helpers;
+using GyroShell.Settings;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using System;
-using Windows.Devices.Power;
-using Windows.UI;
-using System.Diagnostics;
-using Windows.UI.Core;
-using static GyroShell.Helpers.Win32.Win32Interop;
-using static GyroShell.Helpers.Win32.GetWindowName;
-using static GyroShell.Helpers.Win32.WindowChecks;
-using static GyroShell.Helpers.Win32.GetHandleIcon;
-using Windows.System;
-using Windows.UI.Notifications.Management;
-using Windows.Foundation.Metadata;
 using System.Collections.Generic;
-using Windows.UI.Notifications;
-using GyroShell.Settings;
 using System.Collections.ObjectModel;
-using Windows.Networking.Connectivity;
-using CoreAudio;
-using System.Threading;
+using System.Diagnostics;
 using System.Linq;
-using Microsoft.UI.Xaml.Media.Imaging;
-using System.Threading.Tasks;
-using System.ComponentModel;
+using System.Threading;
+using Windows.Devices.Power;
+using Windows.Foundation.Metadata;
+using Windows.Networking.Connectivity;
+using Windows.System;
+using Windows.UI;
+using Windows.UI.Core;
+using Windows.UI.Notifications;
+using Windows.UI.Notifications.Management;
+
+using static GyroShell.Helpers.Win32.GetHandleIcon;
+using static GyroShell.Helpers.Win32.GetWindowName;
+using static GyroShell.Helpers.Win32.Win32Interop;
+using static GyroShell.Helpers.Win32.WindowChecks;
 
 namespace GyroShell.Controls
 {
     public sealed partial class DefaultTaskbar : Page
     {
         public static int SettingInstances = 0;
-        private int currentVolume;
-
-        bool reportRequested = false;
-
         public static string timeType = "t";
+
+        private int currentVolume;
+        private bool reportRequested = false;
+
+        private readonly WinEventDelegate callback;
 
         internal ObservableCollection<IconModel> TbIconCollection;
         internal static List<IntPtr> indexedWindows = new List<IntPtr>();
-
-        private readonly WinEventDelegate callback;
 
         public DefaultTaskbar()
         {
@@ -55,15 +52,20 @@ namespace GyroShell.Controls
             DetectBatteryPresence();
             InitNotifcation();
             UpdateNetworkStatus();
+
             NetworkInformation.NetworkStatusChanged += NetworkInformation_NetworkStatusChanged;
             AudioBackend.audioDevice.AudioEndpointVolume.OnVolumeNotification += new AudioEndpointVolumeNotificationDelegate(AudioEndpointVolume_OnVolumeNotification);
+
             AudioCheck();
+
             Battery.AggregateBattery.ReportUpdated += AggregateBattery_ReportUpdated;
+
             BarBorder.Background = new SolidColorBrush(Color.FromArgb(255, 66, 63, 74));
 
             callback = WinEventCallback;
             GetCurrentWindows();
             RegisterWinEventHook();
+
             TaskbarManager.SendWinlogonShowShell();
         }
 
@@ -71,8 +73,10 @@ namespace GyroShell.Controls
         private void TimeAndDate()
         {
             DispatcherTimer dateTimeUpdate = new DispatcherTimer();
+
             dateTimeUpdate.Tick += DTUpdateMethod;
             dateTimeUpdate.Interval = new TimeSpan(400000);
+
             dateTimeUpdate.Start();
         }
         private void DTUpdateMethod(object sender, object e)
@@ -90,8 +94,10 @@ namespace GyroShell.Controls
                 UpdateNetworkStatus();
             });
         }
+
         private string[] wifiIcons = { "\uE871", "\uE872", "\uE873", "\uE874", "\uE701" };
         private string[] dataIcons = { "\uEC37", "\uEC38", "\uEC39", "\uEC3A", "\uEC3B" };
+
         private void UpdateNetworkStatus()
         {
             if (NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable)
@@ -104,10 +110,12 @@ namespace GyroShell.Controls
                         break;
                     case ConnectionType.WiFi:
                         int WifiSignalBars = NetworkHelper.Instance.ConnectionInformation.SignalStrength.GetValueOrDefault(0);
+
                         WifiStatus.Text = wifiIcons[WifiSignalBars];
                         break;
                     case ConnectionType.Data:
                         int DataSignalBars = NetworkHelper.Instance.ConnectionInformation.SignalStrength.GetValueOrDefault(0);
+
                         WifiStatus.Text = dataIcons[DataSignalBars];
                         break;
                     case ConnectionType.Unknown:
@@ -129,6 +137,7 @@ namespace GyroShell.Controls
             var aggDetectBattery = Battery.AggregateBattery;
             var report = aggDetectBattery.GetReport();
             string ReportResult = report.Status.ToString();
+
             if (ReportResult == "NotPresent")
             {
                 BattStatus.Visibility = Visibility.Collapsed;
@@ -137,12 +146,14 @@ namespace GyroShell.Controls
             {
                 BattStatus.Visibility = Visibility.Visible;
                 reportRequested = true;
+
                 AggregateBattery();
             }
         }
 
         string[] batteryIconsCharge = { "\uEBAE", "\uEBAC", "\uEBAD", "\uEBAE", "\uEBAF", "\uEBB0", "\uEBB1", "\uEBB2", "\uEBB3", "\uEBB4", "\uEBB5" };
         string[] batteryIcons = { "\uEBA0", "\uEBA1", "\uEBA2", "\uEBA3", "\uEBA4", "\uEBA5", "\uEBA6", "\uEBA7", "\uEBA8", "\uEBA9", "\uEBAA" };
+
         private void AggregateBattery()
         {
             var aggBattery = Battery.AggregateBattery;
@@ -151,14 +162,17 @@ namespace GyroShell.Controls
             double fullCharge = Convert.ToDouble(report.FullChargeCapacityInMilliwattHours);
             double currentCharge = Convert.ToDouble(report.RemainingCapacityInMilliwattHours);
             double battLevel = Math.Ceiling((currentCharge / fullCharge) * 100);
+
             if (charging == "Charging" || charging == "Idle")
             {
                 int indexCharge = (int)Math.Floor(battLevel / 10);
+
                 BattStatus.Text = batteryIconsCharge[indexCharge];
             }
             else
             {
                 int indexDischarge = (int)Math.Floor(battLevel / 10);
+
                 BattStatus.Text = batteryIcons[indexDischarge];
             }
         }
@@ -183,6 +197,7 @@ namespace GyroShell.Controls
         private void AudioCheck()
         {
             currentVolume = (int)Math.Ceiling(AudioBackend.audioDevice.AudioEndpointVolume.MasterVolumeLevelScalar * 100) - 1;
+
             if (currentVolume == 0 || currentVolume == -1)
             {
                 DispatcherQueue.TryEnqueue((Microsoft.UI.Dispatching.DispatcherQueuePriority)CoreDispatcherPriority.Normal, () =>
@@ -263,18 +278,22 @@ namespace GyroShell.Controls
             if (sender is MenuFlyoutItem selectedItem)
             {
                 string shellOption = selectedItem.Tag.ToString();
+
                 switch (shellOption)
                 {
                     case "ShellSettings":
                         SettingInstances++;
+
                         if (SettingInstances <= 1)
                         {
                             SettingsWindow settingsWindow = new SettingsWindow();
+
                             settingsWindow.Activate();
                         }
                         break;
                     case "ExitGyroShell":
                         DestroyHooks();
+
                         App.Current.Exit();
                         break;
                     case "TaskMgr":
@@ -315,12 +334,14 @@ namespace GyroShell.Controls
             if (ApiInformation.IsTypePresent("Windows.UI.Notifications.Management.UserNotificationListener"))
             {
                 UserNotificationListenerAccessStatus accessStatus = await notifListener.RequestAccessAsync();
+
                 switch (accessStatus)
                 {
                     case UserNotificationListenerAccessStatus.Allowed:
                         Customization.NotifError = false;
                         IReadOnlyList<UserNotification> notifsToast = await notifListener.GetNotificationsAsync(NotificationKinds.Toast);
                         IReadOnlyList<UserNotification> notifsOther = await notifListener.GetNotificationsAsync(NotificationKinds.Unknown);
+
                         if (notifsToast.Count > 0 || notifsOther.Count > 0)
                         {
                             DispatcherQueue.TryEnqueue((Microsoft.UI.Dispatching.DispatcherQueuePriority)CoreDispatcherPriority.Normal, () =>
@@ -338,6 +359,7 @@ namespace GyroShell.Controls
                         break;
                     case UserNotificationListenerAccessStatus.Denied:
                         NotifCircle.Visibility = Visibility.Collapsed;
+
                         Customization.NotifError = true;
                         break;
                     case UserNotificationListenerAccessStatus.Unspecified:
@@ -355,6 +377,7 @@ namespace GyroShell.Controls
             FontFamily SegoeFluent = new FontFamily("Segoe Fluent Icons");
             // Icons
             int? iconStyle = App.localSettings.Values["iconStyle"] as int?;
+
             switch (iconStyle)
             {
                 case 0:
@@ -400,6 +423,7 @@ namespace GyroShell.Controls
             // Clock
             bool? secondsEnabled = App.localSettings.Values["isSeconds"] as bool?;
             bool? is24HREnabled = App.localSettings.Values["is24HR"] as bool?;
+
             if (secondsEnabled == true && is24HREnabled == true)
             {
                 timeType = "H:mm:ss";
@@ -449,9 +473,9 @@ namespace GyroShell.Controls
         private void WinEventCallback(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
         {
             string windowName = GetWindowTitle(hwnd);
-            if (!indexedWindows.Contains(hwnd)) 
+            if (!indexedWindows.Contains(hwnd))
             {
-                if(isUserWindow(hwnd))
+                if (isUserWindow(hwnd))
                 {
                     indexedWindows.Add(hwnd);
                     Thread.Sleep(10);
@@ -539,7 +563,7 @@ namespace GyroShell.Controls
                         }
                         else if (windowName == "Search")
                         {
-                            
+
                         }
                         else if (windowName == "Quick settings")
                         {
@@ -577,8 +601,8 @@ namespace GyroShell.Controls
             {
                 if (isUserWindow(hwnd)) { indexedWindows.Add(hwnd); TbIconCollection.Add(new IconModel { IconName = GetWindowTitle(hwnd), Id = hwnd, AppIcon = GetWinUI3BitmapSourceFromHIcon(GetIcon(hwnd)) }); }
             }
-            catch(Exception ex)
-            { 
+            catch (Exception ex)
+            {
                 Debug.WriteLine(ex.Message);
             }
             return true;
@@ -588,7 +612,9 @@ namespace GyroShell.Controls
         private void Icon_Tapped(object sender, TappedRoutedEventArgs e)
         {
             IconModel iconModel = ((FrameworkElement)sender).DataContext as IconModel;
+
             SetForegroundWindow(iconModel.Id);
+
             if (IsIconic(iconModel.Id))
             {
                 ShowWindow(iconModel.Id, SW_RESTORE);

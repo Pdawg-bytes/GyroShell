@@ -1,10 +1,7 @@
 ﻿using System;
-using static GyroShell.Helpers.Win32.Win32Interop;
-using System.Threading.Tasks;
-using System.Diagnostics;
-using Windows.Media.Capture;
 using System.Runtime.InteropServices;
-using System.Threading;
+using System.Threading.Tasks;
+using static GyroShell.Helpers.Win32.Win32Interop;
 
 namespace GyroShell.Helpers
 {
@@ -13,6 +10,10 @@ namespace GyroShell.Helpers
         private const int ID_TRAY_SHOW_OVERFLOW = 0x028a;
         private const int ID_TRAY_HIDE_OVERFLOW = 0x028b;
         private const uint EVENT_MODIFY_STATE = 0x0002;
+
+        private static IntPtr m_hTaskBar;
+        private static IntPtr m_hMultiTaskBar;
+        private static IntPtr m_hStartMenu;
 
         public static void Init()
         {
@@ -59,7 +60,7 @@ namespace GyroShell.Helpers
         {
             int nCmd = isVisible ? SW_SHOW : SW_HIDE;
 
-            if(!isVisible)
+            if (!isVisible)
             {
                 SetWindowPos(m_hTaskBar, (IntPtr)WindowZOrder.HWND_BOTTOM, 0, 0, 0, 0, (int)SWPFlags.SWP_HIDEWINDOW | (int)SWPFlags.SWP_NOMOVE | (int)SWPFlags.SWP_NOSIZE | (int)SWPFlags.SWP_NOACTIVATE);
                 SetWindowPos(m_hMultiTaskBar, (IntPtr)WindowZOrder.HWND_BOTTOM, 0, 0, 0, 0, (int)SWPFlags.SWP_HIDEWINDOW | (int)SWPFlags.SWP_NOMOVE | (int)SWPFlags.SWP_NOSIZE | (int)SWPFlags.SWP_NOACTIVATE);
@@ -110,6 +111,7 @@ namespace GyroShell.Helpers
         public static void SendWinlogonShowShell()
         {
             IntPtr handle = OpenEvent(EVENT_MODIFY_STATE, false, "msgina: ShellReadyEvent");
+
             if (handle != IntPtr.Zero)
             {
                 SetEvent(handle);
@@ -119,10 +121,11 @@ namespace GyroShell.Helpers
 
         internal static void AutoHideExplorer(bool doHide)
         {
-            if(doHide)
+            if (doHide)
             {
                 // MainBar
                 APPBARDATA abd = new APPBARDATA();
+
                 abd.cbSize = Marshal.SizeOf(abd);
                 abd.hWnd = m_hTaskBar;
                 abd.lParam = (IntPtr)ABState.ABS_AUTOHIDE;
@@ -144,6 +147,7 @@ namespace GyroShell.Helpers
             {
                 // MainBar
                 APPBARDATA abd = new APPBARDATA();
+
                 abd.cbSize = Marshal.SizeOf(abd);
                 abd.hWnd = m_hTaskBar;
                 abd.lParam = (IntPtr)ABState.ABS_TOP;
@@ -151,9 +155,10 @@ namespace GyroShell.Helpers
                 SHAppBarMessage((int)ABMsg.ABM_SETSTATE, ref abd);
 
                 // MultiBar
-                if(m_hTaskBar != IntPtr.Zero)
+                if (m_hTaskBar != IntPtr.Zero)
                 {
                     APPBARDATA abdM = new APPBARDATA();
+
                     abd.cbSize = Marshal.SizeOf(abdM);
                     abd.hWnd = m_hMultiTaskBar;
                     abd.lParam = (IntPtr)ABState.ABS_TOP;
@@ -162,9 +167,5 @@ namespace GyroShell.Helpers
                 }
             }
         }
-
-        private static IntPtr m_hTaskBar;
-        private static IntPtr m_hMultiTaskBar;
-        private static IntPtr m_hStartMenu;
     }
 }
