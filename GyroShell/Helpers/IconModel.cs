@@ -26,8 +26,8 @@ namespace GyroShell.Helpers
             }
         }
 
-        /*private WriteableBitmap appIcon;
-        internal WriteableBitmap AppIcon
+        private SoftwareBitmapSource appIcon;
+        public SoftwareBitmapSource AppIcon
         {
             get { return appIcon; }
             set
@@ -38,7 +38,7 @@ namespace GyroShell.Helpers
                     OnPropertyChanged();
                 }
             }
-        }*/
+        }
 
         public IntPtr Id { get; set; }
 

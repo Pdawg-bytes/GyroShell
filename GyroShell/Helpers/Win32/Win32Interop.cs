@@ -166,8 +166,6 @@ namespace GyroShell.Helpers.Win32
         [DllImport("user32.dll", SetLastError = true)]
         internal static extern IntPtr LoadIcon(IntPtr hInstance, IntPtr lpIconName);
 
-        [DllImport("user32.dll", SetLastError = true)]
-        internal static extern IntPtr GetClassLongPtr(IntPtr hWnd, int nIndex);
 
         [DllImport("user32.dll", SetLastError = true)]
         internal static extern IntPtr GetWindow(IntPtr hWnd, GetWindowCmd uCmd);
@@ -298,6 +296,9 @@ namespace GyroShell.Helpers.Win32
 
         [DllImport("user32.dll")]
         internal static extern bool DeregisterShellHookWindow(IntPtr hWnd);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        public static extern int GetWindowThreadProcessId(IntPtr handle, out uint processId);
 
         // DWM API attrib
         internal enum DWMWINDOWATTRIBUTE

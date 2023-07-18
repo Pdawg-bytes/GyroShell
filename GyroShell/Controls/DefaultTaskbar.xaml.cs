@@ -24,6 +24,9 @@ using Windows.Networking.Connectivity;
 using CoreAudio;
 using System.Threading;
 using System.Linq;
+using Microsoft.UI.Xaml.Media.Imaging;
+using System.Threading.Tasks;
+using System.ComponentModel;
 
 namespace GyroShell.Controls
 {
@@ -463,7 +466,7 @@ namespace GyroShell.Controls
                         if (!indexedWindows.Contains(hwnd))
                         {
                             indexedWindows.Add(hwnd);
-                            TbIconCollection.Add(new IconModel { IconName = windowName, Id = hwnd });
+                            TbIconCollection.Add(new IconModel { IconName = windowName, Id = hwnd, AppIcon = GetWinUI3BitmapSourceFromHIcon(GetIcon(hwnd)) });
                         }
                         break;
                     case EVENT_OBJECT_NAMECHANGED:
@@ -478,7 +481,7 @@ namespace GyroShell.Controls
                             {
                                 if (!TbIconCollection.Any(item => item.Id == hwnd))
                                 {
-                                    TbIconCollection.Add(new IconModel { IconName = windowName, Id = hwnd });
+                                    TbIconCollection.Add(new IconModel { IconName = windowName, Id = hwnd, AppIcon = GetWinUI3BitmapSourceFromHIcon(GetIcon(hwnd)) });
                                 }
                             }
                             Debug.WriteLine("[-] WinEventHook: Value not found in rename list.");
@@ -572,7 +575,7 @@ namespace GyroShell.Controls
         {
             try
             {
-                if (isUserWindow(hwnd)) { indexedWindows.Add(hwnd); TbIconCollection.Add(new IconModel { IconName = GetWindowTitle(hwnd), Id = hwnd }); }
+                if (isUserWindow(hwnd)) { indexedWindows.Add(hwnd); TbIconCollection.Add(new IconModel { IconName = GetWindowTitle(hwnd), Id = hwnd, AppIcon = GetWinUI3BitmapSourceFromHIcon(GetIcon(hwnd)) }); }
             }
             catch(Exception ex)
             { 

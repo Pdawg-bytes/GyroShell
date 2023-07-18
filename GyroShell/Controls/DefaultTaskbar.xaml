@@ -136,7 +136,7 @@
                             </StackPanel.ChildrenTransitions>
                             <Border ContextFlyout="{StaticResource IconRightFlyout}" RightTapped="Icon_RightTapped" ToolTipService.Placement="Top" ToolTipService.ToolTip="{Binding IconName}" Tapped="Icon_Tapped" Width="43" Height="43" Margin="0,0,0,0" Background="Transparent" Padding="0" BorderBrush="Transparent" BorderThickness="0" VerticalAlignment="Center">
                                 <Grid>
-                                    <Image Source="ms-appx:///Assets/StoreLogo.backup.png" Height="26" Width="26" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,0" />
+                                    <Image Source="{Binding AppIcon}" Height="23" Width="23" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,0" />
                                 </Grid>
                             </Border>
                         </StackPanel>
