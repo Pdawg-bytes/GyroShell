@@ -40,7 +40,7 @@
                     <TextBlock FontFamily="HoloLens MDL2 Assets" Text="&#xE782;" VerticalAlignment="Center" Margin="0" FontSize="16"/>
                 </ToggleButton.Content>
             </ToggleButton>
-            <TextBox Height="32" PlaceholderText="Type here to search..." Width="200" Margin="5,0,0,0" CornerRadius="15" BorderThickness="0"/>
+            <TextBox Height="32" PlaceholderText="Type here to search..." Width="200" Margin="5,2,0,0" CornerRadius="15" BorderThickness="0"/>
             <Button HorizontalAlignment="Left" Height="40" Width="40" Margin="5,0,10,0" Background="Transparent" BorderBrush="Transparent" x:Name="TaskView" Padding="0" ToolTipService.ToolTip="Task View">
                 <Button.Content>
                     <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE7C4;" VerticalAlignment="Center" Margin="0" FontSize="16" x:Name="TaskViewIcon"/>
@@ -115,7 +115,7 @@
                                             </VisualStateGroup>
                                         </VisualStateManager.VisualStateGroups>
                                         <ContentPresenter x:Name="ContentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Background="Transparent" CornerRadius="4" Margin="0,3,0,0"/>
-                                        <Border x:Name="HighlightBorder" Width="10" Height="3" CornerRadius="2" Background="Gray" VerticalAlignment="Bottom" Margin="0,2,0,0" HorizontalAlignment="Center" RenderTransformOrigin="0.4,0">
+                                        <Border x:Name="HighlightBorder" Width="10" Height="3" CornerRadius="1.6" Background="Gray" VerticalAlignment="Bottom" Margin="0,2,0,0" HorizontalAlignment="Center" RenderTransformOrigin="0.45,0">
                                             <Border.RenderTransform>
                                                 <ScaleTransform x:Name="HighlightBorderTransform" ScaleX="1" ScaleY="1"/>
                                             </Border.RenderTransform>
@@ -150,8 +150,6 @@
                     <EntranceThemeTransition IsStaggeringEnabled="True" />
                 </TransitionCollection>
             </StackPanel.ChildrenTransitions>
-            <!--<Button Content="Add item" HorizontalAlignment="Right" VerticalAlignment="Center" Height="30" x:Name="AddItem" Click="AddItem_Click"/>
-            <Button Content="Remove item" HorizontalAlignment="Right" VerticalAlignment="Center" Height="30" x:Name="RemItem" Click="RemItem_Click"/>-->
             <Button x:Name="SysTray" HorizontalAlignment="Right" VerticalAlignment="Center" Height="40" Background="Transparent" BorderBrush="Transparent" Margin="4,4,10,4" Click="SysTray_Click" Padding="4" ToolTipService.ToolTip="System Tray">
                 <Button.Content>
                     <TextBlock Text="&#xE70E;" FontFamily="Segoe MDL2 Assets" x:Name="TrayIcon" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,2,0,0" FontSize="12"/>

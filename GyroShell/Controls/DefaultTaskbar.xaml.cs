@@ -478,7 +478,6 @@ namespace GyroShell.Controls
                 if (isUserWindow(hwnd))
                 {
                     indexedWindows.Add(hwnd);
-                    Thread.Sleep(10);
                 }
             }
             if (indexedWindows.Contains(hwnd))
@@ -486,11 +485,10 @@ namespace GyroShell.Controls
                 switch (eventType)
                 {
                     case EVENT_OBJECT_CREATE:
-                        Thread.Sleep(1);
                         if (!indexedWindows.Contains(hwnd))
                         {
                             indexedWindows.Add(hwnd);
-                            TbIconCollection.Add(new IconModel { IconName = windowName, Id = hwnd, AppIcon = GetWinUI3BitmapSourceFromHIcon(GetIcon(hwnd)) });
+                            TbIconCollection.Add(new IconModel { IconName = windowName, Id = hwnd, AppIcon = GetWinUI3BitmapSourceFromHIcon(GetIcon(hwnd, 32)) });
                         }
                         break;
                     case EVENT_OBJECT_NAMECHANGED:
@@ -505,7 +503,7 @@ namespace GyroShell.Controls
                             {
                                 if (!TbIconCollection.Any(item => item.Id == hwnd))
                                 {
-                                    TbIconCollection.Add(new IconModel { IconName = windowName, Id = hwnd, AppIcon = GetWinUI3BitmapSourceFromHIcon(GetIcon(hwnd)) });
+                                    TbIconCollection.Add(new IconModel { IconName = windowName, Id = hwnd, AppIcon = GetWinUI3BitmapSourceFromHIcon(GetIcon(hwnd, 32)) });
                                 }
                             }
                             Debug.WriteLine("[-] WinEventHook: Value not found in rename list.");
@@ -538,7 +536,7 @@ namespace GyroShell.Controls
                         {
                             SystemControls.IsChecked = false;
                         }
-                        else if (windowName == "Notification Center")
+                        else if (windowName == "Notification Center" || windowName == "Windows Shell Experience Host")
                         {
                             ActionCenter.IsChecked = false;
                         }
@@ -599,7 +597,7 @@ namespace GyroShell.Controls
         {
             try
             {
-                if (isUserWindow(hwnd)) { indexedWindows.Add(hwnd); TbIconCollection.Add(new IconModel { IconName = GetWindowTitle(hwnd), Id = hwnd, AppIcon = GetWinUI3BitmapSourceFromHIcon(GetIcon(hwnd)) }); }
+                if (isUserWindow(hwnd)) { indexedWindows.Add(hwnd); TbIconCollection.Add(new IconModel { IconName = GetWindowTitle(hwnd), Id = hwnd, AppIcon = GetWinUI3BitmapSourceFromHIcon(GetIcon(hwnd, 32)) }); }
             }
             catch (Exception ex)
             {
