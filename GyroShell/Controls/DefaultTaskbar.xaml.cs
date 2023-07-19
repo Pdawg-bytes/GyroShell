@@ -66,11 +66,12 @@ namespace GyroShell.Controls
             BarBorder.Background = new SolidColorBrush(Color.FromArgb(255, 66, 63, 74));
 
             callback = WinEventCallback;
+            UWPWindowHelper uwpWindowHelper = new UWPWindowHelper();
             GetCurrentWindows();
-            //RegisterWinEventHook();
+            RegisterWinEventHook();
 
-            UwpTest(TbIconCollection.First(param => param.IconName == "Ambie").Id);
-            //UwpTest(MainWindow.hWnd);
+            //UwpTest(TbIconCollection.First(param => param.IconName == "Ambie").Id);
+            //UwpTest(TbIconCollection.First(param => param.IconName == "Clock").Id);
 
             TaskbarManager.SendWinlogonShowShell();
         }
@@ -493,7 +494,7 @@ namespace GyroShell.Controls
                         if (!indexedWindows.Contains(hwnd))
                         {
                             indexedWindows.Add(hwnd);
-                            TbIconCollection.Add(new IconModel { IconName = windowName, Id = hwnd, AppIcon = GetWinUI3BitmapSourceFromHIcon(GetIcon(hwnd, 32)) });
+                            TbIconCollection.Add(new IconModel { IconName = windowName, Id = hwnd, AppIcon = CheckIcon(hwnd, 32) });
                         }
                         break;
                     case EVENT_OBJECT_NAMECHANGED:
@@ -508,7 +509,7 @@ namespace GyroShell.Controls
                             {
                                 if (!TbIconCollection.Any(item => item.Id == hwnd))
                                 {
-                                    TbIconCollection.Add(new IconModel { IconName = windowName, Id = hwnd, AppIcon = GetWinUI3BitmapSourceFromHIcon(GetIcon(hwnd, 32)) });
+                                    TbIconCollection.Add(new IconModel { IconName = windowName, Id = hwnd, AppIcon = CheckIcon(hwnd, 32) });
                                 }
                             }
                             Debug.WriteLine("[-] WinEventHook: Value not found in rename list.");
@@ -578,7 +579,8 @@ namespace GyroShell.Controls
                         }
                         else
                         {
-                            TbIconCollection.Add(new IconModel { IconName = windowName, Id = hwnd });
+                            indexedWindows.Add(hwnd);
+                            TbIconCollection.Add(new IconModel { IconName = windowName, Id = hwnd, AppIcon = CheckIcon(hwnd, 32) });
                         }
                         Debug.WriteLine("Window uncloaked: " + windowName + " | Handle: " + hwnd);
                         break;
@@ -602,7 +604,7 @@ namespace GyroShell.Controls
         {
             try
             {
-                if (isUserWindow(hwnd)) { indexedWindows.Add(hwnd); TbIconCollection.Add(new IconModel { IconName = GetWindowTitle(hwnd), Id = hwnd, AppIcon = GetWinUI3BitmapSourceFromHIcon(GetIcon(hwnd, 32)) }); }
+                if (isUserWindow(hwnd)) { indexedWindows.Add(hwnd); TbIconCollection.Add(new IconModel { IconName = GetWindowTitle(hwnd), Id = hwnd, AppIcon = CheckIcon(hwnd, 32) }); }
             }
             catch (Exception ex)
             {

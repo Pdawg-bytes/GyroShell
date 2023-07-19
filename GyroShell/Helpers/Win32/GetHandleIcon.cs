@@ -9,6 +9,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 
 using static GyroShell.Helpers.Win32.Win32Interop;
 using static GyroShell.Helpers.WinRT.UWPWindowHelper;
+using System.Threading.Tasks;
 
 namespace GyroShell.Helpers.Win32
 {
@@ -18,11 +19,11 @@ namespace GyroShell.Helpers.Win32
         {
             if (IsUwpWindow(hwnd))
             {
-                return GetUWPBitmapSourceFromHwnd(hwnd);
+                return GetUWPBitmapSourceFromHwnd(hwnd).Result;
             }
             else
             {
-                return GetWinUI3BitmapSourceFromHIcon(GetIcon(hwnd, 32));
+                return GetWinUI3BitmapSourceFromHIcon(GetIcon(hwnd, targetSize));
             }
         }
 
@@ -42,13 +43,13 @@ namespace GyroShell.Helpers.Win32
             return null;
         }
 
-        internal static SoftwareBitmapSource GetUWPBitmapSourceFromHwnd(IntPtr hWnd)
+        internal async static Task<SoftwareBitmapSource> GetUWPBitmapSourceFromHwnd(IntPtr hWnd)
         {
             try
             {
                 string iconPath = GetUwpAppIconPath(hWnd);
-                SoftwareBitmap bmp = LoadSoftwareBitmapFromUwpIcon(iconPath).Result;
-                return ConvertSoftwareBitmapToSoftwareBitmapSource(bmp);
+                Bitmap bmp = await LoadBitmapFromUwpIcon(iconPath);
+                return ConvertBitmapToSoftwareBitmapSource(bmp).Result;
             }
             catch (Exception e)
             {
@@ -76,24 +77,21 @@ namespace GyroShell.Helpers.Win32
 
             using (Bitmap smoothedBmp = ApplyBicubicInterpolation(bmp, bmp.Width, bmp.Height))
             {
-                // Get pixels as an array of bytes from the smoothed bitmap
                 BitmapData data = smoothedBmp.LockBits(new Rectangle(0, 0, smoothedBmp.Width, smoothedBmp.Height), ImageLockMode.ReadOnly, smoothedBmp.PixelFormat);
                 byte[] bytes = new byte[data.Stride * data.Height];
                 Marshal.Copy(data.Scan0, bytes, 0, bytes.Length);
                 smoothedBmp.UnlockBits(data);
 
-                // Get WinRT SoftwareBitmap
-                SoftwareBitmap softwareBitmap = new SoftwareBitmap(Windows.Graphics.Imaging.BitmapPixelFormat.Bgra8, smoothedBmp.Width, smoothedBmp.Height, Windows.Graphics.Imaging.BitmapAlphaMode.Premultiplied);
+                SoftwareBitmap softwareBitmap = new SoftwareBitmap(BitmapPixelFormat.Bgra8, smoothedBmp.Width, smoothedBmp.Height, BitmapAlphaMode.Premultiplied);
                 softwareBitmap.CopyFromBuffer(bytes.AsBuffer());
 
-                // Build WinUI3 SoftwareBitmapSource
                 SoftwareBitmapSource source = new SoftwareBitmapSource();
                 source.SetBitmapAsync(softwareBitmap);
                 return source;
             }
         }
 
-        private static Bitmap ApplyBicubicInterpolation(Bitmap source, int targetWidth, int targetHeight)
+        internal static Bitmap ApplyBicubicInterpolation(Bitmap source, int targetWidth, int targetHeight)
         {
             Bitmap resampledImage = new Bitmap(targetWidth, targetHeight);
 

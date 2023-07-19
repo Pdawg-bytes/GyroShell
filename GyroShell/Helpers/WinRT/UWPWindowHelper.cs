@@ -7,64 +7,92 @@ using System.Threading.Tasks;
 using Windows.Storage.Streams;
 using Windows.Graphics.Imaging;
 using Windows.ApplicationModel;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Microsoft.UI.Xaml.Media.Imaging;
 
 using static GyroShell.Interfaces.AUMIDIPropertyStore;
 using static GyroShell.Helpers.Win32.Win32Interop;
+using static GyroShell.Helpers.Win32.GetHandleIcon;
 using Windows.Management.Deployment;
+using Windows.Devices.Sensors;
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Linq;
+using System.Drawing;
+using System.Drawing.Imaging;
+using ABI.Windows.ApplicationModel.Activation;
 
 namespace GyroShell.Helpers.WinRT
 {
     internal class UWPWindowHelper
     {
-        public static string GetUwpAppIconPath(IntPtr hwnd)
-        {
-            return GetPackageFromAppHandle(hwnd).Logo.AbsolutePath;
-        }
+        private static Dictionary<string, string> packageFamilyToFullNameMap;
+        private static PackageManager packageManager;
 
-        public static async Task<SoftwareBitmap> LoadSoftwareBitmapFromUwpIcon(string filePath)
+        public UWPWindowHelper()
         {
-            StorageFile file = await StorageFile.GetFileFromPathAsync(filePath);
-            using (IRandomAccessStream stream = await file.OpenAsync(FileAccessMode.Read))
+            packageFamilyToFullNameMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            packageManager = new PackageManager();
+            IEnumerable<Package> packages = packageManager.FindPackagesForUser(null);
+            foreach (Package package in packages)
             {
-                BitmapDecoder decoder = await BitmapDecoder.CreateAsync(stream);
-                SoftwareBitmap softwareBitmap = await decoder.GetSoftwareBitmapAsync();
-
-                if (softwareBitmap.BitmapPixelFormat != BitmapPixelFormat.Bgra8 || softwareBitmap.BitmapAlphaMode != BitmapAlphaMode.Premultiplied)
-                {
-                    softwareBitmap = SoftwareBitmap.Convert(softwareBitmap, BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
-                }
-
-                return softwareBitmap;
+                packageFamilyToFullNameMap[package.Id.FamilyName] = package.Id.FullName;
             }
         }
 
-        public static SoftwareBitmapSource ConvertSoftwareBitmapToSoftwareBitmapSource(SoftwareBitmap softwareBitmap)
+        public static string GetUwpAppIconPath(IntPtr hwnd)
         {
-            SoftwareBitmapSource bitmapSource = new SoftwareBitmapSource();
-            bitmapSource.SetBitmapAsync(softwareBitmap);
-            return bitmapSource;
+            return Uri.UnescapeDataString(Uri.UnescapeDataString(GetPackageFromAppHandle(hwnd).Result.Logo.AbsolutePath)).Replace("/", "\\");
+        }
+
+        public static async Task<Bitmap> LoadBitmapFromUwpIcon(string filePath)
+        {
+            StorageFile file = await StorageFile.GetFileFromPathAsync(filePath);
+            using (Stream stream = await file.OpenStreamForReadAsync())
+            {
+                return new Bitmap(stream);
+            }
+        }
+
+        public async static Task<SoftwareBitmapSource> ConvertBitmapToSoftwareBitmapSource(Bitmap bmp)
+        {
+            using (Bitmap smoothedBmp = ApplyBicubicInterpolation(bmp, bmp.Width, bmp.Height))
+            {
+                BitmapData data = smoothedBmp.LockBits(new Rectangle(0, 0, smoothedBmp.Width, smoothedBmp.Height), ImageLockMode.ReadOnly, smoothedBmp.PixelFormat);
+                byte[] bytes = new byte[data.Stride * data.Height];
+                Marshal.Copy(data.Scan0, bytes, 0, bytes.Length);
+                smoothedBmp.UnlockBits(data);
+
+                SoftwareBitmap softwareBitmap = new SoftwareBitmap(BitmapPixelFormat.Bgra8, smoothedBmp.Width, smoothedBmp.Height, BitmapAlphaMode.Premultiplied);
+                softwareBitmap.CopyFromBuffer(bytes.AsBuffer());
+
+                SoftwareBitmapSource source = new SoftwareBitmapSource();
+                source.SetBitmapAsync(softwareBitmap);
+                return source;
+            }
         }
 
         public static bool IsUwpWindow(IntPtr hWnd)
         {
-            return true;
+            if (GetPackageFromAppHandle(hWnd).Result == null) 
+            { 
+                return false; 
+            }
+            else 
+            {
+                return true; 
+            }
         }
 
-        [DllImport("shell32.dll")]
-        private static extern int SHGetPropertyStoreForWindow(IntPtr hwnd, ref Guid iid, [Out, MarshalAs(UnmanagedType.Interface)] out IPropertyStore propertyStore);
-
-
-        public static Package GetPackageFromAppHandle(IntPtr appHandle)
+        public async static Task<Package> GetPackageFromAppHandle(IntPtr hWnd)
         {
             // Get the AUMID associated with the app handle
             Guid guidPropertyStore = new Guid("{886D8EEB-8CF2-4446-8D02-CDBA1DBDCF99}");
             IPropertyStore propertyStore;
-            int result = SHGetPropertyStoreForWindow(appHandle, ref guidPropertyStore, out propertyStore);
+            int result = SHGetPropertyStoreForWindow(hWnd, ref guidPropertyStore, out propertyStore);
             if (result != 0)
             {
-                throw new InvalidOperationException("[-] Failed to retrieve the property store.");
+                return null;
             }
 
             // Get the AUMID value from the property store
@@ -87,25 +115,22 @@ namespace GyroShell.Helpers.WinRT
 
             if (string.IsNullOrEmpty(aumid))
             {
-                throw new InvalidOperationException("[-] Failed to retrieve the AUMID.");
+                return null;
             }
 
             // Get the Package object from the AUMID
             try
             {
-                // Fails with ACCESS_DENIED.
-                PackageManager packageManager = new PackageManager();
-                var packages = packageManager.FindPackages();
+                string[] aumidParts = aumid.Split('!');
+                string packageFamilyName = aumidParts[0];
 
-                foreach (var package in packages)
+                if (packageFamilyToFullNameMap.TryGetValue(packageFamilyName, out string packageFullName))
                 {
-                    if (package.Id.FamilyName == aumid)
-                    {
-                        return package;
-                    }
+                    return packageManager.FindPackageForUser(null, packageFullName);
                 }
+                return null;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Debug.WriteLine("UWPWindowHelper => AUMID Filter: " + e.Message);
             }

@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
+using static GyroShell.Interfaces.AUMIDIPropertyStore;
 
 namespace GyroShell.Helpers.Win32
 {
@@ -405,6 +406,9 @@ namespace GyroShell.Helpers.Win32
         }
 
         internal delegate IntPtr WndProcDelegate(IntPtr hwnd, uint message, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("shell32.dll")]
+        internal static extern int SHGetPropertyStoreForWindow(IntPtr hwnd, ref Guid iid, [Out, MarshalAs(UnmanagedType.Interface)] out IPropertyStore propertyStore);
 
         [DllImport("SHELL32", CallingConvention = CallingConvention.StdCall)]
         internal static extern uint SHAppBarMessage(int dwMessage, ref APPBARDATA pData);
