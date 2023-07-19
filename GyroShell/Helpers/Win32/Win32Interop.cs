@@ -54,6 +54,7 @@ namespace GyroShell.Helpers.Win32
         internal const int WS_EX_APPWINDOW = 0x00040000;
         internal const int WS_EX_TOOLWINDOW = 0x00000080;
         internal const int WS_EX_NOACTIVATE = 0x08000000;
+        internal const int WS_VISIBLE = 0x10000000;
 
         internal const int HSHELL_WINDOWCREATED = 1;
         internal const int HSHELL_WINDOWDESTROYED = 2;
@@ -175,6 +176,15 @@ namespace GyroShell.Helpers.Win32
             GW_ENABLEDPOPUP = 6
         }
 
+        [DllImport("ole32.dll")]
+        internal static extern int PropVariantClear(ref Interfaces.AUMIDIPropertyStore.PropVariant pvar);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        internal static extern Int32 GetApplicationUserModelId(IntPtr hProcess, ref UInt32 AppModelIDLength, [MarshalAs(UnmanagedType.LPWStr)] StringBuilder sbAppUserModelID);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        internal static extern bool GetPackageFamilyName(IntPtr hProcess, ref uint packageFamilyNameLength, [Out] char[] packageFamilyName, out uint outLength);
+
         [DllImport("user32.dll", SetLastError = true)]
         internal static extern IntPtr GetWindowIcon(IntPtr hWnd, int flags);
 
@@ -295,6 +305,12 @@ namespace GyroShell.Helpers.Win32
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern int GetWindowThreadProcessId(IntPtr handle, out uint processId);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern bool QueryFullProcessImageName([In] IntPtr hProcess, [In] int dwFlags, [Out] StringBuilder lpExeName, ref int lpdwSize);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern IntPtr OpenProcess(uint processAccess, bool bInheritHandle, uint processId);
 
         // DWM API attrib
         internal enum DWMWINDOWATTRIBUTE

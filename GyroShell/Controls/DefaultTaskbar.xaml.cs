@@ -1,6 +1,7 @@
 using CommunityToolkit.WinUI.Connectivity;
 using CoreAudio;
 using GyroShell.Helpers;
+using GyroShell.Helpers.WinRT;
 using GyroShell.Settings;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -10,10 +11,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
-using System.Threading;
 using Windows.Devices.Power;
 using Windows.Foundation.Metadata;
+using Windows.Graphics.Imaging;
 using Windows.Networking.Connectivity;
 using Windows.System;
 using Windows.UI;
@@ -25,6 +27,7 @@ using static GyroShell.Helpers.Win32.GetHandleIcon;
 using static GyroShell.Helpers.Win32.GetWindowName;
 using static GyroShell.Helpers.Win32.Win32Interop;
 using static GyroShell.Helpers.Win32.WindowChecks;
+using static GyroShell.Helpers.WinRT.UWPWindowHelper;
 
 namespace GyroShell.Controls
 {
@@ -64,7 +67,10 @@ namespace GyroShell.Controls
 
             callback = WinEventCallback;
             GetCurrentWindows();
-            RegisterWinEventHook();
+            //RegisterWinEventHook();
+
+            UwpTest(TbIconCollection.First(param => param.IconName == "Ambie").Id);
+            //UwpTest(MainWindow.hWnd);
 
             TaskbarManager.SendWinlogonShowShell();
         }
@@ -359,7 +365,6 @@ namespace GyroShell.Controls
                         break;
                     case UserNotificationListenerAccessStatus.Denied:
                         NotifCircle.Visibility = Visibility.Collapsed;
-
                         Customization.NotifError = true;
                         break;
                     case UserNotificationListenerAccessStatus.Unspecified:
@@ -622,6 +627,12 @@ namespace GyroShell.Controls
         private void Icon_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
             //IconRightFlyout.ShowAt((FrameworkElement)sender);
+        }
+
+        // CheckIcon(hwnd)
+        private async void UwpTest(IntPtr hWnd)
+        {
+            TbIconCollection.Add(new IconModel { IconName = GetWindowTitle(hWnd), Id = hWnd, AppIcon = CheckIcon(hWnd, 32) });
         }
     }
 }

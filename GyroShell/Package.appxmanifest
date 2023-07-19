@@ -44,6 +44,8 @@
   </Applications>
 
   <Capabilities>
+    <rescap:Capability Name="packageQuery" />
+    <rescap:Capability Name="packageManagement" />
     <rescap:Capability Name="runFullTrust" />
     <uap3:Capability Name="userNotificationListener"/>
   </Capabilities>

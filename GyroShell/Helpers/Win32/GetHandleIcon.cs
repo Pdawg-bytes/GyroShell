@@ -5,13 +5,27 @@ using System.Drawing.Imaging;
 using Windows.Graphics.Imaging;
 using System.Runtime.InteropServices;
 ﻿using Microsoft.UI.Xaml.Media.Imaging;
-using static GyroShell.Helpers.Win32.Win32Interop;
 using System.Runtime.InteropServices.WindowsRuntime;
+
+using static GyroShell.Helpers.Win32.Win32Interop;
+using static GyroShell.Helpers.WinRT.UWPWindowHelper;
 
 namespace GyroShell.Helpers.Win32
 {
     internal class GetHandleIcon
     {
+        internal static SoftwareBitmapSource CheckIcon(IntPtr hwnd, int targetSize)
+        {
+            if (IsUwpWindow(hwnd))
+            {
+                return GetUWPBitmapSourceFromHwnd(hwnd);
+            }
+            else
+            {
+                return GetWinUI3BitmapSourceFromHIcon(GetIcon(hwnd, 32));
+            }
+        }
+
         internal static Icon GetIcon(IntPtr hwnd, int targetSize)
         {
             GetWindowThreadProcessId(hwnd, out uint pid);
@@ -28,7 +42,22 @@ namespace GyroShell.Helpers.Win32
             return null;
         }
 
-        public static SoftwareBitmapSource GetWinUI3BitmapSourceFromHIcon(Icon icon)
+        internal static SoftwareBitmapSource GetUWPBitmapSourceFromHwnd(IntPtr hWnd)
+        {
+            try
+            {
+                string iconPath = GetUwpAppIconPath(hWnd);
+                SoftwareBitmap bmp = LoadSoftwareBitmapFromUwpIcon(iconPath).Result;
+                return ConvertSoftwareBitmapToSoftwareBitmapSource(bmp);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.Message);
+                return null;
+            }
+        }
+
+        internal static SoftwareBitmapSource GetWinUI3BitmapSourceFromHIcon(Icon icon)
         {
             if (icon == null)
                 return null;
@@ -40,7 +69,7 @@ namespace GyroShell.Helpers.Win32
             }
         }
 
-        public static SoftwareBitmapSource GetWinUI3BitmapSourceFromGdiBitmap(Bitmap bmp)
+        internal static SoftwareBitmapSource GetWinUI3BitmapSourceFromGdiBitmap(Bitmap bmp)
         {
             if (bmp == null)
                 return null;

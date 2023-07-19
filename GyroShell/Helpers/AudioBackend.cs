@@ -3,9 +3,9 @@ using System;
 
 namespace GyroShell.Helpers
 {
-    internal class AudioBackend
+    public class AudioBackend
     {
-        internal static MMDeviceEnumerator devEnum = new MMDeviceEnumerator(Guid.Empty);
-        internal static MMDevice audioDevice = devEnum.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+        public static MMDeviceEnumerator devEnum = new MMDeviceEnumerator(Guid.Empty);
+        public static MMDevice audioDevice = devEnum.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
     }
 }
