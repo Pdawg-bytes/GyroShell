@@ -91,6 +91,49 @@ namespace GyroShell.Helpers.Win32
             }
         }
 
+        internal static Bitmap RemoveTransparentBorders(Bitmap bmp)
+        {
+            Rectangle bounds = GetNonTransparentBounds(bmp);
+
+            if (bounds.IsEmpty)
+            {
+                return null;
+            }
+
+            Bitmap croppedBitmap = new Bitmap(bounds.Width, bounds.Height);
+            using (Graphics g = Graphics.FromImage(croppedBitmap))
+            {
+                g.DrawImage(bmp, new Rectangle(0, 0, croppedBitmap.Width, croppedBitmap.Height), bounds, GraphicsUnit.Pixel);
+            }
+            return croppedBitmap;
+        }
+        private static Rectangle GetNonTransparentBounds(Bitmap bmp)
+        {
+            int left = bmp.Width, right = 0, top = bmp.Height, bottom = 0;
+
+            for (int y = 0; y < bmp.Height; y++)
+            {
+                for (int x = 0; x < bmp.Width; x++)
+                {
+                    Color pixelColor = bmp.GetPixel(x, y);
+                    if (pixelColor.A != 0)
+                    {
+                        if (x < left) left = x;
+                        if (x > right) right = x;
+                        if (y < top) top = y;
+                        if (y > bottom) bottom = y;
+                    }
+                }
+            }
+
+            if (left > right || top > bottom)
+            {
+                return Rectangle.Empty;
+            }
+
+            return Rectangle.FromLTRB(left, top, right + 1, bottom + 1);
+        }
+
         internal static Bitmap ApplyBicubicInterpolation(Bitmap source, int targetWidth, int targetHeight)
         {
             Bitmap resampledImage = new Bitmap(targetWidth, targetHeight);

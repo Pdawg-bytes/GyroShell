@@ -58,12 +58,14 @@ namespace GyroShell.Helpers.WinRT
         {
             using (Bitmap smoothedBmp = ApplyBicubicInterpolation(bmp, bmp.Width, bmp.Height))
             {
-                BitmapData data = smoothedBmp.LockBits(new Rectangle(0, 0, smoothedBmp.Width, smoothedBmp.Height), ImageLockMode.ReadOnly, smoothedBmp.PixelFormat);
+                Bitmap croppedBmp = RemoveTransparentBorders(smoothedBmp);
+
+                BitmapData data = croppedBmp.LockBits(new Rectangle(0, 0, croppedBmp.Width, croppedBmp.Height), ImageLockMode.ReadOnly, croppedBmp.PixelFormat);
                 byte[] bytes = new byte[data.Stride * data.Height];
                 Marshal.Copy(data.Scan0, bytes, 0, bytes.Length);
-                smoothedBmp.UnlockBits(data);
+                croppedBmp.UnlockBits(data);
 
-                SoftwareBitmap softwareBitmap = new SoftwareBitmap(BitmapPixelFormat.Bgra8, smoothedBmp.Width, smoothedBmp.Height, BitmapAlphaMode.Premultiplied);
+                SoftwareBitmap softwareBitmap = new SoftwareBitmap(BitmapPixelFormat.Bgra8, croppedBmp.Width, croppedBmp.Height, BitmapAlphaMode.Premultiplied);
                 softwareBitmap.CopyFromBuffer(bytes.AsBuffer());
 
                 SoftwareBitmapSource source = new SoftwareBitmapSource();
