@@ -323,6 +323,24 @@ namespace GyroShell.Controls
                     case "Run":
                         Process.Start("explorer.exe", "shell:::{2559a1f3-21d7-11d4-bdaf-00c04f60b9f0}");
                         break;
+                    case "Desktop":
+                        foreach(IntPtr handle in indexedWindows)
+                        {
+                            ShowWindow(handle, SW_MINIMIZE);
+                        }
+                        break;
+                    case "SignOut":
+                        ExitWindowsEx(EWX_LOGOFF, 0);
+                        break;
+                    case "Sleep":
+                        SetSuspendState(false, false, false);
+                        break;
+                    case "Shutdown":
+                        Process.Start(ProcessStart.ProcessStartEx("shutdown /s /t 00", false, true));
+                        break;
+                    case "Restart":
+                        Process.Start(ProcessStart.ProcessStartEx("shutdown /r /t 00", false, true));
+                        break;
                 }
             }
             else
@@ -500,27 +518,53 @@ namespace GyroShell.Controls
             UnhookWinEvent(nameChangeHook);
             UnhookWinEvent(cdWindowHook);
         }
-        // WinEvent Callbacks
+        // WinEvent Callback
         private void WinEventCallback(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
         {
             string windowName = GetWindowTitle(hwnd);
             if (!indexedWindows.Contains(hwnd))
             {
-                if (isUserWindow(hwnd))
+                if (hwnd != IntPtr.Zero && isUserWindow(hwnd))
                 {
                     indexedWindows.Add(hwnd);
                 }
             }
-            if (indexedWindows.Contains(hwnd))
+            if (indexedWindows.Contains(hwnd) && hwnd != (IntPtr)0x001907DA)
             {
                 switch (eventType)
                 {
                     case EVENT_OBJECT_CREATE:
-                        if (!indexedWindows.Contains(hwnd))
+                        if (!TbIconCollection.Any(item => item.Id == hwnd))
                         {
                             indexedWindows.Add(hwnd);
                             TbIconCollection.Add(new IconModel { IconName = windowName, Id = hwnd, AppIcon = CheckIcon(hwnd, 32) });
+                            if(GetForegroundWindow() == hwnd)
+                            {
+                                IconModel targetItemC = TbIconCollection.FirstOrDefault(item => item.Id == hwnd);
+                                TbOpenGrid.SelectedItem = targetItemC;
+
+                                foreach (IconModel item in TbOpenGrid.Items)
+                                {
+                                    GridViewItem container = TbOpenGrid.ContainerFromItem(item) as GridViewItem;
+                                    if (container != null)
+                                    {
+                                        VisualStateManager.GoToState(container, item == TbOpenGrid.SelectedItem ? "Pressed" : "Normal", true);
+                                    }
+                                }
+                            }
                         }
+                        break;
+                    case EVENT_OBJECT_DESTROY:
+                        indexedWindows.Remove(hwnd);
+                        try
+                        {
+                            TbIconCollection.Remove(TbIconCollection.First(param => param.Id == hwnd));
+                        }
+                        catch
+                        {
+                            Debug.WriteLine("[-] WinEventHook EOD: Value not found in list.");
+                        }
+                        Debug.WriteLine("Window destroy: " + windowName + " | Handle: " + hwnd);
                         break;
                     case EVENT_OBJECT_NAMECHANGED:
                         try
@@ -608,18 +652,6 @@ namespace GyroShell.Controls
                             TbIconCollection.Add(new IconModel { IconName = windowName, Id = hwnd, AppIcon = CheckIcon(hwnd, 32) });
                         }
                         Debug.WriteLine("Window uncloaked: " + windowName + " | Handle: " + hwnd);
-                        break;
-                    case EVENT_OBJECT_DESTROY:
-                        indexedWindows.Remove(hwnd);
-                        try
-                        {
-                            TbIconCollection.Remove(TbIconCollection.First(param => param.Id == hwnd));
-                        }
-                        catch
-                        {
-                            Debug.WriteLine("[-] WinEventHook EOD: Value not found in list.");
-                        }
-                        Debug.WriteLine("Window destroy: " + windowName + " | Handle: " + hwnd);
                         break;
                 }
             }

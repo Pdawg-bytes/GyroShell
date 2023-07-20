@@ -26,7 +26,13 @@
                 <MenuFlyoutItem Text="File Explorer" Tag="FileExp" Click="StartFlyout_Click"/>
                 <MenuFlyoutItem Text="Run" Tag="Run" Click="StartFlyout_Click"/>
                 <MenuFlyoutSeparator/>
-                <MenuFlyoutItem Text="Shut down or sign out" Tag="Shutdown" Click="StartFlyout_Click"/>
+                <MenuFlyoutSubItem Text="Shut down or sign out">
+                    <MenuFlyoutItem Text="Sign out" Tag="SignOut" Click="StartFlyout_Click"/>
+                    <MenuFlyoutItem Text="Sleep" Tag="Sleep" Click="StartFlyout_Click"/>
+                    <MenuFlyoutItem Text="Shut down" Tag="Shutdown"  Click="StartFlyout_Click"/>
+                    <MenuFlyoutItem Text="Restart" Tag="Restart" Click="StartFlyout_Click"/>
+                </MenuFlyoutSubItem>
+                <MenuFlyoutItem Text="Desktop" Tag="Desktop" Click="StartFlyout_Click"/>
             </MenuFlyout>
         </Frame>
         <StackPanel Orientation="Horizontal" x:Name="LeftControls" HorizontalAlignment="Center" >

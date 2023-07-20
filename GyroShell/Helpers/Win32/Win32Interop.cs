@@ -26,6 +26,7 @@ namespace GyroShell.Helpers.Win32
         }
 
         internal const int SW_RESTORE = 9;
+        internal const int SW_MINIMIZE = 6;
         internal const int SW_SHOW = 5;
         internal const int SW_HIDE = 0;
 
@@ -96,6 +97,8 @@ namespace GyroShell.Helpers.Win32
         internal const int WH_SHELL = 10;
         internal const int GW_OWNER = 4;
         internal const long OBJID_WINDOW = 0x00000000L;
+
+        internal const uint EWX_LOGOFF = 0x00000000;
 
         internal delegate bool EnumThreadProc(IntPtr hwnd, IntPtr lParam);
 
@@ -176,6 +179,15 @@ namespace GyroShell.Helpers.Win32
             GW_CHILD = 5,
             GW_ENABLEDPOPUP = 6
         }
+
+        [DllImport("PowrProf.dll")]
+        internal static extern bool SetSuspendState(bool hibernate, bool forceCritical, bool disableWakeEvent);
+
+        [DllImport("user32.dll")]
+        internal static extern bool ExitWindowsEx(uint uFlags, uint dwReason);
+
+        [DllImport("user32.dll")]
+        internal static extern IntPtr GetForegroundWindow();
 
         [DllImport("ole32.dll")]
         internal static extern int PropVariantClear(ref Interfaces.AUMIDIPropertyStore.PropVariant pvar);
