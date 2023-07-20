@@ -17,6 +17,7 @@ using System.Runtime.CompilerServices;
 using Windows.ApplicationModel;
 using GyroShell.Settings;
 using Microsoft.UI.Xaml.Media.Animation;
+using System.Diagnostics;
 
 namespace GyroShell.Controls
 {
@@ -25,6 +26,8 @@ namespace GyroShell.Controls
         private AppWindow m_AppWindow;
 
         private IntPtr hWnd;
+
+        private Stopwatch sw;
 
         internal StartupScreen()
         {
@@ -64,6 +67,9 @@ namespace GyroShell.Controls
             appWindow.Resize(new SizeInt32 { Width = windowWidth, Height = windowHeight });
             appWindow.Move(new PointInt32 { X = windowX, Y = windowY });
             appWindow.MoveInZOrderAtTop();
+
+            sw = new Stopwatch();
+            sw.Start();
         }
 
         #region Window Handling

@@ -11,7 +11,7 @@
     >
 
     <Grid x:Name="RootGrid">
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Height="300">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Height="300" Width="550">
             <TextBlock Text="GyroShell is starting" FontWeight="SemiLight" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="40" Margin="0,80,0,0"/>
             <ProgressRing IsIndeterminate="True" Margin="0,50,0,0"/>
             <TextBlock x:Name="VersionText" Text="VERSION: 0.0.0.0 ALPHA" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,50,0,0" FontWeight="SemiBold" Foreground="Gray" CharacterSpacing="15"/>

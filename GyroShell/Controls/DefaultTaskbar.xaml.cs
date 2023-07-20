@@ -306,9 +306,19 @@ namespace GyroShell.Controls
                             settingsWindow.Activate();
                         }
                         break;
+                    case "RestartGyroShell":
+                        try
+                        {
+                            Process.Start(new ProcessStartInfo { FileName = Process.GetCurrentProcess().MainModule.FileName, UseShellExecute = true });
+                            Application.Current.Exit();
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine(ex);
+                        }
+                        break;
                     case "ExitGyroShell":
                         DestroyHooks();
-
                         App.Current.Exit();
                         break;
                     case "TaskMgr":
@@ -357,7 +367,7 @@ namespace GyroShell.Controls
 
         private void MainShellGrid_Loaded(object sender, RoutedEventArgs e)
         {
-            App.startupScreen.Close();
+            //App.startupScreen.Close();
         }
         #endregion
 

@@ -19,6 +19,7 @@
         <Frame Visibility="Collapsed" Background="{ThemeResource SystemControlAcrylicWindowBrush}">
             <MenuFlyout x:Name="StartFlyout" AreOpenCloseAnimationsEnabled="True" ShouldConstrainToRootBounds="False">
                 <MenuFlyoutItem Text="Shell Settings" Click="StartFlyout_Click" Tag="ShellSettings"/>
+                <MenuFlyoutItem Text="Restart GyroShell" Tag="RestartGyroShell" Click="StartFlyout_Click" />
                 <MenuFlyoutItem Text="Exit GyroShell" Click="StartFlyout_Click" Tag="ExitGyroShell"/>
                 <MenuFlyoutSeparator/>
                 <MenuFlyoutItem Text="Task Manager" Tag="TaskMgr" Click="StartFlyout_Click"/>
