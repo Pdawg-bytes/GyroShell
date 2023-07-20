@@ -56,16 +56,16 @@ namespace GyroShell.Helpers.WinRT
 
         public async static Task<SoftwareBitmapSource> ConvertBitmapToSoftwareBitmapSource(Bitmap bmp)
         {
-            using (Bitmap smoothedBmp = ApplyBicubicInterpolation(bmp, bmp.Width, bmp.Height))
+            using (Bitmap croppedBmp = RemoveTransparentBorders(bmp))
             {
-                Bitmap croppedBmp = RemoveTransparentBorders(smoothedBmp);
+                Bitmap resampledBmp = ApplyBicubicInterpolation(croppedBmp, croppedBmp.Width, croppedBmp.Height);
 
-                BitmapData data = croppedBmp.LockBits(new Rectangle(0, 0, croppedBmp.Width, croppedBmp.Height), ImageLockMode.ReadOnly, croppedBmp.PixelFormat);
+                BitmapData data = resampledBmp.LockBits(new Rectangle(0, 0, resampledBmp.Width, resampledBmp.Height), ImageLockMode.ReadOnly, resampledBmp.PixelFormat);
                 byte[] bytes = new byte[data.Stride * data.Height];
                 Marshal.Copy(data.Scan0, bytes, 0, bytes.Length);
-                croppedBmp.UnlockBits(data);
+                resampledBmp.UnlockBits(data);
 
-                SoftwareBitmap softwareBitmap = new SoftwareBitmap(BitmapPixelFormat.Bgra8, croppedBmp.Width, croppedBmp.Height, BitmapAlphaMode.Premultiplied);
+                SoftwareBitmap softwareBitmap = new SoftwareBitmap(BitmapPixelFormat.Bgra8, resampledBmp.Width, resampledBmp.Height, BitmapAlphaMode.Premultiplied);
                 softwareBitmap.CopyFromBuffer(bytes.AsBuffer());
 
                 SoftwareBitmapSource source = new SoftwareBitmapSource();

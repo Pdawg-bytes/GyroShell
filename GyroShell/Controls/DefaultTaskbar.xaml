@@ -9,7 +9,7 @@
     x:Name="DefaultTaskbarPage"
     >
 
-    <Grid x:Name="MainShellGrid">
+    <Grid x:Name="MainShellGrid" Loaded="MainShellGrid_Loaded">
         <Grid.Resources>
             <MenuFlyout x:Name="IconRightFlyout" x:Key="IconRightFlyout" AreOpenCloseAnimationsEnabled="True" ShouldConstrainToRootBounds="False">
                 <MenuFlyoutItem Text="Close window"/>

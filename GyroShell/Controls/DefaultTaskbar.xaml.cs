@@ -240,6 +240,14 @@ namespace GyroShell.Controls
                     SndStatus.Text = "\uEA85";
                 });
             }
+
+            if (AudioBackend.audioDevice.AudioEndpointVolume.Mute)
+            {
+                DispatcherQueue.TryEnqueue((Microsoft.UI.Dispatching.DispatcherQueuePriority)CoreDispatcherPriority.Normal, () =>
+                {
+                    SndStatus.Text = "\uE198";
+                });
+            }
         }
         #endregion
 
@@ -327,6 +335,11 @@ namespace GyroShell.Controls
         {
             throw new NotImplementedException("Systray not ready yet.");
             //await TaskbarManager.ShowSysTray(); /* Does nothing, no action lol*/
+        }
+
+        private void MainShellGrid_Loaded(object sender, RoutedEventArgs e)
+        {
+            App.startupScreen.Close();
         }
         #endregion
 
@@ -629,12 +642,6 @@ namespace GyroShell.Controls
         private void Icon_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
             //IconRightFlyout.ShowAt((FrameworkElement)sender);
-        }
-
-        // CheckIcon(hwnd)
-        private async void UwpTest(IntPtr hWnd)
-        {
-            TbIconCollection.Add(new IconModel { IconName = GetWindowTitle(hWnd), Id = hWnd, AppIcon = CheckIcon(hWnd, 32) });
         }
     }
 }

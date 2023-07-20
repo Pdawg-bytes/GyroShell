@@ -61,7 +61,6 @@ namespace GyroShell
             m_AppWindow = GetAppWindowForCurrentWindow();
             m_AppWindow.SetPresenter(AppWindowPresenterKind.Default);
 
-            // Resize Window
             hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
             WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
             AppWindow appWindow = AppWindow.GetFromWindowId(windowId);

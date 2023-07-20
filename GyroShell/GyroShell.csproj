@@ -64,10 +64,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove="Controls\DefaultTaskbar.xaml" />
+    <None Remove="Controls\StartupScreen.xaml" />
     <None Remove="Controls\StartWindow.xaml" />
     <None Remove="Settings\AboutPage.xaml" />
     <None Remove="Settings\Customization.xaml" />
     <None Remove="Settings\SettingsWindow.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Controls\StartupScreen.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Settings\AboutPage.xaml">

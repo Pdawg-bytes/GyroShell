@@ -1,16 +1,20 @@
-﻿using GyroShell.Settings;
+﻿using GyroShell.Controls;
+using GyroShell.Settings;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.Storage;
-
+using Windows.UI.Core;
 using static GyroShell.Helpers.Win32.Win32Interop;
 
 namespace GyroShell
 {
     public partial class App : Application
     {
+        internal static StartupScreen startupScreen;
         private Window m_window;
 
         public static ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
@@ -20,11 +24,11 @@ namespace GyroShell
             this.InitializeComponent();
         }
 
-        protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
+        protected async override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
+            await LoadStartupScreenContentAsync();
             m_window = new MainWindow();
             m_window.Activate();
-
             try
             {
                 if (Package.Current.InstalledLocation != null)
@@ -69,6 +73,13 @@ namespace GyroShell
                 AboutPage.PackageVer = "0.0.0.0";
                 AboutPage.PackageBuild = "February, 2023";
             }
+        }
+
+        private async Task LoadStartupScreenContentAsync()
+        {
+            startupScreen = new StartupScreen();
+            startupScreen.Activate();
+            await Task.Delay(100);
         }
     }
 }
