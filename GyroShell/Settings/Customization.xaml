@@ -35,6 +35,23 @@
                     </Expander.Content>
                 </Expander>
 
+                <Expander x:Name="TbBehaviorExpander" HorizontalAlignment="Stretch" Margin="20,20,0,0" HorizontalContentAlignment="Left">
+                    <Expander.Header>
+                        <StackPanel Orientation="Horizontal" Padding="5,10,5,10">
+                            <TextBlock Text="&#xE90E;" FontFamily="Segoe MDL2 Assets" Margin="0,13,10,10" FontSize="22" x:Name="TbIcon"/>
+                            <TextBlock Text="Taskbar Behavior" Margin="10,13,10,10"/>
+                        </StackPanel>
+                    </Expander.Header>
+                    <Expander.Content>
+                        <StackPanel Padding="48,0,48,0">
+                            <ComboBox x:Name="AlignmentType" Header="Set GyroShell's icon alignment" SelectionChanged="AlignmentType_SelectionChanged">
+                                <x:String>Left</x:String>
+                                <x:String>Center</x:String>
+                            </ComboBox>
+                        </StackPanel>
+                    </Expander.Content>
+                </Expander>
+                
                 <Expander x:Name="ClockExpander" HorizontalAlignment="Stretch" Margin="20,20,0,0" HorizontalContentAlignment="Left">
                     <Expander.Header>
                         <StackPanel Orientation="Horizontal" Padding="5,10,5,10">
@@ -45,7 +62,7 @@
                     <Expander.Content>
                         <StackPanel Padding="48,0,48,0">
                             <ToggleSwitch Header="Use seconds in time" Margin="0,0,0,8" VerticalAlignment="Top" HorizontalAlignment="Left" x:Name="SecondsToggle" Toggled="SecondsToggle_Toggled"/>
-                            <ToggleSwitch Header="24 Hour time" VerticalAlignment="Top" HorizontalAlignment="Left" x:Name="TFHourToggle" Toggled="TFHourToggle_Toggled"/>
+                            <ToggleSwitch Header="Use 24 hour time" VerticalAlignment="Top" HorizontalAlignment="Left" x:Name="TFHourToggle" Toggled="TFHourToggle_Toggled"/>
                         </StackPanel>
                     </Expander.Content>
                 </Expander>

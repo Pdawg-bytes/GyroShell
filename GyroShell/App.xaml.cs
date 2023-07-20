@@ -79,7 +79,7 @@ namespace GyroShell
         {
             startupScreen = new StartupScreen();
             startupScreen.Activate();
-            await Task.Delay(100);
+            await Task.Delay(200);
         }
     }
 }

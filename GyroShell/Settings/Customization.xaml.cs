@@ -1,9 +1,14 @@
+using CommunityToolkit.WinUI.Helpers;
 using GyroShell.Controls;
+using GyroShell.Helpers;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.Windows.AppLifecycle;
 using System;
 using System.Diagnostics;
+using System.Linq;
+using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
 using Windows.System;
 using Windows.UI;
@@ -17,6 +22,7 @@ namespace GyroShell.Settings
         bool? is24HREnabled = App.localSettings.Values["is24HR"] as bool?;
         int? transparencyType = App.localSettings.Values["transparencyType"] as int?;
         int? iconStyle = App.localSettings.Values["iconStyle"] as int?;
+        int? tbAlignment = App.localSettings.Values["tbAlignment"] as int?;
         float? luminOpacity = App.localSettings.Values["luminOpacity"] as float?;
         float? tintOpacity = App.localSettings.Values["tintOpacity"] as float?;
         byte? aTint = App.localSettings.Values["aTint"] as byte?;
@@ -29,49 +35,6 @@ namespace GyroShell.Settings
         public Customization()
         {
             this.InitializeComponent();
-        }
-
-        private void TransparencyType_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            string materialName = e.AddedItems[0].ToString();
-
-            switch (materialName)
-            {
-                case "Mica Alt":
-                    App.localSettings.Values["transparencyType"] = 0;
-                    LuminSlider.Value = 0;
-                    LuminSlider.IsEnabled = false;
-
-                    if (transparencyCustom != null && transparencyCustom == false)
-                    {
-                        DefaultExtern();
-                    }
-
-                    RestartInfo.IsOpen = true;
-                    break;
-                case "Mica":
-                    App.localSettings.Values["transparencyType"] = 1;
-                    LuminSlider.IsEnabled = false;
-
-                    if (transparencyCustom != null && transparencyCustom == false)
-                    {
-                        DefaultExtern();
-                    }
-
-                    RestartInfo.IsOpen = true;
-                    break;
-                case "Acrylic":
-                    App.localSettings.Values["transparencyType"] = 2;
-                    LuminSlider.IsEnabled = true;
-
-                    if (transparencyCustom != null && transparencyCustom == false)
-                    {
-                        DefaultExtern();
-                    }
-
-                    RestartInfo.IsOpen = true;
-                    break;
-            }
         }
 
         #region Clock Settings
@@ -132,6 +95,7 @@ namespace GyroShell.Settings
         }
         #endregion
 
+        #region Icon events
         private void Icon_Checked(object sender, RoutedEventArgs e)
         {
             RadioButton irb = sender as RadioButton;
@@ -140,19 +104,63 @@ namespace GyroShell.Settings
             {
                 switch (irb.Name)
                 {
-                    case "Icon10":
+                    case "Icon11":
                     default:
-                        App.localSettings.Values["iconStyle"] = 0;
+                        App.localSettings.Values["iconStyle"] = 1;
                         RestartInfo.IsOpen = true;
                         break;
-                    case "Icon11":
-                        App.localSettings.Values["iconStyle"] = 1;
+                    case "Icon10":
+                        App.localSettings.Values["iconStyle"] = 0;
                         RestartInfo.IsOpen = true;
                         break;
                 }
             }
         }
+        #endregion
 
+        #region Transparency events
+        private void TransparencyType_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string materialName = e.AddedItems[0].ToString();
+
+            switch (materialName)
+            {
+                case "Mica Alt":
+                    App.localSettings.Values["transparencyType"] = 0;
+                    LuminSlider.Value = 0;
+                    LuminSlider.IsEnabled = false;
+
+                    if (transparencyCustom != null && transparencyCustom == false)
+                    {
+                        DefaultExtern();
+                    }
+
+                    RestartInfo.IsOpen = true;
+                    break;
+                case "Mica":
+                    App.localSettings.Values["transparencyType"] = 1;
+                    LuminSlider.IsEnabled = false;
+
+                    if (transparencyCustom != null && transparencyCustom == false)
+                    {
+                        DefaultExtern();
+                    }
+
+                    RestartInfo.IsOpen = true;
+                    break;
+                case "Acrylic":
+                    App.localSettings.Values["transparencyType"] = 2;
+                    LuminSlider.IsEnabled = true;
+
+                    if (transparencyCustom != null && transparencyCustom == false)
+                    {
+                        DefaultExtern();
+                    }
+
+                    RestartInfo.IsOpen = true;
+                    break;
+            }
+        }
         private void TintSlider_ValueChanged(object sender, Microsoft.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
         {
             float tintOpacity = (float)e.NewValue / 100;
@@ -173,11 +181,45 @@ namespace GyroShell.Settings
             RestartInfo.IsOpen = true;
         }
 
-        private void RestartNowInfo_Click(object sender, RoutedEventArgs e)
+        private void TintColorPicker_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
+        {
+            App.localSettings.Values["aTint"] = TintColorPicker.Color.A;
+            App.localSettings.Values["rTint"] = TintColorPicker.Color.R;
+            App.localSettings.Values["gTint"] = TintColorPicker.Color.G;
+            App.localSettings.Values["bTint"] = TintColorPicker.Color.B;
+            App.localSettings.Values["isCustomTransparency"] = true;
+
+            RestartInfo.IsOpen = true;
+        }
+
+        private void DefaultsButton_Click(object sender, RoutedEventArgs e)
+        {
+            DefaultExtern();
+            RestartInfo.IsOpen = true;
+        }
+        private void DefaultExtern()
+        {
+            aTint = null;
+            rTint = null;
+            bTint = null;
+            gTint = null;
+            luminOpacity = null;
+            tintOpacity = null;
+
+            TintSlider.Value = 0;
+            LuminSlider.Value = 0;
+
+            App.localSettings.Values["isCustomTransparency"] = false;
+        }
+        #endregion
+
+        #region Restart InfoBar events
+        private async void RestartNowInfo_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                AppRestartFailureReason ret = Microsoft.Windows.AppLifecycle.AppInstance.Restart("");
+                Process.Start(new ProcessStartInfo { FileName = Process.GetCurrentProcess().MainModule.FileName, UseShellExecute = true });
+                Application.Current.Exit();
             }
             catch (Exception ex)
             {
@@ -189,17 +231,37 @@ namespace GyroShell.Settings
         {
             RestartInfo.IsOpen = false;
         }
+        #endregion
 
-        private void TintColorPicker_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
+        #region Notification InfoBar events
+        private async void OpenSettingsInfo_Click(object sender, RoutedEventArgs e)
         {
-            App.localSettings.Values["aTint"] = TintColorPicker.Color.A;
-            App.localSettings.Values["rTint"] = TintColorPicker.Color.R;
-            App.localSettings.Values["gTint"] = TintColorPicker.Color.G;
-            App.localSettings.Values["bTint"] = TintColorPicker.Color.B;
-            App.localSettings.Values["isCustomTransparency"] = true;
-
-            RestartInfo.IsOpen = true;
+            await Launcher.LaunchUriAsync(new Uri("ms-settings:notifications"));
         }
+        private void IgnoreInfo_Click(object sender, RoutedEventArgs e)
+        {
+            NotifInfo.IsOpen = false;
+        }
+        #endregion
+
+        #region Alignment events
+        private void AlignmentType_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string alignType = e.AddedItems[0].ToString();
+            switch (alignType)
+            {
+                case "Left":
+                default:
+                    App.localSettings.Values["tbAlignment"] = 0;
+                    RestartInfo.IsOpen = true;
+                    break;
+                case "Center":
+                    App.localSettings.Values["tbAlignment"] = 1;
+                    RestartInfo.IsOpen = true;
+                    break;
+            }
+        }
+        #endregion
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
@@ -262,21 +324,42 @@ namespace GyroShell.Settings
                 switch (iconStyle)
                 {
                     case 0:
-                    default:
+                        FontFamily segoeMDL = new FontFamily("Segoe MDL2 Assets");
+
                         Icon10.IsChecked = true;
                         Icon11.IsChecked = false;
 
-                        TransparencyIcon.FontFamily = new FontFamily("Segoe MDL2 Assets");
-                        ClockIcon.FontFamily = new FontFamily("Segoe MDL2 Assets");
-                        IconHeaderIcon.FontFamily = new FontFamily("Segoe MDL2 Assets");
+                        TransparencyIcon.FontFamily = segoeMDL;
+                        ClockIcon.FontFamily = segoeMDL;
+                        IconHeaderIcon.FontFamily = segoeMDL;
+                        TbIcon.FontFamily = segoeMDL;
                         break;
                     case 1:
-                        Icon10.IsChecked = false;
-                        Icon11.IsChecked = true;
+                    default:
+                        if(Helpers.OSVersion.IsWin11())
+                        {
+                            FontFamily segoeFluent = new FontFamily("Segoe Fluent Icons");
 
-                        TransparencyIcon.FontFamily = new FontFamily("Segoe Fluent Icons");
-                        ClockIcon.FontFamily = new FontFamily("Segoe Fluent Icons");
-                        IconHeaderIcon.FontFamily = new FontFamily("Segoe Fluent Icons");
+                            Icon10.IsChecked = false;
+                            Icon11.IsChecked = true;
+
+                            TransparencyIcon.FontFamily = segoeFluent;
+                            ClockIcon.FontFamily = segoeFluent;
+                            IconHeaderIcon.FontFamily = segoeFluent;
+                            TbIcon.FontFamily = segoeFluent;
+                        }
+                        else
+                        {
+                            FontFamily segoeMDLB = new FontFamily("Segoe MDL2 Assets");
+
+                            Icon10.IsChecked = true;
+                            Icon11.IsChecked = false;
+
+                            TransparencyIcon.FontFamily = segoeMDLB;
+                            ClockIcon.FontFamily = segoeMDLB;
+                            IconHeaderIcon.FontFamily = segoeMDLB;
+                            TbIcon.FontFamily = segoeMDLB;
+                        }
                         break;
                 }
             }
@@ -300,37 +383,21 @@ namespace GyroShell.Settings
                 SecondsToggle.IsOn = (bool)secondsEnabled;
             }
 
+            if (tbAlignment != null)
+            {
+                switch (tbAlignment)
+                {
+                    case 0:
+                    default:
+                        AlignmentType.SelectedValue = "Left";
+                        break;
+                    case 1:
+                        AlignmentType.SelectedValue = "Center";
+                        break;
+                }
+            }
+
             RestartInfo.IsOpen = false;
-        }
-
-        private void DefaultsButton_Click(object sender, RoutedEventArgs e)
-        {
-            DefaultExtern();
-            RestartInfo.IsOpen = true;
-        }
-        private void DefaultExtern()
-        {
-            aTint = null;
-            rTint = null;
-            bTint = null;
-            gTint = null;
-            luminOpacity = null;
-            tintOpacity = null;
-
-            TintSlider.Value = 0;
-            LuminSlider.Value = 0;
-
-            App.localSettings.Values["isCustomTransparency"] = false;
-        }
-
-        private async void OpenSettingsInfo_Click(object sender, RoutedEventArgs e)
-        {
-            await Launcher.LaunchUriAsync(new Uri("ms-settings:notifications"));
-        }
-
-        private void IgnoreInfo_Click(object sender, RoutedEventArgs e)
-        {
-            NotifInfo.IsOpen = false;
         }
     }
 }

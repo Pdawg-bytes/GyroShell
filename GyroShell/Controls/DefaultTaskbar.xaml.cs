@@ -400,7 +400,6 @@ namespace GyroShell.Controls
             switch (iconStyle)
             {
                 case 0:
-                default:
                     WifiStatus.Margin = new Thickness(0, -2, 7, 0);
                     WifiStatus.FontFamily = SegoeMDL2;
                     SndStatus.Margin = new Thickness(6, 1, 0, 0);
@@ -412,6 +411,7 @@ namespace GyroShell.Controls
                     TaskViewIcon.FontFamily = SegoeMDL2;
                     break;
                 case 1:
+                default:
                     if (OSVersion.IsWin11())
                     {
                         WifiStatus.Margin = new Thickness(0, 2, 7, 0);
@@ -459,6 +459,18 @@ namespace GyroShell.Controls
             {
                 timeType = "t";
             }
+
+            int? tbAlignment = App.localSettings.Values["tbAlignment"] as int?;
+            switch (tbAlignment)
+            {
+                case 0:
+                default:
+                    LeftControls.HorizontalAlignment = HorizontalAlignment.Left;
+                    break;
+                case 1:
+                    LeftControls.HorizontalAlignment = HorizontalAlignment.Center;
+                    break;
+            } 
         }
         #endregion
 
