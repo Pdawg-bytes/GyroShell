@@ -367,7 +367,7 @@ namespace GyroShell.Controls
 
         private void MainShellGrid_Loaded(object sender, RoutedEventArgs e)
         {
-            //App.startupScreen.Close();
+            App.startupScreen.Close();
         }
         #endregion
 

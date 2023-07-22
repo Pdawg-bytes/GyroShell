@@ -180,6 +180,9 @@ namespace GyroShell.Helpers.Win32
             GW_ENABLEDPOPUP = 6
         }
 
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        internal static extern int MessageBox(IntPtr hWnd, string text, string caption, uint type);
+
         [DllImport("PowrProf.dll")]
         internal static extern bool SetSuspendState(bool hibernate, bool forceCritical, bool disableWakeEvent);
 

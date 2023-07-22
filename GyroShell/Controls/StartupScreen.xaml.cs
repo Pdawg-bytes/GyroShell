@@ -2,22 +2,19 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI;
 using System;
 using Windows.Graphics;
-
-using static GyroShell.Helpers.Win32.Win32Interop;
-
-using AppWindow = Microsoft.UI.Windowing.AppWindow;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Media;
 using GyroShell.Helpers;
 using Microsoft.UI.Composition.SystemBackdrops;
 using Windows.UI;
 using WinRT;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using Windows.ApplicationModel;
-using GyroShell.Settings;
-using Microsoft.UI.Xaml.Media.Animation;
+using System.Timers;
+using System.Threading;
 using System.Diagnostics;
+
+using static GyroShell.Helpers.Win32.Win32Interop;
+
+using AppWindow = Microsoft.UI.Windowing.AppWindow;
 
 namespace GyroShell.Controls
 {
@@ -27,11 +24,17 @@ namespace GyroShell.Controls
 
         private IntPtr hWnd;
 
-        private Stopwatch sw;
+        private System.Timers.Timer timer;
+
+        private int appProcessId;
+        private Process appProcess;
+        private Thread timeThread;
 
         internal StartupScreen()
         {
             this.InitializeComponent();
+            appProcessId = Process.GetCurrentProcess().Id;
+            appProcess = Process.GetProcessById(appProcessId);
             TrySetAcrylicBackdrop();
 
             OverlappedPresenter presenter = GetAppWindowAndPresenter();
@@ -68,9 +71,25 @@ namespace GyroShell.Controls
             appWindow.Move(new PointInt32 { X = windowX, Y = windowY });
             appWindow.MoveInZOrderAtTop();
 
-            sw = new Stopwatch();
-            sw.Start();
+            timer = new System.Timers.Timer(10000);
+            timer.Elapsed += CloseTimer_Elapsed;
+            timer.Start();
         }
+
+        #region Emergency Thread
+        private void CloseTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            timeThread = new Thread(Close);
+            timeThread.Start();
+            timer.Stop();
+        }
+
+        private void Close()
+        {
+            MessageBox(hWnd, "If you keep seeing this message, please contact the developers.", "GyroShell was unable to start.", 0x00000000 | 0x00000030);
+            appProcess.Kill();
+        }
+        #endregion
 
         #region Window Handling
         private OverlappedPresenter GetAppWindowAndPresenter()
@@ -133,6 +152,7 @@ namespace GyroShell.Controls
 
         private void Window_Closed(object sender, WindowEventArgs args)
         {
+            timer.Stop();
             if (acrylicController != null)
             {
                 acrylicController.Dispose();
