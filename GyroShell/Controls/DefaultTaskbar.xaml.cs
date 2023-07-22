@@ -539,7 +539,7 @@ namespace GyroShell.Controls
                     indexedWindows.Add(hwnd);
                 }
             }
-            if (indexedWindows.Contains(hwnd) && hwnd != (IntPtr)0x001907DA)
+            if (indexedWindows.Contains(hwnd))
             {
                 switch (eventType)
                 {

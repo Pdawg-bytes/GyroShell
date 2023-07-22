@@ -15,12 +15,9 @@ using static GyroShell.Interfaces.AUMIDIPropertyStore;
 using static GyroShell.Helpers.Win32.Win32Interop;
 using static GyroShell.Helpers.Win32.GetHandleIcon;
 using Windows.Management.Deployment;
-using Windows.Devices.Sensors;
 using System.Runtime.InteropServices.WindowsRuntime;
-using System.Linq;
 using System.Drawing;
 using System.Drawing.Imaging;
-using ABI.Windows.ApplicationModel.Activation;
 
 namespace GyroShell.Helpers.WinRT
 {
@@ -40,17 +37,24 @@ namespace GyroShell.Helpers.WinRT
             }
         }
 
-        public static string GetUwpAppIconPath(IntPtr hwnd)
+        internal static string GetUwpAppIconPath(IntPtr hwnd)
         {
             return Uri.UnescapeDataString(Uri.UnescapeDataString(GetPackageFromAppHandle(hwnd).Result.Logo.AbsolutePath)).Replace("/", "\\");
         }
 
-        public static async Task<Bitmap> LoadBitmapFromUwpIcon(string filePath)
+        internal static Bitmap LoadBitmapFromUwpIcon(string filePath)
         {
-            StorageFile file = await StorageFile.GetFileFromPathAsync(filePath);
-            using (Stream stream = await file.OpenStreamForReadAsync())
+            try
             {
-                return new Bitmap(stream);
+                using (FileStream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+                {
+                    return new Bitmap(stream);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("LoadBitmapFromUwpIcon => Get: " + ex.Message);
+                return null;
             }
         }
 
@@ -74,7 +78,7 @@ namespace GyroShell.Helpers.WinRT
             }
         }
 
-        public static bool IsUwpWindow(IntPtr hWnd)
+        internal static bool IsUwpWindow(IntPtr hWnd)
         {
             if (GetPackageFromAppHandle(hWnd).Result == null) 
             { 
@@ -86,7 +90,7 @@ namespace GyroShell.Helpers.WinRT
             }
         }
 
-        public async static Task<Package> GetPackageFromAppHandle(IntPtr hWnd)
+        internal async static Task<Package> GetPackageFromAppHandle(IntPtr hWnd)
         {
             // Get the AUMID associated with the app handle
             Guid guidPropertyStore = new Guid("{886D8EEB-8CF2-4446-8D02-CDBA1DBDCF99}");

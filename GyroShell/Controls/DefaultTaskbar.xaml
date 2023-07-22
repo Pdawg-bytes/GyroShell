@@ -40,7 +40,7 @@
             <StackPanel.ChildrenTransitions>
                 <TransitionCollection>
                     <EntranceThemeTransition IsStaggeringEnabled="True" />
-                    </TransitionCollection>
+                </TransitionCollection>
             </StackPanel.ChildrenTransitions>
             <ToggleButton HorizontalAlignment="Left" Height="40" Width="40" Margin="5,0,0,0" Background="Transparent" BorderBrush="Transparent" x:Name="StartButton" Click="StartButton_Click" RightTapped="StartButton_RightTapped">
                 <ToggleButton.Content>
@@ -143,7 +143,7 @@
                             </StackPanel.ChildrenTransitions>
                             <Border ContextFlyout="{StaticResource IconRightFlyout}" RightTapped="Icon_RightTapped" ToolTipService.Placement="Top" ToolTipService.ToolTip="{Binding IconName}" Tapped="Icon_Tapped" Width="43" Height="43" Margin="0,0,0,0" Background="Transparent" Padding="0" BorderBrush="Transparent" BorderThickness="0" VerticalAlignment="Center">
                                 <Grid>
-                                    <Image Source="{Binding AppIcon}" Height="23" Width="23" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,0" />
+                                    <Image Source="{Binding AppIcon}" Height="23" Width="30" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,0" />
                                 </Grid>
                             </Border>
                         </StackPanel>

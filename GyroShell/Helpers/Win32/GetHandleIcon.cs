@@ -29,18 +29,24 @@ namespace GyroShell.Helpers.Win32
 
         internal static Icon GetIcon(IntPtr hwnd, int targetSize)
         {
-            GetWindowThreadProcessId(hwnd, out uint pid);
-            Process proc = Process.GetProcessById((int)pid);
-            Icon icon = Icon.ExtractAssociatedIcon(proc.MainModule.FileName);
-
-            if (icon != null)
+            try
             {
-                // Resize the icon while preserving aspect ratio
-                Bitmap resizedIcon = new Bitmap(icon.ToBitmap(), new Size(targetSize, targetSize));
-                return Icon.FromHandle(resizedIcon.GetHicon());
-            }
+                GetWindowThreadProcessId(hwnd, out uint pid);
+                Process proc = Process.GetProcessById((int)pid);
+                Icon icon = Icon.ExtractAssociatedIcon(proc.MainModule.FileName);
 
-            return null;
+                if (icon != null)
+                {
+                    Bitmap resizedIcon = new Bitmap(icon.ToBitmap(), new Size(targetSize, targetSize));
+                    return Icon.FromHandle(resizedIcon.GetHicon());
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("GetHandleIcon => GetIcon: " + ex.Message);
+                return null;
+            }
         }
 
         internal async static Task<SoftwareBitmapSource> GetUWPBitmapSourceFromHwnd(IntPtr hWnd)
@@ -48,7 +54,7 @@ namespace GyroShell.Helpers.Win32
             try
             {
                 string iconPath = GetUwpAppIconPath(hWnd);
-                Bitmap bmp = await LoadBitmapFromUwpIcon(iconPath);
+                Bitmap bmp = LoadBitmapFromUwpIcon(iconPath);
                 return ConvertBitmapToSoftwareBitmapSource(bmp).Result;
             }
             catch (Exception e)
