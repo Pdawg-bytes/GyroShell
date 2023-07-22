@@ -87,6 +87,7 @@ namespace GyroShell.Controls
         private void Close()
         {
             MessageBox(hWnd, "If you keep seeing this message, please contact the developers.", "GyroShell was unable to start.", 0x00000000 | 0x00000030);
+            TaskbarManager.ShowTaskbar();
             appProcess.Kill();
         }
         #endregion
