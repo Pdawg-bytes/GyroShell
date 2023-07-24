@@ -127,11 +127,12 @@ namespace GyroShell.Controls
 
                 m_configurationSource.IsInputActive = true;
 
-                SetConfigurationSourceTheme();
+                SystemBackdropTheme theme = SetConfigurationSourceTheme();
 
                 acrylicController = new DesktopAcrylicController();
 
-                acrylicController.TintColor = Color.FromArgb(255, 0, 0, 0);
+                SetThemeColor(theme);
+
                 acrylicController.TintOpacity = 0.3f;
                 acrylicController.LuminosityOpacity = 0.2f;
 
@@ -171,7 +172,7 @@ namespace GyroShell.Controls
                 SetConfigurationSourceTheme();
             }
         }
-        private void SetConfigurationSourceTheme()
+        private SystemBackdropTheme SetConfigurationSourceTheme()
         {
             switch (((FrameworkElement)this.Content).ActualTheme)
             {
@@ -182,7 +183,7 @@ namespace GyroShell.Controls
                     {
                         acrylicController.TintColor = Color.FromArgb(255, 0, 0, 0);
                     }
-                    break;
+                    return SystemBackdropTheme.Dark;
                 case ElementTheme.Light:
                     m_configurationSource.Theme = SystemBackdropTheme.Light;
 
@@ -190,15 +191,34 @@ namespace GyroShell.Controls
                     {
                         acrylicController.TintColor = Color.FromArgb(255, 255, 255, 255);
                     }
-                    break;
+                    return SystemBackdropTheme.Light;
                 case ElementTheme.Default:
+                default:
                     m_configurationSource.Theme = SystemBackdropTheme.Default;
 
                     if (acrylicController != null)
                     {
                         acrylicController.TintColor = Color.FromArgb(255, 0, 0, 0);
                     }
+                    return SystemBackdropTheme.Dark;
+            }
+        }
+
+        private void SetThemeColor(SystemBackdropTheme theme)
+        {
+            switch (theme)
+            {
+                case SystemBackdropTheme.Dark:
+                    acrylicController.TintColor = Color.FromArgb(255, 0, 0, 0);
                     break;
+                case SystemBackdropTheme.Light:
+                    acrylicController.TintColor = Color.FromArgb(255, 255, 255, 255);
+                    break;
+                case SystemBackdropTheme.Default:
+                default: 
+                    acrylicController.TintColor = Color.FromArgb(255, 0, 0, 0);
+                    break;
+
             }
         }
         #endregion
