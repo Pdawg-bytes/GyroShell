@@ -12,12 +12,14 @@ using System.Runtime.InteropServices;
 using Microsoft.UI.Xaml.Media.Imaging;
 
 using static GyroShell.Interfaces.AUMIDIPropertyStore;
+using static GyroShell.Helpers.Win32.GetWindowName;
 using static GyroShell.Helpers.Win32.Win32Interop;
 using static GyroShell.Helpers.Win32.GetHandleIcon;
 using Windows.Management.Deployment;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Linq;
 
 namespace GyroShell.Helpers.WinRT
 {
@@ -37,9 +39,31 @@ namespace GyroShell.Helpers.WinRT
             }
         }
 
-        internal static string GetUwpAppIconPath(IntPtr hwnd)
+        internal static string GetUwpAppIconPath(IntPtr hWnd)
         {
-            return Uri.UnescapeDataString(Uri.UnescapeDataString(GetPackageFromAppHandle(hwnd).Result.Logo.AbsolutePath)).Replace("/", "\\");
+            string normalPath = Uri.UnescapeDataString(Uri.UnescapeDataString(GetPackageFromAppHandle(hWnd).Result.Logo.AbsolutePath)).Replace("/", "\\");
+            string finalPath = GetUWPExtraIcons(normalPath, GetWindowTitle(hWnd), normalPath);
+            return finalPath;
+        }
+
+        internal static string GetUWPExtraIcons(string path, string appName, string normalPath)
+        {
+            string[] pathParts = path.Split('\\');
+            string rootAssetsFolder = string.Join("\\", pathParts.Take(pathParts.Length - 1));
+
+            string[] allFiles = Directory.GetFiles(rootAssetsFolder);
+            foreach (string filePath in allFiles)
+            {
+                if (Path.GetFileName(filePath).Contains("StoreLogo.scale-100"))
+                {
+                    string e = filePath.Replace(" ", "").ToLower();
+                    if (e.Contains(appName.Replace(" ", "").ToLower())) 
+                    {
+                        return filePath;
+                    }
+                }
+            }
+            return normalPath;
         }
 
         internal static Bitmap LoadBitmapFromUwpIcon(string filePath)
