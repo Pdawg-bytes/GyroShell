@@ -2,7 +2,9 @@ using CommunityToolkit.WinUI.Connectivity;
 using CoreAudio;
 using GyroShell.Helpers;
 using GyroShell.Helpers.WinRT;
+using GyroShell.Services;
 using GyroShell.Settings;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -38,6 +40,7 @@ namespace GyroShell.Controls
 
         private int currentVolume;
         private bool reportRequested = false;
+        private EnvironmentService m_envService;
 
         private readonly WinEventDelegate callback;
 
@@ -47,6 +50,8 @@ namespace GyroShell.Controls
         public DefaultTaskbar()
         {
             this.InitializeComponent();
+
+            m_envService = App.ServiceProvider.GetRequiredService<EnvironmentService>();
 
             TbIconCollection = new ObservableCollection<IconModel>();
 
@@ -256,7 +261,7 @@ namespace GyroShell.Controls
         {
             if (SystemControls.IsChecked == true)
             {
-                if (OSVersion.IsWin11())
+                if (m_envService.IsWindows11)
                 {
                     await TaskbarManager.ToggleSysControl();
                 }
@@ -440,7 +445,7 @@ namespace GyroShell.Controls
                     break;
                 case 1:
                 default:
-                    if (OSVersion.IsWin11())
+                    if (m_envService.IsWindows11)
                     {
                         WifiStatus.Margin = new Thickness(0, 2, 7, 0);
                         WifiStatus.FontFamily = SegoeFluent;

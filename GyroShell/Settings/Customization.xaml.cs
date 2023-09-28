@@ -16,6 +16,8 @@ using Windows.System;
 using Windows.UI;
 
 using static GyroShell.Helpers.Modules.ModuleManager;
+using GyroShell.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace GyroShell.Settings
 {
@@ -36,9 +38,13 @@ namespace GyroShell.Settings
 
         public static bool NotifError;
 
+        private EnvironmentService m_envService;
+
         public Customization()
         {
             this.InitializeComponent();
+
+            m_envService = App.ServiceProvider.GetRequiredService<EnvironmentService>();
         }
 
         #region Clock Settings
@@ -278,7 +284,7 @@ namespace GyroShell.Settings
                 NotifInfo.IsOpen = false;
             }
 
-            if (!Helpers.OSVersion.IsWin11())
+            if (!m_envService.IsWindows11)
             {
                 Icon11.IsEnabled = false;
                 Icon11.IsChecked = false;
@@ -340,7 +346,7 @@ namespace GyroShell.Settings
                         break;
                     case 1:
                     default:
-                        if(Helpers.OSVersion.IsWin11())
+                        if(m_envService.IsWindows11)
                         {
                             FontFamily segoeFluent = new FontFamily("Segoe Fluent Icons");
 

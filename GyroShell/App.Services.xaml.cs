@@ -19,17 +19,17 @@ namespace GyroShell
             }
         }
 
-        private IServiceProvider ConfigureServices()
+        private void ConfigureServices()
         {
-            IServiceCollection collection = new ServiceCollection();
+            IServiceCollection collection = new ServiceCollection()
+                .AddSingleton<EnvironmentService>();
 
-            IServiceProvider provider = collection.BuildServiceProvider(true);
-
-            return provider;
+            m_serviceProvider = collection.BuildServiceProvider(true);
         }
 
         private void PreloadServices()
         {
+            _ = m_serviceProvider.GetRequiredService<EnvironmentService>();
         }
     }
 }

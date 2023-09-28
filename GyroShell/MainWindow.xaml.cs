@@ -1,23 +1,21 @@
 ﻿using GyroShell.Helpers;
+using GyroShell.Services;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI;
 using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Windows.Graphics;
-using Windows.System;
 using Windows.UI;
-using Windows.UI.Core;
 using WinRT;
 
 using static GyroShell.Helpers.TaskbarManager;
 using static GyroShell.Helpers.Win32.GetWindowName;
-using static GyroShell.Helpers.Win32.ScreenValues;
 using static GyroShell.Helpers.Win32.Win32Interop;
 using static GyroShell.Helpers.Win32.WindowChecks;
 
@@ -28,6 +26,7 @@ namespace GyroShell
     internal sealed partial class MainWindow : Window
     {
         private AppWindow m_AppWindow;
+        private EnvironmentService m_envService;
 
         private IntPtr _oldWndProc;
         internal static IntPtr hWnd;
@@ -52,6 +51,8 @@ namespace GyroShell
             this.InitializeComponent();
             AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
 
+            m_envService = App.ServiceProvider.GetRequiredService<EnvironmentService>();
+
             TaskbarManager.Init();
 
             // Presenter handling code
@@ -67,7 +68,7 @@ namespace GyroShell
             hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
             WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
             AppWindow appWindow = AppWindow.GetFromWindowId(windowId);
-            if (OSVersion.IsWin11())
+            if (m_envService.IsWindows11)
             {
                 DWMWINDOWATTRIBUTE attribute = DWMWINDOWATTRIBUTE.DWMWA_WINDOW_CORNER_PREFERENCE;
                 DWM_WINDOW_CORNER_PREFERENCE preference = DWM_WINDOW_CORNER_PREFERENCE.DWMWCP_DONOTROUND;
@@ -172,7 +173,7 @@ namespace GyroShell
             {
                 case 0:
                 default:
-                    if (OSVersion.IsWin11())
+                    if (m_envService.IsWindows11)
                     {
                         TrySetMicaBackdrop(MicaKind.BaseAlt);
                     }
@@ -182,7 +183,7 @@ namespace GyroShell
                     }
                     break;
                 case 1:
-                    if (OSVersion.IsWin11())
+                    if (m_envService.IsWindows11)
                     {
                         TrySetMicaBackdrop(MicaKind.Base);
                     }
@@ -301,36 +302,36 @@ namespace GyroShell
         {
             switch (((FrameworkElement)this.Content).ActualTheme)
             {
-                case ElementTheme.Dark: 
-                    m_configurationSource.Theme = SystemBackdropTheme.Dark; 
+                case ElementTheme.Dark:
+                    m_configurationSource.Theme = SystemBackdropTheme.Dark;
 
-                    if (acrylicController != null) 
-                    { 
-                        acrylicController.TintColor = Color.FromArgb(255, 0, 0, 0); 
-                    } 
+                    if (acrylicController != null)
+                    {
+                        acrylicController.TintColor = Color.FromArgb(255, 0, 0, 0);
+                    }
                     break;
-                case ElementTheme.Light: 
-                    m_configurationSource.Theme = SystemBackdropTheme.Light; 
+                case ElementTheme.Light:
+                    m_configurationSource.Theme = SystemBackdropTheme.Light;
 
-                    if (acrylicController != null) 
-                    { 
-                        acrylicController.TintColor = Color.FromArgb(255, 255, 255, 255); 
-                    } 
+                    if (acrylicController != null)
+                    {
+                        acrylicController.TintColor = Color.FromArgb(255, 255, 255, 255);
+                    }
                     break;
                 case ElementTheme.Default:
-                    m_configurationSource.Theme = SystemBackdropTheme.Default; 
+                    m_configurationSource.Theme = SystemBackdropTheme.Default;
 
-                    if (acrylicController != null) 
-                    { 
-                        acrylicController.TintColor = Color.FromArgb(255, 0, 0, 0); 
-                    } 
+                    if (acrylicController != null)
+                    {
+                        acrylicController.TintColor = Color.FromArgb(255, 0, 0, 0);
+                    }
                     break;
             }
         }
         #endregion
 
         #region AppBar
-        internal static void RegisterBar()
+        internal void RegisterBar()
         {
             APPBARDATA abd = new APPBARDATA();
 
@@ -362,7 +363,7 @@ namespace GyroShell
             }
         }
 
-        private static void ABSetPos()
+        private void ABSetPos()
         {
             APPBARDATA abd = new APPBARDATA();
 
@@ -371,7 +372,7 @@ namespace GyroShell
             abd.uEdge = (int)ABEdge.ABE_BOTTOM;
 
             abd.rc.left = 0;
-            abd.rc.right = GetScreenWidth();
+            abd.rc.right = m_envService.MonitorWidth;
 
             if (abd.uEdge == (int)ABEdge.ABE_TOP)
             {
@@ -380,7 +381,7 @@ namespace GyroShell
             }
             else
             {
-                abd.rc.bottom = GetScreenHeight();
+                abd.rc.bottom = m_envService.MonitorHeight;
                 abd.rc.top = abd.rc.bottom - 46;
             }
 
