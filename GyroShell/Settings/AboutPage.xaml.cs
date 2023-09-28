@@ -1,25 +1,23 @@
+using GyroShell.Library.Services;
 using GyroShell.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
-using Windows.ApplicationModel;
 
 namespace GyroShell.Settings
 {
     public sealed partial class AboutPage : Page
     {
-        private EnvironmentService m_envService;
+        private IEnvironmentService m_envService;
 
         public AboutPage()
         {
             this.InitializeComponent();
 
-            m_envService = App.ServiceProvider.GetRequiredService<EnvironmentService>();
-
-            PackageVersion version = m_envService.AppVersion;
+            m_envService = App.ServiceProvider.GetRequiredService<IEnvironmentService>();
 
             ArchText.Text = m_envService.SystemArchitecture;
-            VersionText.Text = string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
+            VersionText.Text = m_envService.AppVersion.ToString();
             BDText.Text = m_envService.AppBuildDate.ToString("MMMM dd, yyyy");
 
             int? iconStyle = App.localSettings.Values["iconStyle"] as int?;

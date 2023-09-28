@@ -1,4 +1,5 @@
-﻿using GyroShell.Services;
+﻿using GyroShell.Library.Services;
+using GyroShell.Services;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
@@ -22,14 +23,14 @@ namespace GyroShell
         private void ConfigureServices()
         {
             IServiceCollection collection = new ServiceCollection()
-                .AddSingleton<EnvironmentService>();
+                .AddSingleton<IEnvironmentService, EnvironmentService>();
 
             m_serviceProvider = collection.BuildServiceProvider(true);
         }
 
         private void PreloadServices()
         {
-            _ = m_serviceProvider.GetRequiredService<EnvironmentService>();
+            _ = m_serviceProvider.GetRequiredService<IEnvironmentService>();
         }
     }
 }

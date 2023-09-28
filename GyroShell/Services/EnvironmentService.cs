@@ -1,14 +1,15 @@
-﻿using System;
+﻿using GyroShell.Library.Services;
+using System;
 using System.IO;
 using Windows.ApplicationModel;
 using static GyroShell.Helpers.Win32.Win32Interop;
 
 namespace GyroShell.Services
 {
-    public class EnvironmentService
+    internal class EnvironmentService : IEnvironmentService
     {
         public string SystemArchitecture { get; init; }
-        public PackageVersion AppVersion { get; init; }
+        public Version AppVersion { get; init; }
         public DateTime AppBuildDate { get; init; }
 
         public bool IsWindows11
@@ -33,7 +34,8 @@ namespace GyroShell.Services
                 Package package = Package.Current;
                 this.SystemArchitecture = package.Id.Architecture.ToString();
 
-                this.AppVersion = package.Id.Version;
+                PackageVersion version = package.Id.Version;
+                this.AppVersion = new Version(version.Major, version.Minor, version.Build, version.Revision);
 
                 string mainExecutablePath = Path.Combine(Package.Current.InstalledLocation.Path, "GyroShell.exe");
                 this.AppBuildDate = File.GetLastWriteTime(mainExecutablePath);
@@ -54,7 +56,7 @@ namespace GyroShell.Services
                     _ => "Unknown Processor",
                 };
 
-                this.AppVersion = new PackageVersion(0, 0, 0, 0);
+                this.AppVersion = new Version(0, 0, 0, 0);
                 this.AppBuildDate = new DateTime(2023, 9, 28);
             }
         }

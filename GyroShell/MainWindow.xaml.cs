@@ -1,4 +1,5 @@
 ﻿using GyroShell.Helpers;
+using GyroShell.Library.Services;
 using GyroShell.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI;
@@ -26,7 +27,7 @@ namespace GyroShell
     internal sealed partial class MainWindow : Window
     {
         private AppWindow m_AppWindow;
-        private EnvironmentService m_envService;
+        private IEnvironmentService m_envService;
 
         private IntPtr _oldWndProc;
         internal static IntPtr hWnd;
@@ -51,7 +52,7 @@ namespace GyroShell
             this.InitializeComponent();
             AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
 
-            m_envService = App.ServiceProvider.GetRequiredService<EnvironmentService>();
+            m_envService = App.ServiceProvider.GetRequiredService<IEnvironmentService>();
 
             TaskbarManager.Init();
 

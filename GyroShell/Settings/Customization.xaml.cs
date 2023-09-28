@@ -18,6 +18,7 @@ using Windows.UI;
 using static GyroShell.Helpers.Modules.ModuleManager;
 using GyroShell.Services;
 using Microsoft.Extensions.DependencyInjection;
+using GyroShell.Library.Services;
 
 namespace GyroShell.Settings
 {
@@ -38,13 +39,13 @@ namespace GyroShell.Settings
 
         public static bool NotifError;
 
-        private EnvironmentService m_envService;
+        private IEnvironmentService m_envService;
 
         public Customization()
         {
             this.InitializeComponent();
 
-            m_envService = App.ServiceProvider.GetRequiredService<EnvironmentService>();
+            m_envService = App.ServiceProvider.GetRequiredService<IEnvironmentService>();
         }
 
         #region Clock Settings

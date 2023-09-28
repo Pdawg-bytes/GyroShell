@@ -2,6 +2,7 @@ using CommunityToolkit.WinUI.Connectivity;
 using CoreAudio;
 using GyroShell.Helpers;
 using GyroShell.Helpers.WinRT;
+using GyroShell.Library.Services;
 using GyroShell.Services;
 using GyroShell.Settings;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,7 +41,7 @@ namespace GyroShell.Controls
 
         private int currentVolume;
         private bool reportRequested = false;
-        private EnvironmentService m_envService;
+        private IEnvironmentService m_envService;
 
         private readonly WinEventDelegate callback;
 
@@ -51,7 +52,7 @@ namespace GyroShell.Controls
         {
             this.InitializeComponent();
 
-            m_envService = App.ServiceProvider.GetRequiredService<EnvironmentService>();
+            m_envService = App.ServiceProvider.GetRequiredService<IEnvironmentService>();
 
             TbIconCollection = new ObservableCollection<IconModel>();
 
