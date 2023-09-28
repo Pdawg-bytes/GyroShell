@@ -185,6 +185,9 @@ namespace GyroShell.Settings
                     default:
                         contentFrame.Navigate(typeof(Customization));
                         break;
+                    case "Modules":
+                        contentFrame.Navigate(typeof(MoudlesPage));
+                        break;
                     case "AboutPage":
                         contentFrame.Navigate(typeof(AboutPage));
                         break;

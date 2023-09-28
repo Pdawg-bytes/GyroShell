@@ -10,8 +10,12 @@ using System.Diagnostics;
 using System.Linq;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
+using Windows.Storage.Pickers;
+using Windows.Storage;
 using Windows.System;
 using Windows.UI;
+
+using static GyroShell.Helpers.Modules.ModuleManager;
 
 namespace GyroShell.Settings
 {

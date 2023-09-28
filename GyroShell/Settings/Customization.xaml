@@ -34,7 +34,6 @@
                         </StackPanel>
                     </Expander.Content>
                 </Expander>
-
                 <Expander x:Name="TbBehaviorExpander" HorizontalAlignment="Stretch" Margin="20,20,0,0" HorizontalContentAlignment="Left">
                     <Expander.Header>
                         <StackPanel Orientation="Horizontal" Padding="5,10,5,10">

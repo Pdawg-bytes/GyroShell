@@ -68,7 +68,13 @@
     <None Remove="Controls\StartWindow.xaml" />
     <None Remove="Settings\AboutPage.xaml" />
     <None Remove="Settings\Customization.xaml" />
+    <None Remove="Settings\MoudlesPage.xaml" />
     <None Remove="Settings\SettingsWindow.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Settings\MoudlesPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Controls\StartupScreen.xaml">
