@@ -42,6 +42,7 @@ namespace GyroShell.Controls
         private int currentVolume;
         private bool reportRequested = false;
         private IEnvironmentService m_envService;
+        private ISettingsService m_appSettings;
 
         private readonly WinEventDelegate callback;
 
@@ -53,6 +54,7 @@ namespace GyroShell.Controls
             this.InitializeComponent();
 
             m_envService = App.ServiceProvider.GetRequiredService<IEnvironmentService>();
+            m_appSettings = App.ServiceProvider.GetRequiredService<ISettingsService>();
 
             TbIconCollection = new ObservableCollection<IconModel>();
 
@@ -429,7 +431,7 @@ namespace GyroShell.Controls
             FontFamily SegoeMDL2 = new FontFamily("Segoe MDL2 Assets");
             FontFamily SegoeFluent = new FontFamily("Segoe Fluent Icons");
             // Icons
-            int? iconStyle = App.localSettings.Values["iconStyle"] as int?;
+            int? iconStyle = m_appSettings.IconStyle;
 
             switch (iconStyle)
             {
@@ -474,8 +476,8 @@ namespace GyroShell.Controls
             }
 
             // Clock
-            bool? secondsEnabled = App.localSettings.Values["isSeconds"] as bool?;
-            bool? is24HREnabled = App.localSettings.Values["is24HR"] as bool?;
+            bool? secondsEnabled = m_appSettings.EnableSeconds;
+            bool? is24HREnabled = m_appSettings.EnableMilitaryTime;
 
             if (secondsEnabled == true && is24HREnabled == true)
             {
@@ -494,7 +496,7 @@ namespace GyroShell.Controls
                 timeType = "t";
             }
 
-            int? tbAlignment = App.localSettings.Values["tbAlignment"] as int?;
+            int? tbAlignment = m_appSettings.TaskbarAlignment;
             switch (tbAlignment)
             {
                 case 0:

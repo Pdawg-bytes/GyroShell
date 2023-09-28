@@ -23,7 +23,8 @@ namespace GyroShell
         private void ConfigureServices()
         {
             IServiceCollection collection = new ServiceCollection()
-                .AddSingleton<IEnvironmentService, EnvironmentService>();
+                .AddSingleton<IEnvironmentService, EnvironmentService>()
+                .AddSingleton<ISettingsService, SettingsService>();
 
             m_serviceProvider = collection.BuildServiceProvider(true);
         }

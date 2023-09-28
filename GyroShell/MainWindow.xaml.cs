@@ -1,6 +1,5 @@
 ﻿using GyroShell.Helpers;
 using GyroShell.Library.Services;
-using GyroShell.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI;
 using Microsoft.UI.Composition.SystemBackdrops;
@@ -28,6 +27,7 @@ namespace GyroShell
     {
         private AppWindow m_AppWindow;
         private IEnvironmentService m_envService;
+        private ISettingsService m_appSettings;
 
         private IntPtr _oldWndProc;
         internal static IntPtr hWnd;
@@ -53,6 +53,7 @@ namespace GyroShell
             AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
 
             m_envService = App.ServiceProvider.GetRequiredService<IEnvironmentService>();
+            m_appSettings = App.ServiceProvider.GetRequiredService<ISettingsService>();
 
             TaskbarManager.Init();
 
@@ -150,15 +151,15 @@ namespace GyroShell
 
         private void SetBackdrop()
         {
-            bool? option = App.localSettings.Values["isCustomTransparency"] as bool?;
+            bool? option = m_appSettings.EnableCustomTransparency;
 
-            byte? alpha = App.localSettings.Values["aTint"] as byte?;
-            byte? red = App.localSettings.Values["rTint"] as byte?;
-            byte? green = App.localSettings.Values["gTint"] as byte?;
-            byte? blue = App.localSettings.Values["bTint"] as byte?;
+            byte? alpha = m_appSettings.AlphaTint;
+            byte? red = m_appSettings.RedTint;
+            byte? green = m_appSettings.GreenTint;
+            byte? blue = m_appSettings.BlueTint;
 
-            float? luminOpacity = App.localSettings.Values["luminOpacity"] as float?;
-            float? tintOpacity = App.localSettings.Values["tintOpacity"] as float?;
+            float? luminOpacity = m_appSettings.LuminosityOpacity;
+            float? tintOpacity = m_appSettings.TintOpacity;
 
             finalOpt = option != null ? (bool)option : false;
             finalA = alpha != null ? (byte)alpha : (byte)0;
@@ -168,7 +169,7 @@ namespace GyroShell
             finalLO = luminOpacity != null ? (float)luminOpacity : (float)0.2f;
             finalTO = tintOpacity != null ? (float)tintOpacity : (float)0.3f;
 
-            int? transparencyType = App.localSettings.Values["transparencyType"] as int?;
+            int? transparencyType = m_appSettings.TransparencyType;
 
             switch (transparencyType)
             {

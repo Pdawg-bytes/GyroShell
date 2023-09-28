@@ -11,8 +11,6 @@ namespace GyroShell
         internal static StartupScreen startupScreen;
         private Window m_window;
 
-        public static ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
-
         public App()
         {
             this.InitializeComponent();

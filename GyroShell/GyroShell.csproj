@@ -73,6 +73,9 @@
     <None Remove="Settings\SettingsWindow.xaml" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GyroShell.Library\GyroShell.Library.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <Page Update="Settings\MoudlesPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -1,25 +1,15 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-using GyroShell.Helpers;
 using GyroShell.Helpers.Modules;
+using GyroShell.Library.Services;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Storage.Pickers;
-using Windows.UI.Core;
 
 using static GyroShell.Helpers.Modules.ModuleManager;
 
@@ -27,19 +17,23 @@ namespace GyroShell.Settings
 {
     public sealed partial class MoudlesPage : Page
     {
-        string? modulesPath = App.localSettings.Values["modulesFolderPath"] as string;
-
         internal ObservableCollection<ModuleModel> ModuleCollection;
+
+        private ISettingsService m_appSettings;
+        private string m_modulesPath;
 
         public MoudlesPage()
         {
             this.InitializeComponent();
 
-            if (modulesPath != null)
+            m_appSettings = App.ServiceProvider.GetRequiredService<ISettingsService>();
+            m_modulesPath = m_appSettings.ModulesFolderPath;
+
+            if (m_modulesPath != null)
             {
                 try
                 {
-                    InitializeModuleList(modulesPath);
+                    InitializeModuleList(m_modulesPath);
                     ModuleCollection = new ObservableCollection<ModuleModel>(GetModules());
                 }
                 catch
@@ -47,12 +41,12 @@ namespace GyroShell.Settings
                     ModuleParseErrorInfo.IsOpen = true;
                 }
             }
-            else 
+            else
             {
                 ModuleNotFoundInfo.IsOpen = true;
             }
 
-            int? iconStyle = App.localSettings.Values["iconStyle"] as int?;
+            int? iconStyle = m_appSettings.IconStyle;
             if (iconStyle != null)
             {
                 switch (iconStyle)
@@ -82,15 +76,15 @@ namespace GyroShell.Settings
 
             if (folder != null)
             {
-                App.localSettings.Values["modulesFolderPath"] = folder.Path;
+                m_appSettings.ModulesFolderPath = folder.Path;
                 try
                 {
-                    InitializeModuleList(modulesPath);
+                    InitializeModuleList(m_modulesPath);
                     ModuleCollection = new ObservableCollection<ModuleModel>(GetModules());
                 }
-                catch 
+                catch
                 {
-                    ModuleParseErrorInfo.IsOpen = true; 
+                    ModuleParseErrorInfo.IsOpen = true;
                 }
                 ModuleNotFoundInfo.IsOpen = false;
             }

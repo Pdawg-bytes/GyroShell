@@ -9,18 +9,20 @@ namespace GyroShell.Settings
     public sealed partial class AboutPage : Page
     {
         private IEnvironmentService m_envService;
+        private ISettingsService m_appSettings;
 
         public AboutPage()
         {
             this.InitializeComponent();
 
             m_envService = App.ServiceProvider.GetRequiredService<IEnvironmentService>();
+            m_appSettings = App.ServiceProvider.GetRequiredService<ISettingsService>();
 
             ArchText.Text = m_envService.SystemArchitecture;
             VersionText.Text = m_envService.AppVersion.ToString();
             BDText.Text = m_envService.AppBuildDate.ToString("MMMM dd, yyyy");
 
-            int? iconStyle = App.localSettings.Values["iconStyle"] as int?;
+            int? iconStyle = m_appSettings.IconStyle;
 
             if (iconStyle != null)
             {

@@ -1,51 +1,29 @@
-using CommunityToolkit.WinUI.Helpers;
 using GyroShell.Controls;
-using GyroShell.Helpers;
+using GyroShell.Library.Services;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
-using Microsoft.Windows.AppLifecycle;
 using System;
 using System.Diagnostics;
-using System.Linq;
-using Windows.ApplicationModel.Activation;
-using Windows.ApplicationModel.Core;
-using Windows.Storage.Pickers;
-using Windows.Storage;
 using Windows.System;
 using Windows.UI;
-
-using static GyroShell.Helpers.Modules.ModuleManager;
-using GyroShell.Services;
-using Microsoft.Extensions.DependencyInjection;
-using GyroShell.Library.Services;
 
 namespace GyroShell.Settings
 {
     public sealed partial class Customization : Page
     {
-        bool? transparencyCustom = App.localSettings.Values["isCustomTransparency"] as bool?;
-        bool? secondsEnabled = App.localSettings.Values["isSeconds"] as bool?;
-        bool? is24HREnabled = App.localSettings.Values["is24HR"] as bool?;
-        int? transparencyType = App.localSettings.Values["transparencyType"] as int?;
-        int? iconStyle = App.localSettings.Values["iconStyle"] as int?;
-        int? tbAlignment = App.localSettings.Values["tbAlignment"] as int?;
-        float? luminOpacity = App.localSettings.Values["luminOpacity"] as float?;
-        float? tintOpacity = App.localSettings.Values["tintOpacity"] as float?;
-        byte? aTint = App.localSettings.Values["aTint"] as byte?;
-        byte? rTint = App.localSettings.Values["rTint"] as byte?;
-        byte? gTint = App.localSettings.Values["gTint"] as byte?;
-        byte? bTint = App.localSettings.Values["bTint"] as byte?;
-
         public static bool NotifError;
 
         private IEnvironmentService m_envService;
+        private ISettingsService m_appSettings;
 
         public Customization()
         {
             this.InitializeComponent();
 
             m_envService = App.ServiceProvider.GetRequiredService<IEnvironmentService>();
+            m_appSettings = App.ServiceProvider.GetRequiredService<ISettingsService>();
         }
 
         #region Clock Settings
@@ -54,25 +32,25 @@ namespace GyroShell.Settings
             if (TFHourToggle.IsOn == true && SecondsToggle.IsOn == false)
             {
                 DefaultTaskbar.timeType = "H:mm";
-                App.localSettings.Values["is24HR"] = true;
-                App.localSettings.Values["isSeconds"] = false;
+                m_appSettings.EnableMilitaryTime = true;
+                m_appSettings.EnableSeconds = false;
             }
             else if (TFHourToggle.IsOn == true && SecondsToggle.IsOn == true)
             {
                 DefaultTaskbar.timeType = "H:mm:ss";
-                App.localSettings.Values["is24HR"] = true;
-                App.localSettings.Values["isSeconds"] = true;
+                m_appSettings.EnableMilitaryTime = true;
+                m_appSettings.EnableSeconds = true;
             }
             else if (TFHourToggle.IsOn == false && SecondsToggle.IsOn == false)
             {
                 DefaultTaskbar.timeType = "t";
-                App.localSettings.Values["is24HR"] = false;
-                App.localSettings.Values["isSeconds"] = false;
+                m_appSettings.EnableMilitaryTime = false;
+                m_appSettings.EnableSeconds = false;
             }
             else if (SecondsToggle.IsOn)
             {
-                App.localSettings.Values["is24HR"] = false;
-                App.localSettings.Values["isSeconds"] = true;
+                m_appSettings.EnableMilitaryTime = false;
+                m_appSettings.EnableSeconds = true;
                 DefaultTaskbar.timeType = "T";
             }
         }
@@ -82,25 +60,25 @@ namespace GyroShell.Settings
             if (TFHourToggle.IsOn == true && SecondsToggle.IsOn == true)
             {
                 DefaultTaskbar.timeType = "H:mm:ss";
-                App.localSettings.Values["is24HR"] = true;
-                App.localSettings.Values["isSeconds"] = true;
+                m_appSettings.EnableMilitaryTime = true;
+                m_appSettings.EnableSeconds = true;
             }
             else if (TFHourToggle.IsOn)
             {
                 DefaultTaskbar.timeType = "H:mm";
-                App.localSettings.Values["is24HR"] = true;
-                App.localSettings.Values["isSeconds"] = false;
+                m_appSettings.EnableMilitaryTime = true;
+                m_appSettings.EnableSeconds = false;
             }
             else if (TFHourToggle.IsOn == false && SecondsToggle.IsOn == true)
             {
                 DefaultTaskbar.timeType = "T";
-                App.localSettings.Values["is24HR"] = false;
-                App.localSettings.Values["isSeconds"] = true;
+                m_appSettings.EnableMilitaryTime = false;
+                m_appSettings.EnableSeconds = true;
             }
             else
             {
-                App.localSettings.Values["is24HR"] = false;
-                App.localSettings.Values["isSeconds"] = false;
+                m_appSettings.EnableMilitaryTime = false;
+                m_appSettings.EnableSeconds = false;
                 DefaultTaskbar.timeType = "t";
             }
         }
@@ -117,11 +95,11 @@ namespace GyroShell.Settings
                 {
                     case "Icon11":
                     default:
-                        App.localSettings.Values["iconStyle"] = 1;
+                        m_appSettings.IconStyle = 1;
                         RestartInfo.IsOpen = true;
                         break;
                     case "Icon10":
-                        App.localSettings.Values["iconStyle"] = 0;
+                        m_appSettings.IconStyle = 0;
                         RestartInfo.IsOpen = true;
                         break;
                 }
@@ -133,11 +111,12 @@ namespace GyroShell.Settings
         private void TransparencyType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             string materialName = e.AddedItems[0].ToString();
+            bool? transparencyCustom = m_appSettings.EnableCustomTransparency;
 
             switch (materialName)
             {
                 case "Mica Alt":
-                    App.localSettings.Values["transparencyType"] = 0;
+                    m_appSettings.TransparencyType = 0;
                     LuminSlider.Value = 0;
                     LuminSlider.IsEnabled = false;
 
@@ -149,7 +128,7 @@ namespace GyroShell.Settings
                     RestartInfo.IsOpen = true;
                     break;
                 case "Mica":
-                    App.localSettings.Values["transparencyType"] = 1;
+                    m_appSettings.TransparencyType = 1;
                     LuminSlider.IsEnabled = false;
 
                     if (transparencyCustom != null && transparencyCustom == false)
@@ -160,7 +139,7 @@ namespace GyroShell.Settings
                     RestartInfo.IsOpen = true;
                     break;
                 case "Acrylic":
-                    App.localSettings.Values["transparencyType"] = 2;
+                    m_appSettings.TransparencyType = 2;
                     LuminSlider.IsEnabled = true;
 
                     if (transparencyCustom != null && transparencyCustom == false)
@@ -176,8 +155,8 @@ namespace GyroShell.Settings
         {
             float tintOpacity = (float)e.NewValue / 100;
 
-            App.localSettings.Values["tintOpacity"] = tintOpacity;
-            App.localSettings.Values["isCustomTransparency"] = true;
+            m_appSettings.TintOpacity = tintOpacity;
+            m_appSettings.EnableCustomTransparency = true;
 
             RestartInfo.IsOpen = true;
         }
@@ -186,19 +165,19 @@ namespace GyroShell.Settings
         {
             float luminOpacity = (float)e.NewValue / 100;
 
-            App.localSettings.Values["luminOpacity"] = luminOpacity;
-            App.localSettings.Values["isCustomTransparency"] = true;
+            m_appSettings.LuminosityOpacity = luminOpacity;
+            m_appSettings.EnableCustomTransparency = true;
 
             RestartInfo.IsOpen = true;
         }
 
         private void TintColorPicker_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
         {
-            App.localSettings.Values["aTint"] = TintColorPicker.Color.A;
-            App.localSettings.Values["rTint"] = TintColorPicker.Color.R;
-            App.localSettings.Values["gTint"] = TintColorPicker.Color.G;
-            App.localSettings.Values["bTint"] = TintColorPicker.Color.B;
-            App.localSettings.Values["isCustomTransparency"] = true;
+            m_appSettings.AlphaTint = TintColorPicker.Color.A;
+            m_appSettings.RedTint = TintColorPicker.Color.R;
+            m_appSettings.GreenTint = TintColorPicker.Color.G;
+            m_appSettings.BlueTint = TintColorPicker.Color.B;
+            m_appSettings.EnableCustomTransparency = true;
 
             RestartInfo.IsOpen = true;
         }
@@ -210,17 +189,17 @@ namespace GyroShell.Settings
         }
         private void DefaultExtern()
         {
-            aTint = null;
-            rTint = null;
-            bTint = null;
-            gTint = null;
-            luminOpacity = null;
-            tintOpacity = null;
+            m_appSettings.AlphaTint = null;
+            m_appSettings.RedTint = null;
+            m_appSettings.BlueTint = null;
+            m_appSettings.GreenTint = null;
+            m_appSettings.LuminosityOpacity = null;
+            m_appSettings.TintOpacity = null;
 
             TintSlider.Value = 0;
             LuminSlider.Value = 0;
 
-            App.localSettings.Values["isCustomTransparency"] = false;
+            m_appSettings.EnableCustomTransparency = false;
         }
         #endregion
 
@@ -263,11 +242,11 @@ namespace GyroShell.Settings
             {
                 case "Left":
                 default:
-                    App.localSettings.Values["tbAlignment"] = 0;
+                    m_appSettings.TaskbarAlignment = 0;
                     RestartInfo.IsOpen = true;
                     break;
                 case "Center":
-                    App.localSettings.Values["tbAlignment"] = 1;
+                    m_appSettings.TaskbarAlignment = 1;
                     RestartInfo.IsOpen = true;
                     break;
             }
@@ -276,6 +255,21 @@ namespace GyroShell.Settings
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            int? transparencyType = m_appSettings.TransparencyType;
+            int? iconStyle = m_appSettings.IconStyle;
+            int? tbAlignment = m_appSettings.TaskbarAlignment;
+
+            float? luminOpacity = m_appSettings.LuminosityOpacity;
+            float? tintOpacity = m_appSettings.TintOpacity;
+
+            byte? aTint = m_appSettings.AlphaTint;
+            byte? rTint = m_appSettings.RedTint;
+            byte? gTint = m_appSettings.GreenTint;
+            byte? bTint = m_appSettings.BlueTint;
+
+            bool? is24HREnabled = m_appSettings.EnableMilitaryTime;
+            bool? secondsEnabled = m_appSettings.EnableSeconds;
+
             if (NotifError)
             {
                 NotifInfo.IsOpen = true;
@@ -311,23 +305,23 @@ namespace GyroShell.Settings
             if (luminOpacity != null)
             {
                 LuminSlider.Value = (int)Math.Round((decimal)luminOpacity * 100, 1);
-                App.localSettings.Values["isCustomTransparency"] = true;
+                m_appSettings.EnableCustomTransparency = true;
             }
             else
             {
                 LuminSlider.Value = 0;
-                App.localSettings.Values["isCustomTransparency"] = false;
+                m_appSettings.EnableCustomTransparency = false;
             }
 
             if (tintOpacity != null)
             {
                 TintSlider.Value = (int)Math.Round((decimal)(tintOpacity * 100), 1);
-                App.localSettings.Values["isCustomTransparency"] = true;
+                m_appSettings.EnableCustomTransparency = true;
             }
             else
             {
                 TintSlider.Value = 0;
-                App.localSettings.Values["isCustomTransparency"] = false;
+                m_appSettings.EnableCustomTransparency = false;
             }
 
             if (iconStyle != null)
@@ -347,7 +341,7 @@ namespace GyroShell.Settings
                         break;
                     case 1:
                     default:
-                        if(m_envService.IsWindows11)
+                        if (m_envService.IsWindows11)
                         {
                             FontFamily segoeFluent = new FontFamily("Segoe Fluent Icons");
 
@@ -378,11 +372,11 @@ namespace GyroShell.Settings
             if (aTint != null && rTint != null && gTint != null && bTint != null)
             {
                 TintColorPicker.Color = Color.FromArgb((byte)aTint, (byte)rTint, (byte)gTint, (byte)bTint);
-                App.localSettings.Values["isCustomTransparency"] = true;
+                m_appSettings.EnableCustomTransparency = true;
             }
             else
             {
-                App.localSettings.Values["isCustomTransparency"] = false;
+                m_appSettings.EnableCustomTransparency = false;
             }
 
             if (is24HREnabled != null)
