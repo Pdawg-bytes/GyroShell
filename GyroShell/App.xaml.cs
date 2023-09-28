@@ -26,9 +26,13 @@ namespace GyroShell
 
         protected async override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
+            ConfigureServices();
+            PreloadServices();
+
             await LoadStartupScreenContentAsync();
             m_window = new MainWindow();
             m_window.Activate();
+
             try
             {
                 if (Package.Current.InstalledLocation != null)
