@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -7,6 +8,8 @@ using System.Reflection;
 using System.Runtime.Loader;
 using System.Text;
 using System.Threading.Tasks;
+
+using static GyroShell.Helpers.Modules.ModuleModel;
 
 namespace GyroShell.Helpers.Modules
 {
@@ -39,7 +42,6 @@ namespace GyroShell.Helpers.Modules
 
                             if (initializeMethod != null && runMethod != null)
                             {
-                                Debug.WriteLine($"[+] ModuleManager: Module '{type.FullName}' loaded.");
                                 object moduleInstance = Activator.CreateInstance(type);
                                 if ((bool)initializeMethod.Invoke(moduleInstance, null))
                                 {
@@ -53,9 +55,47 @@ namespace GyroShell.Helpers.Modules
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"[-] ModuleManager: Error loading and running module from {dllFile}: {ex.Message}");
+                    Debug.WriteLine($"[-] ModuleManager: Error getting module from {dllFile}: {ex.Message}");
                 }
             }
+        }
+
+        public static List<ModuleModel> GetModules() 
+        {
+            List<ModuleModel> returnList = new List<ModuleModel>();
+            foreach (string dllFile in Directory.GetFiles(moduleDirectory, "*.dll"))
+            {
+                try
+                {
+                    Assembly assembly = moduleLoadContext.LoadFromAssemblyPath(Path.GetFullPath(dllFile));
+
+                    foreach (Type type in assembly.GetTypes())
+                    {
+                        if (type.IsClass)
+                        {
+                            MethodInfo initializeMethod = type.GetMethod("Initialize");
+                            MethodInfo runMethod = type.GetMethod("Run");
+
+                            if (initializeMethod != null && runMethod != null)
+                            {
+                                object moduleInstance = Activator.CreateInstance(type);
+                                string moduleName = (string)type.GetProperty("ModuleName")?.GetValue(moduleInstance);
+                                string moduleVersion = (string)type.GetProperty("ModuleVersion")?.GetValue(moduleInstance);
+                                Guid moduleGuid = (Guid)type.GetProperty("ModuleId")?.GetValue(moduleInstance);
+                                returnList.Add(new ModuleModel { ModuleName = moduleName, ModuleVersion = moduleVersion, ModuleId = moduleGuid, IsLoaded = false });
+                            }
+                        }
+                        
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[-] ModuleManager: Error loading and running module from {dllFile}: {ex.Message}");
+                    return null;
+                }
+            }
+            moduleLoadContext.Unload();
+            return returnList;
         }
 
         public static void UnloadModules()
