@@ -27,7 +27,7 @@
             </StackPanel>
         </ScrollViewer>
         <StackPanel VerticalAlignment="Bottom">
-            <InfoBar IsOpen="True" Message="GyroShell is unable to find any modules in the current folder. Please select a new directory." IsClosable="True" Severity="Error" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,20" x:Name="ModuleNotFoundInfo" Width="425">
+            <InfoBar Message="GyroShell is unable to find any modules in the current folder. Please select a new directory." IsClosable="True" Severity="Error" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,20" x:Name="ModuleNotFoundInfo" Width="425">
                 <InfoBar.Content>
                     <StackPanel Orientation="Horizontal">
                         <Button x:Name="OpenFolderInfo" Style="{ThemeResource AccentButtonStyle}" Content="Browse" Margin="0,0,10,20" HorizontalAlignment="Stretch" Width="150" Click="OpenFolderInfo_Click"/>

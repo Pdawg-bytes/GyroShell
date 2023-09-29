@@ -24,6 +24,7 @@ namespace GyroShell.Settings
 {
     public sealed partial class MoudlesPage : Page
     {
+        string? modulesPath = App.localSettings.Values["modulesFolderPath"] as string;
         public MoudlesPage()
         {
             this.InitializeComponent();
@@ -41,35 +42,40 @@ namespace GyroShell.Settings
                         break;
                 }
             }
+
+            if (modulesPath == null)
+            {
+                ModuleNotFoundInfo.IsOpen = true;
+            }
         }
 
         #region Control Events
         private async void OpenFolderInfo_Click(object sender, RoutedEventArgs e)
         {
-            DispatcherQueue.TryEnqueue((Microsoft.UI.Dispatching.DispatcherQueuePriority)CoreDispatcherPriority.Normal, async () =>
+            FolderPicker folderPicker = new FolderPicker();
+
+            WinRT.Interop.InitializeWithWindow.Initialize(folderPicker, MainWindow.hWnd);
+
+            folderPicker.SuggestedStartLocation = PickerLocationId.Desktop;
+            folderPicker.FileTypeFilter.Add("*");
+
+            Windows.Storage.StorageFolder folder = await folderPicker.PickSingleFolderAsync();
+
+            if (folder != null)
             {
-                FolderPicker folderPicker = new FolderPicker();
-                folderPicker.SuggestedStartLocation = PickerLocationId.Desktop;
-                folderPicker.FileTypeFilter.Add("*");
-
-                Windows.Storage.StorageFolder folder = await folderPicker.PickSingleFolderAsync();
-
-                if (folder != null)
-                {
-                    InitializeModuleList(folder.Path);
-                    LoadAndRunModules();
-                    ModuleNotFoundInfo.IsOpen = false;
-                }
-                else
-                {
-                    ModuleNotFoundInfo.IsOpen = false;
-                }
-            });
+                InitializeModuleList(folder.Path);
+                LoadAndRunModules();
+                ModuleNotFoundInfo.IsOpen = false;
+            }
+            else
+            {
+                ModuleNotFoundInfo.IsOpen = false;
+            }
         }
 
         private void IgnoreInfo_Click(object sender, RoutedEventArgs e)
         {
-
+            ModuleNotFoundInfo.IsOpen = false;
         }
         #endregion
     }
