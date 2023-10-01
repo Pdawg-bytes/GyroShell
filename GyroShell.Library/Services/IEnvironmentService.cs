@@ -1,4 +1,6 @@
-﻿namespace GyroShell.Library.Services
+﻿using System;
+
+namespace GyroShell.Library.Services
 {
     public interface IEnvironmentService
     {
