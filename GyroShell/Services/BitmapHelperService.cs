@@ -27,7 +27,7 @@ namespace GyroShell.Services
                 softwareBitmap.CopyFromBuffer(bytes.AsBuffer());
 
                 SoftwareBitmapSource source = new SoftwareBitmapSource();
-                await source.SetBitmapAsync(softwareBitmap);
+                source.SetBitmapAsync(softwareBitmap); // if this is awaited it causes an absolute deadlock????
 
                 return source;
             }

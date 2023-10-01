@@ -1,7 +1,6 @@
 using CommunityToolkit.WinUI.Connectivity;
 using CoreAudio;
 using GyroShell.Helpers;
-using GyroShell.Helpers.WinRT;
 using GyroShell.Library.Services;
 using GyroShell.Services;
 using GyroShell.Settings;
@@ -10,6 +9,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -26,11 +26,9 @@ using Windows.UI.Core;
 using Windows.UI.Notifications;
 using Windows.UI.Notifications.Management;
 
-using static GyroShell.Helpers.Win32.GetHandleIcon;
 using static GyroShell.Helpers.Win32.GetWindowName;
 using static GyroShell.Helpers.Win32.Win32Interop;
 using static GyroShell.Helpers.Win32.WindowChecks;
-using static GyroShell.Helpers.WinRT.UWPWindowHelper;
 
 namespace GyroShell.Controls
 {
@@ -43,6 +41,8 @@ namespace GyroShell.Controls
         private bool reportRequested = false;
         private IEnvironmentService m_envService;
         private ISettingsService m_appSettings;
+        private IAppHelperService m_appHelper;
+        private IBitmapHelperService m_bmpHelper;
 
         private readonly WinEventDelegate callback;
 
@@ -55,6 +55,8 @@ namespace GyroShell.Controls
 
             m_envService = App.ServiceProvider.GetRequiredService<IEnvironmentService>();
             m_appSettings = App.ServiceProvider.GetRequiredService<ISettingsService>();
+            m_appHelper = App.ServiceProvider.GetRequiredService<IAppHelperService>();
+            m_bmpHelper = App.ServiceProvider.GetRequiredService<IBitmapHelperService>();
 
             TbIconCollection = new ObservableCollection<IconModel>();
 
@@ -74,7 +76,6 @@ namespace GyroShell.Controls
             BarBorder.Background = new SolidColorBrush(Color.FromArgb(255, 66, 63, 74));
 
             callback = WinEventCallback;
-            UWPWindowHelper uwpWindowHelper = new UWPWindowHelper();
             GetCurrentWindows();
             RegisterWinEventHook();
 
@@ -555,7 +556,8 @@ namespace GyroShell.Controls
                         if (!TbIconCollection.Any(item => item.Id == hwnd))
                         {
                             indexedWindows.Add(hwnd);
-                            TbIconCollection.Add(new IconModel { IconName = windowName, Id = hwnd, AppIcon = CheckIcon(hwnd, 32) });
+                            SoftwareBitmapSource bmpSource = m_bmpHelper.GetXamlBitmapFromGdiBitmap(m_appHelper.GetUwpOrWin32Icon(hwnd, 32)).Result;
+                            TbIconCollection.Add(new IconModel { IconName = windowName, Id = hwnd, AppIcon = bmpSource });
                             if(GetForegroundWindow() == hwnd)
                             {
                                 IconModel targetItemC = TbIconCollection.FirstOrDefault(item => item.Id == hwnd);
@@ -596,7 +598,8 @@ namespace GyroShell.Controls
                             {
                                 if (!TbIconCollection.Any(item => item.Id == hwnd))
                                 {
-                                    TbIconCollection.Add(new IconModel { IconName = windowName, Id = hwnd, AppIcon = CheckIcon(hwnd, 32) });
+                                    SoftwareBitmapSource bmpSource = m_bmpHelper.GetXamlBitmapFromGdiBitmap(m_appHelper.GetUwpOrWin32Icon(hwnd, 32)).Result;
+                                    TbIconCollection.Add(new IconModel { IconName = windowName, Id = hwnd, AppIcon = bmpSource });
                                 }
                             }
                             Debug.WriteLine("[-] WinEventHook: Value not found in rename list.");
@@ -667,7 +670,8 @@ namespace GyroShell.Controls
                         else
                         {
                             indexedWindows.Add(hwnd);
-                            TbIconCollection.Add(new IconModel { IconName = windowName, Id = hwnd, AppIcon = CheckIcon(hwnd, 32) });
+                            SoftwareBitmapSource bmpSource = m_bmpHelper.GetXamlBitmapFromGdiBitmap(m_appHelper.GetUwpOrWin32Icon(hwnd, 32)).Result;
+                            TbIconCollection.Add(new IconModel { IconName = windowName, Id = hwnd, AppIcon = bmpSource });
                         }
                         Debug.WriteLine("Window uncloaked: " + windowName + " | Handle: " + hwnd);
                         break;
@@ -679,7 +683,12 @@ namespace GyroShell.Controls
         {
             try
             {
-                if (isUserWindow(hwnd)) { indexedWindows.Add(hwnd); TbIconCollection.Add(new IconModel { IconName = GetWindowTitle(hwnd), Id = hwnd, AppIcon = CheckIcon(hwnd, 32) }); }
+                if (isUserWindow(hwnd)) 
+                { 
+                    indexedWindows.Add(hwnd);
+                    SoftwareBitmapSource bmpSource = m_bmpHelper.GetXamlBitmapFromGdiBitmap(m_appHelper.GetUwpOrWin32Icon(hwnd, 32)).Result;
+                    TbIconCollection.Add(new IconModel { IconName = GetWindowTitle(hwnd), Id = hwnd, AppIcon = bmpSource }); 
+                }
             }
             catch (Exception ex)
             {
