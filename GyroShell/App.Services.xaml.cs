@@ -23,10 +23,10 @@ namespace GyroShell
         private void ConfigureServices()
         {
             IServiceCollection collection = new ServiceCollection()
-                .AddSingleton<IBitmapHelperService, BitmapHelperService>()
+                .AddTransient<IBitmapHelperService, BitmapHelperService>()
                 .AddSingleton<IAppHelperService, AppHelperService>()
                 .AddSingleton<IEnvironmentService, EnvironmentService>()
-                .AddSingleton<ISettingsService, SettingsService>();
+                .AddTransient<ISettingsService, SettingsService>();
 
             m_serviceProvider = collection.BuildServiceProvider(true);
         }
