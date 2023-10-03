@@ -9,17 +9,17 @@ To make it easier for us to verify your PR and review it, we request that you pl
 3. Try and use proper grammar and avoid typos. Don't name the commit "add wifdow management in defaurttaskbar"
 4. Keep it clean. Don't use swear words or other vulgar language as it's not needed.
 ```
-**Naming Convention**
+## Naming Convention
 So know that you know how to name your commits, lets break it down. Commits, PRs, and Issues should all follow a naming scheme as follows:
 
 > [PROJECT -> Module] Commit message.
 <br/>
 
-**PROJECT** Replacements
+### **PROJECT** Replacements
 - 📱 GyroShell.csproj - App 
 - 🗂️ Repository - GitHub
 
-**MODULE** Replacements <br/>
+### **MODULE** Replacements <br/>
 Whatever you are modifying. For example, let's say you're moving the clock around. You'd replace MODULE with `Control`, as your PR is for changing one of the controls that the app uses.
 <br/>
 
