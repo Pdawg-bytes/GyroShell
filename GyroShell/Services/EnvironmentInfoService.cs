@@ -7,7 +7,7 @@ using static GyroShell.Helpers.Win32.Win32Interop;
 
 namespace GyroShell.Services
 {
-    internal class EnvironmentService : IEnvironmentService
+    internal class EnvironmentInfoService : IEnvironmentInfoService
     {
         public string SystemArchitecture { get; init; }
         public Version AppVersion { get; init; }
@@ -31,7 +31,7 @@ namespace GyroShell.Services
             get => GetSystemMetrics(SM_CYSCREEN);
         }
 
-        public EnvironmentService()
+        public EnvironmentInfoService()
         {
             this.AudioDeviceEnumerator = new MMDeviceEnumerator(Guid.Empty);
             this.AudioDevice = AudioDeviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);

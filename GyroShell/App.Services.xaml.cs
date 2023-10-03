@@ -25,7 +25,7 @@ namespace GyroShell
             IServiceCollection collection = new ServiceCollection()
                 .AddTransient<IBitmapHelperService, BitmapHelperService>()
                 .AddSingleton<IAppHelperService, AppHelperService>()
-                .AddSingleton<IEnvironmentService, EnvironmentService>()
+                .AddSingleton<IEnvironmentInfoService, EnvironmentInfoService>()
                 .AddTransient<ISettingsService, SettingsService>();
 
             m_serviceProvider = collection.BuildServiceProvider(true);
@@ -33,7 +33,7 @@ namespace GyroShell
 
         private void PreloadServices()
         {
-            _ = m_serviceProvider.GetRequiredService<IEnvironmentService>();
+            _ = m_serviceProvider.GetRequiredService<IEnvironmentInfoService>();
             _ = m_serviceProvider.GetRequiredService<IAppHelperService>();
         }
     }

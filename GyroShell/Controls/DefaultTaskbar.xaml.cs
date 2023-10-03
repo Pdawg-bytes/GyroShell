@@ -39,7 +39,7 @@ namespace GyroShell.Controls
 
         private int currentVolume;
         private bool reportRequested = false;
-        private IEnvironmentService m_envService;
+        private IEnvironmentInfoService m_envService;
         private ISettingsService m_appSettings;
         private IAppHelperService m_appHelper;
         private IBitmapHelperService m_bmpHelper;
@@ -53,7 +53,7 @@ namespace GyroShell.Controls
         {
             this.InitializeComponent();
 
-            m_envService = App.ServiceProvider.GetRequiredService<IEnvironmentService>();
+            m_envService = App.ServiceProvider.GetRequiredService<IEnvironmentInfoService>();
             m_appSettings = App.ServiceProvider.GetRequiredService<ISettingsService>();
             m_appHelper = App.ServiceProvider.GetRequiredService<IAppHelperService>();
             m_bmpHelper = App.ServiceProvider.GetRequiredService<IBitmapHelperService>();

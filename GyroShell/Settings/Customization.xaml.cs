@@ -15,14 +15,14 @@ namespace GyroShell.Settings
     {
         public static bool NotifError;
 
-        private IEnvironmentService m_envService;
+        private IEnvironmentInfoService m_envService;
         private ISettingsService m_appSettings;
 
         public Customization()
         {
             this.InitializeComponent();
 
-            m_envService = App.ServiceProvider.GetRequiredService<IEnvironmentService>();
+            m_envService = App.ServiceProvider.GetRequiredService<IEnvironmentInfoService>();
             m_appSettings = App.ServiceProvider.GetRequiredService<ISettingsService>();
         }
 

@@ -3,7 +3,7 @@ using System;
 
 namespace GyroShell.Library.Services
 {
-    public interface IEnvironmentService
+    public interface IEnvironmentInfoService
     {
         public string SystemArchitecture { get; init; }
         public Version AppVersion { get; init; }
