@@ -1,5 +1,4 @@
 ﻿using GyroShell.Library.Services;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -21,17 +20,62 @@ namespace GyroShell.Services
         private PackageManager m_pkgManager;
         private IBitmapHelperService m_bmpHelper;
 
-        public AppHelperService()
+        public AppHelperService(IBitmapHelperService bitmapHelper)
         {
             m_pkgFamilyMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             m_pkgManager = new PackageManager();
-            m_bmpHelper = App.ServiceProvider.GetRequiredService<IBitmapHelperService>();
+            m_bmpHelper = bitmapHelper;
 
             IEnumerable<Package> packages = m_pkgManager.FindPackagesForUser(null);
             foreach (Package package in packages)
             {
                 m_pkgFamilyMap[package.Id.FamilyName] = package.Id.FullName;
             }
+        }
+
+        public bool IsUwpWindow(IntPtr hWnd) =>
+            GetPackageFromAppHandle(hWnd) != null;
+
+        public Bitmap GetUwpOrWin32Icon(IntPtr hwnd, int targetSize)
+        {
+            if (IsUwpWindow(hwnd))
+            {
+                return GetGdiBitmapFromUwpApp(hwnd);
+            }
+            else
+            {
+                return GetGdiBitmapFromWin32App(hwnd, targetSize);
+            }
+        }
+
+        #region UWP Helper
+        public string GetUwpAppIconPath(IntPtr hWnd)
+        {
+            string normalPath = Uri.UnescapeDataString(Uri.UnescapeDataString(GetPackageFromAppHandle(hWnd).Logo.AbsolutePath)).Replace("/", "\\");
+            string finalPath = GetUwpExtraIcons(normalPath, GetWindowTitle(hWnd), normalPath);
+
+            return finalPath;
+        }
+
+        public string GetUwpExtraIcons(string path, string appName, string normalPath)
+        {
+            string[] pathParts = path.Split('\\');
+            string rootAssetsFolder = string.Join("\\", pathParts.Take(pathParts.Length - 1));
+
+            string[] allFiles = Directory.GetFiles(rootAssetsFolder);
+            foreach (string filePath in allFiles)
+            {
+                if (Path.GetFileName(filePath).Contains("StoreLogo.scale-100"))
+                {
+                    string e = filePath.Replace(" ", "").ToLower();
+                    if (e.Contains(appName.Replace(" ", "").ToLower()))
+                    {
+                        return filePath;
+                    }
+                }
+            }
+
+            return normalPath;
         }
 
         public Package GetPackageFromAppHandle(IntPtr hWnd)
@@ -87,52 +131,7 @@ namespace GyroShell.Services
 
             return null;
         }
-
-        public string GetUwpAppIconPath(IntPtr hWnd)
-        {
-            string normalPath = Uri.UnescapeDataString(Uri.UnescapeDataString(GetPackageFromAppHandle(hWnd).Logo.AbsolutePath)).Replace("/", "\\");
-            string finalPath = GetUwpExtraIcons(normalPath, GetWindowTitle(hWnd), normalPath);
-
-            return finalPath;
-        }
-
-        public string GetUwpExtraIcons(string path, string appName, string normalPath)
-        {
-            string[] pathParts = path.Split('\\');
-            string rootAssetsFolder = string.Join("\\", pathParts.Take(pathParts.Length - 1));
-
-            string[] allFiles = Directory.GetFiles(rootAssetsFolder);
-            foreach (string filePath in allFiles)
-            {
-                if (Path.GetFileName(filePath).Contains("StoreLogo.scale-100"))
-                {
-                    string e = filePath.Replace(" ", "").ToLower();
-                    if (e.Contains(appName.Replace(" ", "").ToLower()))
-                    {
-                        return filePath;
-                    }
-                }
-            }
-
-            return normalPath;
-        }
-
-        public bool IsUwpWindow(IntPtr hWnd)
-        {
-            return GetPackageFromAppHandle(hWnd) != null;
-        }
-
-        public Bitmap GetUwpOrWin32Icon(IntPtr hwnd, int targetSize)
-        {
-            if (IsUwpWindow(hwnd))
-            {
-                return GetGdiBitmapFromUwpApp(hwnd);
-            }
-            else
-            {
-                return GetGdiBitmapFromWin32App(hwnd, targetSize);
-            }
-        }
+        #endregion UWP Helper
 
         private Bitmap GetGdiBitmapFromUwpApp(IntPtr hWnd)
         {
