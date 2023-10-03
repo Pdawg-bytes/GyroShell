@@ -1,4 +1,5 @@
-﻿using GyroShell.Library.Services;
+﻿using CoreAudio;
+using GyroShell.Library.Services;
 using System;
 using System.IO;
 using Windows.ApplicationModel;
@@ -17,6 +18,9 @@ namespace GyroShell.Services
             get => Environment.OSVersion.Version.Build >= 22000;
         }
 
+        public MMDevice AudioDevice { get; init; }
+        public MMDeviceEnumerator AudioDeviceEnumerator { get; init; }
+
         public int MonitorWidth
         {
             get => GetSystemMetrics(SM_CXSCREEN);
@@ -29,6 +33,9 @@ namespace GyroShell.Services
 
         public EnvironmentService()
         {
+            this.AudioDeviceEnumerator = new MMDeviceEnumerator(Guid.Empty);
+            this.AudioDevice = AudioDeviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+
             if (Package.Current.InstalledLocation != null)
             {
                 Package package = Package.Current;

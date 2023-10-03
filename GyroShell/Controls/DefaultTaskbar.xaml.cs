@@ -67,7 +67,7 @@ namespace GyroShell.Controls
             UpdateNetworkStatus();
 
             NetworkInformation.NetworkStatusChanged += NetworkInformation_NetworkStatusChanged;
-            AudioBackend.audioDevice.AudioEndpointVolume.OnVolumeNotification += new AudioEndpointVolumeNotificationDelegate(AudioEndpointVolume_OnVolumeNotification);
+            m_envService.AudioDevice.AudioEndpointVolume.OnVolumeNotification += new AudioEndpointVolumeNotificationDelegate(AudioEndpointVolume_OnVolumeNotification);
 
             AudioCheck();
 
@@ -212,7 +212,7 @@ namespace GyroShell.Controls
         }
         private void AudioCheck()
         {
-            currentVolume = (int)Math.Ceiling(AudioBackend.audioDevice.AudioEndpointVolume.MasterVolumeLevelScalar * 100) - 1;
+            currentVolume = (int)Math.Ceiling(m_envService.AudioDevice.AudioEndpointVolume.MasterVolumeLevelScalar * 100) - 1;
 
             if (currentVolume == 0 || currentVolume == -1)
             {
@@ -250,7 +250,7 @@ namespace GyroShell.Controls
                 });
             }
 
-            if (AudioBackend.audioDevice.AudioEndpointVolume.Mute)
+            if (m_envService.AudioDevice.AudioEndpointVolume.Mute)
             {
                 DispatcherQueue.TryEnqueue((Microsoft.UI.Dispatching.DispatcherQueuePriority)CoreDispatcherPriority.Normal, () =>
                 {
