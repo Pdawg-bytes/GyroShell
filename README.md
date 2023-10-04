@@ -47,6 +47,7 @@ To contribute to GyroShell, follow the [contribution guide](https://github.com/P
 People in this section have contributed a significant amount to GyroShell. Thank you, contributors!
 - **Pdawg** - Lead developer of GyroShell. Works on the UI, backend, and design.
 - **AnalogFeelings** - Implemented Dependency Injection, and refined the UI, cleaned up the backend.
+- **Rounak** - Implemented the taskbar icon system and some shell hooking code.
 
 ## :balance_scale: License
 GyroShell is licensed under the **MIT License**, found [here](https://github.com/Pdawg-bytes/GyroShell/blob/main/LICENSE).
