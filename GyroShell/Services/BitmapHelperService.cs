@@ -14,7 +14,7 @@ namespace GyroShell.Services
 {
     internal class BitmapHelperService : IBitmapHelperService
     {
-        public async Task<SoftwareBitmapSource> GetXamlBitmapFromGdiBitmap(Bitmap bmp)
+        public async Task<SoftwareBitmapSource> GetXamlBitmapFromGdiBitmapAsync(Bitmap bmp)
         {
             using (Bitmap resampledBmp = FilterAndScaleBitmap(bmp, bmp.Width, bmp.Height))
             {
@@ -33,11 +33,11 @@ namespace GyroShell.Services
             }
         }
 
-        public async Task<SoftwareBitmapSource> GetXamlBitmapFromGdiIcon(Icon icon)
+        public async Task<SoftwareBitmapSource> GetXamlBitmapFromGdiIconAsync(Icon icon)
         {
             using (Bitmap bmp = icon.ToBitmap())
             {
-                return await GetXamlBitmapFromGdiBitmap(bmp);
+                return await GetXamlBitmapFromGdiBitmapAsync(bmp);
             }
         }
 

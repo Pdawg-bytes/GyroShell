@@ -10,7 +10,7 @@ namespace GyroShell.Library.Services
         public Bitmap FilterAndScaleBitmap(Bitmap source, int targetWidth, int targetHeight);
         public Bitmap LoadBitmapFromPath(string filePath);
 
-        public Task<SoftwareBitmapSource> GetXamlBitmapFromGdiBitmap(Bitmap bmp);
-        public Task<SoftwareBitmapSource> GetXamlBitmapFromGdiIcon(Icon icon);
+        public Task<SoftwareBitmapSource> GetXamlBitmapFromGdiBitmapAsync(Bitmap bmp);
+        public Task<SoftwareBitmapSource> GetXamlBitmapFromGdiIconAsync(Icon icon);
     }
 }
