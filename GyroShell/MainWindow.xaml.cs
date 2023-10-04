@@ -14,7 +14,6 @@ using Windows.Graphics;
 using Windows.UI;
 using WinRT;
 
-using static GyroShell.Helpers.TaskbarManager;
 using static GyroShell.Helpers.Win32.GetWindowName;
 using static GyroShell.Helpers.Win32.Win32Interop;
 using static GyroShell.Helpers.Win32.WindowChecks;
@@ -28,6 +27,7 @@ namespace GyroShell
         private AppWindow m_AppWindow;
         private IEnvironmentInfoService m_envService;
         private ISettingsService m_appSettings;
+        private ITaskbarManagerService m_tbManager;
 
         private IntPtr _oldWndProc;
         internal static IntPtr hWnd;
@@ -54,8 +54,9 @@ namespace GyroShell
 
             m_envService = App.ServiceProvider.GetRequiredService<IEnvironmentInfoService>();
             m_appSettings = App.ServiceProvider.GetRequiredService<ISettingsService>();
+            m_tbManager = App.ServiceProvider.GetRequiredService<ITaskbarManagerService>();
 
-            TaskbarManager.Init();
+            m_tbManager.Initialize();
 
             // Presenter handling code
             OverlappedPresenter presenter = GetAppWindowAndPresenter();
@@ -109,7 +110,7 @@ namespace GyroShell
         #region Window Handling
         private void OnProcessExit(object sender, EventArgs e)
         {
-            TaskbarManager.ShowTaskbar();
+            m_tbManager.ShowTaskbar();
             //UnhookWinEvent(foregroundHook);
             //UnhookWinEvent(cloakedHook);
             //UnhookWinEvent(nameChangeHook);
@@ -349,10 +350,10 @@ namespace GyroShell
                 bool regShellHook = RegisterShellHookWindow(hWnd);
                 fBarRegistered = true;
 
-                AutoHideExplorer(true);
+                m_tbManager.ToggleAutoHideExplorer(true);
                 ABSetPos();
-                AutoHideExplorer(false);
-                HideTaskbar();
+                m_tbManager.ToggleAutoHideExplorer(false);
+                m_tbManager.HideTaskbar();
                 SetWindowPos(hWnd, (IntPtr)WindowZOrder.HWND_TOPMOST, 0, 0, 0, 0, (int)SWPFlags.SWP_NOMOVE | (int)SWPFlags.SWP_NOSIZE | (int)SWPFlags.SWP_SHOWWINDOW);
             }
             else

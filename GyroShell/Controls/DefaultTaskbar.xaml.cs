@@ -43,6 +43,7 @@ namespace GyroShell.Controls
         private ISettingsService m_appSettings;
         private IAppHelperService m_appHelper;
         private IBitmapHelperService m_bmpHelper;
+        private ITaskbarManagerService m_tbManager;
 
         private readonly WinEventDelegate callback;
 
@@ -57,6 +58,7 @@ namespace GyroShell.Controls
             m_appSettings = App.ServiceProvider.GetRequiredService<ISettingsService>();
             m_appHelper = App.ServiceProvider.GetRequiredService<IAppHelperService>();
             m_bmpHelper = App.ServiceProvider.GetRequiredService<IBitmapHelperService>();
+            m_tbManager = App.ServiceProvider.GetRequiredService<ITaskbarManagerService>();
 
             TbIconCollection = new ObservableCollection<IconModel>();
 
@@ -82,7 +84,7 @@ namespace GyroShell.Controls
             //UwpTest(TbIconCollection.First(param => param.IconName == "Ambie").Id);
             //UwpTest(TbIconCollection.First(param => param.IconName == "Clock").Id);
 
-            TaskbarManager.SendWinlogonShowShell();
+            m_tbManager.NotifyWinlogonShowShell();
         }
 
         #region Clock
@@ -261,34 +263,34 @@ namespace GyroShell.Controls
         #endregion
 
         #region Bar Events
-        private async void SystemControls_Click(object sender, RoutedEventArgs e)
+        private void SystemControls_Click(object sender, RoutedEventArgs e)
         {
             if (SystemControls.IsChecked == true)
             {
                 if (m_envService.IsWindows11)
                 {
-                    await TaskbarManager.ToggleSysControl();
+                    m_tbManager.ToggleControlCenter();
                 }
                 else
                 {
-                    await TaskbarManager.ToggleActionCenter();
+                    m_tbManager.ToggleActionCenter();
                 }
             }
         }
 
-        private async void StartButton_Click(object sender, RoutedEventArgs e)
+        private void StartButton_Click(object sender, RoutedEventArgs e)
         {
             if (StartButton.IsChecked == true)
             {
-                await TaskbarManager.ToggleStart();
+                m_tbManager.ToggleStartMenu();
             }
         }
 
-        private async void ActionCenter_Click(object sender, RoutedEventArgs e)
+        private void ActionCenter_Click(object sender, RoutedEventArgs e)
         {
             if (ActionCenter.IsChecked == true)
             {
-                await TaskbarManager.ToggleActionCenter();
+                m_tbManager.ToggleActionCenter();
             }
         }
 
