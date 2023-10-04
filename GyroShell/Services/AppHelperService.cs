@@ -6,9 +6,9 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using Windows.ApplicationModel;
 using Windows.Management.Deployment;
-using static GyroShell.Helpers.Win32.GetWindowName;
 using static GyroShell.Helpers.Win32.Win32Interop;
 using static GyroShell.Interfaces.AUMIDIPropertyStore;
 
@@ -46,6 +46,16 @@ namespace GyroShell.Services
             {
                 return GetGdiBitmapFromWin32App(hwnd, targetSize);
             }
+        }
+
+        public string GetWindowTitle(IntPtr hWnd)
+        {
+            int length = GetWindowTextLength(hWnd);
+            StringBuilder sb = new StringBuilder(length + 1);
+
+            GetWindowText(hWnd, sb, sb.Capacity);
+
+            return sb.ToString();
         }
 
         #region UWP Helper

@@ -14,7 +14,6 @@ using Windows.Graphics;
 using Windows.UI;
 using WinRT;
 
-using static GyroShell.Helpers.Win32.GetWindowName;
 using static GyroShell.Helpers.Win32.Win32Interop;
 using static GyroShell.Helpers.Win32.WindowChecks;
 
@@ -28,6 +27,7 @@ namespace GyroShell
         private IEnvironmentInfoService m_envService;
         private ISettingsService m_appSettings;
         private ITaskbarManagerService m_tbManager;
+        private IAppHelperService m_appHelper;
 
         private IntPtr _oldWndProc;
         internal static IntPtr hWnd;
@@ -54,6 +54,7 @@ namespace GyroShell
 
             m_envService = App.ServiceProvider.GetRequiredService<IEnvironmentInfoService>();
             m_appSettings = App.ServiceProvider.GetRequiredService<ISettingsService>();
+            m_appHelper = App.ServiceProvider.GetRequiredService<IAppHelperService>();
             m_tbManager = App.ServiceProvider.GetRequiredService<ITaskbarManagerService>();
 
             m_tbManager.Initialize();
@@ -472,7 +473,7 @@ namespace GyroShell
                 case HSHELL_WINDOWCREATED:
                     if (isUserWindow(hwnd))
                     {
-                        Debug.WriteLine("Window created: " + GetWindowTitle(hwnd) + " | Handle: " + (hwnd));
+                        Debug.WriteLine("Window created: " + m_appHelper.GetWindowTitle(hwnd) + " | Handle: " + (hwnd));
                         //indexedWindows.Add(hwnd);
                     }
                     break;
@@ -505,7 +506,7 @@ namespace GyroShell
                     //m_AppWindow.Show();
                     break;
                 default:
-                    Debug.WriteLine("Unknown shhook code: " + iCode + " with window: " + GetWindowTitle(hwnd));
+                    Debug.WriteLine("Unknown shhook code: " + iCode + " with window: " + m_appHelper.GetWindowTitle(hwnd));
                     break;
             }
             return IntPtr.Zero;

@@ -26,7 +26,6 @@ using Windows.UI.Core;
 using Windows.UI.Notifications;
 using Windows.UI.Notifications.Management;
 
-using static GyroShell.Helpers.Win32.GetWindowName;
 using static GyroShell.Helpers.Win32.Win32Interop;
 using static GyroShell.Helpers.Win32.WindowChecks;
 
@@ -542,7 +541,7 @@ namespace GyroShell.Controls
         // WinEvent Callback
         private void WinEventCallback(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
         {
-            string windowName = GetWindowTitle(hwnd);
+            string windowName = m_appHelper.GetWindowTitle(hwnd);
             if (!indexedWindows.Contains(hwnd))
             {
                 if (hwnd != IntPtr.Zero && isUserWindow(hwnd))
@@ -689,7 +688,7 @@ namespace GyroShell.Controls
                 { 
                     indexedWindows.Add(hwnd);
                     SoftwareBitmapSource bmpSource = m_bmpHelper.GetXamlBitmapFromGdiBitmapAsync(m_appHelper.GetUwpOrWin32Icon(hwnd, 32)).Result;
-                    TbIconCollection.Add(new IconModel { IconName = GetWindowTitle(hwnd), Id = hwnd, AppIcon = bmpSource }); 
+                    TbIconCollection.Add(new IconModel { IconName = m_appHelper.GetWindowTitle(hwnd), Id = hwnd, AppIcon = bmpSource }); 
                 }
             }
             catch (Exception ex)

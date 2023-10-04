@@ -13,5 +13,6 @@ namespace GyroShell.Library.Services
         public Package GetPackageFromAppHandle(IntPtr hWnd);
 
         public Bitmap GetUwpOrWin32Icon(IntPtr hwnd, int targetSize);
+        public string GetWindowTitle(IntPtr hWnd);
     }
 }
