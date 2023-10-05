@@ -38,11 +38,13 @@ namespace GyroShell.Controls
 
         private int currentVolume;
         private bool reportRequested = false;
+
         private IEnvironmentInfoService m_envService;
         private ISettingsService m_appSettings;
         private IAppHelperService m_appHelper;
         private IBitmapHelperService m_bmpHelper;
         private ITaskbarManagerService m_tbManager;
+        private INetworkService m_netService;
 
         private readonly WinEventDelegate callback;
 
@@ -58,6 +60,7 @@ namespace GyroShell.Controls
             m_appHelper = App.ServiceProvider.GetRequiredService<IAppHelperService>();
             m_bmpHelper = App.ServiceProvider.GetRequiredService<IBitmapHelperService>();
             m_tbManager = App.ServiceProvider.GetRequiredService<ITaskbarManagerService>();
+            m_netService = App.ServiceProvider.GetRequiredService<INetworkService>();
 
             TbIconCollection = new ObservableCollection<IconModel>();
 
@@ -67,7 +70,7 @@ namespace GyroShell.Controls
             InitNotifcation();
             UpdateNetworkStatus();
 
-            NetworkInformation.NetworkStatusChanged += NetworkInformation_NetworkStatusChanged;
+            m_netService.InternetStatusChanged += NetworkService_InternetStatusChanged;
             m_envService.AudioDevice.AudioEndpointVolume.OnVolumeNotification += new AudioEndpointVolumeNotificationDelegate(AudioEndpointVolume_OnVolumeNotification);
 
             AudioCheck();
@@ -104,7 +107,7 @@ namespace GyroShell.Controls
         #endregion
 
         #region Internet
-        private void NetworkInformation_NetworkStatusChanged(object sender)
+        private void NetworkService_InternetStatusChanged(object sender, EventArgs e)
         {
             DispatcherQueue.TryEnqueue((Microsoft.UI.Dispatching.DispatcherQueuePriority)CoreDispatcherPriority.Normal, () =>
             {
@@ -117,25 +120,25 @@ namespace GyroShell.Controls
 
         private void UpdateNetworkStatus()
         {
-            if (NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable)
+            if (m_netService.IsInternetAvailable)
             {
-                switch (NetworkHelper.Instance.ConnectionInformation.ConnectionType)
+                switch (m_netService.InternetType)
                 {
-                    case ConnectionType.Ethernet:
+                    case InternetConnection.Wired:
                         WifiStatus.Text = "\uE839";
                         WifiStatus.Margin = new Thickness(0, 2, 7, 0);
                         break;
-                    case ConnectionType.WiFi:
-                        int WifiSignalBars = NetworkHelper.Instance.ConnectionInformation.SignalStrength.GetValueOrDefault(0);
+                    case InternetConnection.Wireless:
+                        int WifiSignalBars = m_netService.SignalStrength;
 
                         WifiStatus.Text = wifiIcons[WifiSignalBars];
                         break;
-                    case ConnectionType.Data:
-                        int DataSignalBars = NetworkHelper.Instance.ConnectionInformation.SignalStrength.GetValueOrDefault(0);
+                    case InternetConnection.Data:
+                        int DataSignalBars = m_netService.SignalStrength;
 
                         WifiStatus.Text = dataIcons[DataSignalBars];
                         break;
-                    case ConnectionType.Unknown:
+                    case InternetConnection.Unknown:
                     default:
                         WifiStatus.Text = "\uE774";
                         break;
