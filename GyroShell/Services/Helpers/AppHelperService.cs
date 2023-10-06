@@ -67,27 +67,6 @@ namespace GyroShell.Services.Helpers
             return finalPath;
         }
 
-        public string GetUwpExtraIcons(string path, string appName, string normalPath)
-        {
-            string[] pathParts = path.Split('\\');
-            string rootAssetsFolder = string.Join("\\", pathParts.Take(pathParts.Length - 1));
-
-            string[] allFiles = Directory.GetFiles(rootAssetsFolder);
-            foreach (string filePath in allFiles)
-            {
-                if (Path.GetFileName(filePath).Contains("StoreLogo.scale-100"))
-                {
-                    string e = filePath.Replace(" ", "").ToLower();
-                    if (e.Contains(appName.Replace(" ", "").ToLower()))
-                    {
-                        return filePath;
-                    }
-                }
-            }
-
-            return normalPath;
-        }
-
         public Package GetPackageFromAppHandle(IntPtr hWnd)
         {
             // Get the AUMID associated with the app handle
@@ -142,6 +121,27 @@ namespace GyroShell.Services.Helpers
             return null;
         }
         #endregion UWP Helper
+
+        private string GetUwpExtraIcons(string path, string appName, string normalPath)
+        {
+            string[] pathParts = path.Split('\\');
+            string rootAssetsFolder = string.Join("\\", pathParts.Take(pathParts.Length - 1));
+
+            string[] allFiles = Directory.GetFiles(rootAssetsFolder);
+            foreach (string filePath in allFiles)
+            {
+                if (Path.GetFileName(filePath).Contains("StoreLogo.scale-100"))
+                {
+                    string e = filePath.Replace(" ", "").ToLower();
+                    if (e.Contains(appName.Replace(" ", "").ToLower()))
+                    {
+                        return filePath;
+                    }
+                }
+            }
+
+            return normalPath;
+        }
 
         private Bitmap GetGdiBitmapFromUwpApp(IntPtr hWnd)
         {
