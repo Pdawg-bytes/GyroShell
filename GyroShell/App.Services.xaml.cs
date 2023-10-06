@@ -27,7 +27,8 @@ namespace GyroShell
                 .AddSingleton<IAppHelperService, AppHelperService>()
                 .AddSingleton<IEnvironmentInfoService, EnvironmentInfoService>()
                 .AddTransient<ISettingsService, SettingsService>()
-                .AddTransient<INetworkService, NetworkService>()
+                .AddSingleton<INetworkService, NetworkService>()
+                .AddSingleton<IBatteryService, BatteryService>()
                 .AddTransient<ITaskbarManagerService, TaskbarManagerService>();
 
             m_serviceProvider = collection.BuildServiceProvider(true);

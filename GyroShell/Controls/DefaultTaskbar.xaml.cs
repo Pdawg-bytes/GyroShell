@@ -1,6 +1,7 @@
 using CommunityToolkit.WinUI.Connectivity;
 using CoreAudio;
 using GyroShell.Helpers;
+using GyroShell.Library.Models.Hardware;
 using GyroShell.Library.Services;
 using GyroShell.Services;
 using GyroShell.Settings;
@@ -28,6 +29,7 @@ using Windows.UI.Notifications.Management;
 
 using static GyroShell.Helpers.Win32.Win32Interop;
 using static GyroShell.Helpers.Win32.WindowChecks;
+using BatteryReport = GyroShell.Library.Models.Hardware.BatteryReport;
 
 namespace GyroShell.Controls
 {
@@ -45,6 +47,7 @@ namespace GyroShell.Controls
         private IBitmapHelperService m_bmpHelper;
         private ITaskbarManagerService m_tbManager;
         private INetworkService m_netService;
+        private IBatteryService m_powerService;
 
         private readonly WinEventDelegate callback;
 
@@ -61,6 +64,7 @@ namespace GyroShell.Controls
             m_bmpHelper = App.ServiceProvider.GetRequiredService<IBitmapHelperService>();
             m_tbManager = App.ServiceProvider.GetRequiredService<ITaskbarManagerService>();
             m_netService = App.ServiceProvider.GetRequiredService<INetworkService>();
+            m_powerService = App.ServiceProvider.GetRequiredService<IBatteryService>();
 
             TbIconCollection = new ObservableCollection<IconModel>();
 
@@ -75,7 +79,7 @@ namespace GyroShell.Controls
 
             AudioCheck();
 
-            Battery.AggregateBattery.ReportUpdated += AggregateBattery_ReportUpdated;
+            m_powerService.BatteryStatusChanged += AggregateBattery_ReportUpdated;
 
             BarBorder.Background = new SolidColorBrush(Color.FromArgb(255, 66, 63, 74));
 
@@ -154,11 +158,10 @@ namespace GyroShell.Controls
         #region Battery
         private void DetectBatteryPresence()
         {
-            Battery aggDetectBattery = Battery.AggregateBattery;
-            BatteryReport report = aggDetectBattery.GetReport();
-            string ReportResult = report.Status.ToString();
+            BatteryReport report = m_powerService.GetStatusReport();
+            BatteryPowerStatus status = report.PowerStatus;
 
-            if (ReportResult == "NotPresent")
+            if (status == BatteryPowerStatus.NotInstalled)
             {
                 BattStatus.Visibility = Visibility.Collapsed;
             }
@@ -176,14 +179,11 @@ namespace GyroShell.Controls
 
         private void AggregateBattery()
         {
-            Battery aggBattery = Battery.AggregateBattery;
-            BatteryReport report = aggBattery.GetReport();
-            string charging = report.Status.ToString();
-            double fullCharge = Convert.ToDouble(report.FullChargeCapacityInMilliwattHours);
-            double currentCharge = Convert.ToDouble(report.RemainingCapacityInMilliwattHours);
-            double battLevel = Math.Ceiling((currentCharge / fullCharge) * 100);
+            BatteryReport report = m_powerService.GetStatusReport();
+            double battLevel = report.ChargePercentage;
+            BatteryPowerStatus status = report.PowerStatus;
 
-            if (charging == "Charging" || charging == "Idle")
+            if (status == BatteryPowerStatus.Charging || status == BatteryPowerStatus.Idle)
             {
                 int indexCharge = (int)Math.Floor(battLevel / 10);
 
@@ -197,7 +197,7 @@ namespace GyroShell.Controls
             }
         }
 
-        private void AggregateBattery_ReportUpdated(Battery sender, object args)
+        private void BatteryService_BatteryStatusChanged(object sender, EventArgs e)
         {
             if (reportRequested)
             {
