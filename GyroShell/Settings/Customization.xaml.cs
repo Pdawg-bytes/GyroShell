@@ -1,5 +1,5 @@
 using GyroShell.Controls;
-using GyroShell.Library.Services;
+using GyroShell.Library.Services.Environment;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;

@@ -2,7 +2,7 @@
 using System.Drawing;
 using Windows.ApplicationModel;
 
-namespace GyroShell.Library.Services
+namespace GyroShell.Library.Services.Helpers
 {
     public interface IAppHelperService
     {

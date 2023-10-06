@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GyroShell.Library.Services
+namespace GyroShell.Library.Services.Hardware
 {
     public enum InternetConnection
     {

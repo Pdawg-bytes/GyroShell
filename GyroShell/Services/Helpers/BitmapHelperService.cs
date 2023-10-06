@@ -1,4 +1,4 @@
-﻿using GyroShell.Library.Services;
+﻿using GyroShell.Library.Services.Helpers;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using System.Diagnostics;
@@ -10,7 +10,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Graphics.Imaging;
 
-namespace GyroShell.Services
+namespace GyroShell.Services.Helpers
 {
     internal class BitmapHelperService : IBitmapHelperService
     {

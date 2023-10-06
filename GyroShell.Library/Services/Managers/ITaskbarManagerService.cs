@@ -1,4 +1,4 @@
-﻿namespace GyroShell.Library.Services
+﻿namespace GyroShell.Library.Services.Managers
 {
     public interface ITaskbarManagerService
     {

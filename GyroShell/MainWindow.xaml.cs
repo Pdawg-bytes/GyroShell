@@ -1,5 +1,7 @@
 ﻿using GyroShell.Helpers;
-using GyroShell.Library.Services;
+using GyroShell.Library.Services.Environment;
+using GyroShell.Library.Services.Helpers;
+using GyroShell.Library.Services.Managers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI;
 using Microsoft.UI.Composition.SystemBackdrops;

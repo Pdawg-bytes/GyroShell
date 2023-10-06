@@ -2,7 +2,10 @@ using CommunityToolkit.WinUI.Connectivity;
 using CoreAudio;
 using GyroShell.Helpers;
 using GyroShell.Library.Models.Hardware;
-using GyroShell.Library.Services;
+using GyroShell.Library.Services.Environment;
+using GyroShell.Library.Services.Hardware;
+using GyroShell.Library.Services.Helpers;
+using GyroShell.Library.Services.Managers;
 using GyroShell.Services;
 using GyroShell.Settings;
 using Microsoft.Extensions.DependencyInjection;
@@ -79,7 +82,7 @@ namespace GyroShell.Controls
 
             AudioCheck();
 
-            m_powerService.BatteryStatusChanged += AggregateBattery_ReportUpdated;
+            m_powerService.BatteryStatusChanged += BatteryService_BatteryStatusChanged;
 
             BarBorder.Background = new SolidColorBrush(Color.FromArgb(255, 66, 63, 74));
 

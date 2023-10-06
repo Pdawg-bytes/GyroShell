@@ -1,11 +1,11 @@
 ﻿using CoreAudio;
-using GyroShell.Library.Services;
+using GyroShell.Library.Services.Environment;
 using System;
 using System.IO;
 using Windows.ApplicationModel;
 using static GyroShell.Helpers.Win32.Win32Interop;
 
-namespace GyroShell.Services
+namespace GyroShell.Services.Environment
 {
     internal class EnvironmentInfoService : IEnvironmentInfoService
     {
@@ -15,7 +15,7 @@ namespace GyroShell.Services
 
         public bool IsWindows11
         {
-            get => Environment.OSVersion.Version.Build >= 22000;
+            get => System.Environment.OSVersion.Version.Build >= 22000;
         }
 
         public MMDevice AudioDevice { get; init; }
@@ -33,19 +33,19 @@ namespace GyroShell.Services
 
         public EnvironmentInfoService()
         {
-            this.AudioDeviceEnumerator = new MMDeviceEnumerator(Guid.Empty);
-            this.AudioDevice = AudioDeviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+            AudioDeviceEnumerator = new MMDeviceEnumerator(Guid.Empty);
+            AudioDevice = AudioDeviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
 
             if (Package.Current.InstalledLocation != null)
             {
                 Package package = Package.Current;
-                this.SystemArchitecture = package.Id.Architecture.ToString();
+                SystemArchitecture = package.Id.Architecture.ToString();
 
                 PackageVersion version = package.Id.Version;
-                this.AppVersion = new Version(version.Major, version.Minor, version.Build, version.Revision);
+                AppVersion = new Version(version.Major, version.Minor, version.Build, version.Revision);
 
                 string mainExecutablePath = Path.Combine(Package.Current.InstalledLocation.Path, "GyroShell.exe");
-                this.AppBuildDate = File.GetLastWriteTime(mainExecutablePath);
+                AppBuildDate = File.GetLastWriteTime(mainExecutablePath);
             }
             else
             {
@@ -54,7 +54,7 @@ namespace GyroShell.Services
 
                 ushort arch = sysInfo.wProcessorArchitecture;
 
-                this.SystemArchitecture = arch switch
+                SystemArchitecture = arch switch
                 {
                     0 => "X86",
                     5 => "ARM",
@@ -63,8 +63,8 @@ namespace GyroShell.Services
                     _ => "Unknown Processor",
                 };
 
-                this.AppVersion = new Version(0, 0, 0, 0);
-                this.AppBuildDate = new DateTime(2023, 9, 28);
+                AppVersion = new Version(0, 0, 0, 0);
+                AppBuildDate = new DateTime(2023, 9, 28);
             }
         }
     }

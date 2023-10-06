@@ -1,5 +1,11 @@
-﻿using GyroShell.Library.Services;
-using GyroShell.Services;
+﻿using GyroShell.Library.Services.Environment;
+using GyroShell.Library.Services.Hardware;
+using GyroShell.Library.Services.Helpers;
+using GyroShell.Library.Services.Managers;
+using GyroShell.Services.Environment;
+using GyroShell.Services.Hardware;
+using GyroShell.Services.Helpers;
+using GyroShell.Services.Managers;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 

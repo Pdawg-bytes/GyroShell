@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using GyroShell.Helpers.Modules;
-using GyroShell.Library.Services;
+using GyroShell.Library.Services.Environment;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;

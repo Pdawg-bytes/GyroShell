@@ -1,9 +1,9 @@
-﻿using GyroShell.Library.Services;
+﻿using GyroShell.Library.Services.Managers;
 using System;
 using System.Runtime.InteropServices;
 using static GyroShell.Helpers.Win32.Win32Interop;
 
-namespace GyroShell.Services
+namespace GyroShell.Services.Managers
 {
     internal class TaskbarManagerService : ITaskbarManagerService
     {

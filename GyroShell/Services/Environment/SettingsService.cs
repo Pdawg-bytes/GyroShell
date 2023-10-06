@@ -1,7 +1,7 @@
-﻿using GyroShell.Library.Services;
+﻿using GyroShell.Library.Services.Environment;
 using Windows.Storage;
 
-namespace GyroShell.Services
+namespace GyroShell.Services.Environment
 {
     internal class SettingsService : ISettingsService
     {

@@ -15,8 +15,8 @@ using System.Diagnostics;
 using static GyroShell.Helpers.Win32.Win32Interop;
 
 using AppWindow = Microsoft.UI.Windowing.AppWindow;
-using GyroShell.Library.Services;
 using Microsoft.Extensions.DependencyInjection;
+using GyroShell.Library.Services.Managers;
 
 namespace GyroShell.Controls
 {

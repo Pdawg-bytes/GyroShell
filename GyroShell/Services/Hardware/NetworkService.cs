@@ -1,9 +1,9 @@
 ﻿using CommunityToolkit.WinUI.Connectivity;
-using GyroShell.Library.Services;
+using GyroShell.Library.Services.Hardware;
 using System;
 using Windows.Networking.Connectivity;
 
-namespace GyroShell.Services
+namespace GyroShell.Services.Hardware
 {
     internal class NetworkService : INetworkService
     {

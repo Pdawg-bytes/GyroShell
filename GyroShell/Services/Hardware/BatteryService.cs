@@ -1,11 +1,11 @@
 ﻿using GyroShell.Library.Models.Hardware;
-using GyroShell.Library.Services;
+using GyroShell.Library.Services.Hardware;
 using System;
 using Windows.Devices.Power;
 using Windows.System.Power;
 using BatteryReport = GyroShell.Library.Models.Hardware.BatteryReport;
 
-namespace GyroShell.Services
+namespace GyroShell.Services.Hardware
 {
     internal class BatteryService : IBatteryService
     {
@@ -28,7 +28,6 @@ namespace GyroShell.Services
                 RemainingCapacity = report.RemainingCapacityInMilliwattHours.GetValueOrDefault(0)
             };
 
-            batteryReport.ChargePercentage = (int)Math.Ceiling((double)(batteryReport.RemainingCapacity / batteryReport.FullCapacity) * 100);
             batteryReport.PowerStatus = report.Status switch
             {
                 BatteryStatus.NotPresent => BatteryPowerStatus.NotInstalled,
@@ -37,6 +36,11 @@ namespace GyroShell.Services
                 BatteryStatus.Discharging => BatteryPowerStatus.Draining,
                 _ => BatteryPowerStatus.NotInstalled
             };
+
+            if(batteryReport.PowerStatus != BatteryPowerStatus.NotInstalled)
+                batteryReport.ChargePercentage = (int)Math.Ceiling((double)(batteryReport.RemainingCapacity / batteryReport.FullCapacity) * 100);
+            else
+                batteryReport.ChargePercentage = 0;
 
             return batteryReport;
         }

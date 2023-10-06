@@ -15,9 +15,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Commands\**" />
+    <Compile Remove="NewFolder\**" />
     <EmbeddedResource Remove="Commands\**" />
+    <EmbeddedResource Remove="NewFolder\**" />
     <None Remove="Commands\**" />
+    <None Remove="NewFolder\**" />
     <Page Remove="Commands\**" />
+    <Page Remove="NewFolder\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -109,5 +113,8 @@
     <Page Update="Controls\DefaultTaskbar.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Remove="NewFolder\**" />
   </ItemGroup>
 </Project>

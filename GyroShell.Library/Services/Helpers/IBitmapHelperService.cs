@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Threading.Tasks;
 
-namespace GyroShell.Library.Services
+namespace GyroShell.Library.Services.Helpers
 {
     public interface IBitmapHelperService
     {

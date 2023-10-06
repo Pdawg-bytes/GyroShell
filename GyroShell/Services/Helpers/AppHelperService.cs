@@ -1,4 +1,4 @@
-﻿using GyroShell.Library.Services;
+﻿using GyroShell.Library.Services.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,7 +12,7 @@ using Windows.Management.Deployment;
 using static GyroShell.Helpers.Win32.Win32Interop;
 using static GyroShell.Interfaces.AUMIDIPropertyStore;
 
-namespace GyroShell.Services
+namespace GyroShell.Services.Helpers
 {
     internal class AppHelperService : IAppHelperService
     {

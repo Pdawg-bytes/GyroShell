@@ -1,7 +1,7 @@
 ﻿using CoreAudio;
 using System;
 
-namespace GyroShell.Library.Services
+namespace GyroShell.Library.Services.Environment
 {
     public interface IEnvironmentInfoService
     {
