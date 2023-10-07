@@ -15,9 +15,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Commands\**" />
+    <Compile Remove="NewFolder\**" />
     <EmbeddedResource Remove="Commands\**" />
+    <EmbeddedResource Remove="NewFolder\**" />
     <None Remove="Commands\**" />
+    <None Remove="NewFolder\**" />
     <Page Remove="Commands\**" />
+    <Page Remove="NewFolder\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -32,6 +36,7 @@
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.WinUI.Connectivity" Version="7.1.2" />
     <PackageReference Include="CoreAudio" Version="1.37.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.230913002" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
     <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
@@ -72,6 +77,9 @@
     <None Remove="Settings\SettingsWindow.xaml" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GyroShell.Library\GyroShell.Library.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <Page Update="Settings\MoudlesPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -105,5 +113,8 @@
     <Page Update="Controls\DefaultTaskbar.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Remove="NewFolder\**" />
   </ItemGroup>
 </Project>

@@ -15,12 +15,15 @@ using System.Diagnostics;
 using static GyroShell.Helpers.Win32.Win32Interop;
 
 using AppWindow = Microsoft.UI.Windowing.AppWindow;
+using Microsoft.Extensions.DependencyInjection;
+using GyroShell.Library.Services.Managers;
 
 namespace GyroShell.Controls
 {
     internal partial class StartupScreen : Window
     {
         private AppWindow m_AppWindow;
+        private ITaskbarManagerService m_tbManager;
 
         private IntPtr hWnd;
 
@@ -33,6 +36,9 @@ namespace GyroShell.Controls
         internal StartupScreen()
         {
             this.InitializeComponent();
+
+            m_tbManager = App.ServiceProvider.GetRequiredService<ITaskbarManagerService>();
+
             appProcessId = Process.GetCurrentProcess().Id;
             appProcess = Process.GetProcessById(appProcessId);
             TrySetAcrylicBackdrop();
@@ -87,7 +93,7 @@ namespace GyroShell.Controls
         private void Close()
         {
             MessageBox(hWnd, "If you keep seeing this message, please contact the developers.", "GyroShell was unable to start.", 0x00000000 | 0x00000030);
-            TaskbarManager.ShowTaskbar();
+            m_tbManager.ShowTaskbar();
             appProcess.Kill();
         }
         #endregion

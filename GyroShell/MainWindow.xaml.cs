@@ -1,23 +1,21 @@
 ﻿using GyroShell.Helpers;
+using GyroShell.Library.Services.Environment;
+using GyroShell.Library.Services.Helpers;
+using GyroShell.Library.Services.Managers;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI;
 using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Windows.Graphics;
-using Windows.System;
 using Windows.UI;
-using Windows.UI.Core;
 using WinRT;
 
-using static GyroShell.Helpers.TaskbarManager;
-using static GyroShell.Helpers.Win32.GetWindowName;
-using static GyroShell.Helpers.Win32.ScreenValues;
 using static GyroShell.Helpers.Win32.Win32Interop;
 using static GyroShell.Helpers.Win32.WindowChecks;
 
@@ -28,6 +26,10 @@ namespace GyroShell
     internal sealed partial class MainWindow : Window
     {
         private AppWindow m_AppWindow;
+        private IEnvironmentInfoService m_envService;
+        private ISettingsService m_appSettings;
+        private ITaskbarManagerService m_tbManager;
+        private IAppHelperService m_appHelper;
 
         private IntPtr _oldWndProc;
         internal static IntPtr hWnd;
@@ -52,7 +54,12 @@ namespace GyroShell
             this.InitializeComponent();
             AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
 
-            TaskbarManager.Init();
+            m_envService = App.ServiceProvider.GetRequiredService<IEnvironmentInfoService>();
+            m_appSettings = App.ServiceProvider.GetRequiredService<ISettingsService>();
+            m_appHelper = App.ServiceProvider.GetRequiredService<IAppHelperService>();
+            m_tbManager = App.ServiceProvider.GetRequiredService<ITaskbarManagerService>();
+
+            m_tbManager.Initialize();
 
             // Presenter handling code
             OverlappedPresenter presenter = GetAppWindowAndPresenter();
@@ -67,7 +74,7 @@ namespace GyroShell
             hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
             WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
             AppWindow appWindow = AppWindow.GetFromWindowId(windowId);
-            if (OSVersion.IsWin11())
+            if (m_envService.IsWindows11)
             {
                 DWMWINDOWATTRIBUTE attribute = DWMWINDOWATTRIBUTE.DWMWA_WINDOW_CORNER_PREFERENCE;
                 DWM_WINDOW_CORNER_PREFERENCE preference = DWM_WINDOW_CORNER_PREFERENCE.DWMWCP_DONOTROUND;
@@ -106,7 +113,7 @@ namespace GyroShell
         #region Window Handling
         private void OnProcessExit(object sender, EventArgs e)
         {
-            TaskbarManager.ShowTaskbar();
+            m_tbManager.ShowTaskbar();
             //UnhookWinEvent(foregroundHook);
             //UnhookWinEvent(cloakedHook);
             //UnhookWinEvent(nameChangeHook);
@@ -148,15 +155,15 @@ namespace GyroShell
 
         private void SetBackdrop()
         {
-            bool? option = App.localSettings.Values["isCustomTransparency"] as bool?;
+            bool? option = m_appSettings.EnableCustomTransparency;
 
-            byte? alpha = App.localSettings.Values["aTint"] as byte?;
-            byte? red = App.localSettings.Values["rTint"] as byte?;
-            byte? green = App.localSettings.Values["gTint"] as byte?;
-            byte? blue = App.localSettings.Values["bTint"] as byte?;
+            byte? alpha = m_appSettings.AlphaTint;
+            byte? red = m_appSettings.RedTint;
+            byte? green = m_appSettings.GreenTint;
+            byte? blue = m_appSettings.BlueTint;
 
-            float? luminOpacity = App.localSettings.Values["luminOpacity"] as float?;
-            float? tintOpacity = App.localSettings.Values["tintOpacity"] as float?;
+            float? luminOpacity = m_appSettings.LuminosityOpacity;
+            float? tintOpacity = m_appSettings.TintOpacity;
 
             finalOpt = option != null ? (bool)option : false;
             finalA = alpha != null ? (byte)alpha : (byte)0;
@@ -166,13 +173,13 @@ namespace GyroShell
             finalLO = luminOpacity != null ? (float)luminOpacity : (float)0.2f;
             finalTO = tintOpacity != null ? (float)tintOpacity : (float)0.3f;
 
-            int? transparencyType = App.localSettings.Values["transparencyType"] as int?;
+            int? transparencyType = m_appSettings.TransparencyType;
 
             switch (transparencyType)
             {
                 case 0:
                 default:
-                    if (OSVersion.IsWin11())
+                    if (m_envService.IsWindows11)
                     {
                         TrySetMicaBackdrop(MicaKind.BaseAlt);
                     }
@@ -182,7 +189,7 @@ namespace GyroShell
                     }
                     break;
                 case 1:
-                    if (OSVersion.IsWin11())
+                    if (m_envService.IsWindows11)
                     {
                         TrySetMicaBackdrop(MicaKind.Base);
                     }
@@ -301,36 +308,36 @@ namespace GyroShell
         {
             switch (((FrameworkElement)this.Content).ActualTheme)
             {
-                case ElementTheme.Dark: 
-                    m_configurationSource.Theme = SystemBackdropTheme.Dark; 
+                case ElementTheme.Dark:
+                    m_configurationSource.Theme = SystemBackdropTheme.Dark;
 
-                    if (acrylicController != null) 
-                    { 
-                        acrylicController.TintColor = Color.FromArgb(255, 0, 0, 0); 
-                    } 
+                    if (acrylicController != null)
+                    {
+                        acrylicController.TintColor = Color.FromArgb(255, 0, 0, 0);
+                    }
                     break;
-                case ElementTheme.Light: 
-                    m_configurationSource.Theme = SystemBackdropTheme.Light; 
+                case ElementTheme.Light:
+                    m_configurationSource.Theme = SystemBackdropTheme.Light;
 
-                    if (acrylicController != null) 
-                    { 
-                        acrylicController.TintColor = Color.FromArgb(255, 255, 255, 255); 
-                    } 
+                    if (acrylicController != null)
+                    {
+                        acrylicController.TintColor = Color.FromArgb(255, 255, 255, 255);
+                    }
                     break;
                 case ElementTheme.Default:
-                    m_configurationSource.Theme = SystemBackdropTheme.Default; 
+                    m_configurationSource.Theme = SystemBackdropTheme.Default;
 
-                    if (acrylicController != null) 
-                    { 
-                        acrylicController.TintColor = Color.FromArgb(255, 0, 0, 0); 
-                    } 
+                    if (acrylicController != null)
+                    {
+                        acrylicController.TintColor = Color.FromArgb(255, 0, 0, 0);
+                    }
                     break;
             }
         }
         #endregion
 
         #region AppBar
-        internal static void RegisterBar()
+        internal void RegisterBar()
         {
             APPBARDATA abd = new APPBARDATA();
 
@@ -346,10 +353,10 @@ namespace GyroShell
                 bool regShellHook = RegisterShellHookWindow(hWnd);
                 fBarRegistered = true;
 
-                AutoHideExplorer(true);
+                m_tbManager.ToggleAutoHideExplorer(true);
                 ABSetPos();
-                AutoHideExplorer(false);
-                HideTaskbar();
+                m_tbManager.ToggleAutoHideExplorer(false);
+                m_tbManager.HideTaskbar();
                 SetWindowPos(hWnd, (IntPtr)WindowZOrder.HWND_TOPMOST, 0, 0, 0, 0, (int)SWPFlags.SWP_NOMOVE | (int)SWPFlags.SWP_NOSIZE | (int)SWPFlags.SWP_SHOWWINDOW);
             }
             else
@@ -362,7 +369,7 @@ namespace GyroShell
             }
         }
 
-        private static void ABSetPos()
+        private void ABSetPos()
         {
             APPBARDATA abd = new APPBARDATA();
 
@@ -371,7 +378,7 @@ namespace GyroShell
             abd.uEdge = (int)ABEdge.ABE_BOTTOM;
 
             abd.rc.left = 0;
-            abd.rc.right = GetScreenWidth();
+            abd.rc.right = m_envService.MonitorWidth;
 
             if (abd.uEdge == (int)ABEdge.ABE_TOP)
             {
@@ -380,7 +387,7 @@ namespace GyroShell
             }
             else
             {
-                abd.rc.bottom = GetScreenHeight();
+                abd.rc.bottom = m_envService.MonitorHeight;
                 abd.rc.top = abd.rc.bottom - 46;
             }
 
@@ -468,7 +475,7 @@ namespace GyroShell
                 case HSHELL_WINDOWCREATED:
                     if (isUserWindow(hwnd))
                     {
-                        Debug.WriteLine("Window created: " + GetWindowTitle(hwnd) + " | Handle: " + (hwnd));
+                        Debug.WriteLine("Window created: " + m_appHelper.GetWindowTitle(hwnd) + " | Handle: " + (hwnd));
                         //indexedWindows.Add(hwnd);
                     }
                     break;
@@ -501,7 +508,7 @@ namespace GyroShell
                     //m_AppWindow.Show();
                     break;
                 default:
-                    Debug.WriteLine("Unknown shhook code: " + iCode + " with window: " + GetWindowTitle(hwnd));
+                    Debug.WriteLine("Unknown shhook code: " + iCode + " with window: " + m_appHelper.GetWindowTitle(hwnd));
                     break;
             }
             return IntPtr.Zero;

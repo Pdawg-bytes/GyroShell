@@ -1,12 +1,19 @@
 using CommunityToolkit.WinUI.Connectivity;
 using CoreAudio;
 using GyroShell.Helpers;
-using GyroShell.Helpers.WinRT;
+using GyroShell.Library.Models.Hardware;
+using GyroShell.Library.Services.Environment;
+using GyroShell.Library.Services.Hardware;
+using GyroShell.Library.Services.Helpers;
+using GyroShell.Library.Services.Managers;
+using GyroShell.Services;
 using GyroShell.Settings;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -23,11 +30,9 @@ using Windows.UI.Core;
 using Windows.UI.Notifications;
 using Windows.UI.Notifications.Management;
 
-using static GyroShell.Helpers.Win32.GetHandleIcon;
-using static GyroShell.Helpers.Win32.GetWindowName;
 using static GyroShell.Helpers.Win32.Win32Interop;
 using static GyroShell.Helpers.Win32.WindowChecks;
-using static GyroShell.Helpers.WinRT.UWPWindowHelper;
+using BatteryReport = GyroShell.Library.Models.Hardware.BatteryReport;
 
 namespace GyroShell.Controls
 {
@@ -39,6 +44,18 @@ namespace GyroShell.Controls
         private int currentVolume;
         private bool reportRequested = false;
 
+        private IEnvironmentInfoService m_envService;
+        private ISettingsService m_appSettings;
+
+        private IAppHelperService m_appHelper;
+        private IBitmapHelperService m_bmpHelper;
+
+        private ITaskbarManagerService m_tbManager;
+
+        private INetworkService m_netService;
+        private IBatteryService m_powerService;
+        private ISoundService m_soundService;
+
         private readonly WinEventDelegate callback;
 
         internal ObservableCollection<IconModel> TbIconCollection;
@@ -48,6 +65,18 @@ namespace GyroShell.Controls
         {
             this.InitializeComponent();
 
+            m_envService = App.ServiceProvider.GetRequiredService<IEnvironmentInfoService>();
+            m_appSettings = App.ServiceProvider.GetRequiredService<ISettingsService>();
+
+            m_appHelper = App.ServiceProvider.GetRequiredService<IAppHelperService>();
+            m_bmpHelper = App.ServiceProvider.GetRequiredService<IBitmapHelperService>();
+
+            m_tbManager = App.ServiceProvider.GetRequiredService<ITaskbarManagerService>();
+
+            m_netService = App.ServiceProvider.GetRequiredService<INetworkService>();
+            m_powerService = App.ServiceProvider.GetRequiredService<IBatteryService>();
+            m_soundService = App.ServiceProvider.GetRequiredService<ISoundService>();
+
             TbIconCollection = new ObservableCollection<IconModel>();
 
             LoadSettings();
@@ -56,24 +85,23 @@ namespace GyroShell.Controls
             InitNotifcation();
             UpdateNetworkStatus();
 
-            NetworkInformation.NetworkStatusChanged += NetworkInformation_NetworkStatusChanged;
-            AudioBackend.audioDevice.AudioEndpointVolume.OnVolumeNotification += new AudioEndpointVolumeNotificationDelegate(AudioEndpointVolume_OnVolumeNotification);
+            m_netService.InternetStatusChanged += NetworkService_InternetStatusChanged;
+            m_soundService.OnVolumeChanged += SoundService_OnVolumeChanged;
 
             AudioCheck();
 
-            Battery.AggregateBattery.ReportUpdated += AggregateBattery_ReportUpdated;
+            m_powerService.BatteryStatusChanged += BatteryService_BatteryStatusChanged;
 
             BarBorder.Background = new SolidColorBrush(Color.FromArgb(255, 66, 63, 74));
 
             callback = WinEventCallback;
-            UWPWindowHelper uwpWindowHelper = new UWPWindowHelper();
             GetCurrentWindows();
             RegisterWinEventHook();
 
             //UwpTest(TbIconCollection.First(param => param.IconName == "Ambie").Id);
             //UwpTest(TbIconCollection.First(param => param.IconName == "Clock").Id);
 
-            TaskbarManager.SendWinlogonShowShell();
+            m_tbManager.NotifyWinlogonShowShell();
         }
 
         #region Clock
@@ -94,7 +122,7 @@ namespace GyroShell.Controls
         #endregion
 
         #region Internet
-        private void NetworkInformation_NetworkStatusChanged(object sender)
+        private void NetworkService_InternetStatusChanged(object sender, EventArgs e)
         {
             DispatcherQueue.TryEnqueue((Microsoft.UI.Dispatching.DispatcherQueuePriority)CoreDispatcherPriority.Normal, () =>
             {
@@ -107,25 +135,25 @@ namespace GyroShell.Controls
 
         private void UpdateNetworkStatus()
         {
-            if (NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable)
+            if (m_netService.IsInternetAvailable)
             {
-                switch (NetworkHelper.Instance.ConnectionInformation.ConnectionType)
+                switch (m_netService.InternetType)
                 {
-                    case ConnectionType.Ethernet:
+                    case InternetConnection.Wired:
                         WifiStatus.Text = "\uE839";
                         WifiStatus.Margin = new Thickness(0, 2, 7, 0);
                         break;
-                    case ConnectionType.WiFi:
-                        int WifiSignalBars = NetworkHelper.Instance.ConnectionInformation.SignalStrength.GetValueOrDefault(0);
+                    case InternetConnection.Wireless:
+                        int WifiSignalBars = m_netService.SignalStrength;
 
                         WifiStatus.Text = wifiIcons[WifiSignalBars];
                         break;
-                    case ConnectionType.Data:
-                        int DataSignalBars = NetworkHelper.Instance.ConnectionInformation.SignalStrength.GetValueOrDefault(0);
+                    case InternetConnection.Data:
+                        int DataSignalBars = m_netService.SignalStrength;
 
                         WifiStatus.Text = dataIcons[DataSignalBars];
                         break;
-                    case ConnectionType.Unknown:
+                    case InternetConnection.Unknown:
                     default:
                         WifiStatus.Text = "\uE774";
                         break;
@@ -141,11 +169,10 @@ namespace GyroShell.Controls
         #region Battery
         private void DetectBatteryPresence()
         {
-            Battery aggDetectBattery = Battery.AggregateBattery;
-            BatteryReport report = aggDetectBattery.GetReport();
-            string ReportResult = report.Status.ToString();
+            BatteryReport report = m_powerService.GetStatusReport();
+            BatteryPowerStatus status = report.PowerStatus;
 
-            if (ReportResult == "NotPresent")
+            if (status == BatteryPowerStatus.NotInstalled)
             {
                 BattStatus.Visibility = Visibility.Collapsed;
             }
@@ -163,14 +190,11 @@ namespace GyroShell.Controls
 
         private void AggregateBattery()
         {
-            Battery aggBattery = Battery.AggregateBattery;
-            BatteryReport report = aggBattery.GetReport();
-            string charging = report.Status.ToString();
-            double fullCharge = Convert.ToDouble(report.FullChargeCapacityInMilliwattHours);
-            double currentCharge = Convert.ToDouble(report.RemainingCapacityInMilliwattHours);
-            double battLevel = Math.Ceiling((currentCharge / fullCharge) * 100);
+            BatteryReport report = m_powerService.GetStatusReport();
+            double battLevel = report.ChargePercentage;
+            BatteryPowerStatus status = report.PowerStatus;
 
-            if (charging == "Charging" || charging == "Idle")
+            if (status == BatteryPowerStatus.Charging || status == BatteryPowerStatus.Idle)
             {
                 int indexCharge = (int)Math.Floor(battLevel / 10);
 
@@ -184,7 +208,7 @@ namespace GyroShell.Controls
             }
         }
 
-        private void AggregateBattery_ReportUpdated(Battery sender, object args)
+        private void BatteryService_BatteryStatusChanged(object sender, EventArgs e)
         {
             if (reportRequested)
             {
@@ -197,13 +221,13 @@ namespace GyroShell.Controls
         #endregion
 
         #region Sound
-        private void AudioEndpointVolume_OnVolumeNotification(AudioVolumeNotificationData data)
+        private void SoundService_OnVolumeChanged(object sender, EventArgs e)
         {
             AudioCheck();
         }
         private void AudioCheck()
         {
-            currentVolume = (int)Math.Ceiling(AudioBackend.audioDevice.AudioEndpointVolume.MasterVolumeLevelScalar * 100) - 1;
+            currentVolume = m_soundService.Volume;
 
             if (currentVolume == 0 || currentVolume == -1)
             {
@@ -241,7 +265,7 @@ namespace GyroShell.Controls
                 });
             }
 
-            if (AudioBackend.audioDevice.AudioEndpointVolume.Mute)
+            if (m_soundService.IsMuted)
             {
                 DispatcherQueue.TryEnqueue((Microsoft.UI.Dispatching.DispatcherQueuePriority)CoreDispatcherPriority.Normal, () =>
                 {
@@ -252,34 +276,34 @@ namespace GyroShell.Controls
         #endregion
 
         #region Bar Events
-        private async void SystemControls_Click(object sender, RoutedEventArgs e)
+        private void SystemControls_Click(object sender, RoutedEventArgs e)
         {
             if (SystemControls.IsChecked == true)
             {
-                if (OSVersion.IsWin11())
+                if (m_envService.IsWindows11)
                 {
-                    await TaskbarManager.ToggleSysControl();
+                    m_tbManager.ToggleControlCenter();
                 }
                 else
                 {
-                    await TaskbarManager.ToggleActionCenter();
+                    m_tbManager.ToggleActionCenter();
                 }
             }
         }
 
-        private async void StartButton_Click(object sender, RoutedEventArgs e)
+        private void StartButton_Click(object sender, RoutedEventArgs e)
         {
             if (StartButton.IsChecked == true)
             {
-                await TaskbarManager.ToggleStart();
+                m_tbManager.ToggleStartMenu();
             }
         }
 
-        private async void ActionCenter_Click(object sender, RoutedEventArgs e)
+        private void ActionCenter_Click(object sender, RoutedEventArgs e)
         {
             if (ActionCenter.IsChecked == true)
             {
-                await TaskbarManager.ToggleActionCenter();
+                m_tbManager.ToggleActionCenter();
             }
         }
 
@@ -423,7 +447,7 @@ namespace GyroShell.Controls
             FontFamily SegoeMDL2 = new FontFamily("Segoe MDL2 Assets");
             FontFamily SegoeFluent = new FontFamily("Segoe Fluent Icons");
             // Icons
-            int? iconStyle = App.localSettings.Values["iconStyle"] as int?;
+            int? iconStyle = m_appSettings.IconStyle;
 
             switch (iconStyle)
             {
@@ -440,7 +464,7 @@ namespace GyroShell.Controls
                     break;
                 case 1:
                 default:
-                    if (OSVersion.IsWin11())
+                    if (m_envService.IsWindows11)
                     {
                         WifiStatus.Margin = new Thickness(0, 2, 7, 0);
                         WifiStatus.FontFamily = SegoeFluent;
@@ -468,8 +492,8 @@ namespace GyroShell.Controls
             }
 
             // Clock
-            bool? secondsEnabled = App.localSettings.Values["isSeconds"] as bool?;
-            bool? is24HREnabled = App.localSettings.Values["is24HR"] as bool?;
+            bool? secondsEnabled = m_appSettings.EnableSeconds;
+            bool? is24HREnabled = m_appSettings.EnableMilitaryTime;
 
             if (secondsEnabled == true && is24HREnabled == true)
             {
@@ -488,7 +512,7 @@ namespace GyroShell.Controls
                 timeType = "t";
             }
 
-            int? tbAlignment = App.localSettings.Values["tbAlignment"] as int?;
+            int? tbAlignment = m_appSettings.TaskbarAlignment;
             switch (tbAlignment)
             {
                 case 0:
@@ -531,7 +555,7 @@ namespace GyroShell.Controls
         // WinEvent Callback
         private void WinEventCallback(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
         {
-            string windowName = GetWindowTitle(hwnd);
+            string windowName = m_appHelper.GetWindowTitle(hwnd);
             if (!indexedWindows.Contains(hwnd))
             {
                 if (hwnd != IntPtr.Zero && isUserWindow(hwnd))
@@ -547,7 +571,8 @@ namespace GyroShell.Controls
                         if (!TbIconCollection.Any(item => item.Id == hwnd))
                         {
                             indexedWindows.Add(hwnd);
-                            TbIconCollection.Add(new IconModel { IconName = windowName, Id = hwnd, AppIcon = CheckIcon(hwnd, 32) });
+                            SoftwareBitmapSource bmpSource = m_bmpHelper.GetXamlBitmapFromGdiBitmapAsync(m_appHelper.GetUwpOrWin32Icon(hwnd, 32)).Result;
+                            TbIconCollection.Add(new IconModel { IconName = windowName, Id = hwnd, AppIcon = bmpSource });
                             if(GetForegroundWindow() == hwnd)
                             {
                                 IconModel targetItemC = TbIconCollection.FirstOrDefault(item => item.Id == hwnd);
@@ -588,7 +613,8 @@ namespace GyroShell.Controls
                             {
                                 if (!TbIconCollection.Any(item => item.Id == hwnd))
                                 {
-                                    TbIconCollection.Add(new IconModel { IconName = windowName, Id = hwnd, AppIcon = CheckIcon(hwnd, 32) });
+                                    SoftwareBitmapSource bmpSource = m_bmpHelper.GetXamlBitmapFromGdiBitmapAsync(m_appHelper.GetUwpOrWin32Icon(hwnd, 32)).Result;
+                                    TbIconCollection.Add(new IconModel { IconName = windowName, Id = hwnd, AppIcon = bmpSource });
                                 }
                             }
                             Debug.WriteLine("[-] WinEventHook: Value not found in rename list.");
@@ -659,7 +685,8 @@ namespace GyroShell.Controls
                         else
                         {
                             indexedWindows.Add(hwnd);
-                            TbIconCollection.Add(new IconModel { IconName = windowName, Id = hwnd, AppIcon = CheckIcon(hwnd, 32) });
+                            SoftwareBitmapSource bmpSource = m_bmpHelper.GetXamlBitmapFromGdiBitmapAsync(m_appHelper.GetUwpOrWin32Icon(hwnd, 32)).Result;
+                            TbIconCollection.Add(new IconModel { IconName = windowName, Id = hwnd, AppIcon = bmpSource });
                         }
                         Debug.WriteLine("Window uncloaked: " + windowName + " | Handle: " + hwnd);
                         break;
@@ -671,7 +698,12 @@ namespace GyroShell.Controls
         {
             try
             {
-                if (isUserWindow(hwnd)) { indexedWindows.Add(hwnd); TbIconCollection.Add(new IconModel { IconName = GetWindowTitle(hwnd), Id = hwnd, AppIcon = CheckIcon(hwnd, 32) }); }
+                if (isUserWindow(hwnd)) 
+                { 
+                    indexedWindows.Add(hwnd);
+                    SoftwareBitmapSource bmpSource = m_bmpHelper.GetXamlBitmapFromGdiBitmapAsync(m_appHelper.GetUwpOrWin32Icon(hwnd, 32)).Result;
+                    TbIconCollection.Add(new IconModel { IconName = m_appHelper.GetWindowTitle(hwnd), Id = hwnd, AppIcon = bmpSource }); 
+                }
             }
             catch (Exception ex)
             {

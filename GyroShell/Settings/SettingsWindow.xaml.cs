@@ -1,5 +1,7 @@
 using GyroShell.Controls;
 using GyroShell.Helpers;
+using GyroShell.Library.Services.Environment;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI;
 using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Windowing;
@@ -14,9 +16,13 @@ namespace GyroShell.Settings
 {
     public sealed partial class SettingsWindow : Window
     {
+        private ISettingsService m_appSettings;
+
         public SettingsWindow()
         {
             this.InitializeComponent();
+
+            m_appSettings = App.ServiceProvider.GetRequiredService<ISettingsService>();
 
             // Window Handling
             IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
@@ -26,7 +32,7 @@ namespace GyroShell.Settings
             appWindow.MoveInZOrderAtTop();
             contentFrame.Navigate(typeof(Customization));
 
-            int? iconStyle = App.localSettings.Values["iconStyle"] as int?;
+            int? iconStyle = m_appSettings.IconStyle;
 
             ExtendsContentIntoTitleBar = true;
             Title = "GyroShell Settings";
