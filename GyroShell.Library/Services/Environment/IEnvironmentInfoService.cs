@@ -1,10 +1,9 @@
-﻿using CoreAudio;
-using System;
+﻿using System;
 
 namespace GyroShell.Library.Services.Environment
 {
     /// <summary>
-    /// Defines a mostly platform-agnostic service interface to get environment information.
+    /// Defines a platform-agnostic service interface to get environment information.
     /// </summary>
     public interface IEnvironmentInfoService
     {
@@ -22,16 +21,6 @@ namespace GyroShell.Library.Services.Environment
         /// The build date of the application package.
         /// </summary>
         public DateTime AppBuildDate { get; init; }
-
-        /// <summary>
-        /// The system's principal audio device.
-        /// </summary>
-        public MMDevice AudioDevice { get; init; }
-
-        /// <summary>
-        /// The system's audio device enumerator.
-        /// </summary>
-        public MMDeviceEnumerator AudioDeviceEnumerator { get; init; }
 
         /// <summary>
         /// Checks if the application is running under Windows 11.

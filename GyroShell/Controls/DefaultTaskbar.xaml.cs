@@ -46,11 +46,15 @@ namespace GyroShell.Controls
 
         private IEnvironmentInfoService m_envService;
         private ISettingsService m_appSettings;
+
         private IAppHelperService m_appHelper;
         private IBitmapHelperService m_bmpHelper;
+
         private ITaskbarManagerService m_tbManager;
+
         private INetworkService m_netService;
         private IBatteryService m_powerService;
+        private ISoundService m_soundService;
 
         private readonly WinEventDelegate callback;
 
@@ -63,11 +67,15 @@ namespace GyroShell.Controls
 
             m_envService = App.ServiceProvider.GetRequiredService<IEnvironmentInfoService>();
             m_appSettings = App.ServiceProvider.GetRequiredService<ISettingsService>();
+
             m_appHelper = App.ServiceProvider.GetRequiredService<IAppHelperService>();
             m_bmpHelper = App.ServiceProvider.GetRequiredService<IBitmapHelperService>();
+
             m_tbManager = App.ServiceProvider.GetRequiredService<ITaskbarManagerService>();
+
             m_netService = App.ServiceProvider.GetRequiredService<INetworkService>();
             m_powerService = App.ServiceProvider.GetRequiredService<IBatteryService>();
+            m_soundService = App.ServiceProvider.GetRequiredService<ISoundService>();
 
             TbIconCollection = new ObservableCollection<IconModel>();
 
@@ -78,7 +86,7 @@ namespace GyroShell.Controls
             UpdateNetworkStatus();
 
             m_netService.InternetStatusChanged += NetworkService_InternetStatusChanged;
-            m_envService.AudioDevice.AudioEndpointVolume.OnVolumeNotification += new AudioEndpointVolumeNotificationDelegate(AudioEndpointVolume_OnVolumeNotification);
+            m_soundService.OnVolumeChanged += SoundService_OnVolumeChanged;
 
             AudioCheck();
 
@@ -213,13 +221,13 @@ namespace GyroShell.Controls
         #endregion
 
         #region Sound
-        private void AudioEndpointVolume_OnVolumeNotification(AudioVolumeNotificationData data)
+        private void SoundService_OnVolumeChanged(object sender, EventArgs e)
         {
             AudioCheck();
         }
         private void AudioCheck()
         {
-            currentVolume = (int)Math.Ceiling(m_envService.AudioDevice.AudioEndpointVolume.MasterVolumeLevelScalar * 100) - 1;
+            currentVolume = m_soundService.Volume;
 
             if (currentVolume == 0 || currentVolume == -1)
             {
@@ -257,7 +265,7 @@ namespace GyroShell.Controls
                 });
             }
 
-            if (m_envService.AudioDevice.AudioEndpointVolume.Mute)
+            if (m_soundService.IsMuted)
             {
                 DispatcherQueue.TryEnqueue((Microsoft.UI.Dispatching.DispatcherQueuePriority)CoreDispatcherPriority.Normal, () =>
                 {

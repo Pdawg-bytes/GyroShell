@@ -35,6 +35,7 @@ namespace GyroShell
                 .AddTransient<ISettingsService, SettingsService>()
                 .AddSingleton<INetworkService, NetworkService>()
                 .AddSingleton<IBatteryService, BatteryService>()
+                .AddSingleton<ISoundService, SoundService>()
                 .AddTransient<ITaskbarManagerService, TaskbarManagerService>();
 
             m_serviceProvider = collection.BuildServiceProvider(true);
