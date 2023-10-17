@@ -32,7 +32,7 @@ namespace GyroShell.Settings
             appWindow.MoveInZOrderAtTop();
             contentFrame.Navigate(typeof(Customization));
 
-            int? iconStyle = m_appSettings.IconStyle;
+            int iconStyle = m_appSettings.IconStyle;
 
             ExtendsContentIntoTitleBar = true;
             Title = "GyroShell Settings";
@@ -40,18 +40,15 @@ namespace GyroShell.Settings
 
             TrySetMicaBackdrop();
 
-            if (iconStyle != null)
+            switch (iconStyle)
             {
-                switch (iconStyle)
-                {
-                    case 0:
-                    default:
-                        TopIcon.FontFamily = new FontFamily("Segoe MDL2 Assets");
-                        break;
-                    case 1:
-                        TopIcon.FontFamily = new FontFamily("Segoe Fluent Icons");
-                        break;
-                }
+                case 0:
+                default:
+                    TopIcon.FontFamily = new FontFamily("Segoe MDL2 Assets");
+                    break;
+                case 1:
+                    TopIcon.FontFamily = new FontFamily("Segoe Fluent Icons");
+                    break;
             }
         }
 

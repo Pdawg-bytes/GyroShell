@@ -189,12 +189,12 @@ namespace GyroShell.Settings
         }
         private void DefaultExtern()
         {
-            m_appSettings.AlphaTint = null;
-            m_appSettings.RedTint = null;
-            m_appSettings.BlueTint = null;
-            m_appSettings.GreenTint = null;
-            m_appSettings.LuminosityOpacity = null;
-            m_appSettings.TintOpacity = null;
+            m_appSettings.AlphaTint = 0;
+            m_appSettings.RedTint = 0;
+            m_appSettings.BlueTint = 0;
+            m_appSettings.GreenTint = 0;
+            m_appSettings.LuminosityOpacity = 0.3f;
+            m_appSettings.TintOpacity = 0.2f;
 
             TintSlider.Value = 0;
             LuminSlider.Value = 0;
@@ -255,151 +255,95 @@ namespace GyroShell.Settings
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            int? transparencyType = m_appSettings.TransparencyType;
-            int? iconStyle = m_appSettings.IconStyle;
-            int? tbAlignment = m_appSettings.TaskbarAlignment;
+            float luminOpacity = m_appSettings.LuminosityOpacity;
+            float tintOpacity = m_appSettings.TintOpacity;
 
-            float? luminOpacity = m_appSettings.LuminosityOpacity;
-            float? tintOpacity = m_appSettings.TintOpacity;
+            byte aTint = m_appSettings.AlphaTint;
+            byte rTint = m_appSettings.RedTint;
+            byte gTint = m_appSettings.GreenTint;
+            byte bTint = m_appSettings.BlueTint;
 
-            byte? aTint = m_appSettings.AlphaTint;
-            byte? rTint = m_appSettings.RedTint;
-            byte? gTint = m_appSettings.GreenTint;
-            byte? bTint = m_appSettings.BlueTint;
+            NotifInfo.IsOpen = NotifError ? true : false;
 
-            bool? is24HREnabled = m_appSettings.EnableMilitaryTime;
-            bool? secondsEnabled = m_appSettings.EnableSeconds;
-
-            if (NotifError)
+            // Icon Style radio buttons
+            Icon11.IsEnabled = m_envService.IsWindows11 ? true : false;
+  
+            // Transparency type
+            switch (m_appSettings.TransparencyType)
             {
-                NotifInfo.IsOpen = true;
-            }
-            else
-            {
-                NotifInfo.IsOpen = false;
-            }
-
-            if (!m_envService.IsWindows11)
-            {
-                Icon11.IsEnabled = false;
-                Icon11.IsChecked = false;
+                case 0:
+                default:
+                    TransparencyType.SelectedValue = "Mica Alt";
+                    break;
+                case 1:
+                    TransparencyType.SelectedValue = "Mica";
+                    break;
+                case 2:
+                    TransparencyType.SelectedValue = "Acrylic";
+                    break;
             }
 
-            if (transparencyType != null)
-            {
-                switch (transparencyType)
-                {
-                    case 0:
-                    default:
-                        TransparencyType.SelectedValue = "Mica Alt";
-                        break;
-                    case 1:
-                        TransparencyType.SelectedValue = "Mica";
-                        break;
-                    case 2:
-                        TransparencyType.SelectedValue = "Acrylic";
-                        break;
-                }
-            }
+            // Transparency settings
+            LuminSlider.Value = (int)Math.Round((decimal)luminOpacity * 100, 1);
+            TintSlider.Value = (int)Math.Round((decimal)(tintOpacity * 100), 1);
+            TintColorPicker.Color = Color.FromArgb((byte)aTint, (byte)rTint, (byte)gTint, (byte)bTint);
 
-            if (luminOpacity != null)
+            switch (m_appSettings.IconStyle)
             {
-                LuminSlider.Value = (int)Math.Round((decimal)luminOpacity * 100, 1);
-                m_appSettings.EnableCustomTransparency = true;
-            }
-            else
-            {
-                LuminSlider.Value = 0;
-                m_appSettings.EnableCustomTransparency = false;
-            }
+                case 0:
+                    FontFamily segoeMDL = new FontFamily("Segoe MDL2 Assets");
 
-            if (tintOpacity != null)
-            {
-                TintSlider.Value = (int)Math.Round((decimal)(tintOpacity * 100), 1);
-                m_appSettings.EnableCustomTransparency = true;
-            }
-            else
-            {
-                TintSlider.Value = 0;
-                m_appSettings.EnableCustomTransparency = false;
-            }
+                    Icon10.IsChecked = true;
+                    Icon11.IsChecked = false;
 
-            if (iconStyle != null)
-            {
-                switch (iconStyle)
-                {
-                    case 0:
-                        FontFamily segoeMDL = new FontFamily("Segoe MDL2 Assets");
+                    TransparencyIcon.FontFamily = segoeMDL;
+                    ClockIcon.FontFamily = segoeMDL;
+                    IconHeaderIcon.FontFamily = segoeMDL;
+                    TbIcon.FontFamily = segoeMDL;
+                    break;
+                case 1:
+                default:
+                    if (m_envService.IsWindows11)
+                    {
+                        FontFamily segoeFluent = new FontFamily("Segoe Fluent Icons");
+
+                        Icon10.IsChecked = false;
+                        Icon11.IsChecked = true;
+
+                        TransparencyIcon.FontFamily = segoeFluent;
+                        ClockIcon.FontFamily = segoeFluent;
+                        IconHeaderIcon.FontFamily = segoeFluent;
+                        TbIcon.FontFamily = segoeFluent;
+                    }
+                    else
+                    {
+                        FontFamily segoeMDLB = new FontFamily("Segoe MDL2 Assets");
 
                         Icon10.IsChecked = true;
                         Icon11.IsChecked = false;
 
-                        TransparencyIcon.FontFamily = segoeMDL;
-                        ClockIcon.FontFamily = segoeMDL;
-                        IconHeaderIcon.FontFamily = segoeMDL;
-                        TbIcon.FontFamily = segoeMDL;
-                        break;
-                    case 1:
-                    default:
-                        if (m_envService.IsWindows11)
-                        {
-                            FontFamily segoeFluent = new FontFamily("Segoe Fluent Icons");
-
-                            Icon10.IsChecked = false;
-                            Icon11.IsChecked = true;
-
-                            TransparencyIcon.FontFamily = segoeFluent;
-                            ClockIcon.FontFamily = segoeFluent;
-                            IconHeaderIcon.FontFamily = segoeFluent;
-                            TbIcon.FontFamily = segoeFluent;
-                        }
-                        else
-                        {
-                            FontFamily segoeMDLB = new FontFamily("Segoe MDL2 Assets");
-
-                            Icon10.IsChecked = true;
-                            Icon11.IsChecked = false;
-
-                            TransparencyIcon.FontFamily = segoeMDLB;
-                            ClockIcon.FontFamily = segoeMDLB;
-                            IconHeaderIcon.FontFamily = segoeMDLB;
-                            TbIcon.FontFamily = segoeMDLB;
-                        }
-                        break;
-                }
+                        TransparencyIcon.FontFamily = segoeMDLB;
+                        ClockIcon.FontFamily = segoeMDLB;
+                        IconHeaderIcon.FontFamily = segoeMDLB;
+                        TbIcon.FontFamily = segoeMDLB;
+                    }
+                    break;
             }
 
-            if (aTint != null && rTint != null && gTint != null && bTint != null)
-            {
-                TintColorPicker.Color = Color.FromArgb((byte)aTint, (byte)rTint, (byte)gTint, (byte)bTint);
-                m_appSettings.EnableCustomTransparency = true;
-            }
-            else
-            {
-                m_appSettings.EnableCustomTransparency = false;
-            }
+            // Clock toggles
+            TFHourToggle.IsOn = m_appSettings.EnableMilitaryTime;
+            SecondsToggle.IsOn = m_appSettings.EnableSeconds;
 
-            if (is24HREnabled != null)
+            // Taskbar Alignment Combo-box
+            switch (m_appSettings.TaskbarAlignment)
             {
-                TFHourToggle.IsOn = (bool)is24HREnabled;
-            }
-            if (secondsEnabled != null)
-            {
-                SecondsToggle.IsOn = (bool)secondsEnabled;
-            }
-
-            if (tbAlignment != null)
-            {
-                switch (tbAlignment)
-                {
-                    case 0:
-                    default:
-                        AlignmentType.SelectedValue = "Left";
-                        break;
-                    case 1:
-                        AlignmentType.SelectedValue = "Center";
-                        break;
-                }
+                case 0:
+                default:
+                    AlignmentType.SelectedValue = "Left";
+                    break;
+                case 1:
+                    AlignmentType.SelectedValue = "Center";
+                    break;
             }
 
             RestartInfo.IsOpen = false;

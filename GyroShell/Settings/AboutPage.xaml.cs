@@ -22,24 +22,19 @@ namespace GyroShell.Settings
             VersionText.Text = m_envService.AppVersion.ToString();
             BDText.Text = m_envService.AppBuildDate.ToString("MMMM dd, yyyy");
 
-            int? iconStyle = m_appSettings.IconStyle;
-
-            if (iconStyle != null)
+            switch (m_appSettings.IconStyle)
             {
-                switch (iconStyle)
-                {
-                    case 0:
-                    default:
-                        InfoIcon.FontFamily = new FontFamily("Segoe MDL2 Assets");
-                        LinksIcon.FontFamily = new FontFamily("Segoe MDL2 Assets");
-                        LicenseIcon.FontFamily = new FontFamily("Segoe MDL2 Assets");
-                        break;
-                    case 1:
-                        InfoIcon.FontFamily = new FontFamily("Segoe Fluent Icons");
-                        LinksIcon.FontFamily = new FontFamily("Segoe Fluent Icons");
-                        LicenseIcon.FontFamily = new FontFamily("Segoe Fluent Icons");
-                        break;
-                }
+                case 0:
+                default:
+                    InfoIcon.FontFamily = new FontFamily("Segoe MDL2 Assets");
+                    LinksIcon.FontFamily = new FontFamily("Segoe MDL2 Assets");
+                    LicenseIcon.FontFamily = new FontFamily("Segoe MDL2 Assets");
+                    break;
+                case 1:
+                    InfoIcon.FontFamily = new FontFamily("Segoe Fluent Icons");
+                    LinksIcon.FontFamily = new FontFamily("Segoe Fluent Icons");
+                    LicenseIcon.FontFamily = new FontFamily("Segoe Fluent Icons");
+                    break;
             }
         }
     }

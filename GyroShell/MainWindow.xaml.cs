@@ -39,16 +39,6 @@ namespace GyroShell
         internal static bool fBarRegistered = false;
         private bool finalOpt;
 
-        private byte finalA;
-        private byte finalR;
-        private byte finalG;
-        private byte finalB;
-
-        private float finalLO;
-        private float finalTO;
-
-        private static string name;
-
         internal MainWindow()
         {
             this.InitializeComponent();
@@ -157,23 +147,15 @@ namespace GyroShell
         {
             bool? option = m_appSettings.EnableCustomTransparency;
 
-            byte? alpha = m_appSettings.AlphaTint;
-            byte? red = m_appSettings.RedTint;
-            byte? green = m_appSettings.GreenTint;
-            byte? blue = m_appSettings.BlueTint;
+            byte alpha = m_appSettings.AlphaTint;
+            byte red = m_appSettings.RedTint;
+            byte green = m_appSettings.GreenTint;
+            byte blue = m_appSettings.BlueTint;
 
-            float? luminOpacity = m_appSettings.LuminosityOpacity;
-            float? tintOpacity = m_appSettings.TintOpacity;
+            float luminOpacity = m_appSettings.LuminosityOpacity;
+            float tintOpacity = m_appSettings.TintOpacity;
 
-            finalOpt = option != null ? (bool)option : false;
-            finalA = alpha != null ? (byte)alpha : (byte)0;
-            finalR = red != null ? (byte)red : (byte)0;
-            finalG = green != null ? (byte)green : (byte)0;
-            finalB = blue != null ? (byte)blue : (byte)0;
-            finalLO = luminOpacity != null ? (float)luminOpacity : (float)0.2f;
-            finalTO = tintOpacity != null ? (float)tintOpacity : (float)0.3f;
-
-            int? transparencyType = m_appSettings.TransparencyType;
+            int transparencyType = m_appSettings.TransparencyType;
 
             switch (transparencyType)
             {
@@ -181,30 +163,30 @@ namespace GyroShell
                 default:
                     if (m_envService.IsWindows11)
                     {
-                        TrySetMicaBackdrop(MicaKind.BaseAlt);
+                        TrySetMicaBackdrop(MicaKind.BaseAlt, alpha, red, green, blue, tintOpacity, luminOpacity);
                     }
                     else
                     {
-                        TrySetAcrylicBackdrop();
+                        TrySetAcrylicBackdrop(alpha, red, green, blue, tintOpacity, luminOpacity);
                     }
                     break;
                 case 1:
                     if (m_envService.IsWindows11)
                     {
-                        TrySetMicaBackdrop(MicaKind.Base);
+                        TrySetMicaBackdrop(MicaKind.Base, alpha, red, green, blue, tintOpacity, luminOpacity);
                     }
                     else
                     {
-                        TrySetAcrylicBackdrop();
+                        TrySetAcrylicBackdrop(alpha, red, green, blue, tintOpacity, luminOpacity);
                     }
                     break;
                 case 2:
-                    TrySetAcrylicBackdrop();
+                    TrySetAcrylicBackdrop(alpha, red, green, blue, tintOpacity, luminOpacity);
                     break;
             }
         }
 
-        bool TrySetMicaBackdrop(MicaKind micaKind)
+        bool TrySetMicaBackdrop(MicaKind micaKind, byte alpha, byte red, byte green, byte blue, float tintOpacity, float luminOpacity)
         {
             if (MicaController.IsSupported())
             {
@@ -225,8 +207,8 @@ namespace GyroShell
 
                 if (finalOpt == true)
                 {
-                    micaController.TintColor = Color.FromArgb(finalA, finalR, finalG, finalB);
-                    micaController.TintOpacity = finalTO;
+                    micaController.TintColor = Color.FromArgb(alpha, red, green, blue);
+                    micaController.TintOpacity = tintOpacity;
                 }
 
                 micaController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
@@ -235,12 +217,12 @@ namespace GyroShell
                 return true;
             }
 
-            TrySetAcrylicBackdrop();
+            TrySetAcrylicBackdrop(alpha, red, green, blue, tintOpacity, luminOpacity);
 
             return false;
         }
 
-        bool TrySetAcrylicBackdrop()
+        bool TrySetAcrylicBackdrop(byte alpha, byte red, byte green, byte blue, float tintOpacity, float luminOpacity)
         {
             if (DesktopAcrylicController.IsSupported())
             {
@@ -257,9 +239,9 @@ namespace GyroShell
 
                 acrylicController = new DesktopAcrylicController();
 
-                acrylicController.TintColor = Color.FromArgb(finalA, finalR, finalG, finalB);
-                acrylicController.TintOpacity = finalTO;
-                acrylicController.LuminosityOpacity = finalLO;
+                acrylicController.TintColor = Color.FromArgb(alpha, red, green, blue);
+                acrylicController.TintOpacity = tintOpacity;
+                acrylicController.LuminosityOpacity = luminOpacity;
 
                 ((FrameworkElement)this.Content).ActualThemeChanged += Window_ThemeChanged;
 

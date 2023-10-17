@@ -29,7 +29,7 @@ namespace GyroShell.Settings
             m_appSettings = App.ServiceProvider.GetRequiredService<ISettingsService>();
             m_modulesPath = m_appSettings.ModulesFolderPath;
 
-            if (m_modulesPath != null)
+            if (m_modulesPath != null || m_modulesPath == string.Empty)
             {
                 try
                 {
@@ -46,19 +46,15 @@ namespace GyroShell.Settings
                 ModuleNotFoundInfo.IsOpen = true;
             }
 
-            int? iconStyle = m_appSettings.IconStyle;
-            if (iconStyle != null)
+            switch (m_appSettings.IconStyle)
             {
-                switch (iconStyle)
-                {
-                    case 0:
-                    default:
-                        ModuleIcon.FontFamily = new FontFamily("Segoe MDL2 Assets");
-                        break;
-                    case 1:
-                        ModuleIcon.FontFamily = new FontFamily("Segoe Fluent Icons");
-                        break;
-                }
+                case 0:
+                default:
+                    ModuleIcon.FontFamily = new FontFamily("Segoe MDL2 Assets");
+                    break;
+                case 1:
+                    ModuleIcon.FontFamily = new FontFamily("Segoe Fluent Icons");
+                    break;
             }
         }
 

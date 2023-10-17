@@ -98,9 +98,6 @@ namespace GyroShell.Controls
             GetCurrentWindows();
             RegisterWinEventHook();
 
-            //UwpTest(TbIconCollection.First(param => param.IconName == "Ambie").Id);
-            //UwpTest(TbIconCollection.First(param => param.IconName == "Clock").Id);
-
             m_tbManager.NotifyWinlogonShowShell();
         }
 
@@ -446,10 +443,9 @@ namespace GyroShell.Controls
         {
             FontFamily SegoeMDL2 = new FontFamily("Segoe MDL2 Assets");
             FontFamily SegoeFluent = new FontFamily("Segoe Fluent Icons");
-            // Icons
-            int? iconStyle = m_appSettings.IconStyle;
 
-            switch (iconStyle)
+            // Icons
+            switch (m_appSettings.IconStyle)
             {
                 case 0:
                     WifiStatus.Margin = new Thickness(0, -2, 7, 0);
@@ -492,28 +488,11 @@ namespace GyroShell.Controls
             }
 
             // Clock
-            bool? secondsEnabled = m_appSettings.EnableSeconds;
-            bool? is24HREnabled = m_appSettings.EnableMilitaryTime;
+            bool secondsEnabled = m_appSettings.EnableSeconds;
+            bool is24HREnabled = m_appSettings.EnableMilitaryTime;
+            timeType = secondsEnabled ? (is24HREnabled ? "H:mm:ss" : "T") : (is24HREnabled ? "H:mm" : "t");
 
-            if (secondsEnabled == true && is24HREnabled == true)
-            {
-                timeType = "H:mm:ss";
-            }
-            else if (secondsEnabled == true && is24HREnabled == false)
-            {
-                timeType = "T";
-            }
-            else if (secondsEnabled == false && is24HREnabled == true)
-            {
-                timeType = "H:mm";
-            }
-            else if (secondsEnabled == false && is24HREnabled == false)
-            {
-                timeType = "t";
-            }
-
-            int? tbAlignment = m_appSettings.TaskbarAlignment;
-            switch (tbAlignment)
+            switch (m_appSettings.TaskbarAlignment)
             {
                 case 0:
                 default:
