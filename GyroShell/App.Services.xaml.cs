@@ -28,6 +28,7 @@ namespace GyroShell
 
         private void ConfigureServices()
         {
+            // TODO: Initialize ViewModels.
             IServiceCollection collection = new ServiceCollection()
                 .AddTransient<IBitmapHelperService, BitmapHelperService>()
                 .AddSingleton<IAppHelperService, AppHelperService>()

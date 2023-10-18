@@ -7,7 +7,7 @@ using GyroShell.Library.Services.Hardware;
 using GyroShell.Library.Services.Helpers;
 using GyroShell.Library.Services.Managers;
 using GyroShell.Services;
-using GyroShell.Settings;
+using GyroShell.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -407,7 +407,7 @@ namespace GyroShell.Controls
                 switch (accessStatus)
                 {
                     case UserNotificationListenerAccessStatus.Allowed:
-                        Customization.NotifError = false;
+                        CustomizationSettingView.NotifError = false;
                         IReadOnlyList<UserNotification> notifsToast = await notifListener.GetNotificationsAsync(NotificationKinds.Toast);
                         IReadOnlyList<UserNotification> notifsOther = await notifListener.GetNotificationsAsync(NotificationKinds.Unknown);
 
@@ -428,10 +428,10 @@ namespace GyroShell.Controls
                         break;
                     case UserNotificationListenerAccessStatus.Denied:
                         NotifCircle.Visibility = Visibility.Collapsed;
-                        Customization.NotifError = true;
+                        CustomizationSettingView.NotifError = true;
                         break;
                     case UserNotificationListenerAccessStatus.Unspecified:
-                        Customization.NotifError = true;
+                        CustomizationSettingView.NotifError = true;
                         break;
                 }
             }

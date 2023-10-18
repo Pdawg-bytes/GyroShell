@@ -1,0 +1,202 @@
+using GyroShell.Controls;
+using GyroShell.Views;
+using GyroShell.Helpers;
+using GyroShell.Library.Services.Environment;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.UI;
+using Microsoft.UI.Composition.SystemBackdrops;
+using Microsoft.UI.Windowing;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
+using System;
+using Windows.UI;
+using WinRT;
+
+namespace GyroShell.Controls
+{
+    public sealed partial class SettingsWindow : Window
+    {
+        private ISettingsService m_appSettings;
+
+        public SettingsWindow()
+        {
+            this.InitializeComponent();
+
+            m_appSettings = App.ServiceProvider.GetRequiredService<ISettingsService>();
+
+            // Window Handling
+            IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+            WindowId windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
+            AppWindow appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
+
+            appWindow.MoveInZOrderAtTop();
+            contentFrame.Navigate(typeof(CustomizationSettingView));
+
+            int iconStyle = m_appSettings.IconStyle;
+
+            ExtendsContentIntoTitleBar = true;
+            Title = "GyroShell Settings";
+            SetTitleBar(AppTitleBar);
+
+            TrySetMicaBackdrop();
+
+            switch (iconStyle)
+            {
+                case 0:
+                default:
+                    TopIcon.FontFamily = new FontFamily("Segoe MDL2 Assets");
+                    break;
+                case 1:
+                    TopIcon.FontFamily = new FontFamily("Segoe Fluent Icons");
+                    break;
+            }
+        }
+
+        #region Backdrop Stuff
+        WindowsSystemDispatcherQueueHelper m_wsdqHelper;
+        MicaController micaController;
+        DesktopAcrylicController acrylicController;
+        SystemBackdropConfiguration m_configurationSource;
+        bool TrySetMicaBackdrop()
+        {
+            if (MicaController.IsSupported())
+            {
+                m_wsdqHelper = new WindowsSystemDispatcherQueueHelper();
+                m_wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
+                m_configurationSource = new SystemBackdropConfiguration();
+
+                this.Activated += Window_Activated;
+                this.Closed += Window_Closed;
+                ((FrameworkElement)this.Content).ActualThemeChanged += Window_ThemeChanged;
+
+                m_configurationSource.IsInputActive = true;
+                SetConfigurationSourceTheme();
+
+                micaController = new MicaController();
+
+                micaController.Kind = MicaKind.Base;
+                micaController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
+                micaController.SetSystemBackdropConfiguration(m_configurationSource);
+
+                return true;
+            }
+
+            TrySetAcrylicBackdrop();
+
+            return false;
+        }
+        bool TrySetAcrylicBackdrop()
+        {
+            if (DesktopAcrylicController.IsSupported())
+            {
+                m_wsdqHelper = new WindowsSystemDispatcherQueueHelper();
+                m_wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
+                m_configurationSource = new SystemBackdropConfiguration();
+
+                this.Activated += Window_Activated;
+                this.Closed += Window_Closed;
+
+                m_configurationSource.IsInputActive = true;
+                SetConfigurationSourceTheme();
+
+                acrylicController = new DesktopAcrylicController();
+
+                acrylicController.TintColor = Color.FromArgb(255, 0, 0, 0);
+                acrylicController.TintOpacity = 0;
+
+                ((FrameworkElement)this.Content).ActualThemeChanged += Window_ThemeChanged;
+
+                acrylicController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
+                acrylicController.SetSystemBackdropConfiguration(m_configurationSource);
+
+                return true;
+            }
+
+            return false;
+        }
+
+        private void Window_Activated(object sender, Microsoft.UI.Xaml.WindowActivatedEventArgs args)
+        {
+            m_configurationSource.IsInputActive = args.WindowActivationState != WindowActivationState.Deactivated;
+        }
+
+        private void Window_Closed(object sender, WindowEventArgs args)
+        {
+            if (micaController != null)
+            {
+                micaController.Dispose();
+                micaController = null;
+            }
+            if (acrylicController != null)
+            {
+                acrylicController.Dispose();
+                acrylicController = null;
+            }
+
+            this.Activated -= Window_Activated;
+            m_configurationSource = null;
+
+            DefaultTaskbar.SettingInstances = 0;
+        }
+
+        private void Window_ThemeChanged(FrameworkElement sender, object args)
+        {
+            if (m_configurationSource != null)
+            {
+                SetConfigurationSourceTheme();
+            }
+        }
+
+        private void SetConfigurationSourceTheme()
+        {
+            switch (((FrameworkElement)this.Content).ActualTheme)
+            {
+                case ElementTheme.Dark: 
+                    m_configurationSource.Theme = SystemBackdropTheme.Dark; 
+                    if (acrylicController != null) 
+                    { 
+                        acrylicController.TintColor = Color.FromArgb(255, 0, 0, 0); 
+                    } 
+                    break;
+                case ElementTheme.Light: 
+                    m_configurationSource.Theme = SystemBackdropTheme.Light; 
+                    if (acrylicController != null) 
+                    { 
+                        acrylicController.TintColor = Color.FromArgb(255, 255, 255, 255); 
+                    } 
+                    break;
+                case ElementTheme.Default: 
+                    m_configurationSource.Theme = SystemBackdropTheme.Default; 
+                    if (acrylicController != null) 
+                    { 
+                        acrylicController.TintColor = Color.FromArgb(255, 50, 50, 50); 
+                    } 
+                    break;
+            }
+        }
+        #endregion
+
+        private void SettingNav_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+        {
+            NavigationViewItem item = args.SelectedItem as NavigationViewItem;
+
+            if (item != null)
+            {
+                switch (item.Tag.ToString())
+                {
+                    case "Customization":
+                    default:
+                        contentFrame.Navigate(typeof(CustomizationSettingView));
+                        break;
+                    case "Modules":
+                        contentFrame.Navigate(typeof(ModulesSettingView));
+                        break;
+                    case "AboutPage":
+                        contentFrame.Navigate(typeof(AboutSettingView));
+                        break;
+                }
+            }
+        }
+    }
+}

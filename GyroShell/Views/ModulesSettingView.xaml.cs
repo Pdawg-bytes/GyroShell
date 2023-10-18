@@ -1,6 +1,3 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License. See LICENSE in the project root for license information.
-
 using GyroShell.Helpers.Modules;
 using GyroShell.Library.Services.Environment;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,16 +10,16 @@ using Windows.Storage.Pickers;
 
 using static GyroShell.Helpers.Modules.ModuleManager;
 
-namespace GyroShell.Settings
+namespace GyroShell.Views
 {
-    public sealed partial class MoudlesPage : Page
+    public sealed partial class ModulesSettingView : Page
     {
         internal ObservableCollection<ModuleModel> ModuleCollection;
 
         private ISettingsService m_appSettings;
         private string m_modulesPath;
 
-        public MoudlesPage()
+        public ModulesSettingView()
         {
             this.InitializeComponent();
 
