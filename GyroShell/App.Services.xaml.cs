@@ -29,7 +29,6 @@ namespace GyroShell
 
         private void ConfigureServices()
         {
-            // TODO: Initialize ViewModels.
             IServiceCollection collection = new ServiceCollection()
                 .AddTransient<IBitmapHelperService, BitmapHelperService>()
                 .AddSingleton<IAppHelperService, AppHelperService>()
@@ -39,7 +38,10 @@ namespace GyroShell
                 .AddSingleton<IBatteryService, BatteryService>()
                 .AddSingleton<ISoundService, SoundService>()
                 .AddTransient<ITaskbarManagerService, TaskbarManagerService>()
-                .AddTransient<StartupScreenViewModel>();
+                .AddSingleton<IModuleManager, ModuleManager>()
+                .AddTransient<StartupScreenViewModel>()
+                .AddTransient<AboutSettingViewModel>()
+                .AddTransient<ModulesSettingViewModel>();
 
             m_serviceProvider = collection.BuildServiceProvider(true);
         }

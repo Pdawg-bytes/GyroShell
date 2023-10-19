@@ -39,6 +39,8 @@ namespace GyroShell.Controls
             this.InitializeComponent();
             RootPageFrame.Navigate(typeof(StartupPage));
 
+            Title = "GyroShell Startup Host";
+
             m_tbManager = App.ServiceProvider.GetRequiredService<ITaskbarManagerService>();
 
             appProcessId = Process.GetCurrentProcess().Id;
@@ -65,10 +67,6 @@ namespace GyroShell.Controls
 
             int screenWidth = GetSystemMetrics(SM_CXSCREEN);
             int screenHeight = GetSystemMetrics(SM_CYSCREEN);
-
-            Title = "GyroShell Startup Host";
-            //PackageVersion version = Package.Current.Id.Version;
-            //VersionText.Text = "Version: " + string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
 
             int windowWidth = 550;
             int windowHeight = 300;

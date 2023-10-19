@@ -33,6 +33,7 @@ using Windows.UI.Notifications.Management;
 using static GyroShell.Helpers.Win32.Win32Interop;
 using static GyroShell.Helpers.Win32.WindowChecks;
 using BatteryReport = GyroShell.Library.Models.Hardware.BatteryReport;
+using GyroShell.Library.Models.InternalData;
 
 namespace GyroShell.Controls
 {

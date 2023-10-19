@@ -62,6 +62,7 @@ namespace GyroShell
             m_AppWindow.SetPresenter(AppWindowPresenterKind.Default);
 
             hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+            m_envService.MainWindowHandle = hWnd;
             WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
             AppWindow appWindow = AppWindow.GetFromWindowId(windowId);
             if (m_envService.IsWindows11)

@@ -7,15 +7,16 @@ namespace GyroShell.Library.ViewModels
 {
     public sealed class StartupScreenViewModel
     {
-        private readonly IEnvironmentInfoService _environmentInfoService;
-        public StartupScreenViewModel(IEnvironmentInfoService environmentInfoService) 
+        private readonly IEnvironmentInfoService m_envService;
+
+        public StartupScreenViewModel(IEnvironmentInfoService envService) 
         {
-            _environmentInfoService = environmentInfoService;
+            m_envService = envService;
         }
 
         public Version AppVersion
         {
-            get => _environmentInfoService.AppVersion;
+            get => m_envService.AppVersion;
         }
     }
 }

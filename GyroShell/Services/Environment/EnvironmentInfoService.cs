@@ -12,6 +12,14 @@ namespace GyroShell.Services.Environment
         public Version AppVersion { get; init; }
         public DateTime AppBuildDate { get; init; }
 
+
+        private IntPtr _mainWindowHandle;
+        public IntPtr MainWindowHandle
+        {
+            get => _mainWindowHandle;
+            set => _mainWindowHandle = value;
+        }
+
         public bool IsWindows11
         {
             get => System.Environment.OSVersion.Version.Build >= 22000;

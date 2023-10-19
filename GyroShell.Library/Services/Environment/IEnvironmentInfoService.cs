@@ -36,5 +36,10 @@ namespace GyroShell.Library.Services.Environment
         /// Gets the principal monitor's height in pixels.
         /// </summary>
         public int MonitorHeight { get; }
+
+        /// <summary>
+        /// Gets the handle of the MainWindow.
+        /// </summary>
+        public IntPtr MainWindowHandle { get; set; }
     }
 }

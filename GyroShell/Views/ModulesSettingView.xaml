@@ -14,13 +14,13 @@
                 <Expander x:Name="ModuleListExpander" HorizontalAlignment="Stretch" Margin="20,20,0,0" HorizontalContentAlignment="Left">
                     <Expander.Header>
                         <StackPanel Orientation="Horizontal" Padding="5,10,5,10">
-                            <TextBlock Text="&#xED2A;" FontFamily="Segoe MDL2 Assets" Margin="0,13,10,10" FontSize="22" x:Name="ModuleIcon"/>
+                            <TextBlock Text="&#xED2A;" FontFamily="{x:Bind ViewModel.IconFontFamily, Mode=OneWay}" Margin="0,13,10,10" FontSize="22" x:Name="ModuleIcon"/>
                             <TextBlock Text="Modules" Margin="10,13,10,10"/>
                         </StackPanel>
                     </Expander.Header>
                     <Expander.Content>
                         <StackPanel Padding="48,0,48,0">
-                            <ListView x:Name="ModulesListView" SelectionMode="None" ItemsSource="{x:Bind ModuleCollection}">
+                            <ListView x:Name="ModulesListView" SelectionMode="None" ItemsSource="{x:Bind ViewModel.ModuleCollection}">
                                 <ListView.ItemContainerTransitions>
                                     <TransitionCollection>
                                         <ReorderThemeTransition/>
@@ -43,20 +43,16 @@
             </StackPanel>
         </ScrollViewer>
         <StackPanel VerticalAlignment="Bottom">
-            <InfoBar Message="GyroShell is unable to find any modules in the current folder. Please select a new directory." IsClosable="True" Severity="Warning" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,20" x:Name="ModuleNotFoundInfo" Width="425">
+            <InfoBar IsOpen="{x:Bind ViewModel.IsEmptyDirectoryInfoOpen, Mode=TwoWay}" Message="GyroShell is unable to find any modules in the current folder. Please select a new directory." IsClosable="True" Severity="Warning" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,20" x:Name="ModuleNotFoundInfo" Width="425">
                 <InfoBar.Content>
                     <StackPanel Orientation="Horizontal">
-                        <Button x:Name="OpenFolderInfo" Style="{ThemeResource AccentButtonStyle}" Content="Browse" Margin="0,0,10,20" HorizontalAlignment="Stretch" Width="150" Click="OpenFolderInfo_Click"/>
-                        <Button x:Name="IgnoreInfo" Style="{ThemeResource DefaultButtonStyle}" Content="Later" Margin="0,0,0,20" HorizontalAlignment="Stretch" Width="150" Click="IgnoreInfo_Click"/>
+                        <Button Command="{x:Bind ViewModel.OpenFolderCommand}" x:Name="OpenFolderInfo" Style="{ThemeResource AccentButtonStyle}" Content="Browse" Margin="0,0,10,20" HorizontalAlignment="Stretch" Width="300"/>
                     </StackPanel>
                 </InfoBar.Content>
             </InfoBar>
-            <InfoBar Message="GyroShell was unable to parse one or more modules in the selected directory." IsClosable="True" Severity="Error" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,20" x:Name="ModuleParseErrorInfo" Width="425">
+            <InfoBar IsOpen="{x:Bind ViewModel.IsParseFailureInfoOpen, Mode=TwoWay}" Message="GyroShell was unable to parse one or more modules in the selected directory." IsClosable="True" Severity="Error" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,20" x:Name="ModuleParseErrorInfo" Width="425">
                 <InfoBar.Content>
-                    <StackPanel Orientation="Horizontal">
-                        <Button x:Name="ParseErrorBrowse" Style="{ThemeResource AccentButtonStyle}" Content="Browse" Margin="0,0,10,20" HorizontalAlignment="Stretch" Width="150" Click="OpenFolderInfo_Click"/>
-                        <Button x:Name="IgnoreInfoErrorBrowse" Style="{ThemeResource DefaultButtonStyle}" Content="Later" Margin="0,0,0,20" HorizontalAlignment="Stretch" Width="150" Click="IgnoreInfo_Click"/>
-                    </StackPanel>
+                    <Button Command="{x:Bind ViewModel.OpenFolderCommand}" x:Name="ParseErrorBrowse" Style="{ThemeResource AccentButtonStyle}" Content="Browse" Margin="0,0,10,20" HorizontalAlignment="Stretch" Width="300"/>
                 </InfoBar.Content>
             </InfoBar>
         </StackPanel>

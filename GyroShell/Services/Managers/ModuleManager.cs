@@ -6,26 +6,25 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
-using System.Text;
-using System.Threading.Tasks;
 
-using static GyroShell.Helpers.Modules.ModuleModel;
+using GyroShell.Library.Models.InternalData;
+using GyroShell.Library.Services.Managers;
 
-namespace GyroShell.Helpers.Modules
+namespace GyroShell.Services.Managers
 {
-    internal class ModuleManager
+    public class ModuleManager : IModuleManager
     {
-        private static AssemblyLoadContext moduleLoadContext;
-        private static string moduleDirectory;
-        private static readonly Dictionary<string, Assembly> loadedModules = new Dictionary<string, Assembly>();
+        private AssemblyLoadContext moduleLoadContext;
+        private string moduleDirectory;
+        private readonly Dictionary<string, Assembly> loadedModules = new Dictionary<string, Assembly>();
 
-        public static void InitializeModuleList(string directory)
+        public void InitializeModuleList(string directory)
         {
             moduleDirectory = directory;
             moduleLoadContext = new AssemblyLoadContext("ModuleLoadContext", isCollectible: true);
         }
 
-        public static void LoadAndRunModules()
+        public void LoadAndRunModules()
         {
             foreach (string dllFile in Directory.GetFiles(moduleDirectory, "*.dll"))
             {
@@ -55,12 +54,12 @@ namespace GyroShell.Helpers.Modules
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"[-] ModuleManager: Error getting module from {dllFile}: {ex.Message}");
+                    Debug.WriteLine($"[-] ModuleManager: Error loading and running module from {dllFile}: {ex.Message}");
                 }
             }
         }
 
-        public static List<ModuleModel> GetModules() 
+        public List<ModuleModel> GetModules()
         {
             List<ModuleModel> returnList = new List<ModuleModel>();
             foreach (string dllFile in Directory.GetFiles(moduleDirectory, "*.dll"))
@@ -85,12 +84,12 @@ namespace GyroShell.Helpers.Modules
                                 returnList.Add(new ModuleModel { ModuleName = moduleName, ModuleVersion = moduleVersion, ModuleId = moduleGuid, IsLoaded = false });
                             }
                         }
-                        
+
                     }
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"[-] ModuleManager: Error loading and running module from {dllFile}: {ex.Message}");
+                    Debug.WriteLine($"[-] ModuleManager: Error getting module from {dllFile}: {ex.Message}");
                     return null;
                 }
             }
@@ -98,9 +97,9 @@ namespace GyroShell.Helpers.Modules
             return returnList;
         }
 
-        public static void UnloadModules()
+        public void UnloadModules()
         {
-            foreach(KeyValuePair<string, Assembly> module in loadedModules)
+            foreach (KeyValuePair<string, Assembly> module in loadedModules)
             {
                 string moduleName = module.Key;
                 if (loadedModules.TryGetValue(moduleName, out var moduleAssembly))

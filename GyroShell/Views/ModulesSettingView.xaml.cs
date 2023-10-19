@@ -1,4 +1,3 @@
-using GyroShell.Helpers.Modules;
 using GyroShell.Library.Services.Environment;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
@@ -8,89 +7,21 @@ using System;
 using System.Collections.ObjectModel;
 using Windows.Storage.Pickers;
 
-using static GyroShell.Helpers.Modules.ModuleManager;
+using static GyroShell.Services.Managers.ModuleManager;
+using GyroShell.Library.Models.InternalData;
+using GyroShell.Library.ViewModels;
 
 namespace GyroShell.Views
 {
     public sealed partial class ModulesSettingView : Page
     {
-        internal ObservableCollection<ModuleModel> ModuleCollection;
-
-        private ISettingsService m_appSettings;
-        private string m_modulesPath;
-
         public ModulesSettingView()
         {
             this.InitializeComponent();
 
-            m_appSettings = App.ServiceProvider.GetRequiredService<ISettingsService>();
-            m_modulesPath = m_appSettings.ModulesFolderPath;
-
-            if (m_modulesPath != null || m_modulesPath == string.Empty)
-            {
-                try
-                {
-                    InitializeModuleList(m_modulesPath);
-                    ModuleCollection = new ObservableCollection<ModuleModel>(GetModules());
-                }
-                catch
-                {
-                    ModuleParseErrorInfo.IsOpen = true;
-                }
-            }
-            else
-            {
-                ModuleNotFoundInfo.IsOpen = true;
-            }
-
-            switch (m_appSettings.IconStyle)
-            {
-                case 0:
-                default:
-                    ModuleIcon.FontFamily = new FontFamily("Segoe MDL2 Assets");
-                    break;
-                case 1:
-                    ModuleIcon.FontFamily = new FontFamily("Segoe Fluent Icons");
-                    break;
-            }
+            DataContext = App.ServiceProvider.GetRequiredService<ModulesSettingViewModel>();
         }
 
-        #region Control Events
-        private async void OpenFolderInfo_Click(object sender, RoutedEventArgs e)
-        {
-            FolderPicker folderPicker = new FolderPicker();
-
-            WinRT.Interop.InitializeWithWindow.Initialize(folderPicker, MainWindow.hWnd);
-
-            folderPicker.SuggestedStartLocation = PickerLocationId.Desktop;
-            folderPicker.FileTypeFilter.Add("*");
-
-            Windows.Storage.StorageFolder folder = await folderPicker.PickSingleFolderAsync();
-
-            if (folder != null)
-            {
-                m_appSettings.ModulesFolderPath = folder.Path;
-                try
-                {
-                    InitializeModuleList(m_modulesPath);
-                    ModuleCollection = new ObservableCollection<ModuleModel>(GetModules());
-                }
-                catch
-                {
-                    ModuleParseErrorInfo.IsOpen = true;
-                }
-                ModuleNotFoundInfo.IsOpen = false;
-            }
-            else
-            {
-                ModuleNotFoundInfo.IsOpen = false;
-            }
-        }
-
-        private void IgnoreInfo_Click(object sender, RoutedEventArgs e)
-        {
-            ModuleNotFoundInfo.IsOpen = false;
-        }
-        #endregion
+        public ModulesSettingViewModel ViewModel => (ModulesSettingViewModel)this.DataContext;
     }
 }
