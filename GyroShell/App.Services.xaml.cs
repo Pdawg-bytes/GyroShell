@@ -2,6 +2,7 @@
 using GyroShell.Library.Services.Hardware;
 using GyroShell.Library.Services.Helpers;
 using GyroShell.Library.Services.Managers;
+using GyroShell.Library.ViewModels;
 using GyroShell.Services.Environment;
 using GyroShell.Services.Hardware;
 using GyroShell.Services.Helpers;
@@ -37,7 +38,8 @@ namespace GyroShell
                 .AddSingleton<INetworkService, NetworkService>()
                 .AddSingleton<IBatteryService, BatteryService>()
                 .AddSingleton<ISoundService, SoundService>()
-                .AddTransient<ITaskbarManagerService, TaskbarManagerService>();
+                .AddTransient<ITaskbarManagerService, TaskbarManagerService>()
+                .AddTransient<StartupScreenViewModel>();
 
             m_serviceProvider = collection.BuildServiceProvider(true);
         }

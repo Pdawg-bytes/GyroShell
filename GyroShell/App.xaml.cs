@@ -8,7 +8,7 @@ namespace GyroShell
 {
     public partial class App : Application
     {
-        internal static StartupScreen startupScreen;
+        internal static StartupWindow startupScreen;
         private Window m_window;
 
         public App()
@@ -28,7 +28,7 @@ namespace GyroShell
 
         private async Task LoadStartupScreenContentAsync()
         {
-            startupScreen = new StartupScreen();
+            startupScreen = new StartupWindow();
             startupScreen.Activate();
             await Task.Delay(200);
         }

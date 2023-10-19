@@ -66,17 +66,23 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove="Controls\DefaultTaskbar.xaml" />
-    <None Remove="Controls\StartupScreen.xaml" />
+    <None Remove="Controls\StartupWindow.xaml" />
     <None Remove="Controls\StartWindow.xaml" />
     <None Remove="Settings\AboutPage.xaml" />
     <None Remove="Settings\SettingsWindow.xaml" />
     <None Remove="Views\ModulesSettingView.xaml" />
+    <None Remove="Views\StartupPage.xaml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GyroShell.Library\GyroShell.Library.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Controls\StartupScreen.xaml">
+    <Page Update="Views\StartupPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Controls\StartupWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

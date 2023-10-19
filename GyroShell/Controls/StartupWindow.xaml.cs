@@ -13,6 +13,7 @@ using System.Threading;
 using System.Diagnostics;
 
 using static GyroShell.Helpers.Win32.Win32Interop;
+using GyroShell.Views;
 
 using AppWindow = Microsoft.UI.Windowing.AppWindow;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,7 +21,7 @@ using GyroShell.Library.Services.Managers;
 
 namespace GyroShell.Controls
 {
-    internal partial class StartupScreen : Window
+    internal partial class StartupWindow : Window
     {
         private AppWindow m_AppWindow;
         private ITaskbarManagerService m_tbManager;
@@ -33,9 +34,10 @@ namespace GyroShell.Controls
         private Process appProcess;
         private Thread timeThread;
 
-        internal StartupScreen()
+        internal StartupWindow()
         {
             this.InitializeComponent();
+            RootPageFrame.Navigate(typeof(StartupPage));
 
             m_tbManager = App.ServiceProvider.GetRequiredService<ITaskbarManagerService>();
 
@@ -65,8 +67,8 @@ namespace GyroShell.Controls
             int screenHeight = GetSystemMetrics(SM_CYSCREEN);
 
             Title = "GyroShell Startup Host";
-            PackageVersion version = Package.Current.Id.Version;
-            VersionText.Text = "Version: " + string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
+            //PackageVersion version = Package.Current.Id.Version;
+            //VersionText.Text = "Version: " + string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
 
             int windowWidth = 550;
             int windowHeight = 300;
