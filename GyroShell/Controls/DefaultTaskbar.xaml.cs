@@ -34,13 +34,13 @@ using static GyroShell.Helpers.Win32.Win32Interop;
 using static GyroShell.Helpers.Win32.WindowChecks;
 using BatteryReport = GyroShell.Library.Models.Hardware.BatteryReport;
 using GyroShell.Library.Models.InternalData;
+using GyroShell.Library.ViewModels;
 
 namespace GyroShell.Controls
 {
     public sealed partial class DefaultTaskbar : Page
     {
         public static int SettingInstances = 0;
-        public static string timeType = "t";
 
         private int currentVolume;
         private bool reportRequested = false;
@@ -56,6 +56,7 @@ namespace GyroShell.Controls
         private INetworkService m_netService;
         private IBatteryService m_powerService;
         private ISoundService m_soundService;
+        private ITimeService m_timeService;
 
         private readonly WinEventDelegate callback;
 
@@ -65,6 +66,8 @@ namespace GyroShell.Controls
         public DefaultTaskbar()
         {
             this.InitializeComponent();
+
+            DataContext = App.ServiceProvider.GetRequiredService<DefaultTaskbarViewModel>();
 
             m_envService = App.ServiceProvider.GetRequiredService<IEnvironmentInfoService>();
             m_appSettings = App.ServiceProvider.GetRequiredService<ISettingsService>();
@@ -77,11 +80,11 @@ namespace GyroShell.Controls
             m_netService = App.ServiceProvider.GetRequiredService<INetworkService>();
             m_powerService = App.ServiceProvider.GetRequiredService<IBatteryService>();
             m_soundService = App.ServiceProvider.GetRequiredService<ISoundService>();
+            m_timeService = App.ServiceProvider.GetRequiredService<ITimeService>();
 
             TbIconCollection = new ObservableCollection<IconModel>();
 
             LoadSettings();
-            TimeAndDate();
             DetectBatteryPresence();
             InitNotifcation();
             UpdateNetworkStatus();
@@ -102,22 +105,7 @@ namespace GyroShell.Controls
             m_tbManager.NotifyWinlogonShowShell();
         }
 
-        #region Clock
-        private void TimeAndDate()
-        {
-            DispatcherTimer dateTimeUpdate = new DispatcherTimer();
-
-            dateTimeUpdate.Tick += DTUpdateMethod;
-            dateTimeUpdate.Interval = new TimeSpan(400000);
-
-            dateTimeUpdate.Start();
-        }
-        private void DTUpdateMethod(object sender, object e)
-        {
-            TimeText.Text = DateTime.Now.ToString(timeType);
-            DateText.Text = DateTime.Now.ToString("M/d/yyyy");
-        }
-        #endregion
+        public DefaultTaskbarViewModel ViewModel => (DefaultTaskbarViewModel)this.DataContext;
 
         #region Internet
         private void NetworkService_InternetStatusChanged(object sender, EventArgs e)
@@ -487,11 +475,6 @@ namespace GyroShell.Controls
                     }
                     break;
             }
-
-            // Clock
-            bool secondsEnabled = m_appSettings.EnableSeconds;
-            bool is24HREnabled = m_appSettings.EnableMilitaryTime;
-            timeType = secondsEnabled ? (is24HREnabled ? "H:mm:ss" : "T") : (is24HREnabled ? "H:mm" : "t");
 
             switch (m_appSettings.TaskbarAlignment)
             {

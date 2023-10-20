@@ -9,80 +9,28 @@ using System.Diagnostics;
 using Windows.System;
 using Windows.UI;
 
+using GyroShell.Library.ViewModels;
+
 namespace GyroShell.Views
 {
     public sealed partial class CustomizationSettingView : Page
     {
         public static bool NotifError;
-
-        private IEnvironmentInfoService m_envService;
+        
         private ISettingsService m_appSettings;
+        private IEnvironmentInfoService m_envService;
 
-        public CustomizationSettingView()
+        public CustomizationSettingView(ISettingsService appSettings, IEnvironmentInfoService envService)
         {
+            //DataContext = App.ServiceProvider.GetRequiredService<CustomizationSettingViewModel>();
+
             this.InitializeComponent();
 
-            m_envService = App.ServiceProvider.GetRequiredService<IEnvironmentInfoService>();
-            m_appSettings = App.ServiceProvider.GetRequiredService<ISettingsService>();
+            m_appSettings = appSettings;
+            m_envService = envService;
         }
 
-        #region Clock Settings
-        private void SecondsToggle_Toggled(object sender, RoutedEventArgs e)
-        {
-            if (TFHourToggle.IsOn == true && SecondsToggle.IsOn == false)
-            {
-                DefaultTaskbar.timeType = "H:mm";
-                m_appSettings.EnableMilitaryTime = true;
-                m_appSettings.EnableSeconds = false;
-            }
-            else if (TFHourToggle.IsOn == true && SecondsToggle.IsOn == true)
-            {
-                DefaultTaskbar.timeType = "H:mm:ss";
-                m_appSettings.EnableMilitaryTime = true;
-                m_appSettings.EnableSeconds = true;
-            }
-            else if (TFHourToggle.IsOn == false && SecondsToggle.IsOn == false)
-            {
-                DefaultTaskbar.timeType = "t";
-                m_appSettings.EnableMilitaryTime = false;
-                m_appSettings.EnableSeconds = false;
-            }
-            else if (SecondsToggle.IsOn)
-            {
-                m_appSettings.EnableMilitaryTime = false;
-                m_appSettings.EnableSeconds = true;
-                DefaultTaskbar.timeType = "T";
-            }
-        }
-
-        private void TFHourToggle_Toggled(object sender, RoutedEventArgs e)
-        {
-            if (TFHourToggle.IsOn == true && SecondsToggle.IsOn == true)
-            {
-                DefaultTaskbar.timeType = "H:mm:ss";
-                m_appSettings.EnableMilitaryTime = true;
-                m_appSettings.EnableSeconds = true;
-            }
-            else if (TFHourToggle.IsOn)
-            {
-                DefaultTaskbar.timeType = "H:mm";
-                m_appSettings.EnableMilitaryTime = true;
-                m_appSettings.EnableSeconds = false;
-            }
-            else if (TFHourToggle.IsOn == false && SecondsToggle.IsOn == true)
-            {
-                DefaultTaskbar.timeType = "T";
-                m_appSettings.EnableMilitaryTime = false;
-                m_appSettings.EnableSeconds = true;
-            }
-            else
-            {
-                m_appSettings.EnableMilitaryTime = false;
-                m_appSettings.EnableSeconds = false;
-                DefaultTaskbar.timeType = "t";
-            }
-        }
-        #endregion
+        //public CustomizationSettingViewModel ViewModel => (CustomizationSettingViewModel)this.DataContext;
 
         #region Icon events
         private void Icon_Checked(object sender, RoutedEventArgs e)

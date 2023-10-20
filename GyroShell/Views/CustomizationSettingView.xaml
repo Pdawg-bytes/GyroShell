@@ -60,8 +60,8 @@
                     </Expander.Header>
                     <Expander.Content>
                         <StackPanel Padding="48,0,48,0">
-                            <ToggleSwitch Header="Use seconds in time" Margin="0,0,0,8" VerticalAlignment="Top" HorizontalAlignment="Left" x:Name="SecondsToggle" Toggled="SecondsToggle_Toggled"/>
-                            <ToggleSwitch Header="Use 24 hour time" VerticalAlignment="Top" HorizontalAlignment="Left" x:Name="TFHourToggle" Toggled="TFHourToggle_Toggled"/>
+                            <ToggleSwitch Header="Use seconds in time" Margin="0,0,0,8" VerticalAlignment="Top" HorizontalAlignment="Left" x:Name="SecondsToggle"/> <!--IsOn="{x:Bind ViewModel.EnableSeconds}"-->
+                            <ToggleSwitch Header="Use 24 hour time" VerticalAlignment="Top" HorizontalAlignment="Left" x:Name="TFHourToggle"/> <!--IsOn="{x:Bind ViewModel.EnableMilitaryTime}"-->
                         </StackPanel>
                     </Expander.Content>
                 </Expander>
