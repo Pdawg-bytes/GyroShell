@@ -7,14 +7,14 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid>
+    <Grid x:Name="RootGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid x:Name="AppTitleBar" Grid.Row="0" Background="Transparent" Opacity="1">
             <StackPanel Orientation="Horizontal">
-                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE713;" Margin="16,15,0,0" FontSize="18" x:Name="TopIcon"/>
+                <TextBlock FontFamily="{x:Bind ViewModel.IconFontFamily, Mode=OneWay}" Text="&#xE713;" Margin="16,15,0,0" FontSize="18" x:Name="TopIcon"/>
                 <TextBlock Text="GyroShell Settings" Margin="16,16,0,0" Style="{StaticResource CaptionTextBlockStyle}" FontSize="12"/>
             </StackPanel>
         </Grid>
@@ -23,27 +23,17 @@
                 <NavigationView.MenuItems>
                     <NavigationViewItem Content="Customization" Tag="Customization">
                         <NavigationViewItem.Icon>
-                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xEC87;"/>
-                        </NavigationViewItem.Icon>
-                    </NavigationViewItem>
-                    <NavigationViewItem Content="Appearance" Tag="Appearance">
-                        <NavigationViewItem.Icon>
-                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE790;"/>
-                        </NavigationViewItem.Icon>
-                    </NavigationViewItem>
-                    <NavigationViewItem Content="Behavior" Tag="Behavior">
-                        <NavigationViewItem.Icon>
-                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE790;"/>
+                            <FontIcon FontFamily="{x:Bind ViewModel.IconFontFamily, Mode=OneWay}" Glyph="&#xEC87;"/>
                         </NavigationViewItem.Icon>
                     </NavigationViewItem>
                     <NavigationViewItem Content="Modules" Tag="Modules">
                         <NavigationViewItem.Icon>
-                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xED2A;"/>
+                            <FontIcon FontFamily="{x:Bind ViewModel.IconFontFamily, Mode=OneWay}" Glyph="&#xED2A;"/>
                         </NavigationViewItem.Icon>
                     </NavigationViewItem>
                     <NavigationViewItem Content="About" Tag="AboutPage">
                         <NavigationViewItem.Icon>
-                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE946;"/>
+                            <FontIcon FontFamily="{x:Bind ViewModel.IconFontFamily, Mode=OneWay}" Glyph="&#xE946;"/>
                         </NavigationViewItem.Icon>
                     </NavigationViewItem>
                 </NavigationView.MenuItems>

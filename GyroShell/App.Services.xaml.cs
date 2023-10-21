@@ -41,7 +41,8 @@ namespace GyroShell
                 .AddSingleton<IModuleManager, ModuleManager>()
                 .AddTransient<StartupScreenViewModel>()
                 .AddTransient<AboutSettingViewModel>()
-                .AddTransient<ModulesSettingViewModel>();
+                .AddTransient<ModulesSettingViewModel>()
+                .AddTransient<SettingsWindowViewModel>();
 
             m_serviceProvider = collection.BuildServiceProvider(true);
         }

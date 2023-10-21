@@ -12,11 +12,11 @@ namespace GyroShell.Library.Models.Hardware
 
     public record BatteryReport
     {
-        public int ChargeRate;
+        public double ChargeRate;
 
-        public int FullCapacity;
+        public double FullCapacity;
 
-        public int RemainingCapacity;
+        public double RemainingCapacity;
 
         public int ChargePercentage;
 

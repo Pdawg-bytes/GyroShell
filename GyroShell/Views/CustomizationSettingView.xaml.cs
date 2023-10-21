@@ -189,15 +189,19 @@ namespace GyroShell.Views
         }
         private void DefaultExtern()
         {
-            m_appSettings.AlphaTint = 0;
-            m_appSettings.RedTint = 0;
-            m_appSettings.BlueTint = 0;
-            m_appSettings.GreenTint = 0;
-            m_appSettings.LuminosityOpacity = 0.3f;
-            m_appSettings.TintOpacity = 0.2f;
+            m_appSettings.AlphaTint = 255;
+            m_appSettings.RedTint = 32;
+            m_appSettings.BlueTint = 32;
+            m_appSettings.GreenTint = 32;
+            m_appSettings.LuminosityOpacity = 0.95f;
+            m_appSettings.TintOpacity = 0.0f;
 
             TintSlider.Value = 0;
-            LuminSlider.Value = 0;
+            LuminSlider.Value = 95;
+
+            Color defaultColor = new Color { A = 255, R = 32, B = 32, G = 32 };
+
+            TintColorPicker.Color = defaultColor;
 
             m_appSettings.EnableCustomTransparency = false;
         }

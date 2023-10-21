@@ -12,6 +12,7 @@ using Microsoft.UI.Xaml.Media;
 using System;
 using Windows.UI;
 using WinRT;
+using GyroShell.Library.ViewModels;
 
 namespace GyroShell.Controls
 {
@@ -23,35 +24,26 @@ namespace GyroShell.Controls
         {
             this.InitializeComponent();
 
+            RootGrid.DataContext = App.ServiceProvider.GetService<SettingsWindowViewModel>();
+
             m_appSettings = App.ServiceProvider.GetRequiredService<ISettingsService>();
 
             // Window Handling
             IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
-            WindowId windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
-            AppWindow appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
+            WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
+            AppWindow appWindow = AppWindow.GetFromWindowId(windowId);
 
             appWindow.MoveInZOrderAtTop();
             contentFrame.Navigate(typeof(CustomizationSettingView));
-
-            int iconStyle = m_appSettings.IconStyle;
 
             ExtendsContentIntoTitleBar = true;
             Title = "GyroShell Settings";
             SetTitleBar(AppTitleBar);
 
             TrySetMicaBackdrop();
-
-            switch (iconStyle)
-            {
-                case 0:
-                default:
-                    TopIcon.FontFamily = new FontFamily("Segoe MDL2 Assets");
-                    break;
-                case 1:
-                    TopIcon.FontFamily = new FontFamily("Segoe Fluent Icons");
-                    break;
-            }
         }
+
+        public SettingsWindowViewModel ViewModel => (SettingsWindowViewModel)RootGrid.DataContext;
 
         #region Backdrop Stuff
         WindowsSystemDispatcherQueueHelper m_wsdqHelper;
@@ -102,8 +94,9 @@ namespace GyroShell.Controls
 
                 acrylicController = new DesktopAcrylicController();
 
-                acrylicController.TintColor = Color.FromArgb(255, 0, 0, 0);
+                acrylicController.TintColor = Color.FromArgb(255, 32, 32, 32);
                 acrylicController.TintOpacity = 0;
+                acrylicController.LuminosityOpacity = 0.95f;
 
                 ((FrameworkElement)this.Content).ActualThemeChanged += Window_ThemeChanged;
 

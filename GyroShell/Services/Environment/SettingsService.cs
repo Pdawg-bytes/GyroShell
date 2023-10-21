@@ -39,37 +39,37 @@ namespace GyroShell.Services.Environment
 
         public byte AlphaTint
         {
-            get => localSettings.Values["aTint"] as byte? != null ? (byte)localSettings.Values["aTint"] : (byte)0;
+            get => localSettings.Values["aTint"] as byte? != null ? (byte)localSettings.Values["aTint"] : (byte)255;
             set => localSettings.Values["aTint"] = value;
         }
 
         public byte RedTint
         {
-            get => localSettings.Values["rTint"] as byte? != null ? (byte)localSettings.Values["rTint"] : (byte)0;
+            get => localSettings.Values["rTint"] as byte? != null ? (byte)localSettings.Values["rTint"] : (byte)32;
             set => localSettings.Values["rTint"] = value;
         }
 
         public byte GreenTint
         {
-            get => localSettings.Values["gTint"] as byte? != null ? (byte)localSettings.Values["gTint"] : (byte)0;
+            get => localSettings.Values["gTint"] as byte? != null ? (byte)localSettings.Values["gTint"] : (byte)32;
             set => localSettings.Values["gTint"] = value;
         }
 
         public byte BlueTint
         {
-            get => localSettings.Values["bTint"] as byte? != null ? (byte)localSettings.Values["bTint"] : (byte)0;
+            get => localSettings.Values["bTint"] as byte? != null ? (byte)localSettings.Values["bTint"] : (byte)32;
             set => localSettings.Values["bTint"] = value;
         }
 
         public float LuminosityOpacity
         {
-            get => localSettings.Values["luminOpacity"] as float? != null ? (float)localSettings.Values["luminOpacity"] : 0.2f;
+            get => localSettings.Values["luminOpacity"] as float? != null ? (float)localSettings.Values["luminOpacity"] : 0.95f;
             set => localSettings.Values["luminOpacity"] = value;
         }
 
         public float TintOpacity
         {
-            get => localSettings.Values["tintOpacity"] as float? != null ? (float)localSettings.Values["tintOpacity"] : 0.3f;
+            get => localSettings.Values["tintOpacity"] as float? != null ? (float)localSettings.Values["tintOpacity"] : 0.0f;
             set => localSettings.Values["tintOpacity"] = value;
         }
 
