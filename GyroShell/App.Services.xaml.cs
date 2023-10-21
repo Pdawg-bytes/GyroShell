@@ -39,12 +39,9 @@ namespace GyroShell
                 .AddSingleton<ISoundService, SoundService>()
                 .AddTransient<ITaskbarManagerService, TaskbarManagerService>()
                 .AddSingleton<IModuleManager, ModuleManager>()
-                .AddSingleton<ITimeService, TimeService>()
                 .AddTransient<StartupScreenViewModel>()
                 .AddTransient<AboutSettingViewModel>()
-                .AddTransient<ModulesSettingViewModel>()
-                .AddTransient<CustomizationSettingViewModel>()
-                .AddTransient<DefaultTaskbarViewModel>();
+                .AddTransient<ModulesSettingViewModel>();
 
             m_serviceProvider = collection.BuildServiceProvider(true);
         }
