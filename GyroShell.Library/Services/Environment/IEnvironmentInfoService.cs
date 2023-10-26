@@ -41,5 +41,10 @@ namespace GyroShell.Library.Services.Environment
         /// Gets the handle of the MainWindow.
         /// </summary>
         public IntPtr MainWindowHandle { get; set; }
+
+        /// <summary>
+        /// The amount of settings windows currently running.
+        /// </summary>
+        public int SettingsInstances { get; set; }
     }
 }

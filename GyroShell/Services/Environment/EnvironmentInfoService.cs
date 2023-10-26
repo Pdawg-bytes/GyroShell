@@ -20,6 +20,13 @@ namespace GyroShell.Services.Environment
             set => _mainWindowHandle = value;
         }
 
+        private int _settingsInstances;
+        public int SettingsInstances
+        {
+            get => _settingsInstances;
+            set => _settingsInstances = value;
+        }
+
         public bool IsWindows11
         {
             get => System.Environment.OSVersion.Version.Build >= 22000;

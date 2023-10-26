@@ -27,12 +27,12 @@ using static GyroShell.Helpers.Win32.Win32Interop;
 using static GyroShell.Helpers.Win32.WindowChecks;
 using BatteryReport = GyroShell.Library.Models.Hardware.BatteryReport;
 using GyroShell.Library.Models.InternalData;
+using GyroShell.Library.ViewModels;
 
 namespace GyroShell.Controls
 {
     public sealed partial class DefaultTaskbar : Page
     {
-        public static int SettingInstances = 0;
         public static string timeType = "t";
 
         private int currentVolume;
@@ -58,6 +58,8 @@ namespace GyroShell.Controls
         public DefaultTaskbar()
         {
             this.InitializeComponent();
+
+            DataContext = App.ServiceProvider.GetRequiredService<DefaultTaskbarViewModel>();
 
             m_envService = App.ServiceProvider.GetRequiredService<IEnvironmentInfoService>();
             m_appSettings = App.ServiceProvider.GetRequiredService<ISettingsService>();
@@ -94,6 +96,8 @@ namespace GyroShell.Controls
 
             m_tbManager.NotifyWinlogonShowShell();
         }
+
+        public DefaultTaskbarViewModel ViewModel => (DefaultTaskbarViewModel)this.DataContext;
 
         #region Clock
         private void TimeAndDate()
@@ -267,37 +271,6 @@ namespace GyroShell.Controls
         #endregion
 
         #region Bar Events
-        private void SystemControls_Click(object sender, RoutedEventArgs e)
-        {
-            if (SystemControls.IsChecked == true)
-            {
-                if (m_envService.IsWindows11)
-                {
-                    m_tbManager.ToggleControlCenter();
-                }
-                else
-                {
-                    m_tbManager.ToggleActionCenter();
-                }
-            }
-        }
-
-        private void StartButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (StartButton.IsChecked == true)
-            {
-                m_tbManager.ToggleStartMenu();
-            }
-        }
-
-        private void ActionCenter_Click(object sender, RoutedEventArgs e)
-        {
-            if (ActionCenter.IsChecked == true)
-            {
-                m_tbManager.ToggleActionCenter();
-            }
-        }
-
         private void StartButton_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
             StartFlyout.ShowAt(StartButton);
@@ -311,16 +284,6 @@ namespace GyroShell.Controls
 
                 switch (shellOption)
                 {
-                    case "ShellSettings":
-                        SettingInstances++;
-
-                        if (SettingInstances <= 1)
-                        {
-                            SettingsWindow settingsWindow = new SettingsWindow();
-
-                            settingsWindow.Activate();
-                        }
-                        break;
                     case "RestartGyroShell":
                         try
                         {
@@ -370,7 +333,7 @@ namespace GyroShell.Controls
             }
             else
             {
-                throw new Exception("MenuFlyout sender variable error");
+                //throw new Exception("MenuFlyout sender variable error");
             }
         }
 
@@ -435,67 +398,10 @@ namespace GyroShell.Controls
         #region Settings
         private void LoadSettings()
         {
-            FontFamily SegoeMDL2 = new FontFamily("Segoe MDL2 Assets");
-            FontFamily SegoeFluent = new FontFamily("Segoe Fluent Icons");
-
-            // Icons
-            switch (m_appSettings.IconStyle)
-            {
-                case 0:
-                    WifiStatus.Margin = new Thickness(0, -2, 7, 0);
-                    WifiStatus.FontFamily = SegoeMDL2;
-                    SndStatus.Margin = new Thickness(6, 1, 0, 0);
-                    SndStatus.FontFamily = SegoeMDL2;
-                    BattStatus.Margin = new Thickness(0, 2, 12, 0);
-                    BattStatus.FontFamily = SegoeMDL2;
-                    NotifText.FontFamily = SegoeMDL2;
-                    //SearchIcon.FontFamily = SegoeMDL2;
-                    TaskViewIcon.FontFamily = SegoeMDL2;
-                    break;
-                case 1:
-                default:
-                    if (m_envService.IsWindows11)
-                    {
-                        WifiStatus.Margin = new Thickness(0, 2, 7, 0);
-                        WifiStatus.FontFamily = SegoeFluent;
-                        SndStatus.Margin = new Thickness(5, 0, 0, 0);
-                        SndStatus.FontFamily = SegoeFluent;
-                        BattStatus.Margin = new Thickness(0, 3, 14, 0);
-                        BattStatus.FontFamily = SegoeFluent;
-                        NotifText.FontFamily = SegoeFluent;
-                        //SearchIcon.FontFamily = SegoeFluent;
-                        TaskViewIcon.FontFamily = SegoeFluent;
-                    }
-                    else
-                    {
-                        WifiStatus.Margin = new Thickness(0, -2, 7, 0);
-                        WifiStatus.FontFamily = SegoeMDL2;
-                        SndStatus.Margin = new Thickness(6, 1, 0, 0);
-                        SndStatus.FontFamily = SegoeMDL2;
-                        BattStatus.Margin = new Thickness(0, 2, 12, 0);
-                        BattStatus.FontFamily = SegoeMDL2;
-                        NotifText.FontFamily = SegoeMDL2;
-                        //SearchIcon.FontFamily = SegoeMDL2;
-                        TaskViewIcon.FontFamily = SegoeMDL2;
-                    }
-                    break;
-            }
-
             // Clock
             bool secondsEnabled = m_appSettings.EnableSeconds;
             bool is24HREnabled = m_appSettings.EnableMilitaryTime;
             timeType = secondsEnabled ? (is24HREnabled ? "H:mm:ss" : "T") : (is24HREnabled ? "H:mm" : "t");
-
-            switch (m_appSettings.TaskbarAlignment)
-            {
-                case 0:
-                default:
-                    LeftControls.HorizontalAlignment = HorizontalAlignment.Left;
-                    break;
-                case 1:
-                    LeftControls.HorizontalAlignment = HorizontalAlignment.Center;
-                    break;
-            } 
         }
         #endregion
 

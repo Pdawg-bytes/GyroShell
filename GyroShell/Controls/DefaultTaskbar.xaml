@@ -18,7 +18,7 @@
         <Border Height="1" VerticalAlignment="Top" HorizontalAlignment="Stretch" x:Name="BarBorder" Opacity="0.6"/>
         <Frame Visibility="Collapsed" Background="{ThemeResource SystemControlAcrylicWindowBrush}">
             <MenuFlyout x:Name="StartFlyout" AreOpenCloseAnimationsEnabled="True" ShouldConstrainToRootBounds="False">
-                <MenuFlyoutItem Text="Shell Settings" Click="StartFlyout_Click" Tag="ShellSettings"/>
+                <MenuFlyoutItem Text="Shell Settings" Command="{x:Bind ViewModel.StartFlyoutCommands.OpenShellSettingsCommand}" Tag="ShellSettings"/>
                 <MenuFlyoutItem Text="Restart GyroShell" Tag="RestartGyroShell" Click="StartFlyout_Click" />
                 <MenuFlyoutItem Text="Exit GyroShell" Click="StartFlyout_Click" Tag="ExitGyroShell"/>
                 <MenuFlyoutSeparator/>
@@ -36,13 +36,13 @@
                 <MenuFlyoutItem Text="Desktop" Tag="Desktop" Click="StartFlyout_Click"/>
             </MenuFlyout>
         </Frame>
-        <StackPanel Orientation="Horizontal" x:Name="LeftControls" HorizontalAlignment="Center" >
+        <StackPanel Orientation="Horizontal" x:Name="LeftControls" HorizontalAlignment="{x:Bind ViewModel.TaskbarIconAlignment}">
             <StackPanel.ChildrenTransitions>
                 <TransitionCollection>
                     <EntranceThemeTransition IsStaggeringEnabled="True" />
                 </TransitionCollection>
             </StackPanel.ChildrenTransitions>
-            <ToggleButton HorizontalAlignment="Left" Height="40" Width="40" Margin="5,0,0,0" Background="Transparent" BorderBrush="Transparent" x:Name="StartButton" Click="StartButton_Click" RightTapped="StartButton_RightTapped">
+            <ToggleButton Command="{x:Bind ViewModel.StartButtonCheckedCommand}" HorizontalAlignment="Left" Height="40" Width="40" Margin="5,0,0,0" Background="Transparent" BorderBrush="Transparent" x:Name="StartButton" RightTapped="StartButton_RightTapped">
                 <ToggleButton.Content>
                     <TextBlock FontFamily="HoloLens MDL2 Assets" Text="&#xE782;" VerticalAlignment="Center" Margin="0" FontSize="16"/>
                 </ToggleButton.Content>
@@ -50,7 +50,7 @@
             <TextBox Height="32" PlaceholderText="Type here to search..." Width="200" Margin="5,2,0,0" CornerRadius="15" BorderThickness="0"/>
             <Button HorizontalAlignment="Left" Height="40" Width="40" Margin="5,0,10,0" Background="Transparent" BorderBrush="Transparent" x:Name="TaskView" Padding="0" ToolTipService.ToolTip="Task View">
                 <Button.Content>
-                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE7C4;" VerticalAlignment="Center" Margin="0" FontSize="16" x:Name="TaskViewIcon"/>
+                    <TextBlock FontFamily="{x:Bind ViewModel.IconFontFamily}" Text="&#xE7C4;" VerticalAlignment="Center" Margin="0" FontSize="16" x:Name="TaskViewIcon"/>
                 </Button.Content>
             </Button>
             <!--<Border x:Name="LeftControlsSeperator" Height="28" VerticalAlignment="Center" Width="1" Opacity="0.3" CornerRadius="1"/>-->
@@ -162,24 +162,24 @@
                     <TextBlock Text="&#xE70E;" FontFamily="Segoe MDL2 Assets" x:Name="TrayIcon" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,2,0,0" FontSize="12"/>
                 </Button.Content>
             </Button>
-            <ToggleButton VerticalAlignment="Center" x:Name="SystemControls" HorizontalAlignment="Right" Height="40" Background="Transparent" BorderBrush="Transparent" Click="SystemControls_Click" Margin="0,0,2,0" ToolTipService.ToolTip="Control Center">
+            <ToggleButton Command="{x:Bind ViewModel.SystemControlsCheckedCommand}" VerticalAlignment="Center" x:Name="SystemControls" HorizontalAlignment="Right" Height="40" Background="Transparent" BorderBrush="Transparent" Margin="0,0,2,0" ToolTipService.ToolTip="Control Center">
                 <ToggleButton.Content>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xEBAA;" VerticalAlignment="Center" Margin="0,4,3,0" FontSize="16" x:Name="BattStatus" Visibility="Visible"/>
-                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE839;" VerticalAlignment="Center" Margin="5,-2,5,0" FontSize="16" x:Name="WifiStatus"/>
-                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE995;" VerticalAlignment="Center" Margin="5,0,0,0" FontSize="16" x:Name="SndStatus"/>
+                        <TextBlock FontFamily="{x:Bind ViewModel.IconFontFamily}" Text="&#xEBAA;" VerticalAlignment="Center" Margin="{x:Bind ViewModel.BatteryStatusMargin}" FontSize="16" x:Name="BattStatus" Visibility="Visible"/>
+                        <TextBlock FontFamily="{x:Bind ViewModel.IconFontFamily}" Text="&#xE839;" VerticalAlignment="Center" Margin="{x:Bind ViewModel.NetworkStatusMargin}" FontSize="16" x:Name="WifiStatus"/>
+                        <TextBlock FontFamily="{x:Bind ViewModel.IconFontFamily}" Text="&#xE995;" VerticalAlignment="Center" Margin="{x:Bind ViewModel.SoundStatusMargin}" FontSize="16" x:Name="SndStatus"/>
                     </StackPanel>
                 </ToggleButton.Content>
             </ToggleButton>
             <!--<Border x:Name="RightClockSeperator" Height="28" VerticalAlignment="Center" Width="1" Opacity="0.3" CornerRadius="1"/>-->
-            <ToggleButton HorizontalAlignment="Right" VerticalAlignment="Center" Height="40" Margin="0,0,5,0" Background="Transparent" BorderBrush="Transparent" x:Name="ActionCenter" Click="ActionCenter_Click" ToolTipService.ToolTip="Notification Center">
+            <ToggleButton Command="{x:Bind ViewModel.ActionCenterCheckedCommand}" HorizontalAlignment="Right" VerticalAlignment="Center" Height="40" Margin="0,0,5,0" Background="Transparent" BorderBrush="Transparent" x:Name="ActionCenter" ToolTipService.ToolTip="Notification Center">
                 <ToggleButton.Content>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock FontSize="14" VerticalAlignment="Center" x:Name="TimeText" Margin="-4,1,0,0"/>
                         <TextBlock Text="" VerticalAlignment="Center" Margin="5" FontSize="16"/>
                         <TextBlock FontSize="14" VerticalAlignment="Center" x:Name="DateText" Margin="0,1,5,0"/>
                         <Grid>
-                            <TextBlock Text="&#xE7E7;" FontFamily="Segoe MDL2 Assets" FontSize="16" x:Name="NotifText" Margin="3,7,-2,0"/>
+                            <TextBlock Text="&#xE7E7;" FontFamily="{x:Bind ViewModel.IconFontFamily}" FontSize="16" x:Name="NotifText" Margin="3,7,-2,0"/>
                             <Ellipse Fill="{ThemeResource SystemAccentColor}" Height="9" Width="9" Margin="12,0,-8,13" x:Name="NotifCircle" Visibility="Collapsed"/>
                         </Grid>
                     </StackPanel>

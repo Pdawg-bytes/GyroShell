@@ -18,7 +18,8 @@ namespace GyroShell.Controls
 {
     public sealed partial class SettingsWindow : Window
     {
-        private ISettingsService m_appSettings;
+        private readonly ISettingsService m_appSettings;
+        private readonly IEnvironmentInfoService m_envService;
 
         public SettingsWindow()
         {
@@ -27,6 +28,7 @@ namespace GyroShell.Controls
             RootGrid.DataContext = App.ServiceProvider.GetService<SettingsWindowViewModel>();
 
             m_appSettings = App.ServiceProvider.GetRequiredService<ISettingsService>();
+            m_envService = App.ServiceProvider.GetRequiredService<IEnvironmentInfoService>();
 
             // Window Handling
             IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
@@ -130,7 +132,7 @@ namespace GyroShell.Controls
             this.Activated -= Window_Activated;
             m_configurationSource = null;
 
-            DefaultTaskbar.SettingInstances = 0;
+            m_envService.SettingsInstances = 0;
         }
 
         private void Window_ThemeChanged(FrameworkElement sender, object args)
