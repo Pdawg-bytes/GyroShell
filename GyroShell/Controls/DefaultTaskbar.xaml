@@ -19,13 +19,13 @@
         <Frame Visibility="Collapsed" Background="{ThemeResource SystemControlAcrylicWindowBrush}">
             <MenuFlyout x:Name="StartFlyout" AreOpenCloseAnimationsEnabled="True" ShouldConstrainToRootBounds="False">
                 <MenuFlyoutItem Text="Shell Settings" Command="{x:Bind ViewModel.StartFlyoutCommands.OpenShellSettingsCommand}" Tag="ShellSettings"/>
-                <MenuFlyoutItem Text="Restart GyroShell" Tag="RestartGyroShell" Click="StartFlyout_Click" />
+                <MenuFlyoutItem Text="Restart GyroShell" Command="{x:Bind ViewModel.StartFlyoutCommands.RestartGyroShellCommand}" Tag="RestartGyroShell"/>
                 <MenuFlyoutItem Text="Exit GyroShell" Click="StartFlyout_Click" Tag="ExitGyroShell"/>
                 <MenuFlyoutSeparator/>
-                <MenuFlyoutItem Text="Task Manager" Tag="TaskMgr" Click="StartFlyout_Click"/>
-                <MenuFlyoutItem Text="Settings" Tag="Settings" Click="StartFlyout_Click"/>
-                <MenuFlyoutItem Text="File Explorer" Tag="FileExp" Click="StartFlyout_Click"/>
-                <MenuFlyoutItem Text="Run" Tag="Run" Click="StartFlyout_Click"/>
+                <MenuFlyoutItem Text="Task Manager" Command="{x:Bind ViewModel.StartFlyoutCommands.LaunchTaskManagerCommand}" Tag="TaskMgr"/>
+                <MenuFlyoutItem Text="Settings" Command="{x:Bind ViewModel.StartFlyoutCommands.LaunchWindowsSettingsCommand}" Tag="Settings"/>
+                <MenuFlyoutItem Text="File Explorer" Command="{x:Bind ViewModel.StartFlyoutCommands.LaunchWindowsExplorerCommand}" Tag="FileExp"/>
+                <MenuFlyoutItem Text="Run" Command="{x:Bind ViewModel.StartFlyoutCommands.LaunchRunDialogCommand}" Tag="Run"/>
                 <MenuFlyoutSeparator/>
                 <MenuFlyoutSubItem Text="Shut down or sign out">
                     <MenuFlyoutItem Text="Sign out" Tag="SignOut" Click="StartFlyout_Click"/>

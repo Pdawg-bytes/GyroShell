@@ -284,32 +284,9 @@ namespace GyroShell.Controls
 
                 switch (shellOption)
                 {
-                    case "RestartGyroShell":
-                        try
-                        {
-                            Process.Start(new ProcessStartInfo { FileName = Process.GetCurrentProcess().MainModule.FileName, UseShellExecute = true });
-                            Application.Current.Exit();
-                        }
-                        catch (Exception ex)
-                        {
-                            Debug.WriteLine(ex);
-                        }
-                        break;
                     case "ExitGyroShell":
                         DestroyHooks();
                         App.Current.Exit();
-                        break;
-                    case "TaskMgr":
-                        Process.Start(ProcessStart.ProcessStartEx("taskmgr.exe", false, true));
-                        break;
-                    case "Settings":
-                        await Launcher.LaunchUriAsync(new Uri("ms-settings:"));
-                        break;
-                    case "FileExp":
-                        Process.Start("explorer.exe");
-                        break;
-                    case "Run":
-                        Process.Start("explorer.exe", "shell:::{2559a1f3-21d7-11d4-bdaf-00c04f60b9f0}");
                         break;
                     case "Desktop":
                         foreach(IntPtr handle in indexedWindows)
