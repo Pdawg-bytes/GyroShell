@@ -1,7 +1,7 @@
 ﻿using GyroShell.Library.Services.Managers;
 using System;
 using System.Runtime.InteropServices;
-using static GyroShell.Helpers.Win32.Win32Interop;
+using static GyroShell.Library.Helpers.Win32.Win32Interop;
 
 namespace GyroShell.Services.Managers
 {

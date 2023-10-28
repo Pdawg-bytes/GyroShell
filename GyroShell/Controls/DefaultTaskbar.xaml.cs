@@ -23,8 +23,8 @@ using Windows.UI.Core;
 using Windows.UI.Notifications;
 using Windows.UI.Notifications.Management;
 
-using static GyroShell.Helpers.Win32.Win32Interop;
-using static GyroShell.Helpers.Win32.WindowChecks;
+using static GyroShell.Library.Helpers.Win32.Win32Interop;
+using static GyroShell.Library.Helpers.Win32.WindowChecks;
 using BatteryReport = GyroShell.Library.Models.Hardware.BatteryReport;
 using GyroShell.Library.Models.InternalData;
 using GyroShell.Library.ViewModels;
@@ -270,13 +270,12 @@ namespace GyroShell.Controls
         }
         #endregion
 
-        #region Bar Events
         private void StartButton_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
             StartFlyout.ShowAt(StartButton);
         }
 
-        private async void StartFlyout_Click(object sender, RoutedEventArgs e)
+        private void StartFlyout_Click(object sender, RoutedEventArgs e)
         {
             if (sender is MenuFlyoutItem selectedItem)
             {
@@ -289,7 +288,7 @@ namespace GyroShell.Controls
                         App.Current.Exit();
                         break;
                     case "Desktop":
-                        foreach(IntPtr handle in indexedWindows)
+                        foreach (IntPtr handle in indexedWindows)
                         {
                             ShowWindow(handle, SW_MINIMIZE);
                         }
@@ -300,31 +299,14 @@ namespace GyroShell.Controls
                     case "Sleep":
                         SetSuspendState(false, false, false);
                         break;
-                    case "Shutdown":
-                        Process.Start(ProcessStart.ProcessStartEx("shutdown /s /t 00", false, true));
-                        break;
-                    case "Restart":
-                        Process.Start(ProcessStart.ProcessStartEx("shutdown /r /t 00", false, true));
-                        break;
                 }
             }
-            else
-            {
-                //throw new Exception("MenuFlyout sender variable error");
-            }
-        }
-
-        private async void SysTray_Click(object sender, RoutedEventArgs e)
-        {
-            throw new NotImplementedException("Systray not ready yet.");
-            //await TaskbarManager.ShowSysTray(); /* Does nothing, no action lol*/
         }
 
         private void MainShellGrid_Loaded(object sender, RoutedEventArgs e)
         {
             App.startupScreen.Close();
         }
-        #endregion
 
         #region Notifications
         UserNotificationListener notifListener = UserNotificationListener.Current;

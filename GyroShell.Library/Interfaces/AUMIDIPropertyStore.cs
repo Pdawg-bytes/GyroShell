@@ -5,16 +5,16 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-using static GyroShell.Helpers.Win32.Win32Interop;
+using static GyroShell.Library.Helpers.Win32.Win32Interop;
 
-namespace GyroShell.Interfaces
+namespace GyroShell.Library.Interfaces
 {
-    internal class AUMIDIPropertyStore
+    public class AUMIDIPropertyStore
     {
         [ComImport]
         [Guid("886D8EEB-8CF2-4446-8D02-CDBA1DBDCF99")]
         [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-        internal interface IPropertyStore
+        public interface IPropertyStore
         {
             void GetCount(out uint propCount);
 

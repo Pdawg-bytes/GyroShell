@@ -2,7 +2,7 @@
 using System;
 using System.IO;
 using Windows.ApplicationModel;
-using static GyroShell.Helpers.Win32.Win32Interop;
+using static GyroShell.Library.Helpers.Win32.Win32Interop;
 
 namespace GyroShell.Services.Environment
 {

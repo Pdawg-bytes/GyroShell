@@ -1,4 +1,4 @@
-﻿using GyroShell.Library.Models.InternalData;
+﻿using GyroShell.Library.Models.publicData;
 using System;
 using System.Collections.Generic;
 using System.Linq;

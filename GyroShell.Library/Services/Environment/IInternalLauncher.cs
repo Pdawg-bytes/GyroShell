@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GyroShell.Library.Services.Environment
 {
-    public interface IInternalLauncher
+    public interface IpublicLauncher
     {
         /// <summary>
         /// Launches the shell settings.
@@ -19,7 +19,7 @@ namespace GyroShell.Library.Services.Environment
         public void LaunchNewShellInstance();
 
         /// <summary>
-        /// An abstraction of GyroShell's internal ProcessStartEx method.
+        /// An abstraction of GyroShell's public ProcessStartEx method.
         /// </summary>
         /// <param name="procName">The name of the process to launch.</param>
         /// <param name="createNoWindow">Create no window flag.</param>

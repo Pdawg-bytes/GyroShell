@@ -9,8 +9,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Windows.ApplicationModel;
 using Windows.Management.Deployment;
-using static GyroShell.Helpers.Win32.Win32Interop;
-using static GyroShell.Interfaces.AUMIDIPropertyStore;
+using static GyroShell.Library.Helpers.Win32.Win32Interop;
+using static GyroShell.Library.Interfaces.AUMIDIPropertyStore;
 
 namespace GyroShell.Services.Helpers
 {

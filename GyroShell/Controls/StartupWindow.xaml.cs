@@ -12,7 +12,7 @@ using System.Timers;
 using System.Threading;
 using System.Diagnostics;
 
-using static GyroShell.Helpers.Win32.Win32Interop;
+using static GyroShell.Library.Helpers.Win32.Win32Interop;
 using GyroShell.Views;
 
 using AppWindow = Microsoft.UI.Windowing.AppWindow;

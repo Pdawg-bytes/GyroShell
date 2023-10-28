@@ -18,7 +18,7 @@ namespace GyroShell.Library.ViewModels
     {
         private readonly IEnvironmentInfoService m_envService;
         private readonly ISettingsService m_appSettings;
-        private readonly IInternalLauncher m_internalLauncher;
+        private readonly IpublicLauncher m_publicLauncher;
 
         private readonly IAppHelperService m_appHelper;
         private readonly IBitmapHelperService m_bmpHelper;
@@ -40,7 +40,7 @@ namespace GyroShell.Library.ViewModels
             INetworkService netService,
             IBatteryService powerService,
             ISoundService soundService,
-            IInternalLauncher internalLauncher)
+            IpublicLauncher publicLauncher)
         {
             m_envService = envService;
             m_appSettings = appSettings;
@@ -50,9 +50,9 @@ namespace GyroShell.Library.ViewModels
             m_netService = netService;
             m_powerService = powerService;
             m_soundService = soundService;
-            m_internalLauncher = internalLauncher;
+            m_publicLauncher = publicLauncher;
 
-            StartFlyoutCommands = new StartFlyoutCommands(m_envService, m_internalLauncher);
+            StartFlyoutCommands = new StartFlyoutCommands(m_envService, m_publicLauncher);
         }
 
         public FontFamily IconFontFamily => m_appSettings.IconStyle switch
@@ -119,6 +119,13 @@ namespace GyroShell.Library.ViewModels
         public void ActionCenterChecked()
         {
             m_tbManager.ToggleActionCenter();
+        }
+
+        [RelayCommand]
+        public void SystemTrayClicked()
+        {
+            throw new NotImplementedException("Systray not ready yet.");
+            //await TaskbarManager.ShowSysTray(); /* Does nothing, no action */
         }
     }
 }

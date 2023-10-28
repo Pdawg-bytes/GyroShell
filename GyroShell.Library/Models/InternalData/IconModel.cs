@@ -3,7 +3,7 @@ using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace GyroShell.Library.Models.InternalData
+namespace GyroShell.Library.Models.publicData
 {
     public class IconModel : INotifyPropertyChanged
     {

@@ -6,7 +6,7 @@
     public interface ITaskbarManagerService
     {
         /// <summary>
-        /// Initializes the service's internal components.
+        /// Initializes the service's public components.
         /// </summary>
         public void Initialize();
 

@@ -16,8 +16,8 @@ using Windows.Graphics;
 using Windows.UI;
 using WinRT;
 
-using static GyroShell.Helpers.Win32.Win32Interop;
-using static GyroShell.Helpers.Win32.WindowChecks;
+using static GyroShell.Library.Helpers.Win32.Win32Interop;
+using static GyroShell.Library.Helpers.Win32.WindowChecks;
 
 using AppWindow = Microsoft.UI.Windowing.AppWindow;
 

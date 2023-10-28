@@ -9,7 +9,7 @@
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
                 <!-- Other merged dictionaries here -->
             </ResourceDictionary.MergedDictionaries>
-            <!-- Other app resources here -->
+            
             <SolidColorBrush x:Key="WindowCaptionBackground">Transparent</SolidColorBrush>
             <SolidColorBrush x:Key="WindowCaptionBackgroundDisabled">Transparent</SolidColorBrush>
             <SolidColorBrush x:Key="WindowCaptionForeground">Gray</SolidColorBrush>
@@ -19,6 +19,76 @@
             <SolidColorBrush x:Key="GridViewItemPointerOverBackgroundThemeBrush" Color="Transparent"></SolidColorBrush>
             <SolidColorBrush x:Key="GridViewItemSelectedPointerOverBackgroundThemeBrush" Color="Transparent"></SolidColorBrush>
             <SolidColorBrush x:Key="GridViewItemSelectedPointerOverBorderThemeBrush" Color="Transparent"></SolidColorBrush>
+
+            <Style TargetType="GridViewItem" x:Key="DefaultTaskbarIconStyle">
+                <Setter Property="FocusVisualMargin" Value="0" />
+                <Setter Property="IsHitTestVisible" Value="True"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="GridViewItem">
+                            <Grid Background="{TemplateBinding Background}">
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup x:Name="CommonStates">
+                                        <VisualState x:Name="Normal">
+                                            <Storyboard>
+                                                <ColorAnimation Duration="0:0:0.15" To="#00707070" Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="(Control.Background).(SolidColorBrush.Color)">
+                                                    <ColorAnimation.EasingFunction>
+                                                        <CubicEase EasingMode="EaseInOut"/>
+                                                    </ColorAnimation.EasingFunction>
+                                                </ColorAnimation>
+                                                <ColorAnimation Duration="0:0:0.15" To="Gray" Storyboard.TargetName="HighlightBorder" Storyboard.TargetProperty="(Control.Background).(SolidColorBrush.Color)">
+                                                    <ColorAnimation.EasingFunction>
+                                                        <CubicEase EasingMode="EaseInOut"/>
+                                                    </ColorAnimation.EasingFunction>
+                                                </ColorAnimation>
+                                                <DoubleAnimation Duration="0:0:0.2" To="1" Storyboard.TargetName="HighlightBorderTransform" Storyboard.TargetProperty="ScaleX">
+                                                    <DoubleAnimation.EasingFunction>
+                                                        <CubicEase EasingMode="EaseInOut"/>
+                                                    </DoubleAnimation.EasingFunction>
+                                                </DoubleAnimation>
+                                            </Storyboard>
+                                        </VisualState>
+                                        <VisualState x:Name="PointerOver">
+                                            <Storyboard>
+                                                <ColorAnimation Duration="0:0:0.15" From="#00525252" To="#42525252" Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="(Control.Background).(SolidColorBrush.Color)">
+                                                    <ColorAnimation.EasingFunction>
+                                                        <CubicEase EasingMode="EaseInOut"/>
+                                                    </ColorAnimation.EasingFunction>
+                                                </ColorAnimation>
+                                            </Storyboard>
+                                        </VisualState>
+                                        <VisualState x:Name="Pressed">
+                                            <Storyboard>
+                                                <ColorAnimation Duration="0:0:0.15" From="#00707070" To="#42707070" Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="(Control.Background).(SolidColorBrush.Color)">
+                                                    <ColorAnimation.EasingFunction>
+                                                        <CubicEase EasingMode="EaseInOut"/>
+                                                    </ColorAnimation.EasingFunction>
+                                                </ColorAnimation>
+                                                <ColorAnimation Duration="0:0:0.15" From="Gray" To="{StaticResource SystemAccentColorLight2}" Storyboard.TargetName="HighlightBorder" Storyboard.TargetProperty="(Control.Background).(SolidColorBrush.Color)">
+                                                    <ColorAnimation.EasingFunction>
+                                                        <CubicEase EasingMode="EaseInOut"/>
+                                                    </ColorAnimation.EasingFunction>
+                                                </ColorAnimation>
+                                                <DoubleAnimation Duration="0:0:0.3" From="1" To="2.2" Storyboard.TargetName="HighlightBorderTransform" Storyboard.TargetProperty="ScaleX">
+                                                    <DoubleAnimation.EasingFunction>
+                                                        <CubicEase EasingMode="EaseInOut"/>
+                                                    </DoubleAnimation.EasingFunction>
+                                                </DoubleAnimation>
+                                            </Storyboard>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+                                <ContentPresenter x:Name="ContentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Background="Transparent" CornerRadius="4" Margin="0,3,0,0"/>
+                                <Border x:Name="HighlightBorder" Width="8" Height="3" CornerRadius="1" Background="Gray" VerticalAlignment="Bottom" Margin="0,2,0,0" HorizontalAlignment="Center" RenderTransformOrigin="0.45,0">
+                                    <Border.RenderTransform>
+                                        <ScaleTransform x:Name="HighlightBorderTransform" ScaleX="1" ScaleY="1"/>
+                                    </Border.RenderTransform>
+                                </Border>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
