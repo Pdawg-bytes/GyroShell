@@ -223,50 +223,37 @@ namespace GyroShell.Controls
         private void AudioCheck()
         {
             currentVolume = m_soundService.Volume;
+            string statusIcon = "\uEA85";
 
             if (currentVolume == 0 || currentVolume == -1)
             {
-                DispatcherQueue.TryEnqueue((Microsoft.UI.Dispatching.DispatcherQueuePriority)CoreDispatcherPriority.Normal, () =>
-                {
-                    SndStatus.Text = "\uE992";
-                });
-            }
-            else if (currentVolume <= 33)
-            {
-                DispatcherQueue.TryEnqueue((Microsoft.UI.Dispatching.DispatcherQueuePriority)CoreDispatcherPriority.Normal, () =>
-                {
-                    SndStatus.Text = "\uE993";
-                });
-            }
-            else if (currentVolume <= 66)
-            {
-                DispatcherQueue.TryEnqueue((Microsoft.UI.Dispatching.DispatcherQueuePriority)CoreDispatcherPriority.Normal, () =>
-                {
-                    SndStatus.Text = "\uE994";
-                });
-            }
-            else if (currentVolume <= 100)
-            {
-                DispatcherQueue.TryEnqueue((Microsoft.UI.Dispatching.DispatcherQueuePriority)CoreDispatcherPriority.Normal, () =>
-                {
-                    SndStatus.Text = "\uE995";
-                });
+                statusIcon = "\uE992";
             }
             else
             {
-                DispatcherQueue.TryEnqueue((Microsoft.UI.Dispatching.DispatcherQueuePriority)CoreDispatcherPriority.Normal, () =>
+                switch (currentVolume)
                 {
-                    SndStatus.Text = "\uEA85";
-                });
+                    case int volume when volume <= 33:
+                        statusIcon = "\uE993";
+                        break;
+                    case int volume when volume <= 66:
+                        statusIcon = "\uE994";
+                        break;
+                    case int volume when volume <= 100:
+                        statusIcon = "\uE995";
+                        break;
+                }
             }
 
             if (m_soundService.IsMuted)
             {
-                DispatcherQueue.TryEnqueue((Microsoft.UI.Dispatching.DispatcherQueuePriority)CoreDispatcherPriority.Normal, () =>
-                {
-                    SndStatus.Text = "\uE198";
-                });
+                statusIcon = "\uE198";
             }
+
+            DispatcherQueue.TryEnqueue((Microsoft.UI.Dispatching.DispatcherQueuePriority)CoreDispatcherPriority.Normal, () =>
+            {
+                SndStatus.Text = statusIcon;
+            });
         }
         #endregion
 
