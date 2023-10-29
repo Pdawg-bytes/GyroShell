@@ -1,9 +1,10 @@
 ﻿using GyroShell.Controls;
 using GyroShell.Helpers;
-using GyroShell.Library.Services.Environment;
 using Microsoft.UI.Xaml;
 using System;
 using System.Diagnostics;
+
+using GyroShell.Library.Services.Environment;
 
 namespace GyroShell.Services.Environment
 {

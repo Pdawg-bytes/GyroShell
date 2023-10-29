@@ -9,7 +9,7 @@ using static GyroShell.Library.Helpers.Win32.Win32Interop;
 
 namespace GyroShell.Library.Interfaces
 {
-    public class AUMIDIPropertyStore
+    public class IPropertyStoreAUMID
     {
         [ComImport]
         [Guid("886D8EEB-8CF2-4446-8D02-CDBA1DBDCF99")]

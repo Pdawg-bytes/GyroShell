@@ -12,13 +12,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using static GyroShell.Library.Helpers.Win32.Win32Interop;
+
 namespace GyroShell.Library.ViewModels
 {
     public partial class DefaultTaskbarViewModel
     {
         private readonly IEnvironmentInfoService m_envService;
         private readonly ISettingsService m_appSettings;
-        private readonly IpublicLauncher m_publicLauncher;
+        private readonly IInternalLauncher m_publicLauncher;
 
         private readonly IAppHelperService m_appHelper;
         private readonly IBitmapHelperService m_bmpHelper;
@@ -40,7 +42,7 @@ namespace GyroShell.Library.ViewModels
             INetworkService netService,
             IBatteryService powerService,
             ISoundService soundService,
-            IpublicLauncher publicLauncher)
+            IInternalLauncher publicLauncher)
         {
             m_envService = envService;
             m_appSettings = appSettings;
@@ -52,7 +54,7 @@ namespace GyroShell.Library.ViewModels
             m_soundService = soundService;
             m_publicLauncher = publicLauncher;
 
-            StartFlyoutCommands = new StartFlyoutCommands(m_envService, m_publicLauncher);
+            StartFlyoutCommands = new StartFlyoutCommands(m_envService, m_publicLauncher, m_tbManager);
         }
 
         public FontFamily IconFontFamily => m_appSettings.IconStyle switch

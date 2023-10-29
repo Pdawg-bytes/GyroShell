@@ -10,7 +10,7 @@ using System.Text;
 using Windows.ApplicationModel;
 using Windows.Management.Deployment;
 using static GyroShell.Library.Helpers.Win32.Win32Interop;
-using static GyroShell.Library.Interfaces.AUMIDIPropertyStore;
+using static GyroShell.Library.Interfaces.IPropertyStoreAUMID;
 
 namespace GyroShell.Services.Helpers
 {

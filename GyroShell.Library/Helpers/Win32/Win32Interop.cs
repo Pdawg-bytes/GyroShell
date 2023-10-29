@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 
 using GyroShell.Library.Interfaces;
+using static GyroShell.Library.Interfaces.IPropertyStoreAUMID;
 
 namespace GyroShell.Library.Helpers.Win32
 {
@@ -25,6 +26,8 @@ namespace GyroShell.Library.Helpers.Win32
             public int right;
             public int bottom;
         }
+
+        public const int WM_COMMAND = 0x0111;
 
         public const int SW_RESTORE = 9;
         public const int SW_MINIMIZE = 6;
@@ -194,7 +197,7 @@ namespace GyroShell.Library.Helpers.Win32
         public static extern IntPtr GetForegroundWindow();
 
         [DllImport("ole32.dll")]
-        public static extern int PropVariantClear(ref Interfaces.AUMIDIPropertyStore.PropVariant pvar);
+        public static extern int PropVariantClear(ref Interfaces.IPropertyStoreAUMID.PropVariant pvar);
 
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern Int32 GetApplicationUserModelId(IntPtr hProcess, ref UInt32 AppModelIDLength, [MarshalAs(UnmanagedType.LPWStr)] StringBuilder sbAppUserModelID);

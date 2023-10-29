@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GyroShell.Library.Services.Environment
 {
-    public interface IpublicLauncher
+    public interface IInternalLauncher
     {
         /// <summary>
         /// Launches the shell settings.

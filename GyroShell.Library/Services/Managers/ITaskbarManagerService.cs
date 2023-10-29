@@ -1,4 +1,6 @@
-﻿namespace GyroShell.Library.Services.Managers
+﻿using System;
+
+namespace GyroShell.Library.Services.Managers
 {
     /// <summary>
     /// Defines a service interface for managing the Windows taskbar.
@@ -47,5 +49,20 @@
         /// Notifies winlogon that the shell has already loaded, hiding the login screen.
         /// </summary>
         public void NotifyWinlogonShowShell();
+
+        /// <summary>
+        /// The handle of the primary taskbar.
+        /// </summary>
+        public IntPtr m_hTaskBar { get; set; }
+
+        /// <summary>
+        /// The handle of the secondary, tertiary, etc taskbar.
+        /// </summary>
+        public IntPtr m_hMultiTaskBar { get; set; }
+
+        /// <summary>
+        /// The handle of the start menu.
+        /// </summary>
+        public IntPtr m_hStartMenu { get; set; }
     }
 }

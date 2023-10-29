@@ -7,7 +7,7 @@ using Windows.Storage.Pickers;
 using System;
 using Windows.Storage;
 
-using GyroShell.Library.Models.publicData;
+using GyroShell.Library.Models.InternalData;
 using GyroShell.Library.Services.Environment;
 using GyroShell.Library.Services.Managers;
 

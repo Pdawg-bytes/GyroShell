@@ -293,12 +293,6 @@ namespace GyroShell.Controls
                             ShowWindow(handle, SW_MINIMIZE);
                         }
                         break;
-                    case "SignOut":
-                        ExitWindowsEx(EWX_LOGOFF, 0);
-                        break;
-                    case "Sleep":
-                        SetSuspendState(false, false, false);
-                        break;
                 }
             }
         }

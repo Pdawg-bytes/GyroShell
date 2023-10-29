@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace GyroShell.Library.Models.publicData
+namespace GyroShell.Library.Models.InternalData
 {
     public class ModuleModel : INotifyPropertyChanged
     {

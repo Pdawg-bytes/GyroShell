@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using GyroShell.Library.Services.Environment;
+using GyroShell.Library.Services.Managers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,17 +9,21 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.System;
 
+using static GyroShell.Library.Helpers.Win32.Win32Interop;
+
 namespace GyroShell.Library.Commands
 {
     public partial class StartFlyoutCommands
     {
         private readonly IEnvironmentInfoService m_envService;
-        private readonly IpublicLauncher m_publicLauncher;
+        private readonly IInternalLauncher m_publicLauncher;
+        private readonly ITaskbarManagerService m_tbService;
 
-        public StartFlyoutCommands(IEnvironmentInfoService envService, IpublicLauncher publicLauncher)
+        public StartFlyoutCommands(IEnvironmentInfoService envService, IInternalLauncher publicLauncher, ITaskbarManagerService tbManager)
         {
             m_envService = envService;
             m_publicLauncher = publicLauncher;
+            m_tbService = tbManager;
         }
 
         [RelayCommand]
@@ -65,13 +70,13 @@ namespace GyroShell.Library.Commands
         [RelayCommand]
         public void SignOutWindows()
         {
-            // TODO: Implement
+            ExitWindowsEx(EWX_LOGOFF, 0);
         }
 
         [RelayCommand]
         public void SleepWindows()
         {
-            // TODO: Implement
+            SetSuspendState(false, false, false);
         }
 
         [RelayCommand]
@@ -89,7 +94,7 @@ namespace GyroShell.Library.Commands
         [RelayCommand]
         public void ShowDesktop()
         {
-            // TODO: Implement
+            // TODO: Implement.
         }
     }
 }

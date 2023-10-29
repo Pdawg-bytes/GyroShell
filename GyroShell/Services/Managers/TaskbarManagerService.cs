@@ -9,9 +9,9 @@ namespace GyroShell.Services.Managers
     {
         private const uint EVENT_MODIFY_STATE = 0x0002;
 
-        private IntPtr m_hTaskBar;
-        private IntPtr m_hMultiTaskBar;
-        private IntPtr m_hStartMenu;
+        public IntPtr m_hTaskBar { get; set; }
+        public IntPtr m_hMultiTaskBar { get; set; }
+        public IntPtr m_hStartMenu { get; set; }
 
         public void Initialize()
         {
