@@ -3,7 +3,7 @@ using Windows.Storage;
 
 namespace GyroShell.Services.Environment
 {
-    internal class SettingsService : ISettingsService
+    public class SettingsService : ISettingsService
     {
         private readonly ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
 

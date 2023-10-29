@@ -1,5 +1,7 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using GyroShell.Library.Commands;
+using GyroShell.Library.Models.Hardware;
 using GyroShell.Library.Services.Environment;
 using GyroShell.Library.Services.Hardware;
 using GyroShell.Library.Services.Helpers;
@@ -7,20 +9,18 @@ using GyroShell.Library.Services.Managers;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+using Windows.UI.Core;
 using static GyroShell.Library.Helpers.Win32.Win32Interop;
+using GyroShell.Library.Constants;
 
 namespace GyroShell.Library.ViewModels
 {
-    public partial class DefaultTaskbarViewModel
+    public partial class DefaultTaskbarViewModel : ObservableObject, IDisposable
     {
         private readonly IEnvironmentInfoService m_envService;
         private readonly ISettingsService m_appSettings;
         private readonly IInternalLauncher m_publicLauncher;
+        private readonly IDispatcherService m_dispatcherService;
 
         private readonly IAppHelperService m_appHelper;
         private readonly IBitmapHelperService m_bmpHelper;
@@ -42,7 +42,8 @@ namespace GyroShell.Library.ViewModels
             INetworkService netService,
             IBatteryService powerService,
             ISoundService soundService,
-            IInternalLauncher publicLauncher)
+            IInternalLauncher publicLauncher,
+            IDispatcherService dispatcherService)
         {
             m_envService = envService;
             m_appSettings = appSettings;
@@ -53,8 +54,18 @@ namespace GyroShell.Library.ViewModels
             m_powerService = powerService;
             m_soundService = soundService;
             m_publicLauncher = publicLauncher;
+            m_dispatcherService = dispatcherService;
 
             StartFlyoutCommands = new StartFlyoutCommands(m_envService, m_publicLauncher, m_tbManager);
+
+            m_soundService.OnVolumeChanged += SoundService_OnVolumeChanged;
+            AudioCheck();
+
+            m_powerService.BatteryStatusChanged += BatteryService_BatteryStatusChanged;
+            DetectBatteryPresence();
+
+            UpdateNetworkStatus();
+            m_netService.InternetStatusChanged += NetworkService_InternetStatusChanged;
         }
 
         public FontFamily IconFontFamily => m_appSettings.IconStyle switch
@@ -128,6 +139,156 @@ namespace GyroShell.Library.ViewModels
         {
             throw new NotImplementedException("Systray not ready yet.");
             //await TaskbarManager.ShowSysTray(); /* Does nothing, no action */
+        }
+
+
+        #region Audio
+        [ObservableProperty]
+        private string soundStatusText;
+
+        [ObservableProperty]
+        private Visibility soundBackIconVisibility;
+
+        private void SoundService_OnVolumeChanged(object sender, EventArgs e)
+        {
+            AudioCheck();
+        }
+        private void AudioCheck()
+        {
+            int currentVolume = m_soundService.Volume;
+            string statusTextBuf = "\uEA85";
+
+            if (currentVolume == 0 || currentVolume == -1)
+            {
+                statusTextBuf = "\uE992";
+            }
+            else
+            {
+                switch (currentVolume)
+                {
+                    case int volume when volume <= 33:
+                        statusTextBuf = "\uE993";
+                        break;
+                    case int volume when volume <= 66:
+                        statusTextBuf = "\uE994";
+                        break;
+                    case int volume when volume <= 100:
+                        statusTextBuf = "\uE995";
+                        break;
+                }
+            }
+
+            if (m_soundService.IsMuted)
+            {
+                statusTextBuf = "\uE198";
+            }
+
+            m_dispatcherService.DispatcherQueue.TryEnqueue(() =>
+            {
+                SoundStatusText = statusTextBuf;
+                SoundBackIconVisibility = (statusTextBuf == "\uE198") ? Visibility.Collapsed : Visibility.Visible;
+            });
+        }
+        #endregion
+
+
+        #region Battery
+        [ObservableProperty]
+        private string batteryStatusCharacter;
+
+        [ObservableProperty]
+        private Visibility battStatusVisibility;
+
+        private void BatteryService_BatteryStatusChanged(object sender, EventArgs e)
+        {
+            m_dispatcherService.DispatcherQueue.TryEnqueue(() =>
+            {
+                AggregateBattery();
+            });
+        }
+        private void DetectBatteryPresence()
+        {
+            BatteryReport report = m_powerService.GetStatusReport();
+            BatteryPowerStatus status = report.PowerStatus;
+
+            if (status == BatteryPowerStatus.NotInstalled)
+            {
+                BattStatusVisibility = Visibility.Collapsed;
+            }
+            else
+            {
+                BattStatusVisibility = Visibility.Visible;
+                AggregateBattery();
+            }
+        }
+        private void AggregateBattery()
+        {
+            BatteryReport report = m_powerService.GetStatusReport();
+            double battLevel = report.ChargePercentage;
+            BatteryPowerStatus status = report.PowerStatus;
+            if (status == BatteryPowerStatus.Charging || status == BatteryPowerStatus.Idle)
+            {
+                int indexCharge = (int)Math.Floor(battLevel / 10);
+                BatteryStatusCharacter = UIConstants.BatteryIconsCharge[indexCharge];
+            }
+            else
+            {
+                int indexDischarge = (int)Math.Floor(battLevel / 10);
+                BatteryStatusCharacter = UIConstants.BatteryIcons[indexDischarge];
+            }
+        }
+        #endregion
+
+
+        #region Internet
+        [ObservableProperty]
+        private string networkStatusCharacter;
+
+        private void NetworkService_InternetStatusChanged(object sender, EventArgs e)
+        {
+            UpdateNetworkStatus();
+        }
+        private void UpdateNetworkStatus()
+        {
+            string statusTextBuf = "\uE774";
+            if (m_netService.IsInternetAvailable)
+            {
+                switch (m_netService.InternetType)
+                {
+                    case InternetConnection.Wired:
+                        statusTextBuf = "\uE839";
+                        OnPropertyChanged(nameof(NetworkStatusMargin));
+                        break;
+                    case InternetConnection.Wireless:
+                        statusTextBuf = UIConstants.WiFiIcons[m_netService.SignalStrength];
+                        break;
+                    case InternetConnection.Data:
+                        statusTextBuf = UIConstants.DataIcons[m_netService.SignalStrength];
+                        break;
+                    case InternetConnection.Unknown:
+                    default:
+                        statusTextBuf = "\uE774";
+                        break;
+                }
+            }
+            else
+            {
+                statusTextBuf = "\uEB55";
+            }
+
+            m_dispatcherService.DispatcherQueue.TryEnqueue(() =>
+            {
+                NetworkStatusCharacter = statusTextBuf;
+            });
+        }
+        #endregion
+
+
+        public void Dispose()
+        {
+            m_soundService.OnVolumeChanged -= SoundService_OnVolumeChanged;
+            m_powerService.BatteryStatusChanged -= BatteryService_BatteryStatusChanged;
+            m_netService.InternetStatusChanged -= NetworkService_InternetStatusChanged;
         }
     }
 }

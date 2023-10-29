@@ -35,9 +35,6 @@ namespace GyroShell.Controls
     {
         public static string timeType = "t";
 
-        private int currentVolume;
-        private bool reportRequested = false;
-
         private IEnvironmentInfoService m_envService;
         private ISettingsService m_appSettings;
 
@@ -77,16 +74,8 @@ namespace GyroShell.Controls
 
             LoadSettings();
             TimeAndDate();
-            DetectBatteryPresence();
             InitNotifcation();
-            UpdateNetworkStatus();
 
-            m_netService.InternetStatusChanged += NetworkService_InternetStatusChanged;
-            m_soundService.OnVolumeChanged += SoundService_OnVolumeChanged;
-
-            AudioCheck();
-
-            m_powerService.BatteryStatusChanged += BatteryService_BatteryStatusChanged;
 
             BarBorder.Background = new SolidColorBrush(Color.FromArgb(255, 66, 63, 74));
 
@@ -113,147 +102,6 @@ namespace GyroShell.Controls
         {
             TimeText.Text = DateTime.Now.ToString(timeType);
             DateText.Text = DateTime.Now.ToString("M/d/yyyy");
-        }
-        #endregion
-
-        #region Internet
-        private void NetworkService_InternetStatusChanged(object sender, EventArgs e)
-        {
-            DispatcherQueue.TryEnqueue((Microsoft.UI.Dispatching.DispatcherQueuePriority)CoreDispatcherPriority.Normal, () =>
-            {
-                UpdateNetworkStatus();
-            });
-        }
-
-        private string[] wifiIcons = { "\uE871", "\uE872", "\uE873", "\uE874", "\uE701" };
-        private string[] dataIcons = { "\uEC37", "\uEC38", "\uEC39", "\uEC3A", "\uEC3B" };
-
-        private void UpdateNetworkStatus()
-        {
-            if (m_netService.IsInternetAvailable)
-            {
-                switch (m_netService.InternetType)
-                {
-                    case InternetConnection.Wired:
-                        WifiStatus.Text = "\uE839";
-                        WifiStatus.Margin = new Thickness(0, 2, 7, 0);
-                        break;
-                    case InternetConnection.Wireless:
-                        int WifiSignalBars = m_netService.SignalStrength;
-
-                        WifiStatus.Text = wifiIcons[WifiSignalBars];
-                        break;
-                    case InternetConnection.Data:
-                        int DataSignalBars = m_netService.SignalStrength;
-
-                        WifiStatus.Text = dataIcons[DataSignalBars];
-                        break;
-                    case InternetConnection.Unknown:
-                    default:
-                        WifiStatus.Text = "\uE774";
-                        break;
-                }
-            }
-            else
-            {
-                WifiStatus.Text = "\uEB55";
-            }
-        }
-        #endregion
-
-        #region Battery
-        private void DetectBatteryPresence()
-        {
-            BatteryReport report = m_powerService.GetStatusReport();
-            BatteryPowerStatus status = report.PowerStatus;
-
-            if (status == BatteryPowerStatus.NotInstalled)
-            {
-                BattStatus.Visibility = Visibility.Collapsed;
-            }
-            else
-            {
-                BattStatus.Visibility = Visibility.Visible;
-                reportRequested = true;
-
-                AggregateBattery();
-            }
-        }
-
-        string[] batteryIconsCharge = { "\uEBAE", "\uEBAC", "\uEBAD", "\uEBAE", "\uEBAF", "\uEBB0", "\uEBB1", "\uEBB2", "\uEBB3", "\uEBB4", "\uEBB5" };
-        string[] batteryIcons = { "\uEBA0", "\uEBA1", "\uEBA2", "\uEBA3", "\uEBA4", "\uEBA5", "\uEBA6", "\uEBA7", "\uEBA8", "\uEBA9", "\uEBAA" };
-
-        private void AggregateBattery()
-        {
-            BatteryReport report = m_powerService.GetStatusReport();
-            double battLevel = report.ChargePercentage;
-            BatteryPowerStatus status = report.PowerStatus;
-
-            if (status == BatteryPowerStatus.Charging || status == BatteryPowerStatus.Idle)
-            {
-                int indexCharge = (int)Math.Floor(battLevel / 10);
-
-                BattStatus.Text = batteryIconsCharge[indexCharge];
-            }
-            else
-            {
-                int indexDischarge = (int)Math.Floor(battLevel / 10);
-
-                BattStatus.Text = batteryIcons[indexDischarge];
-            }
-        }
-
-        private void BatteryService_BatteryStatusChanged(object sender, EventArgs e)
-        {
-            if (reportRequested)
-            {
-                DispatcherQueue.TryEnqueue((Microsoft.UI.Dispatching.DispatcherQueuePriority)CoreDispatcherPriority.Normal, () =>
-                {
-                    AggregateBattery();
-                });
-            }
-        }
-        #endregion
-
-        #region Sound
-        private void SoundService_OnVolumeChanged(object sender, EventArgs e)
-        {
-            AudioCheck();
-        }
-        private void AudioCheck()
-        {
-            currentVolume = m_soundService.Volume;
-            string statusIcon = "\uEA85";
-
-            if (currentVolume == 0 || currentVolume == -1)
-            {
-                statusIcon = "\uE992";
-            }
-            else
-            {
-                switch (currentVolume)
-                {
-                    case int volume when volume <= 33:
-                        statusIcon = "\uE993";
-                        break;
-                    case int volume when volume <= 66:
-                        statusIcon = "\uE994";
-                        break;
-                    case int volume when volume <= 100:
-                        statusIcon = "\uE995";
-                        break;
-                }
-            }
-
-            if (m_soundService.IsMuted)
-            {
-                statusIcon = "\uE198";
-            }
-
-            DispatcherQueue.TryEnqueue((Microsoft.UI.Dispatching.DispatcherQueuePriority)CoreDispatcherPriority.Normal, () =>
-            {
-                SndStatus.Text = statusIcon;
-            });
         }
         #endregion
 

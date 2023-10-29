@@ -6,7 +6,7 @@ using static GyroShell.Library.Helpers.Win32.Win32Interop;
 
 namespace GyroShell.Services.Environment
 {
-    internal class EnvironmentInfoService : IEnvironmentInfoService
+    public class EnvironmentInfoService : IEnvironmentInfoService
     {
         public string SystemArchitecture { get; init; }
         public Version AppVersion { get; init; }

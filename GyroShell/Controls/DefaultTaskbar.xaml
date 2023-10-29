@@ -50,7 +50,7 @@
             <TextBox Height="32" PlaceholderText="Type here to search..." Width="200" Margin="5,2,0,0" CornerRadius="15" BorderThickness="0"/>
             <Button HorizontalAlignment="Left" Height="40" Width="40" Margin="5,0,10,0" Background="Transparent" BorderBrush="Transparent" x:Name="TaskView" Padding="0" ToolTipService.ToolTip="Task View">
                 <Button.Content>
-                    <TextBlock FontFamily="{x:Bind ViewModel.IconFontFamily}" Text="&#xE7C4;" VerticalAlignment="Center" Margin="0" FontSize="16" x:Name="TaskViewIcon"/>
+                    <TextBlock FontFamily="{x:Bind ViewModel.IconFontFamily, Mode=OneWay}" Text="&#xE7C4;" VerticalAlignment="Center" Margin="0" FontSize="16" x:Name="TaskViewIcon"/>
                 </Button.Content>
             </Button>
             <!--<Border x:Name="LeftControlsSeperator" Height="28" VerticalAlignment="Center" Width="1" Opacity="0.3" CornerRadius="1"/>-->
@@ -94,9 +94,14 @@
             <ToggleButton Command="{x:Bind ViewModel.SystemControlsCheckedCommand}" VerticalAlignment="Center" x:Name="SystemControls" HorizontalAlignment="Right" Height="40" Background="Transparent" BorderBrush="Transparent" Margin="0,0,2,0" ToolTipService.ToolTip="Control Center">
                 <ToggleButton.Content>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock FontFamily="{x:Bind ViewModel.IconFontFamily}" Text="&#xEBAA;" VerticalAlignment="Center" Margin="{x:Bind ViewModel.BatteryStatusMargin}" FontSize="16" x:Name="BattStatus" Visibility="Visible"/>
-                        <TextBlock FontFamily="{x:Bind ViewModel.IconFontFamily}" Text="&#xE839;" VerticalAlignment="Center" Margin="{x:Bind ViewModel.NetworkStatusMargin}" FontSize="16" x:Name="WifiStatus"/>
-                        <TextBlock FontFamily="{x:Bind ViewModel.IconFontFamily}" Text="&#xE995;" VerticalAlignment="Center" Margin="{x:Bind ViewModel.SoundStatusMargin}" FontSize="16" x:Name="SndStatus"/>
+                        <TextBlock FontFamily="{x:Bind ViewModel.IconFontFamily, Mode=OneWay}" Text="{x:Bind ViewModel.BatteryStatusCharacter, Mode=OneWay}" VerticalAlignment="Center" Margin="{x:Bind ViewModel.BatteryStatusMargin}" FontSize="16" x:Name="BattStatus" Visibility="Visible"/>
+                        <Grid>
+                            <TextBlock FontFamily="{x:Bind ViewModel.IconFontFamily, Mode=OneWay}" Text="{x:Bind ViewModel.NetworkStatusCharacter, Mode=OneWay}" VerticalAlignment="Center" Margin="{x:Bind ViewModel.NetworkStatusMargin}" FontSize="16" x:Name="NetworkStatus"/>
+                        </Grid>
+                        <Grid>
+                            <TextBlock FontFamily="{x:Bind ViewModel.IconFontFamily, Mode=OneWay}" Text="&#xE995;" Visibility="{x:Bind ViewModel.SoundBackIconVisibility, Mode=OneWay}" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="{x:Bind ViewModel.SoundStatusMargin}" FontSize="16" Foreground="Gray" Opacity="0.5"/>
+                            <TextBlock FontFamily="{x:Bind ViewModel.IconFontFamily, Mode=OneWay}" Text="{x:Bind ViewModel.SoundStatusText, Mode=OneWay}" VerticalAlignment="Center" Margin="{x:Bind ViewModel.SoundStatusMargin}" FontSize="16" x:Name="SndStatus"/>
+                        </Grid>
                     </StackPanel>
                 </ToggleButton.Content>
             </ToggleButton>
@@ -108,7 +113,7 @@
                         <TextBlock Text="" VerticalAlignment="Center" Margin="5" FontSize="16"/>
                         <TextBlock FontSize="14" VerticalAlignment="Center" x:Name="DateText" Margin="0,1,5,0"/>
                         <Grid>
-                            <TextBlock Text="&#xE7E7;" FontFamily="{x:Bind ViewModel.IconFontFamily}" FontSize="16" x:Name="NotifText" Margin="3,7,-2,0"/>
+                            <TextBlock Text="&#xE7E7;" FontFamily="{x:Bind ViewModel.IconFontFamily, Mode=OneWay}" FontSize="16" x:Name="NotifText" Margin="3,7,-2,0"/>
                             <Ellipse Fill="{ThemeResource SystemAccentColor}" Height="9" Width="9" Margin="12,0,-8,13" x:Name="NotifCircle" Visibility="Collapsed"/>
                         </Grid>
                     </StackPanel>

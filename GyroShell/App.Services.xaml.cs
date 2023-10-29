@@ -40,6 +40,7 @@ namespace GyroShell
                 .AddTransient<ITaskbarManagerService, TaskbarManagerService>()
                 .AddSingleton<IModuleManager, ModuleManager>()
                 .AddSingleton<IInternalLauncher, InternalLauncher>()
+                .AddSingleton<IDispatcherService, DispatcherService>()
                 .AddTransient<StartupScreenViewModel>()
                 .AddTransient<AboutSettingViewModel>()
                 .AddTransient<ModulesSettingViewModel>()
@@ -53,6 +54,7 @@ namespace GyroShell
         {
             _ = m_serviceProvider.GetRequiredService<IEnvironmentInfoService>();
             _ = m_serviceProvider.GetRequiredService<IAppHelperService>();
+            _ = m_serviceProvider.GetRequiredService<IDispatcherService>();
         }
     }
 }
