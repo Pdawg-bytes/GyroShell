@@ -1,5 +1,3 @@
-using GyroShell.Helpers;
-using GyroShell.Library.Models.Hardware;
 using GyroShell.Library.Services.Environment;
 using GyroShell.Library.Services.Hardware;
 using GyroShell.Library.Services.Helpers;
@@ -25,11 +23,8 @@ using Windows.UI.Notifications.Management;
 
 using static GyroShell.Library.Helpers.Win32.Win32Interop;
 using static GyroShell.Library.Helpers.Win32.WindowChecks;
-using BatteryReport = GyroShell.Library.Models.Hardware.BatteryReport;
 using GyroShell.Library.Models.InternalData;
 using GyroShell.Library.ViewModels;
-using GyroShell.Library.Constants;
-using GyroShell.Services.Environment;
 
 namespace GyroShell.Controls
 {

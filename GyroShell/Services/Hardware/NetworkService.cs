@@ -1,7 +1,6 @@
-﻿using CommunityToolkit.WinUI.Connectivity;
-using GyroShell.Library.Services.Hardware;
-using System;
+﻿using System;
 using Windows.Networking.Connectivity;
+using GyroShell.Library.Services.Hardware;
 
 namespace GyroShell.Services.Hardware
 {
@@ -11,23 +10,43 @@ namespace GyroShell.Services.Hardware
         {
             get
             {
-                ConnectionType type = NetworkHelper.Instance.ConnectionInformation.ConnectionType;
+                ConnectionProfile profile = NetworkInformation.GetInternetConnectionProfile();
 
-                return type switch
+                if (profile == null)
+                    return InternetConnection.Unknown;
+
+                switch (profile.NetworkAdapter.IanaInterfaceType)
                 {
-                    ConnectionType.Ethernet => InternetConnection.Wired,
-                    ConnectionType.WiFi => InternetConnection.Wireless,
-                    ConnectionType.Data => InternetConnection.Data,
-                    ConnectionType.Unknown => InternetConnection.Unknown,
-                    _ => InternetConnection.Unknown
-                };
+                    case 6:
+                        return InternetConnection.Wired;
+                    case 71:
+                        return InternetConnection.Wireless;
+                    case 243:
+                    case 244:
+                        return InternetConnection.Data;
+                    default:
+                        return InternetConnection.Unknown;
+                }
             }
         }
 
-        public bool IsInternetAvailable =>
-            NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable;
-        public byte SignalStrength =>
-            NetworkHelper.Instance.ConnectionInformation.SignalStrength.GetValueOrDefault(0);
+        public bool IsInternetAvailable
+        {
+            get
+            {
+                ConnectionProfile profile = NetworkInformation.GetInternetConnectionProfile();
+                return profile != null && profile.GetNetworkConnectivityLevel() == NetworkConnectivityLevel.InternetAccess;
+            }
+        }
+
+        public byte SignalStrength
+        {
+            get
+            {
+                ConnectionProfile profile = NetworkInformation.GetInternetConnectionProfile();
+                return profile.GetSignalBars() ?? 0;
+            }
+        }
 
         public event EventHandler InternetStatusChanged;
 
