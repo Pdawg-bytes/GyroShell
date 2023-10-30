@@ -28,6 +28,8 @@ using static GyroShell.Library.Helpers.Win32.WindowChecks;
 using BatteryReport = GyroShell.Library.Models.Hardware.BatteryReport;
 using GyroShell.Library.Models.InternalData;
 using GyroShell.Library.ViewModels;
+using GyroShell.Library.Constants;
+using GyroShell.Services.Environment;
 
 namespace GyroShell.Controls
 {
@@ -75,7 +77,6 @@ namespace GyroShell.Controls
             LoadSettings();
             TimeAndDate();
             InitNotifcation();
-
 
             BarBorder.Background = new SolidColorBrush(Color.FromArgb(255, 66, 63, 74));
 

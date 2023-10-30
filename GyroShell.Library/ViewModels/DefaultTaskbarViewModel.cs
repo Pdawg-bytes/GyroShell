@@ -12,6 +12,7 @@ using System;
 using Windows.UI.Core;
 using static GyroShell.Library.Helpers.Win32.Win32Interop;
 using GyroShell.Library.Constants;
+using System.Diagnostics;
 
 namespace GyroShell.Library.ViewModels
 {
@@ -64,8 +65,8 @@ namespace GyroShell.Library.ViewModels
             m_powerService.BatteryStatusChanged += BatteryService_BatteryStatusChanged;
             DetectBatteryPresence();
 
-            UpdateNetworkStatus();
             m_netService.InternetStatusChanged += NetworkService_InternetStatusChanged;
+            UpdateNetworkStatus();
         }
 
         public FontFamily IconFontFamily => m_appSettings.IconStyle switch
@@ -246,41 +247,51 @@ namespace GyroShell.Library.ViewModels
 
         private void NetworkService_InternetStatusChanged(object sender, EventArgs e)
         {
-            UpdateNetworkStatus();
+            m_dispatcherService.DispatcherQueue.TryEnqueue(() =>
+            {
+                UpdateNetworkStatus();
+            });
         }
         private void UpdateNetworkStatus()
         {
-            string statusTextBuf = "\uE774";
-            if (m_netService.IsInternetAvailable)
+            try
             {
-                switch (m_netService.InternetType)
+                string statusTextBuf = "\uE774";
+                if (m_netService.IsInternetAvailable)
                 {
-                    case InternetConnection.Wired:
-                        statusTextBuf = "\uE839";
-                        OnPropertyChanged(nameof(NetworkStatusMargin));
-                        break;
-                    case InternetConnection.Wireless:
-                        statusTextBuf = UIConstants.WiFiIcons[m_netService.SignalStrength];
-                        break;
-                    case InternetConnection.Data:
-                        statusTextBuf = UIConstants.DataIcons[m_netService.SignalStrength];
-                        break;
-                    case InternetConnection.Unknown:
-                    default:
-                        statusTextBuf = "\uE774";
-                        break;
+                    switch (m_netService.InternetType)
+                    {
+                        case InternetConnection.Wired:
+                            statusTextBuf = "\uE839";
+                            OnPropertyChanged(nameof(NetworkStatusMargin));
+                            break;
+                        case InternetConnection.Wireless:
+                            statusTextBuf = UIConstants.WiFiIcons[m_netService.SignalStrength];
+                            break;
+                        case InternetConnection.Data:
+                            statusTextBuf = UIConstants.DataIcons[m_netService.SignalStrength];
+                            break;
+                        case InternetConnection.Unknown:
+                        default:
+                            statusTextBuf = "\uE774";
+                            break;
+                    }
                 }
-            }
-            else
-            {
-                statusTextBuf = "\uEB55";
-            }
-
-            m_dispatcherService.DispatcherQueue.TryEnqueue(() =>
-            {
+                else
+                {
+                    statusTextBuf = "\uEB55";
+                }
                 NetworkStatusCharacter = statusTextBuf;
-            });
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
+        #endregion
+
+
+        #region Notifications
         #endregion
 
 
