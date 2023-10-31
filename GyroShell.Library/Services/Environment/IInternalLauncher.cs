@@ -19,6 +19,11 @@ namespace GyroShell.Library.Services.Environment
         public void LaunchNewShellInstance();
 
         /// <summary>
+        /// Exits the current instance of GyroShell (App.Current).
+        /// </summary>
+        public void ExitGyroShell();
+
+        /// <summary>
         /// An abstraction of GyroShell's public ProcessStartEx method.
         /// </summary>
         /// <param name="procName">The name of the process to launch.</param>

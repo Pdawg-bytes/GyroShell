@@ -9,14 +9,6 @@ namespace GyroShell.Library.Helpers.Win32
 {
     public class WindowChecks
     {
-        private static bool isWindow;
-        private static bool isWindowVisible;
-        private static bool cloakedCheck;
-        private static bool gaCheck;
-        private static bool gwCheck;
-        private static bool flagCheckT;
-        private static bool classCheck;
-
         private static StringBuilder className = new StringBuilder(256);
 
         private static int attributeSize = Marshal.SizeOf(typeof(int));
@@ -26,13 +18,14 @@ namespace GyroShell.Library.Helpers.Win32
         public static bool isUserWindow(IntPtr hWnd)
         {
             // Debug code, each is declared so I can find value on breakpoint.
-            /*isWindow = IsWindow(hWnd);
-            isWindowVisible = IsWindowVisible(hWnd);
-            cloakedCheck = !isCloaked(hWnd);
-            gaCheck = GetAncestor(hWnd, (GetAncestorFlags)GA_ROOT) == hWnd;
-            gwCheck = GetWindow(hWnd, (GetWindowType)GW_OWNER) == IntPtr.Zero;
-            flagCheckT = flagCheck(hWnd);
-            classCheck = classNameCheck(hWnd);
+            /*
+            bool isWindow = IsWindow(hWnd);
+            bool isWindowVisible = IsWindowVisible(hWnd);
+            bool cloakedCheck = !isCloaked(hWnd);
+            bool gaCheck = GetAncestor(hWnd, (GetAncestorFlags)GA_ROOT) == hWnd;
+            bool gwCheck = GetWindow(hWnd, (GetWindowType)GW_OWNER) == IntPtr.Zero;
+            bool flagCheckT = flagCheck(hWnd);
+            bool classCheck = classNameCheck(hWnd);
 
             if(isWindow && isWindowVisible && cloakedCheck || classCheck && gaCheck && gwCheck && flagCheckT) { return true; }
             else { return false; }*/

@@ -20,7 +20,7 @@
             <MenuFlyout x:Name="StartFlyout" AreOpenCloseAnimationsEnabled="True" ShouldConstrainToRootBounds="False">
                 <MenuFlyoutItem Text="Shell Settings" Command="{x:Bind ViewModel.StartFlyoutCommands.OpenShellSettingsCommand}" Tag="ShellSettings"/>
                 <MenuFlyoutItem Text="Restart GyroShell" Command="{x:Bind ViewModel.StartFlyoutCommands.RestartGyroShellCommand}" Tag="RestartGyroShell"/>
-                <MenuFlyoutItem Text="Exit GyroShell" Click="StartFlyout_Click" Tag="ExitGyroShell"/>
+                <MenuFlyoutItem Text="Exit GyroShell" Command="{x:Bind ViewModel.StartFlyoutCommands.ExitGyroShellCommand}" Tag="ExitGyroShell"/>
                 <MenuFlyoutSeparator/>
                 <MenuFlyoutItem Text="Task Manager" Command="{x:Bind ViewModel.StartFlyoutCommands.LaunchTaskManagerCommand}" Tag="TaskMgr"/>
                 <MenuFlyoutItem Text="Settings" Command="{x:Bind ViewModel.StartFlyoutCommands.LaunchWindowsSettingsCommand}" Tag="Settings"/>
@@ -109,12 +109,12 @@
             <ToggleButton Command="{x:Bind ViewModel.ActionCenterCheckedCommand}" HorizontalAlignment="Right" VerticalAlignment="Center" Height="40" Margin="0,0,5,0" Background="Transparent" BorderBrush="Transparent" x:Name="ActionCenter" ToolTipService.ToolTip="Notification Center">
                 <ToggleButton.Content>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock FontSize="14" VerticalAlignment="Center" x:Name="TimeText" Margin="-4,1,0,0"/>
+                        <TextBlock Text="{x:Bind ViewModel.TimeText, Mode=OneWay}" FontSize="14" VerticalAlignment="Center" x:Name="TimeText" Margin="-4,1,0,0"/>
                         <TextBlock Text="" VerticalAlignment="Center" Margin="5" FontSize="16"/>
-                        <TextBlock FontSize="14" VerticalAlignment="Center" x:Name="DateText" Margin="0,1,5,0"/>
+                        <TextBlock Text="{x:Bind ViewModel.DateText, Mode=OneWay}" FontSize="14" VerticalAlignment="Center" x:Name="DateText" Margin="0,1,5,0"/>
                         <Grid>
                             <TextBlock Text="&#xE7E7;" FontFamily="{x:Bind ViewModel.IconFontFamily, Mode=OneWay}" FontSize="16" x:Name="NotifText" Margin="3,7,-2,0"/>
-                            <Ellipse Fill="{ThemeResource SystemAccentColor}" Height="9" Width="9" Margin="12,0,-8,13" x:Name="NotifCircle" Visibility="Collapsed"/>
+                            <Ellipse Fill="{ThemeResource SystemAccentColor}" Height="9" Width="9" Margin="12,0,-8,13" x:Name="NotifCircle" Visibility="{x:Bind ViewModel.NotifIndicatorVisibility, Mode=OneWay}"/>
                         </Grid>
                     </StackPanel>
                 </ToggleButton.Content>

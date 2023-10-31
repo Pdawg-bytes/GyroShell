@@ -14,6 +14,6 @@ namespace GyroShell.Library.Services.Managers
         /// <summary>
         /// Event that is fired when any notification is changed.
         /// </summary>
-        public event EventHandler<UserNotificationChangedEventArgs> NotifcationChanged;
+        public event EventHandler NotifcationChanged;
     }
 }

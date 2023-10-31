@@ -31,19 +31,16 @@ namespace GyroShell.Views
         {
             if (TFHourToggle.IsOn == true && SecondsToggle.IsOn == false)
             {
-                DefaultTaskbar.timeType = "H:mm";
                 m_appSettings.EnableMilitaryTime = true;
                 m_appSettings.EnableSeconds = false;
             }
             else if (TFHourToggle.IsOn == true && SecondsToggle.IsOn == true)
             {
-                DefaultTaskbar.timeType = "H:mm:ss";
                 m_appSettings.EnableMilitaryTime = true;
                 m_appSettings.EnableSeconds = true;
             }
             else if (TFHourToggle.IsOn == false && SecondsToggle.IsOn == false)
             {
-                DefaultTaskbar.timeType = "t";
                 m_appSettings.EnableMilitaryTime = false;
                 m_appSettings.EnableSeconds = false;
             }
@@ -51,7 +48,6 @@ namespace GyroShell.Views
             {
                 m_appSettings.EnableMilitaryTime = false;
                 m_appSettings.EnableSeconds = true;
-                DefaultTaskbar.timeType = "T";
             }
         }
 
@@ -59,19 +55,16 @@ namespace GyroShell.Views
         {
             if (TFHourToggle.IsOn == true && SecondsToggle.IsOn == true)
             {
-                DefaultTaskbar.timeType = "H:mm:ss";
                 m_appSettings.EnableMilitaryTime = true;
                 m_appSettings.EnableSeconds = true;
             }
             else if (TFHourToggle.IsOn)
             {
-                DefaultTaskbar.timeType = "H:mm";
                 m_appSettings.EnableMilitaryTime = true;
                 m_appSettings.EnableSeconds = false;
             }
             else if (TFHourToggle.IsOn == false && SecondsToggle.IsOn == true)
             {
-                DefaultTaskbar.timeType = "T";
                 m_appSettings.EnableMilitaryTime = false;
                 m_appSettings.EnableSeconds = true;
             }
@@ -79,7 +72,6 @@ namespace GyroShell.Views
             {
                 m_appSettings.EnableMilitaryTime = false;
                 m_appSettings.EnableSeconds = false;
-                DefaultTaskbar.timeType = "t";
             }
         }
         #endregion
@@ -208,7 +200,7 @@ namespace GyroShell.Views
         #endregion
 
         #region Restart InfoBar events
-        private async void RestartNowInfo_Click(object sender, RoutedEventArgs e)
+        private void RestartNowInfo_Click(object sender, RoutedEventArgs e)
         {
             try
             {

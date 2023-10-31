@@ -20,6 +20,11 @@ namespace GyroShell.Services.Environment
             _settingsWindow.Activate();
         }
 
+        public void ExitGyroShell()
+        {
+            App.Current.Exit();
+        }
+
         public void LaunchNewShellInstance()
         {
             try

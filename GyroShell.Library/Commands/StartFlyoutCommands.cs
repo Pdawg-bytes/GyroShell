@@ -16,14 +16,12 @@ namespace GyroShell.Library.Commands
     public partial class StartFlyoutCommands
     {
         private readonly IEnvironmentInfoService m_envService;
-        private readonly IInternalLauncher m_publicLauncher;
-        private readonly ITaskbarManagerService m_tbService;
+        private readonly IInternalLauncher m_internalLauncher;
 
-        public StartFlyoutCommands(IEnvironmentInfoService envService, IInternalLauncher publicLauncher, ITaskbarManagerService tbManager)
+        public StartFlyoutCommands(IEnvironmentInfoService envService, IInternalLauncher internalLauncher)
         {
             m_envService = envService;
-            m_publicLauncher = publicLauncher;
-            m_tbService = tbManager;
+            m_internalLauncher = internalLauncher;
         }
 
         [RelayCommand]
@@ -33,20 +31,26 @@ namespace GyroShell.Library.Commands
 
             if (m_envService.SettingsInstances <= 1)
             {
-                m_publicLauncher.LaunchShellSettings();
+                m_internalLauncher.LaunchShellSettings();
             }
         }
 
         [RelayCommand]
         public void RestartGyroShell()
         {
-            m_publicLauncher.LaunchNewShellInstance();
+            m_internalLauncher.LaunchNewShellInstance();
+        }
+
+        [RelayCommand]
+        public void ExitGyroShell()
+        {
+            m_internalLauncher.ExitGyroShell();
         }
 
         [RelayCommand]
         public void LaunchTaskManager()
         {
-            m_publicLauncher.LaunchProcess("taskmgr.exe", false, true);
+            m_internalLauncher.LaunchProcess("taskmgr.exe", false, true);
         }
 
         [RelayCommand]
@@ -82,13 +86,13 @@ namespace GyroShell.Library.Commands
         [RelayCommand]
         public void ShutdownWindows()
         {
-            m_publicLauncher.LaunchProcess("shutdown /s /t 00", false, true);
+            m_internalLauncher.LaunchProcess("shutdown /s /t 00", false, true);
         }
 
         [RelayCommand]
         public void RestartWindows()
         {
-            m_publicLauncher.LaunchProcess("shutdown /r /t 00", false, true);
+            m_internalLauncher.LaunchProcess("shutdown /r /t 00", false, true);
         }
 
         [RelayCommand]

@@ -13,6 +13,10 @@ using Windows.UI.Core;
 using static GyroShell.Library.Helpers.Win32.Win32Interop;
 using GyroShell.Library.Constants;
 using System.Diagnostics;
+using Windows.UI.Notifications.Management;
+using Windows.UI.Notifications;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace GyroShell.Library.ViewModels
 {
@@ -20,8 +24,9 @@ namespace GyroShell.Library.ViewModels
     {
         private readonly IEnvironmentInfoService m_envService;
         private readonly ISettingsService m_appSettings;
-        private readonly IInternalLauncher m_publicLauncher;
+        private readonly IInternalLauncher m_internalLauncher;
         private readonly IDispatcherService m_dispatcherService;
+        private readonly ITimeService m_timeService;
 
         private readonly IAppHelperService m_appHelper;
         private readonly IBitmapHelperService m_bmpHelper;
@@ -45,8 +50,9 @@ namespace GyroShell.Library.ViewModels
             INetworkService netService,
             IBatteryService powerService,
             ISoundService soundService,
-            IInternalLauncher publicLauncher,
-            IDispatcherService dispatcherService)
+            IInternalLauncher internalLauncher,
+            IDispatcherService dispatcherService,
+            ITimeService timeService)
         {
             m_envService = envService;
             m_appSettings = appSettings;
@@ -56,11 +62,12 @@ namespace GyroShell.Library.ViewModels
             m_netService = netService;
             m_powerService = powerService;
             m_soundService = soundService;
-            m_publicLauncher = publicLauncher;
+            m_internalLauncher = internalLauncher;
             m_dispatcherService = dispatcherService;
             m_notifManager = notifManager;
+            m_timeService = timeService;
 
-            StartFlyoutCommands = new StartFlyoutCommands(m_envService, m_publicLauncher, m_tbManager);
+            StartFlyoutCommands = new StartFlyoutCommands(m_envService, m_internalLauncher);
 
             m_soundService.OnVolumeChanged += SoundService_OnVolumeChanged;
             AudioCheck();
@@ -70,6 +77,11 @@ namespace GyroShell.Library.ViewModels
 
             m_netService.InternetStatusChanged += NetworkService_InternetStatusChanged;
             UpdateNetworkStatus();
+
+            m_notifManager.NotifcationChanged += NotificationManager_NotificationChanged;
+            Task.Run(UpdateNotifications).Wait();
+
+            m_timeService.UpdateClockBinding += TimeService_UpdateClockBinding;
         }
 
         public FontFamily IconFontFamily => m_appSettings.IconStyle switch
@@ -97,12 +109,19 @@ namespace GyroShell.Library.ViewModels
                 }
             }
         }
-        public Thickness BatteryStatusMargin => m_appSettings.IconStyle switch
+        public Thickness BatteryStatusMargin
         {
-            0 => new Thickness(0, 2, 12, 0),
-            1 => new Thickness(0, 3, 14, 0),
-            _ => new Thickness(0, 2, 12, 0)
-        };
+            get
+            {
+                if (!m_powerService.IsBatteryInstalled) { return new Thickness(0); }
+                return m_appSettings.IconStyle switch
+                {
+                    0 => new Thickness(0, 2, 12, 0),
+                    1 => new Thickness(0, 3, 14, 0),
+                    _ => new Thickness(0, 2, 12, 0)
+                };
+            }
+        }
         public Thickness SoundStatusMargin => m_appSettings.IconStyle switch
         {
             0 => new Thickness(6, 1, 0, 0),
@@ -195,7 +214,6 @@ namespace GyroShell.Library.ViewModels
         }
         #endregion
 
-
         #region Battery
         [ObservableProperty]
         private string batteryStatusCharacter;
@@ -243,7 +261,6 @@ namespace GyroShell.Library.ViewModels
         }
         #endregion
 
-
         #region Internet
         [ObservableProperty]
         private string networkStatusCharacter;
@@ -286,8 +303,41 @@ namespace GyroShell.Library.ViewModels
         }
         #endregion
 
-
         #region Notifications
+        [ObservableProperty]
+        private Visibility notifIndicatorVisibility;
+
+        private void NotificationManager_NotificationChanged(object sender, EventArgs e)
+        {
+            UpdateNotifications();
+        }
+        private async Task UpdateNotifications()
+        {
+            IReadOnlyList<UserNotification> notifsToast = await m_notifManager.NotificationListener.GetNotificationsAsync(NotificationKinds.Toast);
+            IReadOnlyList<UserNotification> notifsOther = await m_notifManager.NotificationListener.GetNotificationsAsync(NotificationKinds.Unknown);
+
+            m_dispatcherService.DispatcherQueue.TryEnqueue((Microsoft.UI.Dispatching.DispatcherQueuePriority)CoreDispatcherPriority.Normal, () =>
+            {
+                NotifIndicatorVisibility = notifsToast.Count > 0 || notifsOther.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+            });
+        }
+        #endregion
+
+        #region Clock
+        [ObservableProperty]
+        private string timeText;
+
+        [ObservableProperty]
+        private string dateText;
+
+        private void TimeService_UpdateClockBinding(object sender, EventArgs e)
+        {
+            m_dispatcherService.DispatcherQueue.TryEnqueue(() =>
+            {
+                TimeText = DateTime.Now.ToString(m_timeService.ClockFormat);
+                DateText = DateTime.Now.ToString(m_timeService.DateFormat);
+            });
+        }
         #endregion
 
 
@@ -296,6 +346,7 @@ namespace GyroShell.Library.ViewModels
             m_soundService.OnVolumeChanged -= SoundService_OnVolumeChanged;
             m_powerService.BatteryStatusChanged -= BatteryService_BatteryStatusChanged;
             m_netService.InternetStatusChanged -= NetworkService_InternetStatusChanged;
+            m_timeService.UpdateClockBinding -= TimeService_UpdateClockBinding;
         }
     }
 }

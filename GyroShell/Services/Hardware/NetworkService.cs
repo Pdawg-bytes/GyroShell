@@ -4,7 +4,7 @@ using GyroShell.Library.Services.Hardware;
 
 namespace GyroShell.Services.Hardware
 {
-    internal class NetworkService : INetworkService
+    internal class NetworkService : INetworkService, IDisposable
     {
         public InternetConnection InternetType
         {
@@ -58,6 +58,12 @@ namespace GyroShell.Services.Hardware
         private void NetworkInformation_NetworkStatusChanged(object sender)
         {
             InternetStatusChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+
+        public void Dispose()
+        {
+            NetworkInformation.NetworkStatusChanged -= NetworkInformation_NetworkStatusChanged;
         }
     }
 }

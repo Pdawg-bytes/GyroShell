@@ -4,19 +4,33 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Foundation.Metadata;
 using Windows.UI.Notifications;
 using Windows.UI.Notifications.Management;
 
 namespace GyroShell.Services.Managers
 {
-    internal class NotificationManager : INotificationManager
+    internal class NotificationManager : INotificationManager, IDisposable
     {
         public UserNotificationListener NotificationListener { get; init; }
 
         public NotificationManager() 
         {
+            if (!ApiInformation.IsTypePresent("Windows.UI.Notifications.Management.UserNotificationListener"))
+            {
+                // set notif error later
+                return;
+            }
+
             NotificationListener = UserNotificationListener.Current;
-            Task.Run(InitializeEventAsync);
+            if (Task.Run(async () => await InitializeEventAsync()).Result)
+            {
+                NotificationListener.NotificationChanged += NotificationManager_NotificationChanged;
+            }
+            else
+            {
+                Task.Run(RequestNotificationAccess).Wait(); // set notif error later
+            }
         }
 
         private async Task<bool> InitializeEventAsync()
@@ -25,11 +39,22 @@ namespace GyroShell.Services.Managers
             return accessStatus == UserNotificationListenerAccessStatus.Allowed;
         }
 
-        public event EventHandler<UserNotificationChangedEventArgs> NotifcationChanged;
+        private async Task RequestNotificationAccess()
+        {
+            await NotificationListener.RequestAccessAsync();
+        }
+
+        public event EventHandler NotifcationChanged;
 
         private void NotificationManager_NotificationChanged(UserNotificationListener sender, UserNotificationChangedEventArgs args)
         {
-            NotifcationChanged?.Invoke(this, args);
+            NotifcationChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+
+        public void Dispose()
+        {
+            NotificationListener.NotificationChanged -= NotificationManager_NotificationChanged;
         }
     }
 }

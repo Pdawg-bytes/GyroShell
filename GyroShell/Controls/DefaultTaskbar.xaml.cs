@@ -25,13 +25,12 @@ using static GyroShell.Library.Helpers.Win32.Win32Interop;
 using static GyroShell.Library.Helpers.Win32.WindowChecks;
 using GyroShell.Library.Models.InternalData;
 using GyroShell.Library.ViewModels;
+using System.Reflection.Metadata;
 
 namespace GyroShell.Controls
 {
     public sealed partial class DefaultTaskbar : Page
     {
-        public static string timeType = "t";
-
         private IEnvironmentInfoService m_envService;
         private ISettingsService m_appSettings;
 
@@ -39,10 +38,6 @@ namespace GyroShell.Controls
         private IBitmapHelperService m_bmpHelper;
 
         private ITaskbarManagerService m_tbManager;
-
-        private INetworkService m_netService;
-        private IBatteryService m_powerService;
-        private ISoundService m_soundService;
 
         private readonly WinEventDelegate callback;
 
@@ -63,15 +58,7 @@ namespace GyroShell.Controls
 
             m_tbManager = App.ServiceProvider.GetRequiredService<ITaskbarManagerService>();
 
-            m_netService = App.ServiceProvider.GetRequiredService<INetworkService>();
-            m_powerService = App.ServiceProvider.GetRequiredService<IBatteryService>();
-            m_soundService = App.ServiceProvider.GetRequiredService<ISoundService>();
-
             TbIconCollection = new ObservableCollection<IconModel>();
-
-            LoadSettings();
-            TimeAndDate();
-            InitNotifcation();
 
             BarBorder.Background = new SolidColorBrush(Color.FromArgb(255, 66, 63, 74));
 
@@ -83,23 +70,6 @@ namespace GyroShell.Controls
         }
 
         public DefaultTaskbarViewModel ViewModel => (DefaultTaskbarViewModel)this.DataContext;
-
-        #region Clock
-        private void TimeAndDate()
-        {
-            DispatcherTimer dateTimeUpdate = new DispatcherTimer();
-
-            dateTimeUpdate.Tick += DTUpdateMethod;
-            dateTimeUpdate.Interval = new TimeSpan(400000);
-
-            dateTimeUpdate.Start();
-        }
-        private void DTUpdateMethod(object sender, object e)
-        {
-            TimeText.Text = DateTime.Now.ToString(timeType);
-            DateText.Text = DateTime.Now.ToString("M/d/yyyy");
-        }
-        #endregion
 
         private void StartButton_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
@@ -116,7 +86,6 @@ namespace GyroShell.Controls
                 {
                     case "ExitGyroShell":
                         DestroyHooks();
-                        App.Current.Exit();
                         break;
                     case "Desktop":
                         foreach (IntPtr handle in indexedWindows)
@@ -132,62 +101,6 @@ namespace GyroShell.Controls
         {
             App.startupScreen.Close();
         }
-
-        #region Notifications
-        UserNotificationListener notifListener = UserNotificationListener.Current;
-        private void InitNotifcation()
-        {
-            notifListener.NotificationChanged += Listener_NotificationChanged;
-        }
-        private async void Listener_NotificationChanged(UserNotificationListener sender, UserNotificationChangedEventArgs args)
-        {
-            if (ApiInformation.IsTypePresent("Windows.UI.Notifications.Management.UserNotificationListener"))
-            {
-                UserNotificationListenerAccessStatus accessStatus = await notifListener.RequestAccessAsync();
-
-                switch (accessStatus)
-                {
-                    case UserNotificationListenerAccessStatus.Allowed:
-                        CustomizationSettingView.NotifError = false;
-                        IReadOnlyList<UserNotification> notifsToast = await notifListener.GetNotificationsAsync(NotificationKinds.Toast);
-                        IReadOnlyList<UserNotification> notifsOther = await notifListener.GetNotificationsAsync(NotificationKinds.Unknown);
-
-                        if (notifsToast.Count > 0 || notifsOther.Count > 0)
-                        {
-                            DispatcherQueue.TryEnqueue((Microsoft.UI.Dispatching.DispatcherQueuePriority)CoreDispatcherPriority.Normal, () =>
-                            {
-                                NotifCircle.Visibility = Visibility.Visible;
-                            });
-                        }
-                        else
-                        {
-                            DispatcherQueue.TryEnqueue((Microsoft.UI.Dispatching.DispatcherQueuePriority)CoreDispatcherPriority.Normal, () =>
-                            {
-                                NotifCircle.Visibility = Visibility.Collapsed;
-                            });
-                        }
-                        break;
-                    case UserNotificationListenerAccessStatus.Denied:
-                        NotifCircle.Visibility = Visibility.Collapsed;
-                        CustomizationSettingView.NotifError = true;
-                        break;
-                    case UserNotificationListenerAccessStatus.Unspecified:
-                        CustomizationSettingView.NotifError = true;
-                        break;
-                }
-            }
-        }
-        #endregion
-
-        #region Settings
-        private void LoadSettings()
-        {
-            // Clock
-            bool secondsEnabled = m_appSettings.EnableSeconds;
-            bool is24HREnabled = m_appSettings.EnableMilitaryTime;
-            timeType = secondsEnabled ? (is24HREnabled ? "H:mm:ss" : "T") : (is24HREnabled ? "H:mm" : "t");
-        }
-        #endregion
 
         #region Callbacks
         private void GetCurrentWindows()

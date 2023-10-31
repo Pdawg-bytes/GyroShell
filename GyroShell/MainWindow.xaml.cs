@@ -37,7 +37,6 @@ namespace GyroShell
         internal static int uCallBack;
 
         internal static bool fBarRegistered = false;
-        private bool finalOpt;
 
         internal MainWindow()
         {
@@ -146,7 +145,7 @@ namespace GyroShell
 
         private void SetBackdrop()
         {
-            bool? option = m_appSettings.EnableCustomTransparency;
+            bool option = m_appSettings.EnableCustomTransparency;
 
             byte alpha = m_appSettings.AlphaTint;
             byte red = m_appSettings.RedTint;
@@ -164,30 +163,30 @@ namespace GyroShell
                 default:
                     if (m_envService.IsWindows11)
                     {
-                        TrySetMicaBackdrop(MicaKind.BaseAlt, alpha, red, green, blue, tintOpacity, luminOpacity);
+                        TrySetMicaBackdrop(MicaKind.BaseAlt, alpha, red, green, blue, tintOpacity, luminOpacity, option);
                     }
                     else
                     {
-                        TrySetAcrylicBackdrop(alpha, red, green, blue, tintOpacity, luminOpacity);
+                        TrySetAcrylicBackdrop(alpha, red, green, blue, tintOpacity, luminOpacity, option);
                     }
                     break;
                 case 1:
                     if (m_envService.IsWindows11)
                     {
-                        TrySetMicaBackdrop(MicaKind.Base, alpha, red, green, blue, tintOpacity, luminOpacity);
+                        TrySetMicaBackdrop(MicaKind.Base, alpha, red, green, blue, tintOpacity, luminOpacity, option);
                     }
                     else
                     {
-                        TrySetAcrylicBackdrop(alpha, red, green, blue, tintOpacity, luminOpacity);
+                        TrySetAcrylicBackdrop(alpha, red, green, blue, tintOpacity, luminOpacity, option);
                     }
                     break;
                 case 2:
-                    TrySetAcrylicBackdrop(alpha, red, green, blue, tintOpacity, luminOpacity);
+                    TrySetAcrylicBackdrop(alpha, red, green, blue, tintOpacity, luminOpacity, option);
                     break;
             }
         }
 
-        bool TrySetMicaBackdrop(MicaKind micaKind, byte alpha, byte red, byte green, byte blue, float tintOpacity, float luminOpacity)
+        bool TrySetMicaBackdrop(MicaKind micaKind, byte alpha, byte red, byte green, byte blue, float tintOpacity, float luminOpacity, bool customTransparency)
         {
             if (MicaController.IsSupported())
             {
@@ -206,7 +205,7 @@ namespace GyroShell
                 micaController = new MicaController();
                 micaController.Kind = micaKind;
 
-                if (finalOpt == true)
+                if (customTransparency)
                 {
                     micaController.TintColor = Color.FromArgb(alpha, red, green, blue);
                     micaController.TintOpacity = tintOpacity;
@@ -218,12 +217,12 @@ namespace GyroShell
                 return true;
             }
 
-            TrySetAcrylicBackdrop(alpha, red, green, blue, tintOpacity, luminOpacity);
+            TrySetAcrylicBackdrop(alpha, red, green, blue, tintOpacity, luminOpacity, customTransparency);
 
             return false;
         }
 
-        bool TrySetAcrylicBackdrop(byte alpha, byte red, byte green, byte blue, float tintOpacity, float luminOpacity)
+        bool TrySetAcrylicBackdrop(byte alpha, byte red, byte green, byte blue, float tintOpacity, float luminOpacity, bool customTransparency)
         {
             if (DesktopAcrylicController.IsSupported())
             {

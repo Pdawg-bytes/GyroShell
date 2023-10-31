@@ -9,6 +9,15 @@ namespace GyroShell.Services.Hardware
 {
     internal class BatteryService : IBatteryService
     {
+        public bool IsBatteryInstalled
+        {
+            get
+            {
+                BatteryReport report = GetStatusReport();
+                return report.PowerStatus != BatteryPowerStatus.NotInstalled;
+            }
+        }
+
         public event EventHandler BatteryStatusChanged;
 
         public BatteryService()

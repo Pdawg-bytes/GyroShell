@@ -42,6 +42,7 @@ namespace GyroShell
                 .AddSingleton<IInternalLauncher, InternalLauncher>()
                 .AddSingleton<IDispatcherService, DispatcherService>()
                 .AddSingleton<INotificationManager, NotificationManager>()
+                .AddSingleton<ITimeService, TimeService>()
                 .AddTransient<StartupScreenViewModel>()
                 .AddTransient<AboutSettingViewModel>()
                 .AddTransient<ModulesSettingViewModel>()
