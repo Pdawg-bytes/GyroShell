@@ -7,6 +7,33 @@ namespace GyroShell.Services.Environment
     {
         private readonly ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
 
+        public T GetSetting<T>(string key)
+        {
+            if (localSettings.Values.TryGetValue(key, out var value) && value is T)
+            {
+                return (T)value;
+            }
+            return default;
+        }
+
+        public void SetSetting<T>(string key, T value)
+        {
+            localSettings.Values[key] = value;
+        }
+
+        public bool RemoveSetting(string key)
+        {
+            return localSettings.Values.Remove(key);
+        }
+
+        public void AddSetting<T>(string key, T value)
+        {
+            if (!localSettings.Values.ContainsKey(key))
+            {
+                localSettings.Values.Add(key, value);
+            }
+        }
+
         public int IconStyle
         {
             get => localSettings.Values["iconStyle"] as int? != null ? (int)localSettings.Values["iconStyle"] : 0;

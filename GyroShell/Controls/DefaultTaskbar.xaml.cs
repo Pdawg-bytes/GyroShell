@@ -37,7 +37,7 @@ namespace GyroShell.Controls
         private IAppHelperService m_appHelper;
         private IBitmapHelperService m_bmpHelper;
 
-        private ITaskbarManagerService m_tbManager;
+        private IExplorerManagerService m_explorerManager;
 
         private readonly WinEventDelegate callback;
 
@@ -56,7 +56,7 @@ namespace GyroShell.Controls
             m_appHelper = App.ServiceProvider.GetRequiredService<IAppHelperService>();
             m_bmpHelper = App.ServiceProvider.GetRequiredService<IBitmapHelperService>();
 
-            m_tbManager = App.ServiceProvider.GetRequiredService<ITaskbarManagerService>();
+            m_explorerManager = App.ServiceProvider.GetRequiredService<IExplorerManagerService>();
 
             TbIconCollection = new ObservableCollection<IconModel>();
 
@@ -66,7 +66,7 @@ namespace GyroShell.Controls
             GetCurrentWindows();
             RegisterWinEventHook();
 
-            m_tbManager.NotifyWinlogonShowShell();
+            m_explorerManager.NotifyWinlogonShowShell();
         }
 
         public DefaultTaskbarViewModel ViewModel => (DefaultTaskbarViewModel)this.DataContext;

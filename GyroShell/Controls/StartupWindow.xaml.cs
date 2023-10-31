@@ -24,7 +24,7 @@ namespace GyroShell.Controls
     internal partial class StartupWindow : Window
     {
         private AppWindow m_AppWindow;
-        private ITaskbarManagerService m_tbManager;
+        private IExplorerManagerService m_explorerManager;
 
         private IntPtr hWnd;
 
@@ -41,7 +41,7 @@ namespace GyroShell.Controls
 
             Title = "GyroShell Startup Host";
 
-            m_tbManager = App.ServiceProvider.GetRequiredService<ITaskbarManagerService>();
+            m_explorerManager = App.ServiceProvider.GetRequiredService<IExplorerManagerService>();
 
             appProcessId = Process.GetCurrentProcess().Id;
             appProcess = Process.GetProcessById(appProcessId);
@@ -93,7 +93,7 @@ namespace GyroShell.Controls
         private new void Close()
         {
             MessageBox(hWnd, "If you keep seeing this message, please contact the developers.", "GyroShell was unable to start.", 0x00000000 | 0x00000030);
-            m_tbManager.ShowTaskbar();
+            m_explorerManager.ShowTaskbar();
             appProcess.Kill();
         }
         #endregion

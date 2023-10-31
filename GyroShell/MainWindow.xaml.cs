@@ -28,7 +28,7 @@ namespace GyroShell
         private AppWindow m_AppWindow;
         private IEnvironmentInfoService m_envService;
         private ISettingsService m_appSettings;
-        private ITaskbarManagerService m_tbManager;
+        private IExplorerManagerService m_explorerManager;
         private IAppHelperService m_appHelper;
 
         private IntPtr _oldWndProc;
@@ -46,9 +46,9 @@ namespace GyroShell
             m_envService = App.ServiceProvider.GetRequiredService<IEnvironmentInfoService>();
             m_appSettings = App.ServiceProvider.GetRequiredService<ISettingsService>();
             m_appHelper = App.ServiceProvider.GetRequiredService<IAppHelperService>();
-            m_tbManager = App.ServiceProvider.GetRequiredService<ITaskbarManagerService>();
+            m_explorerManager = App.ServiceProvider.GetRequiredService<IExplorerManagerService>();
 
-            m_tbManager.Initialize();
+            m_explorerManager.Initialize();
 
             // Presenter handling code
             OverlappedPresenter presenter = GetAppWindowAndPresenter();
@@ -103,7 +103,7 @@ namespace GyroShell
         #region Window Handling
         private void OnProcessExit(object sender, EventArgs e)
         {
-            m_tbManager.ShowTaskbar();
+            m_explorerManager.ShowTaskbar();
             //UnhookWinEvent(foregroundHook);
             //UnhookWinEvent(cloakedHook);
             //UnhookWinEvent(nameChangeHook);
@@ -335,10 +335,10 @@ namespace GyroShell
                 bool regShellHook = RegisterShellHookWindow(hWnd);
                 fBarRegistered = true;
 
-                m_tbManager.ToggleAutoHideExplorer(true);
+                m_explorerManager.ToggleAutoHideExplorer(true);
                 ABSetPos();
-                m_tbManager.ToggleAutoHideExplorer(false);
-                m_tbManager.HideTaskbar();
+                m_explorerManager.ToggleAutoHideExplorer(false);
+                m_explorerManager.HideTaskbar();
                 SetWindowPos(hWnd, (IntPtr)WindowZOrder.HWND_TOPMOST, 0, 0, 0, 0, (int)SWPFlags.SWP_NOMOVE | (int)SWPFlags.SWP_NOSIZE | (int)SWPFlags.SWP_SHOWWINDOW);
             }
             else

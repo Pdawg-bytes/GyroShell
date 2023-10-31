@@ -4,6 +4,9 @@ using Windows.UI.Notifications.Management;
 
 namespace GyroShell.Library.Services.Managers
 {
+    /// <summary>
+    /// Defines a WinRT based service to handle the user's notifcations.
+    /// </summary>
     public interface INotificationManager
     {
         /// <summary>

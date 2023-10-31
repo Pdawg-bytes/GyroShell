@@ -5,6 +5,30 @@
     /// </summary>
     public interface ISettingsService
     {
+        /// <summary>Gets a setting value associated with a specific key and casts it to the specified data type.</summary>
+        /// <typeparam name="T">The data type to cast the setting value to.</typeparam>
+        /// <param name="key">The unique key associated with the setting.</param>
+        /// <returns>The setting value cast to the specified data type.</returns>
+        /// <remarks>If the key is not found or the type does not match, a default value for the data type is returned.</remarks>
+        public T GetSetting<T>(string key);
+
+        /// <summary> Sets a setting with the specified key to the provided value.</summary>
+        /// <typeparam name="T">The data type of the setting value.</typeparam>
+        /// <param name="key">The unique key associated with the setting.</param>
+        /// <param name="value">The value to set for the specified setting key.</param>
+        public void SetSetting<T>(string key, T value);
+
+        /// <summary>Removes a setting associated with the specified key.</summary>
+        /// <param name="key">The unique key associated with the setting to be removed.</returns>
+        /// <returns>True if the setting was successfully removed; otherwise, false if the key is not found.</returns>
+        public bool RemoveSetting(string key);
+
+        /// <summary>Adds a new setting with the specified key and value, or updates an existing setting with the same key.</summary>
+        /// <typeparam name="T">The data type of the setting value.</typeparam>
+        /// <param name="key">The unique key associated with the setting.</param>
+        /// <param name="value">The value to set for the specified setting key.</param>
+        public void AddSetting<T>(string key, T value);
+
         /// <summary>
         /// The symbol font style to use.
         /// </summary>

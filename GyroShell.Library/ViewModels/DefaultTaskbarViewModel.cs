@@ -31,7 +31,7 @@ namespace GyroShell.Library.ViewModels
         private readonly IAppHelperService m_appHelper;
         private readonly IBitmapHelperService m_bmpHelper;
 
-        private readonly ITaskbarManagerService m_tbManager;
+        private readonly IExplorerManagerService m_explorerManager;
         private readonly INotificationManager m_notifManager;
 
         private readonly INetworkService m_netService;
@@ -45,7 +45,7 @@ namespace GyroShell.Library.ViewModels
             ISettingsService appSettings,
             IAppHelperService appHelper,
             IBitmapHelperService bmpHelper,
-            ITaskbarManagerService tbManager,
+            IExplorerManagerService explorerManager,
             INotificationManager notifManager,
             INetworkService netService,
             IBatteryService powerService,
@@ -58,7 +58,7 @@ namespace GyroShell.Library.ViewModels
             m_appSettings = appSettings;
             m_appHelper = appHelper;
             m_bmpHelper = bmpHelper;
-            m_tbManager = tbManager;
+            m_explorerManager = explorerManager;
             m_netService = netService;
             m_powerService = powerService;
             m_soundService = soundService;
@@ -141,20 +141,20 @@ namespace GyroShell.Library.ViewModels
         [RelayCommand]
         public void SystemControlsChecked()
         {
-            if (m_envService.IsWindows11) { m_tbManager.ToggleControlCenter(); }
-            else { m_tbManager.ToggleActionCenter(); }
+            if (m_envService.IsWindows11) { m_explorerManager.ToggleControlCenter(); }
+            else { m_explorerManager.ToggleActionCenter(); }
         }
 
         [RelayCommand]
         public void StartButtonChecked()
         {
-            m_tbManager.ToggleStartMenu();
+            m_explorerManager.ToggleStartMenu();
         }
 
         [RelayCommand]
         public void ActionCenterChecked()
         {
-            m_tbManager.ToggleActionCenter();
+            m_explorerManager.ToggleActionCenter();
         }
 
         [RelayCommand]

@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace GyroShell.Library.Services.Managers
 {
+    /// <summary>
+    /// Defines the service that handles modules.
+    /// </summary>
     public interface IModuleManager
     {
         /// <summary>

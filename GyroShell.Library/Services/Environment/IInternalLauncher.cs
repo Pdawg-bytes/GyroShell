@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace GyroShell.Library.Services.Environment
 {
+    /// <summary>
+    /// Defines a list of entry points into GyroShell's internal backend.
+    /// </summary>
     public interface IInternalLauncher
     {
         /// <summary>

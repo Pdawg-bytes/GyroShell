@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace GyroShell.Library.Services.Environment
 {
+    /// <summary>
+    /// Defines a service to provide clock data.
+    /// </summary>
     public interface ITimeService
     {
         /// <summary>

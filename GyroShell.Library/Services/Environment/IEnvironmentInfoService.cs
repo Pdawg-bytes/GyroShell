@@ -45,6 +45,9 @@ namespace GyroShell.Library.Services.Environment
         /// <summary>
         /// The amount of settings windows currently running.
         /// </summary>
+        /// <remarks>
+        /// Instance count should never exceed 1. If it does, the internal launcher will not launch another instance.
+        /// </remarks>
         public int SettingsInstances { get; set; }
     }
 }
