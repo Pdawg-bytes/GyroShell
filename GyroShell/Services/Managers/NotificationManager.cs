@@ -14,6 +14,8 @@ namespace GyroShell.Services.Managers
     {
         public UserNotificationListener NotificationListener { get; init; }
 
+        public UserNotificationListenerAccessStatus NotificationAccessStatus { get; set; }
+
         public NotificationManager() 
         {
             if (!ApiInformation.IsTypePresent("Windows.UI.Notifications.Management.UserNotificationListener"))
@@ -36,12 +38,13 @@ namespace GyroShell.Services.Managers
         private async Task<bool> InitializeEventAsync()
         {
             UserNotificationListenerAccessStatus accessStatus = await NotificationListener.RequestAccessAsync();
+            NotificationAccessStatus = accessStatus;
             return accessStatus == UserNotificationListenerAccessStatus.Allowed;
         }
 
         private async Task RequestNotificationAccess()
         {
-            await NotificationListener.RequestAccessAsync();
+            NotificationAccessStatus = await NotificationListener.RequestAccessAsync();
         }
 
         public event EventHandler NotifcationChanged;

@@ -47,7 +47,8 @@ namespace GyroShell
                 .AddTransient<AboutSettingViewModel>()
                 .AddTransient<ModulesSettingViewModel>()
                 .AddTransient<SettingsWindowViewModel>()
-                .AddTransient<DefaultTaskbarViewModel>();
+                .AddTransient<DefaultTaskbarViewModel>()
+                .AddTransient<CustomizationSettingViewModel>();
 
             m_serviceProvider = collection.BuildServiceProvider(true);
         }

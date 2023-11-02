@@ -309,7 +309,7 @@ namespace GyroShell.Library.ViewModels
 
         private void NotificationManager_NotificationChanged(object sender, EventArgs e)
         {
-            UpdateNotifications();
+            UpdateNotifications().Wait();
         }
         private async Task UpdateNotifications()
         {

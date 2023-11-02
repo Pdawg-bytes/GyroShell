@@ -19,6 +19,7 @@ namespace GyroShell.Library.Services.Environment
         /// <summary>
         /// Starts a new instance of GyroShell.
         /// </summary>
+        /// <remarks>Kills the current instace. The new instance replaces the current one.</remarks>
         public void LaunchNewShellInstance();
 
         /// <summary>

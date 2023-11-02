@@ -5,8 +5,7 @@
     xmlns:local="using:GyroShell.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    Loaded="Page_Loaded">
+    mc:Ignorable="d">
 
     <Grid>
         <ScrollViewer HorizontalScrollMode="Disabled" HorizontalAlignment="Stretch" Margin="10">
@@ -15,35 +14,35 @@
                 <Expander x:Name="TransparencyExpander" HorizontalAlignment="Stretch" Margin="20,20,0,0" HorizontalContentAlignment="Left">
                     <Expander.Header>
                         <StackPanel Orientation="Horizontal" Padding="5,10,5,10">
-                            <TextBlock Text="&#xE81E;" FontFamily="Segoe MDL2 Assets" Margin="0,13,10,10" FontSize="22" x:Name="TransparencyIcon"/>
+                            <TextBlock Text="&#xE81E;" FontFamily="{x:Bind ViewModel.IconFontFamily}" Margin="0,13,10,10" FontSize="22" x:Name="TransparencyIcon"/>
                             <TextBlock Text="Transparency Settings" Margin="10,13,10,10"/>
                         </StackPanel>
                     </Expander.Header>
                     <Expander.Content>
                         <StackPanel Padding="48,0,48,0">
-                            <ComboBox x:Name="TransparencyType" Header="Set GyroShell's bar transparency effect" SelectionChanged="TransparencyType_SelectionChanged">
+                            <ComboBox x:Name="TransparencyType" Header="Set GyroShell's bar transparency effect" SelectedIndex="{x:Bind ViewModel.CurrentTransparencyTypeIndex, Mode=TwoWay}">
                                 <x:String>Mica Alt</x:String>
                                 <x:String>Mica</x:String>
                                 <x:String>Acrylic</x:String>
                             </ComboBox>
                             <TextBlock x:Name="TransparencySettingHeader" Text="Tint Settings" Margin="0,20,0,0" FontSize="20" FontWeight="Medium"/>
-                            <ColorPicker x:Name="TintColorPicker" Margin="0,10,0,0" ColorChanged="TintColorPicker_ColorChanged" ColorSpectrumShape="Box" IsAlphaSliderVisible="True" IsAlphaEnabled="True" IsMoreButtonVisible="True" IsColorSliderVisible="True" IsColorChannelTextInputVisible="True" IsHexInputVisible="True"/>
-                            <Slider Header="Luminosity Opacity" TickFrequency="10" x:Name="LuminSlider" ValueChanged="LuminSlider_ValueChanged"/>
-                            <Slider Header="Tint Opacity" TickFrequency="10" x:Name="TintSlider" ValueChanged="TintSlider_ValueChanged"/>
-                            <Button Content="Reset to default tint settings" Margin="-2,20,0,20" Style="{ThemeResource AccentButtonStyle}" x:Name="DefaultsButton" Click="DefaultsButton_Click"/>
+                            <ColorPicker Color="{x:Bind ViewModel.TransparencyColorPickerValue, Mode=TwoWay}" x:Name="TintColorPicker" Margin="0,10,0,0" ColorSpectrumShape="Box" IsAlphaSliderVisible="True" IsAlphaEnabled="True" IsMoreButtonVisible="True" IsColorSliderVisible="True" IsColorChannelTextInputVisible="True" IsHexInputVisible="True"/>
+                            <Slider Header="Luminosity Opacity" TickFrequency="10" x:Name="LuminSlider" Value="{x:Bind ViewModel.LuminosityOpacity, Mode=TwoWay}" IsEnabled="{x:Bind ViewModel.LuminositySliderEnabled, Mode=OneWay}"/>
+                            <Slider Header="Tint Opacity" TickFrequency="10" x:Name="TintSlider" Value="{x:Bind ViewModel.TintOpacity, Mode=TwoWay}"/>
+                            <Button Content="Reset to default tint settings" Margin="-2,20,0,20" Style="{ThemeResource AccentButtonStyle}" x:Name="DefaultTintButton" Command="{x:Bind ViewModel.DefaultTransparencySettingsCommand}"/>
                         </StackPanel>
                     </Expander.Content>
                 </Expander>
                 <Expander x:Name="TbBehaviorExpander" HorizontalAlignment="Stretch" Margin="20,20,0,0" HorizontalContentAlignment="Left">
                     <Expander.Header>
                         <StackPanel Orientation="Horizontal" Padding="5,10,5,10">
-                            <TextBlock Text="&#xE90E;" FontFamily="Segoe MDL2 Assets" Margin="0,13,10,10" FontSize="22" x:Name="TbIcon"/>
+                            <TextBlock Text="&#xE90E;" FontFamily="{x:Bind ViewModel.IconFontFamily}" Margin="0,13,10,10" FontSize="22" x:Name="TbIcon"/>
                             <TextBlock Text="Taskbar Behavior" Margin="10,13,10,10"/>
                         </StackPanel>
                     </Expander.Header>
                     <Expander.Content>
                         <StackPanel Padding="48,0,48,0">
-                            <ComboBox x:Name="AlignmentType" Header="Set GyroShell's icon alignment" SelectionChanged="AlignmentType_SelectionChanged">
+                            <ComboBox x:Name="AlignmentType" Header="Set GyroShell's icon alignment" SelectedIndex="{x:Bind ViewModel.CurrentAlignmentIndex, Mode=TwoWay}">
                                 <x:String>Left</x:String>
                                 <x:String>Center</x:String>
                             </ComboBox>
@@ -54,47 +53,47 @@
                 <Expander x:Name="ClockExpander" HorizontalAlignment="Stretch" Margin="20,20,0,0" HorizontalContentAlignment="Left">
                     <Expander.Header>
                         <StackPanel Orientation="Horizontal" Padding="5,10,5,10">
-                            <TextBlock Text="&#xEC92;" FontFamily="Segoe MDL2 Assets" Margin="0,13,10,10" FontSize="22" x:Name="ClockIcon"/>
+                            <TextBlock Text="&#xEC92;" FontFamily="{x:Bind ViewModel.IconFontFamily}" Margin="0,13,10,10" FontSize="22" x:Name="ClockIcon"/>
                             <TextBlock Text="Clock Settings" Margin="10,13,10,10"/>
                         </StackPanel>
                     </Expander.Header>
                     <Expander.Content>
                         <StackPanel Padding="48,0,48,0">
-                            <ToggleSwitch Header="Use seconds in time" Margin="0,0,0,8" VerticalAlignment="Top" HorizontalAlignment="Left" x:Name="SecondsToggle" Toggled="SecondsToggle_Toggled"/>
-                            <ToggleSwitch Header="Use 24 hour time" VerticalAlignment="Top" HorizontalAlignment="Left" x:Name="TFHourToggle" Toggled="TFHourToggle_Toggled"/>
+                            <ToggleSwitch Header="Use seconds in time" Margin="0,0,0,8" VerticalAlignment="Top" HorizontalAlignment="Left" x:Name="SecondsToggle" IsOn="{x:Bind ViewModel.IsSecondToggleChecked, Mode=TwoWay}"/>
+                            <ToggleSwitch Header="Use 24 hour time" VerticalAlignment="Top" HorizontalAlignment="Left" x:Name="TFHourToggle" IsOn="{x:Bind ViewModel.Is24HourToggleChecked, Mode=TwoWay}"/>
                         </StackPanel>
                     </Expander.Content>
                 </Expander>
                 <Expander x:Name="IconExpander" HorizontalAlignment="Stretch" Margin="20,20,0,0" HorizontalContentAlignment="Left">
                     <Expander.Header>
                         <StackPanel Orientation="Horizontal" Padding="5,10,5,10">
-                            <TextBlock Text="&#xE790;" FontFamily="Segoe MDL2 Assets" Margin="0,13,10,10" FontSize="22" x:Name="IconHeaderIcon"/>
+                            <TextBlock Text="&#xE790;" FontFamily="{x:Bind ViewModel.IconFontFamily}" Margin="0,13,10,10" FontSize="22" x:Name="IconHeaderIcon"/>
                             <TextBlock Text="Icon Settings" Margin="10,13,10,10"/>
                         </StackPanel>
                     </Expander.Header>
                     <Expander.Content>
                         <StackPanel Padding="48,0,48,0">
-                            <RadioButton Content="Windows 10 Icon Style" GroupName="IconStyle" Margin="0,0,0,8" x:Name="Icon10" Checked="Icon_Checked"/>
-                            <RadioButton Content="Windows 11 Icon Style" GroupName="IconStyle" x:Name="Icon11" Checked="Icon_Checked"/>
+                            <RadioButton Content="Windows 10 Icon Style" IsChecked="{x:Bind ViewModel.Icon10Selected}" GroupName="IconStyle" Margin="0,0,0,8" x:Name="Icon10" Command="{x:Bind ViewModel.IconStyleSelectionCommand}" CommandParameter="Icon10"/>
+                            <RadioButton Content="Windows 11 Icon Style" IsChecked="{x:Bind ViewModel.Icon11Selected}" GroupName="IconStyle" x:Name="Icon11" Command="{x:Bind ViewModel.IconStyleSelectionCommand}" CommandParameter="Icon11" IsEnabled="{x:Bind ViewModel.IsWindows11}"/>
                         </StackPanel>
                     </Expander.Content>
                 </Expander>
             </StackPanel>
         </ScrollViewer>
         <StackPanel VerticalAlignment="Bottom">
-            <InfoBar Message="GyroShell needs permission to access your notifications. Please enable it in Windows Settings." IsClosable="True" Severity="Error" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,20" x:Name="NotifInfo" Width="425">
+            <InfoBar IsOpen="{x:Bind ViewModel.IsNotifInfoOpen, Mode=TwoWay}" Message="GyroShell needs permission to access your notifications. Please enable it in Windows Settings." IsClosable="True" Severity="Error" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,20" x:Name="NotifInfo" Width="425">
                 <InfoBar.Content>
                     <StackPanel Orientation="Horizontal">
-                        <Button x:Name="OpenSettingsInfo" Style="{ThemeResource AccentButtonStyle}" Content="Open settings" Margin="0,0,20,20" HorizontalAlignment="Stretch" Width="145" Click="OpenSettingsInfo_Click"/>
-                        <Button x:Name="IgnoreInfo" Style="{ThemeResource DefaultButtonStyle}" Content="Later" Margin="0,0,0,20" HorizontalAlignment="Stretch" Width="145" Click="IgnoreInfo_Click"/>
+                        <Button x:Name="OpenSettingsInfo" Style="{ThemeResource AccentButtonStyle}" Content="Open settings" Margin="0,0,20,20" HorizontalAlignment="Stretch" Width="145" Command="{x:Bind ViewModel.NotifInfoSettingsCommand}"/>
+                        <Button x:Name="IgnoreNotifInfo" Style="{ThemeResource DefaultButtonStyle}" Content="Later" Margin="0,0,0,20" HorizontalAlignment="Stretch" Width="145" Command="{x:Bind ViewModel.HideNotifInfoCommand}"/>
                     </StackPanel>
                 </InfoBar.Content>
             </InfoBar>
-            <InfoBar Message="GyroShell needs to restart to apply these changes." IsClosable="True" IsOpen="False" Severity="Warning" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,20" x:Name="RestartInfo" Width="425">
+            <InfoBar IsOpen="{x:Bind ViewModel.IsRestartInfoOpen, Mode=TwoWay}" Message="GyroShell needs to restart to apply these changes." IsClosable="True" Severity="Warning" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,20" x:Name="RestartInfo" Width="425">
                 <InfoBar.Content>
                     <StackPanel Orientation="Horizontal">
-                        <Button x:Name="RestartNowInfo" Style="{ThemeResource AccentButtonStyle}" Content="Restart now" Margin="0,0,20,20" HorizontalAlignment="Stretch" Click="RestartNowInfo_Click" Width="145"/>
-                        <Button x:Name="RestartLaterInfo" Style="{ThemeResource DefaultButtonStyle}" Content="Restart later" Margin="0,0,0,20" HorizontalAlignment="Stretch" Width="145" Click="RestartLaterInfo_Click"/>
+                        <Button x:Name="RestartNowInfo" Style="{ThemeResource AccentButtonStyle}" Content="Restart now" Margin="0,0,20,20" HorizontalAlignment="Stretch" Command="{x:Bind ViewModel.RestartGyroShellCommand}" Width="145"/>
+                        <Button x:Name="RestartLaterInfo" Style="{ThemeResource DefaultButtonStyle}" Content="Restart later" Margin="0,0,0,20" HorizontalAlignment="Stretch" Command="{x:Bind ViewModel.HideRestartInfoCommand}" Width="145"/>
                     </StackPanel>
                 </InfoBar.Content>
             </InfoBar>

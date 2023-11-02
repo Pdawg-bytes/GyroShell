@@ -18,5 +18,10 @@ namespace GyroShell.Library.Services.Managers
         /// Event that is fired when any notification is changed.
         /// </summary>
         public event EventHandler NotifcationChanged;
+
+        /// <summary>
+        /// The accessibility of the user's notifications.
+        /// </summary>
+        public UserNotificationListenerAccessStatus NotificationAccessStatus { get; set; }
     }
 }

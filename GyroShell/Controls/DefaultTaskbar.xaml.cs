@@ -31,9 +31,6 @@ namespace GyroShell.Controls
 {
     public sealed partial class DefaultTaskbar : Page
     {
-        private IEnvironmentInfoService m_envService;
-        private ISettingsService m_appSettings;
-
         private IAppHelperService m_appHelper;
         private IBitmapHelperService m_bmpHelper;
 
@@ -49,9 +46,6 @@ namespace GyroShell.Controls
             this.InitializeComponent();
 
             DataContext = App.ServiceProvider.GetRequiredService<DefaultTaskbarViewModel>();
-
-            m_envService = App.ServiceProvider.GetRequiredService<IEnvironmentInfoService>();
-            m_appSettings = App.ServiceProvider.GetRequiredService<ISettingsService>();
 
             m_appHelper = App.ServiceProvider.GetRequiredService<IAppHelperService>();
             m_bmpHelper = App.ServiceProvider.GetRequiredService<IBitmapHelperService>();
