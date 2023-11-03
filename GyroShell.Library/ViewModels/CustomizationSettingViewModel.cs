@@ -27,8 +27,17 @@ namespace GyroShell.Library.ViewModels
 
             IsRestartInfoOpen = false;
             IsNotifInfoOpen = m_notifManager.NotificationAccessStatus != UserNotificationListenerAccessStatus.Allowed;
+
+            m_appSettings.SettingUpdated += AppSettings_SettingUpdated;
         }
 
+        private void AppSettings_SettingUpdated(object sender, string key)
+        {
+            switch (key)
+            {
+                case "iconStyle": OnPropertyChanged(nameof(IconFontFamily)); break;
+            }
+        }
 
         public FontFamily IconFontFamily => m_appSettings.IconStyle switch
         {
@@ -40,7 +49,7 @@ namespace GyroShell.Library.ViewModels
 
         public bool IsWindows11 => m_envService.IsWindows11;
 
-        #region Clock settings
+
         public bool Is24HourToggleChecked
         {
             get => m_appSettings.EnableMilitaryTime;
@@ -52,10 +61,8 @@ namespace GyroShell.Library.ViewModels
             get => m_appSettings.EnableSeconds;
             set => m_appSettings.EnableSeconds = value;
         }
-        #endregion
 
 
-        #region Icon style
         [RelayCommand]
         public void IconStyleSelection(string iconStyle)
         {
@@ -78,10 +85,8 @@ namespace GyroShell.Library.ViewModels
         {
             get => m_appSettings.IconStyle == 1;
         }
-        #endregion
 
 
-        #region Restart Information
         [ObservableProperty]
         private bool isRestartInfoOpen;
 
@@ -96,10 +101,8 @@ namespace GyroShell.Library.ViewModels
         {
             IsRestartInfoOpen = false;
         }
-        #endregion
 
 
-        #region Notification Information
         [ObservableProperty]
         private bool isNotifInfoOpen;
 
@@ -114,40 +117,31 @@ namespace GyroShell.Library.ViewModels
         {
             IsNotifInfoOpen = false;
         }
-        #endregion
 
 
-        #region Transparency
         public int CurrentTransparencyTypeIndex
         {
             get => m_appSettings.TransparencyType;
             set
             {
-                switch (value)
-                {
-                    case 0:
-                    case 1:
-                        LuminosityOpacity = 0; 
-                        LuminositySliderEnabled = false;
-                        if (!m_appSettings.EnableCustomTransparency) { DefaultTransparencySettings(); }
-                        break;
-                    case 2:
-                        LuminositySliderEnabled = true;
-                        if (!m_appSettings.EnableCustomTransparency) { DefaultTransparencySettings(); }
-                        break;
-                }
+                if (!m_appSettings.EnableCustomTransparency) { DefaultTransparencySettings(); }
+
                 m_appSettings.TransparencyType = value;
+                OnPropertyChanged(nameof(LuminositySliderEnabled));
+                OnPropertyChanged(nameof(LuminosityOpacity));
             }
         }
 
-        [ObservableProperty]
-        private bool luminositySliderEnabled;
+        public bool LuminositySliderEnabled
+        {
+            get => m_appSettings.TransparencyType == 2;
+        }
         public int LuminosityOpacity
         {
             get => (int)Math.Round((decimal)m_appSettings.LuminosityOpacity * 100, 1);
             set
             {
-                m_appSettings.LuminosityOpacity = value / 100;
+                m_appSettings.LuminosityOpacity = (float)value / 100;
                 m_appSettings.EnableCustomTransparency = true;
 
                 IsRestartInfoOpen = true;
@@ -158,7 +152,7 @@ namespace GyroShell.Library.ViewModels
             get => (int)Math.Round((decimal)m_appSettings.TintOpacity * 100, 1);
             set
             {
-                m_appSettings.TintOpacity = value / 100;
+                m_appSettings.TintOpacity = (float)value / 100;
                 m_appSettings.EnableCustomTransparency = true;
 
                 IsRestartInfoOpen = true;
@@ -183,29 +177,22 @@ namespace GyroShell.Library.ViewModels
         [RelayCommand]
         public void DefaultTransparencySettings()
         {
-            m_appSettings.AlphaTint = 255;
-            m_appSettings.RedTint = 32;
-            m_appSettings.BlueTint = 32;
-            m_appSettings.GreenTint = 32;
-            m_appSettings.LuminosityOpacity = 0.95f;
-            m_appSettings.TintOpacity = 0.0f;
-
+            TransparencyColorPickerValue = Color.FromArgb(255, 32, 32, 32);
             TintOpacity = 0;
             LuminosityOpacity = 95;
 
-            TransparencyColorPickerValue = new Color { A = 255, R = 32, B = 32, G = 32 };
+            OnPropertyChanged(nameof(TransparencyColorPickerValue));
+            OnPropertyChanged(nameof(TintOpacity));
+            OnPropertyChanged(nameof(LuminosityOpacity));
 
             m_appSettings.EnableCustomTransparency = false;
         }
-        #endregion
 
 
-        #region Taskbar Alignment
         public int CurrentAlignmentIndex
         {
             get => m_appSettings.TaskbarAlignment;
             set => m_appSettings.TaskbarAlignment = value;
         }
-        #endregion
     }
 }

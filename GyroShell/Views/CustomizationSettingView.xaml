@@ -14,7 +14,7 @@
                 <Expander x:Name="TransparencyExpander" HorizontalAlignment="Stretch" Margin="20,20,0,0" HorizontalContentAlignment="Left">
                     <Expander.Header>
                         <StackPanel Orientation="Horizontal" Padding="5,10,5,10">
-                            <TextBlock Text="&#xE81E;" FontFamily="{x:Bind ViewModel.IconFontFamily}" Margin="0,13,10,10" FontSize="22" x:Name="TransparencyIcon"/>
+                            <TextBlock Text="&#xE81E;" FontFamily="{x:Bind ViewModel.IconFontFamily, Mode=OneWay}" Margin="0,13,10,10" FontSize="22" x:Name="TransparencyIcon"/>
                             <TextBlock Text="Transparency Settings" Margin="10,13,10,10"/>
                         </StackPanel>
                     </Expander.Header>
@@ -30,13 +30,18 @@
                             <Slider Header="Luminosity Opacity" TickFrequency="10" x:Name="LuminSlider" Value="{x:Bind ViewModel.LuminosityOpacity, Mode=TwoWay}" IsEnabled="{x:Bind ViewModel.LuminositySliderEnabled, Mode=OneWay}"/>
                             <Slider Header="Tint Opacity" TickFrequency="10" x:Name="TintSlider" Value="{x:Bind ViewModel.TintOpacity, Mode=TwoWay}"/>
                             <Button Content="Reset to default tint settings" Margin="-2,20,0,20" Style="{ThemeResource AccentButtonStyle}" x:Name="DefaultTintButton" Command="{x:Bind ViewModel.DefaultTransparencySettingsCommand}"/>
+                            <InfoBar Message="GyroShell needs to restart to apply these changes." IsClosable="True" Severity="Warning" Margin="-5,0,0,20" x:Name="RestartBar" IsOpen="{x:Bind ViewModel.IsRestartInfoOpen, Mode=TwoWay}">
+                                <InfoBar.ActionButton>
+                                    <Button x:Name="RestartNowBar" Style="{ThemeResource AccentButtonStyle}" Content="Restart now" Command="{x:Bind ViewModel.RestartGyroShellCommand}"/>
+                                </InfoBar.ActionButton>
+                            </InfoBar>
                         </StackPanel>
                     </Expander.Content>
                 </Expander>
                 <Expander x:Name="TbBehaviorExpander" HorizontalAlignment="Stretch" Margin="20,20,0,0" HorizontalContentAlignment="Left">
                     <Expander.Header>
                         <StackPanel Orientation="Horizontal" Padding="5,10,5,10">
-                            <TextBlock Text="&#xE90E;" FontFamily="{x:Bind ViewModel.IconFontFamily}" Margin="0,13,10,10" FontSize="22" x:Name="TbIcon"/>
+                            <TextBlock Text="&#xE90E;" FontFamily="{x:Bind ViewModel.IconFontFamily, Mode=OneWay}" Margin="0,13,10,10" FontSize="22" x:Name="TbIcon"/>
                             <TextBlock Text="Taskbar Behavior" Margin="10,13,10,10"/>
                         </StackPanel>
                     </Expander.Header>
@@ -53,7 +58,7 @@
                 <Expander x:Name="ClockExpander" HorizontalAlignment="Stretch" Margin="20,20,0,0" HorizontalContentAlignment="Left">
                     <Expander.Header>
                         <StackPanel Orientation="Horizontal" Padding="5,10,5,10">
-                            <TextBlock Text="&#xEC92;" FontFamily="{x:Bind ViewModel.IconFontFamily}" Margin="0,13,10,10" FontSize="22" x:Name="ClockIcon"/>
+                            <TextBlock Text="&#xEC92;" FontFamily="{x:Bind ViewModel.IconFontFamily, Mode=OneWay}" Margin="0,13,10,10" FontSize="22" x:Name="ClockIcon"/>
                             <TextBlock Text="Clock Settings" Margin="10,13,10,10"/>
                         </StackPanel>
                     </Expander.Header>
@@ -67,7 +72,7 @@
                 <Expander x:Name="IconExpander" HorizontalAlignment="Stretch" Margin="20,20,0,0" HorizontalContentAlignment="Left">
                     <Expander.Header>
                         <StackPanel Orientation="Horizontal" Padding="5,10,5,10">
-                            <TextBlock Text="&#xE790;" FontFamily="{x:Bind ViewModel.IconFontFamily}" Margin="0,13,10,10" FontSize="22" x:Name="IconHeaderIcon"/>
+                            <TextBlock Text="&#xE790;" FontFamily="{x:Bind ViewModel.IconFontFamily, Mode=OneWay}" Margin="0,13,10,10" FontSize="22" x:Name="IconHeaderIcon"/>
                             <TextBlock Text="Icon Settings" Margin="10,13,10,10"/>
                         </StackPanel>
                     </Expander.Header>
@@ -86,14 +91,6 @@
                     <StackPanel Orientation="Horizontal">
                         <Button x:Name="OpenSettingsInfo" Style="{ThemeResource AccentButtonStyle}" Content="Open settings" Margin="0,0,20,20" HorizontalAlignment="Stretch" Width="145" Command="{x:Bind ViewModel.NotifInfoSettingsCommand}"/>
                         <Button x:Name="IgnoreNotifInfo" Style="{ThemeResource DefaultButtonStyle}" Content="Later" Margin="0,0,0,20" HorizontalAlignment="Stretch" Width="145" Command="{x:Bind ViewModel.HideNotifInfoCommand}"/>
-                    </StackPanel>
-                </InfoBar.Content>
-            </InfoBar>
-            <InfoBar IsOpen="{x:Bind ViewModel.IsRestartInfoOpen, Mode=TwoWay}" Message="GyroShell needs to restart to apply these changes." IsClosable="True" Severity="Warning" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,20" x:Name="RestartInfo" Width="425">
-                <InfoBar.Content>
-                    <StackPanel Orientation="Horizontal">
-                        <Button x:Name="RestartNowInfo" Style="{ThemeResource AccentButtonStyle}" Content="Restart now" Margin="0,0,20,20" HorizontalAlignment="Stretch" Command="{x:Bind ViewModel.RestartGyroShellCommand}" Width="145"/>
-                        <Button x:Name="RestartLaterInfo" Style="{ThemeResource DefaultButtonStyle}" Content="Restart later" Margin="0,0,0,20" HorizontalAlignment="Stretch" Command="{x:Bind ViewModel.HideRestartInfoCommand}" Width="145"/>
                     </StackPanel>
                 </InfoBar.Content>
             </InfoBar>

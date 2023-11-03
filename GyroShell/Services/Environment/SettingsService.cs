@@ -91,7 +91,7 @@ namespace GyroShell.Services.Environment
         public byte BlueTint
         {
             get => GetSetting<byte?>("bTint") ?? 32;
-            set => SetSetting("rTint", value);
+            set => SetSetting("bTint", value);
         }
 
         public float LuminosityOpacity

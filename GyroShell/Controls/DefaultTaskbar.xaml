@@ -36,7 +36,7 @@
                 <MenuFlyoutItem Text="Desktop" Command="{x:Bind ViewModel.StartFlyoutCommands.ShowDesktopCommand}" Tag="Desktop"/>
             </MenuFlyout>
         </Frame>
-        <StackPanel Orientation="Horizontal" x:Name="LeftControls" HorizontalAlignment="{x:Bind ViewModel.TaskbarIconAlignment}">
+        <StackPanel Orientation="Horizontal" x:Name="LeftControls" HorizontalAlignment="{x:Bind ViewModel.TaskbarIconAlignment, Mode=OneWay}">
             <StackPanel.ChildrenTransitions>
                 <TransitionCollection>
                     <EntranceThemeTransition IsStaggeringEnabled="True" />
@@ -94,13 +94,13 @@
             <ToggleButton Command="{x:Bind ViewModel.SystemControlsCheckedCommand}" VerticalAlignment="Center" x:Name="SystemControls" HorizontalAlignment="Right" Height="40" Background="Transparent" BorderBrush="Transparent" Margin="0,0,2,0" ToolTipService.ToolTip="Control Center">
                 <ToggleButton.Content>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock FontFamily="{x:Bind ViewModel.IconFontFamily, Mode=OneWay}" Text="{x:Bind ViewModel.BatteryStatusCharacter, Mode=OneWay}" VerticalAlignment="Center" Margin="{x:Bind ViewModel.BatteryStatusMargin}" FontSize="16" x:Name="BattStatus" Visibility="Visible"/>
+                        <TextBlock FontFamily="{x:Bind ViewModel.IconFontFamily, Mode=OneWay}" Text="{x:Bind ViewModel.BatteryStatusCharacter, Mode=OneWay}" VerticalAlignment="Center" Margin="{x:Bind ViewModel.BatteryStatusMargin, Mode=OneWay}" FontSize="16" x:Name="BattStatus" Visibility="Visible"/>
                         <Grid>
-                            <TextBlock FontFamily="{x:Bind ViewModel.IconFontFamily, Mode=OneWay}" Text="{x:Bind ViewModel.NetworkStatusCharacter, Mode=OneWay}" VerticalAlignment="Center" Margin="{x:Bind ViewModel.NetworkStatusMargin}" FontSize="16" x:Name="NetworkStatus"/>
+                            <TextBlock FontFamily="{x:Bind ViewModel.IconFontFamily, Mode=OneWay}" Text="{x:Bind ViewModel.NetworkStatusCharacter, Mode=OneWay}" VerticalAlignment="Center" Margin="{x:Bind ViewModel.NetworkStatusMargin, Mode=OneWay}" FontSize="16" x:Name="NetworkStatus"/>
                         </Grid>
                         <Grid>
                             <TextBlock FontFamily="{x:Bind ViewModel.IconFontFamily, Mode=OneWay}" Text="&#xE995;" Visibility="{x:Bind ViewModel.SoundBackIconVisibility, Mode=OneWay}" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="{x:Bind ViewModel.SoundStatusMargin}" FontSize="16" Foreground="Gray" Opacity="0.5"/>
-                            <TextBlock FontFamily="{x:Bind ViewModel.IconFontFamily, Mode=OneWay}" Text="{x:Bind ViewModel.SoundStatusText, Mode=OneWay}" VerticalAlignment="Center" Margin="{x:Bind ViewModel.SoundStatusMargin}" FontSize="16" x:Name="SndStatus"/>
+                            <TextBlock FontFamily="{x:Bind ViewModel.IconFontFamily, Mode=OneWay}" Text="{x:Bind ViewModel.SoundStatusText, Mode=OneWay}" VerticalAlignment="Center" Margin="{x:Bind ViewModel.SoundStatusMargin, Mode=OneWay}" FontSize="16" x:Name="SndStatus"/>
                         </Grid>
                     </StackPanel>
                 </ToggleButton.Content>
