@@ -82,6 +82,22 @@ namespace GyroShell.Library.ViewModels
             Task.Run(UpdateNotifications).Wait();
 
             m_timeService.UpdateClockBinding += TimeService_UpdateClockBinding;
+
+            m_appSettings.SettingUpdated += AppSettings_SettingUpdated;
+        }
+
+        private void AppSettings_SettingUpdated(object sender, string key)
+        {
+            switch (key)
+            {
+                case "iconStyle": 
+                    OnPropertyChanged(nameof(IconFontFamily)); 
+                    OnPropertyChanged(nameof(NetworkStatusMargin));
+                    OnPropertyChanged(nameof(BatteryStatusMargin));
+                    OnPropertyChanged(nameof(SoundStatusMargin));
+                    break;
+                case "tbAlignment": OnPropertyChanged(nameof(TaskbarIconAlignment)); break;
+            }
         }
 
         public FontFamily IconFontFamily => m_appSettings.IconStyle switch
@@ -109,6 +125,7 @@ namespace GyroShell.Library.ViewModels
                 }
             }
         }
+
         public Thickness BatteryStatusMargin
         {
             get
@@ -122,13 +139,13 @@ namespace GyroShell.Library.ViewModels
                 };
             }
         }
+
         public Thickness SoundStatusMargin => m_appSettings.IconStyle switch
         {
             0 => new Thickness(6, 1, 0, 0),
             1 => new Thickness(5, 0, 0, 0),
             _ => new Thickness(6, 1, 0, 0)
         };
-
 
         public HorizontalAlignment TaskbarIconAlignment => m_appSettings.TaskbarAlignment switch
         {
@@ -165,7 +182,6 @@ namespace GyroShell.Library.ViewModels
         }
 
 
-        #region Audio
         [ObservableProperty]
         private string soundStatusText;
 
@@ -212,9 +228,8 @@ namespace GyroShell.Library.ViewModels
                 SoundBackIconVisibility = (statusTextBuf == "\uE198") ? Visibility.Collapsed : Visibility.Visible;
             });
         }
-        #endregion
 
-        #region Battery
+
         [ObservableProperty]
         private string batteryStatusCharacter;
 
@@ -259,9 +274,8 @@ namespace GyroShell.Library.ViewModels
                 BatteryStatusCharacter = UIConstants.BatteryIcons[indexDischarge];
             }
         }
-        #endregion
 
-        #region Internet
+
         [ObservableProperty]
         private string networkStatusCharacter;
 
@@ -301,9 +315,8 @@ namespace GyroShell.Library.ViewModels
                 NetworkStatusCharacter = statusTextBuf;
             });
         }
-        #endregion
 
-        #region Notifications
+
         [ObservableProperty]
         private Visibility notifIndicatorVisibility;
 
@@ -321,9 +334,8 @@ namespace GyroShell.Library.ViewModels
                 NotifIndicatorVisibility = notifsToast.Count > 0 || notifsOther.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
             });
         }
-        #endregion
 
-        #region Clock
+
         [ObservableProperty]
         private string timeText;
 
@@ -338,7 +350,6 @@ namespace GyroShell.Library.ViewModels
                 DateText = DateTime.Now.ToString(m_timeService.DateFormat);
             });
         }
-        #endregion
 
 
         public void Dispose()

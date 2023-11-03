@@ -20,7 +20,7 @@ namespace GyroShell.Services.Managers
         {
             if (!ApiInformation.IsTypePresent("Windows.UI.Notifications.Management.UserNotificationListener"))
             {
-                // set notif error later
+                NotificationAccessStatus = UserNotificationListenerAccessStatus.Unspecified;
                 return;
             }
 
@@ -31,7 +31,7 @@ namespace GyroShell.Services.Managers
             }
             else
             {
-                Task.Run(RequestNotificationAccess).Wait(); // set notif error later
+                Task.Run(RequestNotificationAccess).Wait();
             }
         }
 

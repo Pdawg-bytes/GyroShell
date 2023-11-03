@@ -33,7 +33,7 @@ namespace GyroShell
                 .AddTransient<IBitmapHelperService, BitmapHelperService>()
                 .AddSingleton<IAppHelperService, AppHelperService>()
                 .AddSingleton<IEnvironmentInfoService, EnvironmentInfoService>()
-                .AddTransient<ISettingsService, SettingsService>()
+                .AddSingleton<ISettingsService, SettingsService>()
                 .AddSingleton<INetworkService, NetworkService>()
                 .AddSingleton<IBatteryService, BatteryService>()
                 .AddSingleton<ISoundService, SoundService>()

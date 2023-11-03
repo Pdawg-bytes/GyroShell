@@ -29,6 +29,8 @@ namespace GyroShell.Services.Environment
             updateCheck.Elapsed += UpdateCheck_Elapsed;
 
             updateCheck.Start();
+
+            m_appSettings.SettingUpdated += AppSettings_SettingUpdated;
         }
 
         private void UpdateCheck_Elapsed(object sender, ElapsedEventArgs e)
@@ -42,6 +44,19 @@ namespace GyroShell.Services.Environment
         }
 
         public event EventHandler UpdateClockBinding;
+
+        private void AppSettings_SettingUpdated(object sender, string key)
+        {
+            switch (key)
+            {
+                case "isSeconds":
+                case "is24HR":
+                    ClockFormat = m_appSettings.EnableSeconds ? (m_appSettings.EnableMilitaryTime ? "H:mm:ss" : "T") : (m_appSettings.EnableMilitaryTime ? "H:mm" : "t");
+                    DateFormat = "M/d/yyyy";
+                    break;
+            }
+        }
+
 
         public void Dispose()
         {
