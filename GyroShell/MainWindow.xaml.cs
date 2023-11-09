@@ -29,9 +29,8 @@ namespace GyroShell
         private IEnvironmentInfoService m_envService;
         private ISettingsService m_appSettings;
         private IExplorerManagerService m_explorerManager;
-        private IAppHelperService m_appHelper;
+        private IShellHookService m_shellHookService;
 
-        private IntPtr _oldWndProc;
         internal static IntPtr hWnd;
 
         internal static int uCallBack;
@@ -45,7 +44,7 @@ namespace GyroShell
 
             m_envService = App.ServiceProvider.GetRequiredService<IEnvironmentInfoService>();
             m_appSettings = App.ServiceProvider.GetRequiredService<ISettingsService>();
-            m_appHelper = App.ServiceProvider.GetRequiredService<IAppHelperService>();
+            m_shellHookService = App.ServiceProvider.GetRequiredService<IShellHookService>();
             m_explorerManager = App.ServiceProvider.GetRequiredService<IExplorerManagerService>();
 
             m_explorerManager.Initialize();
@@ -62,6 +61,7 @@ namespace GyroShell
 
             hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
             m_envService.MainWindowHandle = hWnd;
+            m_shellHookService.MainWindowHandle = hWnd;
             WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
             AppWindow appWindow = AppWindow.GetFromWindowId(windowId);
             if (m_envService.IsWindows11)
@@ -89,12 +89,9 @@ namespace GyroShell
 
             // Init stuff
             RegisterBar();
-            RegisterWinEventHook();
-            _oldWndProc = SetWndProc(WindowProcess);
             MonitorSummon();
             TaskbarFrame.Navigate(typeof(Controls.DefaultTaskbar), null, new SuppressNavigationTransitionInfo());
             SetBackdrop();
-            ShellDDEInit(true);
 
             // Show GyroShell when everything is ready
             m_AppWindow.Show();
@@ -104,9 +101,6 @@ namespace GyroShell
         private void OnProcessExit(object sender, EventArgs e)
         {
             m_explorerManager.ShowTaskbar();
-            //UnhookWinEvent(foregroundHook);
-            //UnhookWinEvent(cloakedHook);
-            //UnhookWinEvent(nameChangeHook);
         }
 
         private OverlappedPresenter GetAppWindowAndPresenter()
@@ -319,7 +313,7 @@ namespace GyroShell
         #endregion
 
         #region AppBar
-        internal void RegisterBar()
+        private void RegisterBar()
         {
             APPBARDATA abd = new APPBARDATA();
 
@@ -393,107 +387,6 @@ namespace GyroShell
 
             SHAppBarMessage((int)ABMsg.ABM_SETPOS, ref abd);
             MoveWindow(abd.hWnd, abd.rc.left, abd.rc.top, abd.rc.right - abd.rc.left, abd.rc.bottom - abd.rc.top, true);
-        }
-        #endregion
-
-        #region Callbacks
-
-        #region SetWinEventHook Init
-        private int WM_ShellHook;
-
-        private void RegisterWinEventHook()
-        {
-            WM_ShellHook = RegisterWindowMessage("SHELLHOOK");
-
-            RegisterShellHook(hWnd, 3);
-        }
-        #endregion
-
-        #region WndProc Init
-        private static WndProcDelegate _currDelegate = null;
-        internal static IntPtr SetWndProc(WndProcDelegate newProc)
-        {
-            _currDelegate = newProc;
-
-            IntPtr newWndProcPtr = Marshal.GetFunctionPointerForDelegate(newProc);
-
-            if (IntPtr.Size == 8)
-            {
-                return SetWindowLongPtr(hWnd, GWLP_WNDPROC, newWndProcPtr);
-            }
-            else
-            {
-                return SetWindowLong(hWnd, GWLP_WNDPROC, newWndProcPtr);
-            }
-        }
-        #endregion
-
-        // WNDPROC Callback
-        private IntPtr WindowProcess(IntPtr hwnd, uint message, IntPtr wParam, IntPtr lParam)
-        {
-            /*Debug.WriteLine("------------");
-            Debug.WriteLine("MESSAGE: " + (WM_CODE)message);
-            Debug.WriteLine(wParam);
-            Debug.WriteLine(lParam);*/
-            if (message == WM_ShellHook)
-            {
-                //return HandleShellHook(wParam.ToInt32(), lParam);
-            }
-
-            return CallWindowProc(_oldWndProc, hwnd, message, wParam, lParam);
-        }
-
-        // WM_ShellHook Callback
-        private IntPtr HandleShellHook(int iCode, IntPtr hwnd)
-        {
-            switch (iCode)
-            {
-                case HSHELL_GETMINRECT: //HSHELL_GETMINRECT
-                    return new IntPtr(1);
-                case (4 | 0x8000): // HSHELL_RUDEAPPACTIVATED
-                    break;
-                case HSHELL_WINDOWACTIVATED:
-                    break;
-                case HSHELL_WINDOWCREATED:
-                    if (isUserWindow(hwnd))
-                    {
-                        Debug.WriteLine("Window created: " + m_appHelper.GetWindowTitle(hwnd) + " | Handle: " + (hwnd));
-                        //indexedWindows.Add(hwnd);
-                    }
-                    break;
-                case HSHELL_WINDOWDESTROYED:
-                    /*if (indexedWindows.Contains(hwnd))
-                    {
-                        Debug.WriteLine("Window destroyed: " + GetWindowTitle(hwnd) + " | Handle: " + (hwnd));
-                        //indexedWindows.Remove(hwnd);
-                    }*/
-                    break;
-                case HSHELL_APPCOMMAND:
-                    int appCommand = ((short)((((uint)hwnd) >> 16) & ushort.MaxValue)) & ~FAPPCOMMAND_MASK;
-
-                    Debug.WriteLine("App command: " + appCommand);
-
-                    if (appCommand == 8)
-                    {
-                        Debug.WriteLine("Volume muted");
-                    }
-                    break;
-                case 16:
-                    return new IntPtr(1);
-                case HSHELL_REDRAW:
-                    //Debug.WriteLine("Window redraw: " + GetWindowTitle(hwnd) + " | Handle: " + (hwnd));
-                    break;
-                case HSHELL_FULLSCREEN_ENABLED:
-                    //m_AppWindow.Hide();
-                    break;
-                case HSHELL_FULLSCREEN_DISABLED:
-                    //m_AppWindow.Show();
-                    break;
-                default:
-                    Debug.WriteLine("Unknown shhook code: " + iCode + " with window: " + m_appHelper.GetWindowTitle(hwnd));
-                    break;
-            }
-            return IntPtr.Zero;
         }
         #endregion
     }

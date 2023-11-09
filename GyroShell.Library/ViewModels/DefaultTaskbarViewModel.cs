@@ -266,12 +266,12 @@ namespace GyroShell.Library.ViewModels
             if (status == BatteryPowerStatus.Charging || status == BatteryPowerStatus.Idle)
             {
                 int indexCharge = (int)Math.Floor(battLevel / 10);
-                BatteryStatusCharacter = UIConstants.BatteryIconsCharge[indexCharge];
+                BatteryStatusCharacter = IconConstants.BatteryIconsCharge[indexCharge];
             }
             else
             {
                 int indexDischarge = (int)Math.Floor(battLevel / 10);
-                BatteryStatusCharacter = UIConstants.BatteryIcons[indexDischarge];
+                BatteryStatusCharacter = IconConstants.BatteryIcons[indexDischarge];
             }
         }
 
@@ -295,10 +295,10 @@ namespace GyroShell.Library.ViewModels
                         OnPropertyChanged(nameof(NetworkStatusMargin));
                         break;
                     case InternetConnection.Wireless:
-                        statusTextBuf = UIConstants.WiFiIcons[m_netService.SignalStrength];
+                        statusTextBuf = IconConstants.WiFiIcons[m_netService.SignalStrength];
                         break;
                     case InternetConnection.Data:
-                        statusTextBuf = UIConstants.DataIcons[m_netService.SignalStrength];
+                        statusTextBuf = IconConstants.DataIcons[m_netService.SignalStrength];
                         break;
                     case InternetConnection.Unknown:
                     default:

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GyroShell.Library.Constants
 {
-    public class UIConstants
+    public class IconConstants
     {
         /// <summary>
         /// The set of icons to represent a charging battery.

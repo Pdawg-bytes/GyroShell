@@ -36,8 +36,6 @@ namespace GyroShell.Controls
 
         private IExplorerManagerService m_explorerManager;
 
-        private readonly WinEventDelegate callback;
-
         internal ObservableCollection<IconModel> TbIconCollection;
         internal static List<IntPtr> indexedWindows = new List<IntPtr>();
 
@@ -56,9 +54,7 @@ namespace GyroShell.Controls
 
             BarBorder.Background = new SolidColorBrush(Color.FromArgb(255, 66, 63, 74));
 
-            callback = WinEventCallback;
             GetCurrentWindows();
-            RegisterWinEventHook();
 
             m_explorerManager.NotifyWinlogonShowShell();
         }
@@ -78,9 +74,6 @@ namespace GyroShell.Controls
 
                 switch (shellOption)
                 {
-                    case "ExitGyroShell":
-                        DestroyHooks();
-                        break;
                     case "Desktop":
                         foreach (IntPtr handle in indexedWindows)
                         {
@@ -102,28 +95,8 @@ namespace GyroShell.Controls
             EnumWindows(EnumWindowsCallbackMethod, IntPtr.Zero);
         }
 
-        private IntPtr foregroundHook;
-        private IntPtr cloakedHook;
-        private IntPtr nameChangeHook;
-        private IntPtr cdWindowHook;
-
-        private IntPtr lastWindow;
-        private void RegisterWinEventHook()
-        {
-            foregroundHook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, callback, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
-            cloakedHook = SetWinEventHook(EVENT_OBJECT_CLOAKED, EVENT_OBJECT_UNCLOAKED, IntPtr.Zero, callback, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
-            nameChangeHook = SetWinEventHook(EVENT_OBJECT_NAMECHANGED, EVENT_OBJECT_NAMECHANGED, IntPtr.Zero, callback, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
-            cdWindowHook = SetWinEventHook(EVENT_OBJECT_CREATE, EVENT_OBJECT_DESTROY, IntPtr.Zero, callback, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
-        }
-        private void DestroyHooks()
-        {
-            UnhookWinEvent(foregroundHook);
-            UnhookWinEvent(cloakedHook);
-            UnhookWinEvent(nameChangeHook);
-            UnhookWinEvent(cdWindowHook);
-        }
         // WinEvent Callback
-        private void WinEventCallback(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
+        /*private void WinEventCallback(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
         {
             string windowName = m_appHelper.GetWindowTitle(hwnd);
             if (!indexedWindows.Contains(hwnd))
@@ -262,13 +235,13 @@ namespace GyroShell.Controls
                         break;
                 }
             }
-        }
+        }*/
 
         private bool EnumWindowsCallbackMethod(IntPtr hwnd, IntPtr lParam)
         {
             try
             {
-                if (isUserWindow(hwnd)) 
+                if (IsUserWindow(hwnd)) 
                 { 
                     indexedWindows.Add(hwnd);
                     SoftwareBitmapSource bmpSource = m_bmpHelper.GetXamlBitmapFromGdiBitmapAsync(m_appHelper.GetUwpOrWin32Icon(hwnd, 32)).Result;

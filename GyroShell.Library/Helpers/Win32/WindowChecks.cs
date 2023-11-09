@@ -15,7 +15,7 @@ namespace GyroShell.Library.Helpers.Win32
         private static int attributeValue = 0;
         private static int hr;
 
-        public static bool isUserWindow(IntPtr hWnd)
+        public static bool IsUserWindow(IntPtr hWnd)
         {
             // Debug code, each is declared so I can find value on breakpoint.
             /*
