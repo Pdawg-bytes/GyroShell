@@ -54,8 +54,6 @@ namespace GyroShell.Controls
 
             BarBorder.Background = new SolidColorBrush(Color.FromArgb(255, 66, 63, 74));
 
-            GetCurrentWindows();
-
             m_explorerManager.NotifyWinlogonShowShell();
         }
 
@@ -90,11 +88,6 @@ namespace GyroShell.Controls
         }
 
         #region Callbacks
-        private void GetCurrentWindows()
-        {
-            EnumWindows(EnumWindowsCallbackMethod, IntPtr.Zero);
-        }
-
         // WinEvent Callback
         /*private void WinEventCallback(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
         {
@@ -237,7 +230,7 @@ namespace GyroShell.Controls
             }
         }*/
 
-        private bool EnumWindowsCallbackMethod(IntPtr hwnd, IntPtr lParam)
+        /*private bool EnumWindowsCallbackMethod(IntPtr hwnd, IntPtr lParam)
         {
             try
             {
@@ -253,7 +246,7 @@ namespace GyroShell.Controls
                 Debug.WriteLine(ex.Message);
             }
             return true;
-        }
+        }*/
         #endregion
 
         private void Icon_Tapped(object sender, TappedRoutedEventArgs e)

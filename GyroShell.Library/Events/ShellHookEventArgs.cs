@@ -9,6 +9,9 @@ namespace GyroShell.Library.Events
 {
     public class ShellHookEventArgs : EventArgs
     {
+        /// <summary>
+        /// Abstraction of neccessary HSHELL message codes.
+        /// </summary>
         public enum ShellHookCode
         {
             WindowActivated = HSHELL_WINDOWACTIVATED,

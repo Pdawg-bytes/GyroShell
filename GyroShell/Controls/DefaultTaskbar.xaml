@@ -54,7 +54,7 @@
                 </Button.Content>
             </Button>
             <!--<Border x:Name="LeftControlsSeperator" Height="28" VerticalAlignment="Center" Width="1" Opacity="0.3" CornerRadius="1"/>-->
-            <GridView ItemContainerStyle="{ThemeResource DefaultTaskbarIconStyle}" ReorderMode="Enabled" CanReorderItems="True" ScrollViewer.VerticalScrollMode="Disabled" ScrollViewer.VerticalScrollBarVisibility="Hidden"  x:Name="TbOpenGrid" ItemsSource="{x:Bind TbIconCollection}" Height="48" Background="Transparent" SelectionMode="Single" Padding="0" VerticalAlignment="Center" Margin="5,2,0,0">
+            <GridView ItemContainerStyle="{ThemeResource DefaultTaskbarIconStyle}" ReorderMode="Enabled" CanReorderItems="True" ScrollViewer.VerticalScrollMode="Disabled" ScrollViewer.VerticalScrollBarVisibility="Hidden" x:Name="TbOpenGrid" ItemsSource="{x:Bind ViewModel.TaskbarIconCollection}" Height="48" Background="Transparent" SelectionMode="Single" Padding="0" VerticalAlignment="Center" Margin="5,2,0,0">
                 <GridView.ItemContainerTransitions>
                     <TransitionCollection>
                         <ReorderThemeTransition/>

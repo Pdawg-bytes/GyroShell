@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using GyroShell.Library.Events;
+using GyroShell.Library.Models.InternalData;
 using GyroShell.Library.Services.Environment;
+using Microsoft.UI.Xaml.Media.Imaging;
 using static GyroShell.Library.Helpers.Win32.Win32Interop;
+using static GyroShell.Library.Helpers.Win32.WindowChecks;
 
 namespace GyroShell.Services.Environment
 {
@@ -30,13 +34,22 @@ namespace GyroShell.Services.Environment
         private WndProcDelegate _currDelegate = null;
         private IntPtr _oldWndProc;
 
+        private List<IntPtr> _indexedWindows;
+        public List<IntPtr> IndexedWindows
+        {
+            get => _indexedWindows;
+            set => _indexedWindows = value;
+        }
+
         public ShellHookService()
         {
+            IndexedWindows = new List<IntPtr>();
         }
 
         private void InitializeHooks()
         {
             _hooksRegistered = true;
+            GetCurrentWindows();
             _shellHook = RegisterWindowMessage("SHELLHOOK");
             RegisterShellHook(_mainWindowHandle, 3);
 
@@ -44,6 +57,27 @@ namespace GyroShell.Services.Environment
 
             ShellDDEInit(true);
         }
+
+        private void GetCurrentWindows()
+        {
+            EnumWindows(EnumWindowsCallbackMethod, IntPtr.Zero);
+        }
+        private bool EnumWindowsCallbackMethod(IntPtr hwnd, IntPtr lParam)
+        {
+            try
+            {
+                if (IsUserWindow(hwnd))
+                {
+                    HandleShellHook(1, hwnd);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+            return true;
+        }
+
 
         private IntPtr SetWndProc(WndProcDelegate newProc)
         {
@@ -69,11 +103,29 @@ namespace GyroShell.Services.Environment
             return CallWindowProc(_oldWndProc, hwnd, message, wParam, lParam);
         }
 
+
         public event EventHandler<ShellHookEventArgs> ShellHookEvent;
-        private IntPtr HandleShellHook(int iCode, IntPtr hwnd)
+        private IntPtr HandleShellHook(int iCode, IntPtr hWnd)
         {
-            ShellHookEventArgs.ShellHookCode sh = (ShellHookEventArgs.ShellHookCode)iCode;
-            return IntPtr.Zero;
+            // TODO: Implement some WinEventHook stuff for other events not caught in HSHELL.
+            try
+            {
+                switch (iCode)
+                {
+                    case HSHELL_WINDOWCREATED:
+                        IndexedWindows.Add(hWnd);
+                        break;
+                    case HSHELL_WINDOWDESTROYED:
+                        IndexedWindows.Remove(hWnd);
+                        break;
+                }
+                ShellHookEvent?.Invoke(this, new ShellHookEventArgs((ShellHookEventArgs.ShellHookCode)iCode, hWnd));
+                return IntPtr.Zero;
+            }
+            catch
+            {
+                return IntPtr.Zero;
+            }
         }
     }
 }

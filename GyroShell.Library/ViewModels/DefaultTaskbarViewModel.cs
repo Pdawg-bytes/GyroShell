@@ -11,12 +11,18 @@ using Microsoft.UI.Xaml.Media;
 using System;
 using Windows.UI.Core;
 using static GyroShell.Library.Helpers.Win32.Win32Interop;
+using static GyroShell.Library.Helpers.Win32.WindowChecks;
 using GyroShell.Library.Constants;
 using System.Diagnostics;
 using Windows.UI.Notifications.Management;
 using Windows.UI.Notifications;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using GyroShell.Library.Events;
+using System.Collections.ObjectModel;
+using GyroShell.Library.Models.InternalData;
+using Microsoft.UI.Xaml.Media.Imaging;
+using System.Linq;
 
 namespace GyroShell.Library.ViewModels
 {
@@ -27,6 +33,7 @@ namespace GyroShell.Library.ViewModels
         private readonly IInternalLauncher m_internalLauncher;
         private readonly IDispatcherService m_dispatcherService;
         private readonly ITimeService m_timeService;
+        private readonly IShellHookService m_shellHookService;
 
         private readonly IAppHelperService m_appHelper;
         private readonly IBitmapHelperService m_bmpHelper;
@@ -40,6 +47,8 @@ namespace GyroShell.Library.ViewModels
 
         public StartFlyoutCommands StartFlyoutCommands { get; }
 
+        public ObservableCollection<IconModel> TaskbarIconCollection;
+
         public DefaultTaskbarViewModel(
             IEnvironmentInfoService envService,
             ISettingsService appSettings,
@@ -52,7 +61,8 @@ namespace GyroShell.Library.ViewModels
             ISoundService soundService,
             IInternalLauncher internalLauncher,
             IDispatcherService dispatcherService,
-            ITimeService timeService)
+            ITimeService timeService,
+            IShellHookService shellHookService)
         {
             m_envService = envService;
             m_appSettings = appSettings;
@@ -66,6 +76,7 @@ namespace GyroShell.Library.ViewModels
             m_dispatcherService = dispatcherService;
             m_notifManager = notifManager;
             m_timeService = timeService;
+            m_shellHookService = shellHookService;
 
             StartFlyoutCommands = new StartFlyoutCommands(m_envService, m_internalLauncher);
 
@@ -84,6 +95,32 @@ namespace GyroShell.Library.ViewModels
             m_timeService.UpdateClockBinding += TimeService_UpdateClockBinding;
 
             m_appSettings.SettingUpdated += AppSettings_SettingUpdated;
+
+            TaskbarIconCollection = new ObservableCollection<IconModel>();
+            m_shellHookService.ShellHookEvent += HandleShellEvent;
+            GetCurrentWindows();
+        }
+
+        private void GetCurrentWindows()
+        {
+            foreach (IntPtr handle in m_shellHookService.IndexedWindows)
+            {
+                SoftwareBitmapSource bmpSource = m_bmpHelper.GetXamlBitmapFromGdiBitmapAsync(m_appHelper.GetUwpOrWin32Icon(handle, 32)).Result;
+                TaskbarIconCollection.Add(new IconModel { IconName = m_appHelper.GetWindowTitle(handle), Id = handle, AppIcon = bmpSource });
+            }
+        }
+        private void HandleShellEvent(object sender, ShellHookEventArgs e)
+        {
+            switch (e.ShellMessage)
+            {
+                case ShellHookEventArgs.ShellHookCode.WindowCreated:
+                    SoftwareBitmapSource bmpSource = m_bmpHelper.GetXamlBitmapFromGdiBitmapAsync(m_appHelper.GetUwpOrWin32Icon(e.ObjectHandle, 32)).Result;
+                    TaskbarIconCollection.Add(new IconModel { IconName = m_appHelper.GetWindowTitle(e.ObjectHandle), Id = e.ObjectHandle, AppIcon = bmpSource });
+                    break;
+                case ShellHookEventArgs.ShellHookCode.WindowDestroyed:
+                    TaskbarIconCollection.Remove(TaskbarIconCollection.First(param => param.Id == e.ObjectHandle));
+                    break;
+            }
         }
 
         private void AppSettings_SettingUpdated(object sender, string key)
