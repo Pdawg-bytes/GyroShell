@@ -113,13 +113,7 @@ namespace GyroShell.Library.ViewModels
         {
             switch (e.ShellMessage)
             {
-                case ShellHookEventArgs.ShellHookCode.WindowCreated:
-                    SoftwareBitmapSource bmpSource = m_bmpHelper.GetXamlBitmapFromGdiBitmapAsync(m_appHelper.GetUwpOrWin32Icon(e.ObjectHandle, 32)).Result;
-                    TaskbarIconCollection.Add(new IconModel { IconName = m_appHelper.GetWindowTitle(e.ObjectHandle), Id = e.ObjectHandle, AppIcon = bmpSource });
-                    break;
-                case ShellHookEventArgs.ShellHookCode.WindowDestroyed:
-                    TaskbarIconCollection.Remove(TaskbarIconCollection.First(param => param.Id == e.ObjectHandle));
-                    break;
+
             }
         }
 

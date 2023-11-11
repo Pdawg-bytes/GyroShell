@@ -10,20 +10,20 @@ namespace GyroShell.Library.Events
     public class ShellHookEventArgs : EventArgs
     {
         /// <summary>
-        /// Abstraction of neccessary HSHELL message codes.
+        /// Abstraction of neccessary shell message codes.
         /// </summary>
         public enum ShellHookCode
         {
-            WindowActivated = HSHELL_WINDOWACTIVATED,
-            WindowReplacing = HSHELL_WINDOWREPLACING,
-            WindowReplaced = HSHELL_WINDOWREPLACED,
-            WindowCreated = HSHELL_WINDOWCREATED,
-            WindowDestroyed = HSHELL_WINDOWDESTROYED,
-            AppCommand = HSHELL_APPCOMMAND
+            ObjectCreated = EVENT_OBJECT_CREATE,
+            ObjectDestroyed = EVENT_OBJECT_DESTROY,
+            ObjectNamechange = EVENT_OBJECT_NAMECHANGED,
+            ForegroundChange = EVENT_SYSTEM_FOREGROUND,
+            ObjectCloaked = EVENT_OBJECT_CLOAKED,
+            ObjectUncloaked = EVENT_OBJECT_UNCLOAKED
         }
 
         /// <summary>
-        /// The event arguments used to derive events sent by Windows' ShellHook.
+        /// The event arguments used to derive events sent by Windows' EventHook.
         /// </summary>
         /// <param name="shellMessage">The code of the message being sent.</param>
         /// <param name="objectHandle">The handle of the object that the message is sent for.</param>

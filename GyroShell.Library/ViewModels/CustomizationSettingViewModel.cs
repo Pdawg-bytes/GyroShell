@@ -177,7 +177,14 @@ namespace GyroShell.Library.ViewModels
         [RelayCommand]
         public void DefaultTransparencySettings()
         {
-            TransparencyColorPickerValue = Color.FromArgb(255, 32, 32, 32);
+            if (m_envService.IsSystemUsingDarkmode)
+            {
+                TransparencyColorPickerValue = Color.FromArgb(255, 32, 32, 32);
+            }
+            else
+            {
+                TransparencyColorPickerValue = Color.FromArgb(255, 232, 232, 232);
+            }
             TintOpacity = 0;
             LuminosityOpacity = 95;
 
