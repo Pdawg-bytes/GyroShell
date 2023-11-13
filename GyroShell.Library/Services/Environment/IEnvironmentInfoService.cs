@@ -28,6 +28,11 @@ namespace GyroShell.Library.Services.Environment
         public bool IsWindows11 { get; }
 
         /// <summary>
+        /// Checks if the system theme is set to dark mode.
+        /// </summary>
+        public bool IsSystemUsingDarkmode { get; }
+
+        /// <summary>
         /// Gets the principal monitor's width in pixels.
         /// </summary>
         public int MonitorWidth { get; }

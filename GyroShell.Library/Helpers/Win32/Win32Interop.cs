@@ -87,11 +87,11 @@ namespace GyroShell.Library.Helpers.Win32
         public const int SM_CXSCREEN = 0;
         public const int SM_CYSCREEN = 1;
 
-        public const uint WINEVENT_OUTOFCONTEXT = 0x0000;
-        public const uint WINEVENT_SKIPOWNTHREAD = 0x0001;
-        public const uint EVENT_SYSTEM_DESKTOPSWITCH = 0x0020;
-        public const uint EVENT_OBJECT_CLOAKED = 0x8017;
-        public const uint EVENT_OBJECT_UNCLOAKED = 0x8018;
+        public const int WINEVENT_OUTOFCONTEXT = 0x0000;
+        public const int WINEVENT_SKIPOWNTHREAD = 0x0001;
+        public const int EVENT_SYSTEM_DESKTOPSWITCH = 0x0020;
+        public const int EVENT_OBJECT_CLOAKED = 0x8017;
+        public const int EVENT_OBJECT_UNCLOAKED = 0x8018;
         public const int EVENT_OBJECT_NAMECHANGED = 0x800C;
         public const int EVENT_OBJECT_DESTROY = 0x8001;
         public const int EVENT_OBJECT_CREATE = 0x8000;
@@ -470,5 +470,8 @@ namespace GyroShell.Library.Helpers.Win32
             HWND_TOPMOST = -1,
             HWND_NOTOPMOST = -2,
         }
+
+        [DllImport("UXTheme.dll", SetLastError = true, EntryPoint = "#138")]
+        public static extern bool ShouldSystemUseDarkMode();
     }
 }

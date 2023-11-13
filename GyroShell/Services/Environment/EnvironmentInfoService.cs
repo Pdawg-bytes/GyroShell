@@ -27,6 +27,11 @@ namespace GyroShell.Services.Environment
             set => _settingsInstances = value;
         }
 
+        public bool IsSystemUsingDarkmode
+        {
+            get => ShouldSystemUseDarkMode(); 
+        }
+
         public bool IsWindows11
         {
             get => System.Environment.OSVersion.Version.Build >= 22000;
