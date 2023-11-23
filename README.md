@@ -15,7 +15,7 @@
 
 </div>
 
-GyroShell is a shell for Windows 11 (and maybe 10) that aims to provide a customizable and functional shell experience. The shells UI is written in WASDK XAML, and the backend is composed of C#; all brought together by WinUI 3. 
+GyroShell is a shell for Windows 11 (and maybe 10) that aims to provide a customizable and functional shell experience. The shells UI is written in WinUI 3 XAML, and the backend is composed of C#; all brought together by WASDK. 
 
 > [!WARNING]  
 > GyroShell is currently under heavy development and may not be stable.
@@ -46,7 +46,7 @@ To contribute to GyroShell, follow the [contribution guide](https://github.com/P
 ### ❤️ Major Contributors
 People in this section have contributed a significant amount to GyroShell. Thank you, contributors!
 - **Pdawg** - Lead developer of GyroShell. Works on the UI, backend, and design.
-- **AnalogFeelings** - Implemented Dependency Injection, and refined the UI, cleaned up the backend.
+- **AnalogFeelings** - Implemented Dependency Injection, refined the UI, and cleaned up the backend.
 - **Rounak** - Implemented the taskbar icon system and some shell hooking code.
 
 ## :balance_scale: License
