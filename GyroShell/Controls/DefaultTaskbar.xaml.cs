@@ -36,9 +36,6 @@ namespace GyroShell.Controls
 
         private IExplorerManagerService m_explorerManager;
 
-        internal ObservableCollection<IconModel> TbIconCollection;
-        internal static List<IntPtr> indexedWindows = new List<IntPtr>();
-
         public DefaultTaskbar()
         {
             this.InitializeComponent();
@@ -49,8 +46,6 @@ namespace GyroShell.Controls
             m_bmpHelper = App.ServiceProvider.GetRequiredService<IBitmapHelperService>();
 
             m_explorerManager = App.ServiceProvider.GetRequiredService<IExplorerManagerService>();
-
-            TbIconCollection = new ObservableCollection<IconModel>();
 
             BarBorder.Background = new SolidColorBrush(Color.FromArgb(255, 66, 63, 74));
 
@@ -73,10 +68,10 @@ namespace GyroShell.Controls
                 switch (shellOption)
                 {
                     case "Desktop":
-                        foreach (IntPtr handle in indexedWindows)
+                        /*foreach (IntPtr handle in indexedWindows)
                         {
                             ShowWindow(handle, SW_MINIMIZE);
-                        }
+                        }*/
                         break;
                 }
             }
@@ -251,14 +246,14 @@ namespace GyroShell.Controls
 
         private void Icon_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            IconModel iconModel = ((FrameworkElement)sender).DataContext as IconModel;
+            /*IconModel iconModel = ((FrameworkElement)sender).DataContext as IconModel;
 
             SetForegroundWindow(iconModel.Id);
 
             if (IsIconic(iconModel.Id))
             {
                 ShowWindow(iconModel.Id, SW_RESTORE);
-            }
+            }*/
         }
 
         private void Icon_RightTapped(object sender, RightTappedRoutedEventArgs e)

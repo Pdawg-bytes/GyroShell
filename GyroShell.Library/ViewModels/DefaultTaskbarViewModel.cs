@@ -47,8 +47,6 @@ namespace GyroShell.Library.ViewModels
 
         public StartFlyoutCommands StartFlyoutCommands { get; }
 
-        public ObservableCollection<IconModel> TaskbarIconCollection;
-
         public DefaultTaskbarViewModel(
             IEnvironmentInfoService envService,
             ISettingsService appSettings,
@@ -95,26 +93,6 @@ namespace GyroShell.Library.ViewModels
             m_timeService.UpdateClockBinding += TimeService_UpdateClockBinding;
 
             m_appSettings.SettingUpdated += AppSettings_SettingUpdated;
-
-            TaskbarIconCollection = new ObservableCollection<IconModel>();
-            m_shellHookService.ShellHookEvent += HandleShellEvent;
-            GetCurrentWindows();
-        }
-
-        private void GetCurrentWindows()
-        {
-            foreach (IntPtr handle in m_shellHookService.IndexedWindows)
-            {
-                SoftwareBitmapSource bmpSource = m_bmpHelper.GetXamlBitmapFromGdiBitmapAsync(m_appHelper.GetUwpOrWin32Icon(handle, 32)).Result;
-                TaskbarIconCollection.Add(new IconModel { IconName = m_appHelper.GetWindowTitle(handle), Id = handle, AppIcon = bmpSource });
-            }
-        }
-        private void HandleShellEvent(object sender, ShellHookEventArgs e)
-        {
-            switch (e.ShellMessage)
-            {
-
-            }
         }
 
         private void AppSettings_SettingUpdated(object sender, string key)
