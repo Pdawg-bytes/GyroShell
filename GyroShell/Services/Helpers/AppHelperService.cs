@@ -62,7 +62,7 @@ namespace GyroShell.Services.Helpers
         public string GetUwpAppIconPath(IntPtr hWnd)
         {
             string normalPath = Uri.UnescapeDataString(Uri.UnescapeDataString(GetPackageFromAppHandle(hWnd).Logo.AbsolutePath)).Replace("/", "\\");
-            string finalPath = GetUwpExtraIcons(normalPath, GetWindowTitle(hWnd), normalPath);
+            string finalPath = GetUwpExtraIcons(normalPath, GetWindowTitle(hWnd));
 
             return finalPath;
         }
@@ -122,7 +122,7 @@ namespace GyroShell.Services.Helpers
         }
         #endregion UWP Helper
 
-        private string GetUwpExtraIcons(string path, string appName, string normalPath)
+        private string GetUwpExtraIcons(string path, string appName)
         {
             string[] pathParts = path.Split('\\');
             string rootAssetsFolder = string.Join("\\", pathParts.Take(pathParts.Length - 1));
@@ -140,7 +140,7 @@ namespace GyroShell.Services.Helpers
                 }
             }
 
-            return normalPath;
+            return path;
         }
 
         private Bitmap GetGdiBitmapFromUwpApp(IntPtr hWnd)

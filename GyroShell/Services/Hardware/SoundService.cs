@@ -24,7 +24,7 @@ namespace GyroShell.Services.Hardware
 
         public SoundService()
         {
-            _deviceEnumerator = new MMDeviceEnumerator(Guid.Empty);
+            _deviceEnumerator = new MMDeviceEnumerator(Guid.NewGuid());
             _audioDevice = _deviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
 
             _audioDevice.AudioEndpointVolume.OnVolumeNotification += new AudioEndpointVolumeNotificationDelegate(AudioEndpointVolume_OnVolumeNotification);
