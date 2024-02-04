@@ -10,6 +10,7 @@ namespace GyroShell
     {
         internal static StartupWindow startupScreen;
         private Window m_window;
+        private IntPtr handle;
 
         public App()
         {

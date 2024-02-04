@@ -29,7 +29,6 @@ namespace GyroShell
         private IEnvironmentInfoService m_envService;
         private ISettingsService m_appSettings;
         private IExplorerManagerService m_explorerManager;
-        private IShellHookService m_shellHookService;
 
         internal static IntPtr hWnd;
 
@@ -44,7 +43,6 @@ namespace GyroShell
 
             m_envService = App.ServiceProvider.GetRequiredService<IEnvironmentInfoService>();
             m_appSettings = App.ServiceProvider.GetRequiredService<ISettingsService>();
-            m_shellHookService = App.ServiceProvider.GetRequiredService<IShellHookService>();
             m_explorerManager = App.ServiceProvider.GetRequiredService<IExplorerManagerService>();
 
             m_explorerManager.Initialize();
@@ -61,7 +59,6 @@ namespace GyroShell
 
             hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
             m_envService.MainWindowHandle = hWnd;
-            //m_shellHookService.MainWindowHandle = hWnd;
             WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
             AppWindow appWindow = AppWindow.GetFromWindowId(windowId);
             if (m_envService.IsWindows11)

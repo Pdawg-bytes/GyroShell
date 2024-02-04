@@ -95,6 +95,8 @@ namespace GyroShell.Library.ViewModels
             m_appSettings.SettingUpdated += AppSettings_SettingUpdated;
         }
 
+        public ObservableCollection<IconModel> CurrentWindows => m_shellHookService.CurrentWindows;
+
         private void AppSettings_SettingUpdated(object sender, string key)
         {
             switch (key)
@@ -193,7 +195,6 @@ namespace GyroShell.Library.ViewModels
 
         [ObservableProperty]
         private string soundStatusText;
-
         [ObservableProperty]
         private Visibility soundBackIconVisibility;
 
@@ -241,7 +242,6 @@ namespace GyroShell.Library.ViewModels
 
         [ObservableProperty]
         private string batteryStatusCharacter;
-
         [ObservableProperty]
         private Visibility battStatusVisibility;
 
@@ -347,7 +347,6 @@ namespace GyroShell.Library.ViewModels
 
         [ObservableProperty]
         private string timeText;
-
         [ObservableProperty]
         private string dateText;
 

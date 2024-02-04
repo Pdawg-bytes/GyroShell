@@ -11,6 +11,8 @@ namespace GyroShell.Library.Services.Environment
 {
     public interface IShellHookService
     {
+        public IntPtr MainWindowHandle { get; set; }
 
+        public ObservableCollection<IconModel> CurrentWindows { get; }
     }
 }

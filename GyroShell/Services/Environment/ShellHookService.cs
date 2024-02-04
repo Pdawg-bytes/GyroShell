@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using GyroShell.Library.Events;
 using GyroShell.Library.Models.InternalData;
 using GyroShell.Library.Services.Environment;
+using GyroShell.Library.Services.Helpers;
 using Microsoft.UI.Xaml.Media.Imaging;
 using static GyroShell.Library.Helpers.Win32.Win32Interop;
 using static GyroShell.Library.Helpers.Win32.WindowChecks;
@@ -17,20 +18,48 @@ namespace GyroShell.Services.Environment
 {
     public class ShellHookService : IShellHookService
     {
+        private readonly IBitmapHelperService m_bmpHelper;
+        private readonly IAppHelperService m_appHelper;
+
         private readonly int _wmShellHook;
 
         private WndProcDelegate _procedureDelegate = null;
         private IntPtr _oldWndProc;
 
-        public IntPtr MainWindowHandle { get; init; }
+        public IntPtr MainWindowHandle { get; set; }
 
-        public ShellHookService() 
+        private ObservableCollection<IconModel> _currentWindows;
+
+        public ShellHookService(IBitmapHelperService bmpHelper, IAppHelperService appHelper) 
         {
-            _oldWndProc = SetWndProc(WindowProcedureCallback);
+            // TODO: fix mainwindowhandle being 0x0000
+            m_bmpHelper = bmpHelper;
+            m_appHelper = appHelper;
+
+            _currentWindows = new ObservableCollection<IconModel>();
+            _oldWndProc = SetWndProc(WndProcCallback);
+
+            EnumWindows(EnumWindowsCallback, IntPtr.Zero);
 
             _wmShellHook = RegisterWindowMessage("SHELLHOOK");
             RegisterShellHook(MainWindowHandle, 3);
             ShellDDEInit(true);
+        }
+
+        private bool EnumWindowsCallback(IntPtr hwnd, IntPtr lParam)
+        {
+            try
+            {
+                if (IsUserWindow(hwnd))
+                {
+                    _currentWindows.Add(new IconModel { IconName = m_appHelper.GetWindowTitle(hwnd), Id = hwnd, AppIcon = m_bmpHelper.GetXamlBitmapFromGdiBitmapAsync(m_appHelper.GetUwpOrWin32Icon(hwnd, 32)).Result });
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+            return true;
         }
 
         private IntPtr SetWndProc(WndProcDelegate procDelegate)
@@ -40,7 +69,7 @@ namespace GyroShell.Services.Environment
             if (IntPtr.Size == 8) { return SetWindowLongPtr(MainWindowHandle, GWLP_WNDPROC, wndProcPtr); }
             else { return SetWindowLong(MainWindowHandle, GWLP_WNDPROC, wndProcPtr); }
         }
-        private IntPtr WindowProcedureCallback(IntPtr hwnd, uint message, IntPtr wParam, IntPtr lParam)
+        private IntPtr WndProcCallback(IntPtr hwnd, uint message, IntPtr wParam, IntPtr lParam)
         {
             if (message == _wmShellHook)
             {
@@ -53,9 +82,42 @@ namespace GyroShell.Services.Environment
         {
             switch (message)
             {
-
+                case HSHELL_WINDOWCREATED:
+                    if (!_currentWindows.Any(win => win.Id == hWnd))
+                    {
+                        AddWindow(hWnd);
+                    }
+                    break;
+                case HSHELL_WINDOWDESTROYED:
+                    RemoveWindow(hWnd);
+                    break;
             }
             return IntPtr.Zero;
+        }
+
+        private void AddWindow(IntPtr hWnd)
+        {
+            if (IsUserWindow(hWnd))
+            {
+                _currentWindows.Add(new IconModel { IconName = m_appHelper.GetWindowTitle(hWnd), Id = hWnd, AppIcon = m_bmpHelper.GetXamlBitmapFromGdiBitmapAsync(m_appHelper.GetUwpOrWin32Icon(hWnd, 32)).Result });
+            }
+        }
+        private void RemoveWindow(IntPtr hWnd)
+        {
+            if (_currentWindows.Any(win => win.Id == hWnd))
+            {
+                do
+                {
+                    _currentWindows.Remove(_currentWindows.First(wdw => wdw.Id == hWnd));
+                }
+                while (_currentWindows.Any(win => win.Id == hWnd));
+            }
+        }
+
+
+        public ObservableCollection<IconModel> CurrentWindows
+        {
+            get => _currentWindows;
         }
     }
 }
