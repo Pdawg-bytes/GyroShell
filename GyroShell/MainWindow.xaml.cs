@@ -26,9 +26,9 @@ namespace GyroShell
     internal sealed partial class MainWindow : Window
     {
         private AppWindow m_AppWindow;
-        private IEnvironmentInfoService m_envService;
-        private ISettingsService m_appSettings;
-        private IExplorerManagerService m_explorerManager;
+        private readonly IEnvironmentInfoService m_envService;
+        private readonly ISettingsService m_appSettings;
+        private readonly IExplorerManagerService m_explorerManager;
 
         internal static IntPtr hWnd;
 
@@ -59,6 +59,11 @@ namespace GyroShell
 
             hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
             m_envService.MainWindowHandle = hWnd;
+
+            IShellHookService shHookService = App.ServiceProvider.GetRequiredService<IShellHookService>();
+            shHookService.MainWindowHandle = hWnd;
+            shHookService.Initialize();
+
             WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
             AppWindow appWindow = AppWindow.GetFromWindowId(windowId);
             if (m_envService.IsWindows11)

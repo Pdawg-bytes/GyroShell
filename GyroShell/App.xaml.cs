@@ -1,4 +1,6 @@
 ﻿using GyroShell.Controls;
+using GyroShell.Library.Services.Environment;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using System;
 using System.Threading.Tasks;

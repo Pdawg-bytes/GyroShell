@@ -21,7 +21,7 @@ namespace GyroShell.Services.Environment
         private readonly IBitmapHelperService m_bmpHelper;
         private readonly IAppHelperService m_appHelper;
 
-        private readonly int _wmShellHook;
+        private int _wmShellHook;
 
         private WndProcDelegate _procedureDelegate = null;
         private IntPtr _oldWndProc;
@@ -32,11 +32,14 @@ namespace GyroShell.Services.Environment
 
         public ShellHookService(IBitmapHelperService bmpHelper, IAppHelperService appHelper) 
         {
-            // TODO: fix mainwindowhandle being 0x0000
             m_bmpHelper = bmpHelper;
             m_appHelper = appHelper;
 
             _currentWindows = new ObservableCollection<IconModel>();
+        }
+
+        public void Initialize()
+        {
             _oldWndProc = SetWndProc(WndProcCallback);
 
             EnumWindows(EnumWindowsCallback, IntPtr.Zero);

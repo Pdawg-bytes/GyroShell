@@ -79,7 +79,7 @@
                                     </VisualStateGroup>
                                 </VisualStateManager.VisualStateGroups>
                                 <ContentPresenter x:Name="ContentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Background="Transparent" CornerRadius="4" Margin="0,3,0,0"/>
-                                <Border x:Name="HighlightBorder" Width="8" Height="3" CornerRadius="1" Background="Gray" VerticalAlignment="Bottom" Margin="0,2,0,0" HorizontalAlignment="Center" RenderTransformOrigin="0.45,0">
+                                <Border x:Name="HighlightBorder" Width="8" Height="3" CornerRadius="1.2" Background="Gray" VerticalAlignment="Bottom" Margin="0,2,0,0" HorizontalAlignment="Center" RenderTransformOrigin="0.45,0">
                                     <Border.RenderTransform>
                                         <ScaleTransform x:Name="HighlightBorderTransform" ScaleX="1" ScaleY="1"/>
                                     </Border.RenderTransform>
