@@ -66,7 +66,7 @@
                                         </VisualState>
                                         <VisualState x:Name="Pressed">
                                             <Storyboard>
-                                                <ColorAnimation Duration="0:0:0.15" From="#00707070" To="#42707070" Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="(Control.Background).(SolidColorBrush.Color)">
+                                                <ColorAnimation Duration="0:0:0.15" From="#00707070" To="#33707070" Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="(Control.Background).(SolidColorBrush.Color)">
                                                     <ColorAnimation.EasingFunction>
                                                         <CubicEase EasingMode="EaseInOut"/>
                                                     </ColorAnimation.EasingFunction>

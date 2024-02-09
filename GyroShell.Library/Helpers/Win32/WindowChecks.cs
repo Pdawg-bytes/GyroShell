@@ -30,9 +30,9 @@ namespace GyroShell.Library.Helpers.Win32
             if(isWindow && isWindowVisible && cloakedCheck || classCheck && gaCheck && gwCheck && flagCheckT) { return true; }
             else { return false; }*/
 
-            if (IsWindow(hWnd) && IsWindowVisible(hWnd) && !isCloaked(hWnd) && 
-                GetAncestor(hWnd, (GetAncestorFlags)GA_ROOT) == hWnd && 
-                GetWindow(hWnd, (GetWindowType)GW_OWNER) == IntPtr.Zero && flagCheck(hWnd))
+            if (IsWindow(hWnd) && IsWindowVisible(hWnd) && 
+                !IsCloaked(hWnd) && GetAncestor(hWnd, (GetAncestorFlags)GA_ROOT) == hWnd && 
+                GetWindow(hWnd, (GetWindowType)GW_OWNER) == IntPtr.Zero && FlagCheck(hWnd))
             {
                 return true;
             }
@@ -42,7 +42,7 @@ namespace GyroShell.Library.Helpers.Win32
             }
         }
 
-        private static bool flagCheck(IntPtr hWnd)
+        private static bool FlagCheck(IntPtr hWnd)
         {
             int exStyle = (int)GetWindowLongPtr(hWnd, GWL_EXSTYLE);
 
@@ -50,7 +50,7 @@ namespace GyroShell.Library.Helpers.Win32
             return (exStyle & WS_EX_APPWINDOW) == WS_EX_APPWINDOW || (exStyle & (WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE)) == 0;
         }
 
-        private static bool isCloaked(IntPtr hWnd)
+        private static bool IsCloaked(IntPtr hWnd)
         {
             hr = DwmGetWindowAttribute(hWnd, (int)(DWMWINDOWATTRIBUTE)DWMWA_CLOAKED, out attributeValue, attributeSize);
 
@@ -73,7 +73,7 @@ namespace GyroShell.Library.Helpers.Win32
             }
         }
 
-        private static bool classNameCheck(IntPtr hWnd)
+        private static bool ClassNameCheck(IntPtr hWnd)
         {
             GetClassName(hWnd, className, className.Capacity);
 

@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using GyroShell.Library.Events;
 using GyroShell.Library.Models.InternalData;
@@ -105,7 +107,7 @@ namespace GyroShell.Services.Environment
         {
             if (IsUserWindow(hWnd))
             {
-                _currentWindows.Add(new IconModel { IconName = m_appHelper.GetWindowTitle(hWnd), Id = hWnd, AppIcon = m_bmpHelper.GetXamlBitmapFromGdiBitmapAsync(m_appHelper.GetUwpOrWin32Icon(hWnd, 32)).Result });
+                _currentWindows.Add(CreateNewIcon(hWnd));
             }
         }
         private void RemoveWindow(IntPtr hWnd)
@@ -118,6 +120,14 @@ namespace GyroShell.Services.Environment
                 }
                 while (_currentWindows.Any(win => win.Id == hWnd));
             }
+        }
+
+        private IconModel CreateNewIcon(IntPtr hWnd)
+        {
+            Bitmap icon = m_appHelper.GetUwpOrWin32Icon(hWnd, 23);
+            SoftwareBitmapSource bmp = m_bmpHelper.GetXamlBitmapFromGdiBitmapAsync(icon).Result;
+            string windowName = m_appHelper.GetWindowTitle(hWnd);
+            return new IconModel { IconName = windowName, Id = hWnd, AppIcon = bmp };
         }
 
 

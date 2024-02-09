@@ -9,7 +9,7 @@ namespace GyroShell.Converters
         {
             if (value is Version version)
             {
-                return $"Version: {version}";
+                return $"Version {version}";
             }
 
             return string.Empty;
