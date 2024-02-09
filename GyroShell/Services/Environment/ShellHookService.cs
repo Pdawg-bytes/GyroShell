@@ -94,6 +94,9 @@ namespace GyroShell.Services.Environment
                 case HSHELL_WINDOWDESTROYED:
                     RemoveWindow(hWnd);
                     break;
+                case HSHELL_RUDEAPPACTIVATED:
+
+                    break;
             }
             return IntPtr.Zero;
         }

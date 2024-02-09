@@ -66,6 +66,7 @@ namespace GyroShell.Library.Helpers.Win32
         public const int HSHELL_WINDOWDESTROYED = 2;
         public const int HSHELL_ACTIVATESHELLWINDOW = 3;
         public const int HSHELL_WINDOWACTIVATED = 4;
+        public const int HSHELL_RUDEAPPACTIVATED = 32772;
         public const int HSHELL_GETMINRECT = 5;
         public const int HSHELL_REDRAW = 6;
         public const int HSHELL_TASKMAN = 7;

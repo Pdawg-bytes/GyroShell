@@ -46,6 +46,13 @@
                                                         <CubicEase EasingMode="EaseInOut"/>
                                                     </DoubleAnimation.EasingFunction>
                                                 </DoubleAnimation>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HighlightBorder" Storyboard.TargetProperty="CornerRadius" Duration="0:0:0.3">
+                                                    <DiscreteObjectKeyFrame KeyTime="0:0:0">
+                                                        <DiscreteObjectKeyFrame.Value>
+                                                            <CornerRadius>2</CornerRadius>
+                                                        </DiscreteObjectKeyFrame.Value>
+                                                    </DiscreteObjectKeyFrame>
+                                                </ObjectAnimationUsingKeyFrames>
                                             </Storyboard>
                                         </VisualState>
                                         <VisualState x:Name="PointerOver">
@@ -74,12 +81,19 @@
                                                         <CubicEase EasingMode="EaseInOut"/>
                                                     </DoubleAnimation.EasingFunction>
                                                 </DoubleAnimation>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HighlightBorder" Storyboard.TargetProperty="CornerRadius" Duration="0:0:0.3">
+                                                    <DiscreteObjectKeyFrame KeyTime="0:0:0">
+                                                        <DiscreteObjectKeyFrame.Value>
+                                                            <CornerRadius>1.1</CornerRadius>
+                                                        </DiscreteObjectKeyFrame.Value>
+                                                    </DiscreteObjectKeyFrame>
+                                                </ObjectAnimationUsingKeyFrames>
                                             </Storyboard>
                                         </VisualState>
                                     </VisualStateGroup>
                                 </VisualStateManager.VisualStateGroups>
                                 <ContentPresenter x:Name="ContentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Background="Transparent" CornerRadius="4" Margin="0,3,0,0"/>
-                                <Border x:Name="HighlightBorder" Width="8" Height="3" CornerRadius="1.1" Background="Gray" VerticalAlignment="Bottom" Margin="0,2,0,0" HorizontalAlignment="Center" RenderTransformOrigin="0.45,0">
+                                <Border x:Name="HighlightBorder" Width="8" Height="3" CornerRadius="2" Background="Gray" VerticalAlignment="Bottom" Margin="0,2,0,0" HorizontalAlignment="Center" RenderTransformOrigin="0.45,0">
                                     <Border.RenderTransform>
                                         <ScaleTransform x:Name="HighlightBorderTransform" ScaleX="1" ScaleY="1"/>
                                     </Border.RenderTransform>
