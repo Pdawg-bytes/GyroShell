@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
 using System.Text;
-
+using System.Threading.Tasks;
 using static GyroShell.Library.Helpers.Win32.Win32Interop;
 
 namespace GyroShell.Library.Helpers.Win32
@@ -18,8 +18,8 @@ namespace GyroShell.Library.Helpers.Win32
 
         public static bool IsUserWindow(IntPtr hWnd)
         {
-            if (IsWindow(hWnd) && IsWindowVisible(hWnd) && 
-                !IsCloaked(hWnd) && GetAncestor(hWnd, (GetAncestorFlags)GA_ROOT) == hWnd && 
+            if (IsWindow(hWnd) && IsWindowVisible(hWnd) &&
+                !IsCloaked(hWnd) && GetAncestor(hWnd, (GetAncestorFlags)GA_ROOT) == hWnd &&
                 GetWindow(hWnd, (GetWindowType)GW_OWNER) == IntPtr.Zero && FlagCheck(hWnd))
             {
                 return true;
