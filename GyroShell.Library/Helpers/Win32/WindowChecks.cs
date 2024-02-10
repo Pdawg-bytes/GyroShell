@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -17,19 +18,6 @@ namespace GyroShell.Library.Helpers.Win32
 
         public static bool IsUserWindow(IntPtr hWnd)
         {
-            // Debug code, each is declared so I can find value on breakpoint.
-            /*
-            bool isWindow = IsWindow(hWnd);
-            bool isWindowVisible = IsWindowVisible(hWnd);
-            bool cloakedCheck = !isCloaked(hWnd);
-            bool gaCheck = GetAncestor(hWnd, (GetAncestorFlags)GA_ROOT) == hWnd;
-            bool gwCheck = GetWindow(hWnd, (GetWindowType)GW_OWNER) == IntPtr.Zero;
-            bool flagCheckT = flagCheck(hWnd);
-            bool classCheck = classNameCheck(hWnd);
-
-            if(isWindow && isWindowVisible && cloakedCheck || classCheck && gaCheck && gwCheck && flagCheckT) { return true; }
-            else { return false; }*/
-
             if (IsWindow(hWnd) && IsWindowVisible(hWnd) && 
                 !IsCloaked(hWnd) && GetAncestor(hWnd, (GetAncestorFlags)GA_ROOT) == hWnd && 
                 GetWindow(hWnd, (GetWindowType)GW_OWNER) == IntPtr.Zero && FlagCheck(hWnd))
@@ -40,6 +28,16 @@ namespace GyroShell.Library.Helpers.Win32
             {
                 return false;
             }
+
+            /*int extendedWindowStyles = (int)GetWindowLongPtr(hWnd, GWL_EXSTYLE);
+            bool isWindow = IsWindow(hWnd);
+            bool isVisible = IsWindowVisible(hWnd);
+            bool isToolWindow = (extendedWindowStyles & WS_EX_TOOLWINDOW) != 0;
+            bool isAppWindow = (extendedWindowStyles & WS_EX_APPWINDOW) != 0;
+            bool isNoActivate = (extendedWindowStyles & WS_EX_NOACTIVATE) != 0;
+            IntPtr ownerWin = GetWindow(hWnd, (GetWindowType)GW_OWNER);
+
+            return isWindow && isVisible && (ownerWin == IntPtr.Zero || isAppWindow) && (!isNoActivate || isAppWindow) && !isToolWindow && !IsCloaked(hWnd);*/
         }
 
         private static bool FlagCheck(IntPtr hWnd)
@@ -54,22 +52,13 @@ namespace GyroShell.Library.Helpers.Win32
         {
             hr = DwmGetWindowAttribute(hWnd, (int)(DWMWINDOWATTRIBUTE)DWMWA_CLOAKED, out attributeValue, attributeSize);
 
-            if (hr >= 0)
+            if (attributeValue == 0)
             {
-                if (attributeValue == 0)
-                {
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
+                return false;
             }
             else
             {
-                Debug.WriteLine("WindowChecks: [-] Failed to get cloaked attribute.");
-
-                return false;
+                return true;
             }
         }
 

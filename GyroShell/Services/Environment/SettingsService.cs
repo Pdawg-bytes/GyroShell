@@ -96,19 +96,19 @@ namespace GyroShell.Services.Environment
 
         public float LuminosityOpacity
         {
-            get => GetSetting<float?>("luminOpacity") ?? 0.95f;
+            get => GetSetting<float?>("luminOpacity") ?? 0.96f;
             set => SetSetting("luminOpacity", value);
         }
 
         public float TintOpacity
         {
-            get => GetSetting<float?>("tintOpacity") ?? 0.0f;
+            get => GetSetting<float?>("tintOpacity") ?? 0.50f;
             set => SetSetting("tintOpacity", value);
         }
 
         public int TransparencyType
         {
-            get => GetSetting<int?>("transparencyType") ?? 0;
+            get => GetSetting<int?>("transparencyType") ?? 2;
             set => SetSetting("transparencyType", value);
         }
 
