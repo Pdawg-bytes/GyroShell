@@ -64,9 +64,11 @@
     <Content Remove="Assets\WindowIcon.ico" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Controls\DebugDialog.xaml" />
     <None Remove="Controls\DefaultTaskbar.xaml" />
     <None Remove="Controls\StartupWindow.xaml" />
     <None Remove="Controls\StartWindow.xaml" />
+    <None Remove="Controls\TaskButton.xaml" />
     <None Remove="Settings\AboutPage.xaml" />
     <None Remove="Settings\SettingsWindow.xaml" />
     <None Remove="Views\ModulesSettingView.xaml" />
@@ -74,6 +76,16 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GyroShell.Library\GyroShell.Library.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Controls\TaskButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Controls\DebugDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\StartupPage.xaml">

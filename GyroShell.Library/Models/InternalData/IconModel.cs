@@ -38,12 +38,24 @@ namespace GyroShell.Library.Models.InternalData
         public IntPtr Id { get; set; }
 
 
+        private WindowState _state;
+        public WindowState State
+        {
+            get => _state;
+            set
+            {
+                _state = value;
+                OnPropertyChanged();
+            }
+        }
+
+
         public enum WindowState
         {
             Active,
             Inactive,
             Flashing,
-
+            Hidden
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

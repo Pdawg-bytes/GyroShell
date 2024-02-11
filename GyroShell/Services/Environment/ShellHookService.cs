@@ -15,6 +15,7 @@ using GyroShell.Library.Services.Helpers;
 using Microsoft.UI.Xaml.Media.Imaging;
 using static GyroShell.Library.Helpers.Win32.Win32Interop;
 using static GyroShell.Library.Helpers.Win32.WindowChecks;
+using static GyroShell.Library.Models.InternalData.IconModel;
 
 namespace GyroShell.Services.Environment
 {
@@ -96,8 +97,26 @@ namespace GyroShell.Services.Environment
                 case HSHELL_WINDOWDESTROYED:
                     RemoveWindow(hWnd);
                     break;
+                case HSHELL_WINDOWREPLACED:
+                    RemoveWindow(hWnd);
+                    break;
+                case HSHELL_WINDOWACTIVATED:
                 case HSHELL_RUDEAPPACTIVATED:
+                    foreach (IconModel win in _currentWindows.Where(w => w.State == WindowState.Active))
+                    {
+                        win.State = WindowState.Inactive;
+                    }
 
+                    IconModel model = null;
+                    if (_currentWindows.Any(w => w.Id == hWnd))
+                    {
+                        model = _currentWindows.First(w => w.Id == hWnd);
+                        model.State = WindowState.Active;
+                    }
+                    else
+                    {
+                        AddWindow(hWnd);
+                    }
                     break;
             }
             return IntPtr.Zero;

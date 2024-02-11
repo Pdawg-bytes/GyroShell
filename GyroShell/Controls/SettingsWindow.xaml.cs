@@ -13,6 +13,8 @@ using System;
 using Windows.UI;
 using WinRT;
 using GyroShell.Library.ViewModels;
+using Windows.UI.Core;
+using Windows.System;
 
 namespace GyroShell.Controls
 {
@@ -20,6 +22,8 @@ namespace GyroShell.Controls
     {
         private readonly ISettingsService m_appSettings;
         private readonly IEnvironmentInfoService m_envService;
+
+        private bool _isDebugMenuOpen;
 
         public SettingsWindow()
         {
@@ -43,6 +47,26 @@ namespace GyroShell.Controls
             SetTitleBar(AppTitleBar);
 
             TrySetMicaBackdrop();
+
+            _isDebugMenuOpen = false;
+            RootGrid.ProcessKeyboardAccelerators += RootGrid_ProcessKeyboardAccelerators;
+        }
+
+        private async void RootGrid_ProcessKeyboardAccelerators(UIElement sender, Microsoft.UI.Xaml.Input.ProcessKeyboardAcceleratorEventArgs args)
+        {
+            switch (args.Key)
+            {
+                case VirtualKey.Insert:
+                    if (!_isDebugMenuOpen)
+                    {
+                        _isDebugMenuOpen = true;
+                        DebugDialog dialog = new();
+                        dialog.XamlRoot = this.Content.XamlRoot;
+                        await dialog.ShowAsync();
+                        _isDebugMenuOpen = false;
+                    }
+                    break;
+            }
         }
 
         public SettingsWindowViewModel ViewModel => (SettingsWindowViewModel)RootGrid.DataContext;
