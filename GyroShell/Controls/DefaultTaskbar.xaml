@@ -54,7 +54,7 @@
                 </Button.Content>
             </Button>
             <!--<Border x:Name="LeftControlsSeperator" Height="28" VerticalAlignment="Center" Width="1" Opacity="0.3" CornerRadius="1"/>-->
-            <GridView ItemContainerStyle="{ThemeResource DefaultTaskbarIconStyle}" ItemsSource="{x:Bind ViewModel.CurrentWindows, Mode=OneWay}" ReorderMode="Enabled" CanReorderItems="True" ScrollViewer.VerticalScrollMode="Disabled" ScrollViewer.VerticalScrollBarVisibility="Hidden" x:Name="TbOpenGrid" Height="48" Background="Transparent" SelectionMode="Single" Padding="0" VerticalAlignment="Center" Margin="5,2,0,0">
+            <GridView ItemsSource="{x:Bind ViewModel.CurrentWindows, Mode=OneWay}" ReorderMode="Enabled" CanReorderItems="True" ScrollViewer.VerticalScrollMode="Disabled" ScrollViewer.VerticalScrollBarVisibility="Hidden" x:Name="TbOpenGrid" Height="48" Background="Transparent" SelectionMode="None" Padding="0" VerticalAlignment="Center" Margin="5,5,0,0">
                 <GridView.ItemContainerTransitions>
                     <TransitionCollection>
                         <ReorderThemeTransition/>
@@ -64,18 +64,7 @@
                 </GridView.ItemContainerTransitions>
                 <GridView.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Orientation="Horizontal" Padding="0" Background="Transparent" Margin="0,0,0,0" Height="40">
-                            <StackPanel.ChildrenTransitions>
-                                <TransitionCollection>
-                                    <EntranceThemeTransition IsStaggeringEnabled="True"/>
-                                </TransitionCollection>
-                            </StackPanel.ChildrenTransitions>
-                            <Border ContextFlyout="{StaticResource IconRightFlyout}" RightTapped="Icon_RightTapped" ToolTipService.Placement="Top" ToolTipService.ToolTip="{Binding IconName}" Tapped="Icon_Tapped" Width="40" Height="40" Margin="0,0,0,0" Background="Transparent" Padding="0" BorderBrush="Transparent" BorderThickness="0" VerticalAlignment="Center">
-                                <Grid>
-                                    <Image Source="{Binding AppIcon}" Height="23" Width="23" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,2" />
-                                </Grid>
-                            </Border>
-                        </StackPanel>
+                        <local:TaskButton Title="{Binding IconName, Mode=OneWay}" AppIcon="{Binding AppIcon, Mode=OneWay}" State="{Binding State, Mode=OneWay}" Handle="{Binding Id, Mode=OneWay}"/>
                     </DataTemplate>
                 </GridView.ItemTemplate>
             </GridView>

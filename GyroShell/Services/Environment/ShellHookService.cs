@@ -29,6 +29,9 @@ namespace GyroShell.Services.Environment
         private WndProcDelegate _procedureDelegate = null;
         private IntPtr _oldWndProc;
 
+        private WinEventDelegate _winEventDelegate;
+        private IntPtr _nameChangeHook;
+
         public IntPtr MainWindowHandle { get; set; }
 
         private ObservableCollection<IconModel> _currentWindows;
@@ -49,8 +52,35 @@ namespace GyroShell.Services.Environment
 
             _wmShellHook = RegisterWindowMessage("SHELLHOOK");
             RegisterShellHook(MainWindowHandle, 3);
+
+            _winEventDelegate = WinEventCallback;
+            _nameChangeHook = SetWinEventHook(EVENT_OBJECT_NAMECHANGED, EVENT_OBJECT_NAMECHANGED, IntPtr.Zero, _winEventDelegate, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
+
             ShellDDEInit(true);
         }
+
+        public void Uninitialize()
+        {
+            UnhookWinEvent(_nameChangeHook);
+        }
+
+
+        private IntPtr SetWndProc(WndProcDelegate procDelegate)
+        {
+            _procedureDelegate = procDelegate;
+            IntPtr wndProcPtr = Marshal.GetFunctionPointerForDelegate(_procedureDelegate);
+            if (IntPtr.Size == 8) { return SetWindowLongPtr(MainWindowHandle, GWLP_WNDPROC, wndProcPtr); }
+            else { return SetWindowLong(MainWindowHandle, GWLP_WNDPROC, wndProcPtr); }
+        }
+        private IntPtr WndProcCallback(IntPtr hwnd, uint message, IntPtr wParam, IntPtr lParam)
+        {
+            if (message == _wmShellHook)
+            {
+                return ShellHookCallback(wParam.ToInt32(), lParam);
+            }
+            return CallWindowProc(_oldWndProc, hwnd, message, wParam, lParam);
+        }
+
 
         private bool EnumWindowsCallback(IntPtr hwnd, IntPtr lParam)
         {
@@ -68,21 +98,20 @@ namespace GyroShell.Services.Environment
             return true;
         }
 
-        private IntPtr SetWndProc(WndProcDelegate procDelegate)
+
+        private void WinEventCallback(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
         {
-            _procedureDelegate = procDelegate;
-            IntPtr wndProcPtr = Marshal.GetFunctionPointerForDelegate(_procedureDelegate);
-            if (IntPtr.Size == 8) { return SetWindowLongPtr(MainWindowHandle, GWLP_WNDPROC, wndProcPtr); }
-            else { return SetWindowLong(MainWindowHandle, GWLP_WNDPROC, wndProcPtr); }
-        }
-        private IntPtr WndProcCallback(IntPtr hwnd, uint message, IntPtr wParam, IntPtr lParam)
-        {
-            if (message == _wmShellHook)
+            switch (eventType)
             {
-                return ShellHookCallback(wParam.ToInt32(), lParam);
+                case EVENT_OBJECT_NAMECHANGED:
+                    if (_currentWindows.Any(wnd => wnd.Id == hwnd))
+                    {
+                        _currentWindows.First(win => win.Id == hwnd).IconName = m_appHelper.GetWindowTitle(hwnd);
+                    }
+                    break;
             }
-            return CallWindowProc(_oldWndProc, hwnd, message, wParam, lParam);
         }
+
 
         private IntPtr ShellHookCallback(int message, IntPtr hWnd)
         {
