@@ -2,11 +2,18 @@
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using static GyroShell.Library.Helpers.Win32.Win32Interop;
 
 namespace GyroShell.Library.Models.InternalData
 {
     public class IconModel : INotifyPropertyChanged
     {
+        public void CloseWindow()
+        {
+            IntPtr retval = IntPtr.Zero;
+            SendMessageTimeout(Id, WM_SYSCOMMAND, SC_CLOSE, 0, 2, 200, ref retval);
+        }
+
         private string iconName;
         public string IconName
         {

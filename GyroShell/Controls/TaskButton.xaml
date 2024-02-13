@@ -12,6 +12,12 @@
     Loaded="TaskButton_Loaded">
 
     <Grid x:Name="RootGrid" ToolTipService.ToolTip="{Binding Path=IconName}" Height="40" Width="40">
+        <Grid.Resources>
+            <MenuFlyout x:Name="IconRightFlyout" x:Key="IconRightFlyout" AreOpenCloseAnimationsEnabled="True" ShouldConstrainToRootBounds="False">
+                <MenuFlyoutItem x:Name="CloseWindowFlyoutItem" Text="Close window" Click="CloseWindowFlyoutItem_Click"/>
+            </MenuFlyout>
+        </Grid.Resources>
+        
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="WindowStates">
                 <VisualState x:Name="Inactive">
@@ -67,7 +73,16 @@
                     </Storyboard>
                 </VisualState>
                 <VisualState x:Name="Flashing">
-                    <Storyboard>
+                    <Storyboard RepeatBehavior="Forever">
+                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="BackgroundButton" Storyboard.TargetProperty="(Control.Background).(SolidColorBrush.Color)">
+                            <LinearColorKeyFrame Value="#66CC5500" KeyTime="0:0:0.5"/>
+                            <LinearColorKeyFrame Value="#33707070" KeyTime="0:0:1.4"/>
+                        </ColorAnimationUsingKeyFrames>
+                        <ColorAnimation Duration="0:0:0.8" From="#FFCC5500" To="#FFCC5500" Storyboard.TargetName="HighlightBorder" Storyboard.TargetProperty="(Control.Background).(SolidColorBrush.Color)">
+                            <ColorAnimation.EasingFunction>
+                                <CubicEase EasingMode="EaseInOut"/>
+                            </ColorAnimation.EasingFunction>
+                        </ColorAnimation>
                     </Storyboard>
                 </VisualState>
                 <VisualState x:Name="Hidden">
@@ -77,9 +92,9 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         
-        <Button Height="40" Width="40" Background="#33707070" CornerRadius="4" x:Name="BackgroundButton" BorderBrush="Transparent" BorderThickness="0" Click="BackgroundButton_Click"/>
+        <Button Height="40" Width="40" Background="#33707070" CornerRadius="4" x:Name="BackgroundButton" BorderBrush="Transparent" BorderThickness="0" Click="BackgroundButton_Click" ContextFlyout="{StaticResource IconRightFlyout}"/>
         
-        <Image IsHitTestVisible="False" Source="{Binding Path=AppIcon}" Height="23" Width="23" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,2" />
+        <Image IsHitTestVisible="False" Source="{Binding Path=AppIcon}" Height="24" Width="24" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,2" />
         <Border IsHitTestVisible="False" x:Name="HighlightBorder" Width="8" Height="3" CornerRadius="2" Background="Gray" VerticalAlignment="Bottom" Margin="0,2,0,0" HorizontalAlignment="Center" RenderTransformOrigin="0.45,0">
             <Border.RenderTransform>
                 <ScaleTransform x:Name="HighlightBorderTransform" ScaleX="1" ScaleY="1"/>

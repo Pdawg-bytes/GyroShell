@@ -28,6 +28,13 @@ namespace GyroShell.Library.Helpers.Win32
         }
 
         public const int WM_COMMAND = 0x0111;
+        public const int WM_SYSCOMMAND = 0x0112;
+
+        public const int SC_MINIMIZE = 0xF020;
+        public const int SC_MOVE = 0xF010;
+        public const int SC_RESTORE = 0xF120;
+        public const int SC_SIZE = 0xF000;
+        public const int SC_CLOSE = 0xF060;
 
         public const int SW_RESTORE = 9;
         public const int SW_MINIMIZE = 6;
@@ -44,7 +51,6 @@ namespace GyroShell.Library.Helpers.Win32
 
         public const int DWMWA_CLOAKED = 14;
 
-        public const int WS_CHILD = 0x40000000;
         public const int GCL_HICONSM = -34;
         public const int GCL_HICON = -14;
 
@@ -60,7 +66,9 @@ namespace GyroShell.Library.Helpers.Win32
         public const int WS_EX_APPWINDOW = 0x00040000;
         public const int WS_EX_TOOLWINDOW = 0x00000080;
         public const int WS_EX_NOACTIVATE = 0x08000000;
+        public const int WS_EX_WINDOWEDGE = 0x100;
         public const int WS_VISIBLE = 0x10000000;
+        public const int WS_CHILD = 0x40000000;
 
         public const int HSHELL_WINDOWCREATED = 1;
         public const int HSHELL_WINDOWDESTROYED = 2;
@@ -75,14 +83,13 @@ namespace GyroShell.Library.Helpers.Win32
         public const int HSHELL_ENDTASK = 10;
         public const int HSHELL_ACCESSIBILITYSTATE = 11;
         public const int HSHELL_APPCOMMAND = 12;
-        public const int FAPPCOMMAND_MASK = 0xF000;
         public const int HSHELL_WINDOWREPLACED = 13;
         public const int HSHELL_WINDOWREPLACING = 14;
         public const int HSHELL_MONITORCHANGED = 16; //A window is moved to a different monitor.
+        public const int HSHELL_HIGHBIT = 0x8000;
+        public const int HSHELL_FLASH = 0x8006;
 
-        // Unofficial HSHELL codes
-        public const int HSHELL_FULLSCREEN_ENABLED = 53;
-        public const int HSHELL_FULLSCREEN_DISABLED = 54;
+        public const int FAPPCOMMAND_MASK = 0xF000;
 
         public const int GWLP_WNDPROC = -4;
         public const int SM_CXSCREEN = 0;
@@ -314,6 +321,9 @@ namespace GyroShell.Library.Helpers.Win32
 
         [DllImport("user32.dll")]
         public static extern IntPtr SendMessageW(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll")]
+        public static extern uint SendMessageTimeout(IntPtr hWnd, uint messageId, uint wparam, uint lparam, uint timeoutFlags, uint timeout, ref IntPtr retval);
 
         [DllImport("Shell32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern IntPtr ShellExecute(IntPtr hwnd, string lpOperation, string lpFile, string lpParameters, string lpDirectory, int nShowCmd);

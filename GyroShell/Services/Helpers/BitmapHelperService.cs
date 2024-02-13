@@ -14,33 +14,6 @@ namespace GyroShell.Services.Helpers
 {
     internal class BitmapHelperService : IBitmapHelperService
     {
-        public async Task<SoftwareBitmapSource> GetXamlBitmapFromGdiBitmapAsync(Bitmap bmp)
-        {
-            using (Bitmap resampledBmp = FilterAndScaleBitmap(bmp, bmp.Width, bmp.Height))
-            {
-                BitmapData data = resampledBmp.LockBits(new Rectangle(0, 0, resampledBmp.Width, resampledBmp.Height), ImageLockMode.ReadOnly, resampledBmp.PixelFormat);
-                byte[] bytes = new byte[data.Stride * data.Height];
-                Marshal.Copy(data.Scan0, bytes, 0, bytes.Length);
-                resampledBmp.UnlockBits(data);
-
-                SoftwareBitmap softwareBitmap = new SoftwareBitmap(BitmapPixelFormat.Bgra8, resampledBmp.Width, resampledBmp.Height, BitmapAlphaMode.Premultiplied);
-                softwareBitmap.CopyFromBuffer(bytes.AsBuffer());
-
-                SoftwareBitmapSource source = new SoftwareBitmapSource();
-                source.SetBitmapAsync(softwareBitmap); // if this is awaited it causes an absolute deadlock????
-
-                return source;
-            }
-        }
-
-        public async Task<SoftwareBitmapSource> GetXamlBitmapFromGdiIconAsync(Icon icon)
-        {
-            using (Bitmap bmp = icon.ToBitmap())
-            {
-                return await GetXamlBitmapFromGdiBitmapAsync(bmp);
-            }
-        }
-
         public Bitmap LoadBitmapFromPath(string filePath)
         {
             try
@@ -85,7 +58,6 @@ namespace GyroShell.Services.Helpers
 
             return croppedBitmap;
         }
-
         private Rectangle GetNonTransparentBounds(Bitmap bmp)
         {
             int left = bmp.Width, right = 0, top = bmp.Height, bottom = 0;

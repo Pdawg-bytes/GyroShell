@@ -35,9 +35,6 @@ namespace GyroShell.Library.ViewModels
         private readonly ITimeService m_timeService;
         private readonly IShellHookService m_shellHookService;
 
-        private readonly IAppHelperService m_appHelper;
-        private readonly IBitmapHelperService m_bmpHelper;
-
         private readonly IExplorerManagerService m_explorerManager;
         private readonly INotificationManager m_notifManager;
 
@@ -50,8 +47,6 @@ namespace GyroShell.Library.ViewModels
         public DefaultTaskbarViewModel(
             IEnvironmentInfoService envService,
             ISettingsService appSettings,
-            IAppHelperService appHelper,
-            IBitmapHelperService bmpHelper,
             IExplorerManagerService explorerManager,
             INotificationManager notifManager,
             INetworkService netService,
@@ -64,8 +59,6 @@ namespace GyroShell.Library.ViewModels
         {
             m_envService = envService;
             m_appSettings = appSettings;
-            m_appHelper = appHelper;
-            m_bmpHelper = bmpHelper;
             m_explorerManager = explorerManager;
             m_netService = netService;
             m_powerService = powerService;

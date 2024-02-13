@@ -23,6 +23,7 @@ namespace GyroShell.Services.Environment
     {
         private readonly IBitmapHelperService m_bmpHelper;
         private readonly IAppHelperService m_appHelper;
+        private readonly IIconHelperService m_iconHelper;
 
         private int _wmShellHook;
 
@@ -36,10 +37,11 @@ namespace GyroShell.Services.Environment
 
         private ObservableCollection<IconModel> _currentWindows;
 
-        public ShellHookService(IBitmapHelperService bmpHelper, IAppHelperService appHelper) 
+        public ShellHookService(IBitmapHelperService bmpHelper, IAppHelperService appHelper, IIconHelperService iconHelper) 
         {
             m_bmpHelper = bmpHelper;
             m_appHelper = appHelper;
+            m_iconHelper = iconHelper;
 
             _currentWindows = new ObservableCollection<IconModel>();
         }
@@ -88,7 +90,7 @@ namespace GyroShell.Services.Environment
             {
                 if (IsUserWindow(hwnd))
                 {
-                    _currentWindows.Add(new IconModel { IconName = m_appHelper.GetWindowTitle(hwnd), Id = hwnd, AppIcon = m_bmpHelper.GetXamlBitmapFromGdiBitmapAsync(m_appHelper.GetUwpOrWin32Icon(hwnd, 32)).Result });
+                    _currentWindows.Add(new IconModel { IconName = m_appHelper.GetWindowTitle(hwnd), Id = hwnd, AppIcon = m_iconHelper.GetUwpOrWin32Icon(hwnd, 32) });
                 }
             }
             catch (Exception ex)
@@ -148,6 +150,20 @@ namespace GyroShell.Services.Environment
                         AddWindow(hWnd);
                     }
                     break;
+                case HSHELL_FLASH:
+                    if (_currentWindows.Any(win => win.Id == hWnd))
+                    {
+                        IconModel win = _currentWindows.First(wnd => wnd.Id == hWnd);
+                        if (win.State != WindowState.Active)
+                        {
+                            win.State = WindowState.Flashing;
+                        }
+                    }
+                    else
+                    {
+                        AddWindow(hWnd);
+                    }
+                    break;
             }
             return IntPtr.Zero;
         }
@@ -173,8 +189,7 @@ namespace GyroShell.Services.Environment
 
         private IconModel CreateNewIcon(IntPtr hWnd)
         {
-            Bitmap icon = m_appHelper.GetUwpOrWin32Icon(hWnd, 23);
-            SoftwareBitmapSource bmp = m_bmpHelper.GetXamlBitmapFromGdiBitmapAsync(icon).Result;
+            SoftwareBitmapSource bmp = m_iconHelper.GetUwpOrWin32Icon(hWnd, 32);
             string windowName = m_appHelper.GetWindowTitle(hWnd);
             return new IconModel { IconName = windowName, Id = hWnd, AppIcon = bmp };
         }

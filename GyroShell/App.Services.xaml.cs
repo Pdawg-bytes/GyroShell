@@ -31,6 +31,7 @@ namespace GyroShell
         {
             IServiceCollection collection = new ServiceCollection()
                 .AddTransient<IBitmapHelperService, BitmapHelperService>()
+                .AddTransient<IIconHelperService, IconHelperService>()
                 .AddSingleton<IAppHelperService, AppHelperService>()
                 .AddSingleton<IEnvironmentInfoService, EnvironmentInfoService>()
                 .AddSingleton<IShellHookService, ShellHookService>()

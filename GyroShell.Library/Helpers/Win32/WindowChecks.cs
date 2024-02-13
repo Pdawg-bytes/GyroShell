@@ -20,7 +20,8 @@ namespace GyroShell.Library.Helpers.Win32
         {
             if (IsWindow(hWnd) && IsWindowVisible(hWnd) &&
                 !IsCloaked(hWnd) && GetAncestor(hWnd, (GetAncestorFlags)GA_ROOT) == hWnd &&
-                GetWindow(hWnd, (GetWindowType)GW_OWNER) == IntPtr.Zero && FlagCheck(hWnd))
+                GetWindow(hWnd, (GetWindowType)GW_OWNER) == IntPtr.Zero && FlagCheck(hWnd)
+                && !ClassNameCheck(hWnd))
             {
                 return true;
             }
@@ -28,16 +29,6 @@ namespace GyroShell.Library.Helpers.Win32
             {
                 return false;
             }
-
-            /*int extendedWindowStyles = (int)GetWindowLongPtr(hWnd, GWL_EXSTYLE);
-            bool isWindow = IsWindow(hWnd);
-            bool isVisible = IsWindowVisible(hWnd);
-            bool isToolWindow = (extendedWindowStyles & WS_EX_TOOLWINDOW) != 0;
-            bool isAppWindow = (extendedWindowStyles & WS_EX_APPWINDOW) != 0;
-            bool isNoActivate = (extendedWindowStyles & WS_EX_NOACTIVATE) != 0;
-            IntPtr ownerWin = GetWindow(hWnd, (GetWindowType)GW_OWNER);
-
-            return isWindow && isVisible && (ownerWin == IntPtr.Zero || isAppWindow) && (!isNoActivate || isAppWindow) && !isToolWindow && !IsCloaked(hWnd);*/
         }
 
         private static bool FlagCheck(IntPtr hWnd)
@@ -66,8 +57,17 @@ namespace GyroShell.Library.Helpers.Win32
         {
             GetClassName(hWnd, className, className.Capacity);
 
-            if (className.ToString() == "Windows.UI.Core.CoreWindow") return true;
-            else return false; 
+            if (className.ToString() == "ApplicationFrameWindow" || className.ToString() == "Windows.UI.Core.CoreWindow")
+            {
+                if (((int)GetWindowLongPtr(hWnd, GWL_EXSTYLE) & WS_EX_WINDOWEDGE) == 0)
+                    return true;
+                else
+                    return false;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

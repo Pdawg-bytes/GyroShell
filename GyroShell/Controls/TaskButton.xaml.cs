@@ -36,14 +36,7 @@ namespace GyroShell.Controls
             window = DataContext as IconModel;
             window.PropertyChanged += Window_PropertyChanged;
 
-            if (window.State == WindowState.Active)
-            {
-                VisualStateManager.GoToState(this, "Active", true);
-            }
-            else
-            {
-                VisualStateManager.GoToState(this, "Inactive", true);
-            }
+            VisualStateManager.GoToState(this, "Inactive", true);
         }
 
         private void Window_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -72,14 +65,19 @@ namespace GyroShell.Controls
 
         private void BackgroundButton_Click(object sender, RoutedEventArgs e)
         {
-            if (window.State != WindowState.Active)
-            {
-                ShowWindow(window.Id, 9);
-            }
-            else
+            if (window.State == WindowState.Active)
             {
                 ShowWindow(window.Id, 6);
             }
+            else
+            {
+                ShowWindow(window.Id, 9);
+            }
+        }
+
+        private void CloseWindowFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            window.CloseWindow();
         }
     }
 }
