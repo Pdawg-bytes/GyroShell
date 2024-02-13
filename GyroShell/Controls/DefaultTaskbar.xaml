@@ -64,7 +64,7 @@
                 </GridView.ItemContainerTransitions>
                 <GridView.ItemTemplate>
                     <DataTemplate>
-                        <local:TaskButton Title="{Binding IconName, Mode=OneWay}" AppIcon="{Binding AppIcon, Mode=OneWay}" State="{Binding State, Mode=OneWay}" Handle="{Binding Id, Mode=OneWay}"/>
+                        <local:TaskButton/>
                     </DataTemplate>
                 </GridView.ItemTemplate>
             </GridView>

@@ -131,6 +131,7 @@ namespace GyroShell.Services.Environment
                     break;
                 case HSHELL_WINDOWACTIVATED:
                 case HSHELL_RUDEAPPACTIVATED:
+                    if (hWnd == MainWindowHandle || hWnd == IntPtr.Zero) { break; }
                     foreach (IconModel win in _currentWindows.Where(w => w.State == WindowState.Active))
                     {
                         win.State = WindowState.Inactive;

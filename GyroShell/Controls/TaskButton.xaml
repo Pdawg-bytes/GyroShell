@@ -8,9 +8,10 @@
     mc:Ignorable="d"
     Width="40"
     Height="40"
-    CornerRadius="4">
+    CornerRadius="4"
+    Loaded="TaskButton_Loaded">
 
-    <Grid x:Name="RootGrid" ToolTipService.ToolTip="{x:Bind Title, Mode=OneWay}" Height="40" Width="40">
+    <Grid x:Name="RootGrid" ToolTipService.ToolTip="{Binding Path=IconName}" Height="40" Width="40">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="WindowStates">
                 <VisualState x:Name="Inactive">
@@ -78,7 +79,7 @@
         
         <Button Height="40" Width="40" Background="#33707070" CornerRadius="4" x:Name="BackgroundButton" BorderBrush="Transparent" BorderThickness="0" Click="BackgroundButton_Click"/>
         
-        <Image IsHitTestVisible="False" Source="{x:Bind AppIcon, Mode=OneWay}" Height="23" Width="23" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,2" />
+        <Image IsHitTestVisible="False" Source="{Binding Path=AppIcon}" Height="23" Width="23" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,2" />
         <Border IsHitTestVisible="False" x:Name="HighlightBorder" Width="8" Height="3" CornerRadius="2" Background="Gray" VerticalAlignment="Bottom" Margin="0,2,0,0" HorizontalAlignment="Center" RenderTransformOrigin="0.45,0">
             <Border.RenderTransform>
                 <ScaleTransform x:Name="HighlightBorderTransform" ScaleX="1" ScaleY="1"/>

@@ -18,98 +18,68 @@ using Windows.Foundation.Collections;
 using static GyroShell.Library.Models.InternalData.IconModel;
 using static GyroShell.Library.Helpers.Win32.Win32Interop;
 using Windows.System;
+using GyroShell.Library.Models.InternalData;
 
 namespace GyroShell.Controls
 {
-    public partial class TaskButton : UserControl, INotifyPropertyChanged
+    public partial class TaskButton : UserControl
     {
-        public static readonly DependencyProperty AppIconProperty =
-            DependencyProperty.Register("AppIcon", typeof(SoftwareBitmapSource), typeof(TaskButton), null);
-
-        public static readonly DependencyProperty TitleProperty =
-            DependencyProperty.Register("Title", typeof(string), typeof(TaskButton), null);
-
-        public static readonly DependencyProperty StateProperty =
-            DependencyProperty.Register("State", typeof(WindowState), typeof(TaskButton),
-            new PropertyMetadata(WindowState.Inactive, OnStateChanged));
-
-        public static readonly DependencyProperty HandleProperty =
-            DependencyProperty.Register("Handle", typeof(IntPtr), typeof(TaskButton), null);
-
+        private IconModel window;
 
         public TaskButton()
         {
             this.InitializeComponent();
         }
 
-
-        private void BackgroundButton_Click(object sender, RoutedEventArgs e)
+        private void TaskButton_Loaded(object sender, RoutedEventArgs e)
         {
-            if (State != WindowState.Active)
+            window = DataContext as IconModel;
+            window.PropertyChanged += Window_PropertyChanged;
+
+            if (window.State == WindowState.Active)
             {
-                ShowWindow(Handle, 1);
+                VisualStateManager.GoToState(this, "Active", true);
             }
             else
             {
-                ShowWindow(Handle, 0);
+                VisualStateManager.GoToState(this, "Inactive", true);
             }
         }
 
-
-        public SoftwareBitmapSource AppIcon
+        private void Window_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            get => (SoftwareBitmapSource)GetValue(AppIconProperty);
-            set => SetValue(AppIconProperty, value);
-        }
-
-        public string Title
-        {
-            get => (string)GetValue(TitleProperty);
-            set => SetValue(TitleProperty, value);
-        }
-
-        public IntPtr Handle
-        {
-            get { return (IntPtr)GetValue(HandleProperty); }
-            set => SetValue(HandleProperty, value);
-        }
-
-        public WindowState State
-        {
-            get => (WindowState)GetValue(StateProperty);
-            set
+            switch (e.PropertyName)
             {
-                switch (value) 
-                {
-                    case WindowState.Inactive:
-                    default:
-                        VisualStateManager.GoToState(this, "Inactive", true);
-                        break;
-                    case WindowState.Active:
-                        VisualStateManager.GoToState(this, "Active", true);
-                        break;
-                    case WindowState.Flashing:
-                        VisualStateManager.GoToState(this, "Flashing", true);
-                        break;
-                    case WindowState.Hidden:
-                        break;
-                }
+                case "State":
+                    switch (window.State)
+                    {
+                        case WindowState.Inactive:
+                        default:
+                            VisualStateManager.GoToState(this, "Inactive", true);
+                            break;
+                        case WindowState.Active:
+                            VisualStateManager.GoToState(this, "Active", true);
+                            break;
+                        case WindowState.Flashing:
+                            VisualStateManager.GoToState(this, "Flashing", true);
+                            break;
+                        case WindowState.Hidden:
+                            break;
+                    }
+                    break;
             }
         }
-        private static void OnStateChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+
+        private void BackgroundButton_Click(object sender, RoutedEventArgs e)
         {
-            TaskButton button = (TaskButton)d;
-            if (e.NewValue != e.OldValue)
+            if (window.State != WindowState.Active)
             {
-                button.State = (WindowState)e.NewValue;
+                ShowWindow(window.Id, 9);
             }
-        }
-
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            else
+            {
+                ShowWindow(window.Id, 6);
+            }
         }
     }
 }
