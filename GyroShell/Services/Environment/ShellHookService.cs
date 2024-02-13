@@ -1,0 +1,258 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Drawing;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using GyroShell.Library.Events;
+using GyroShell.Library.Models.InternalData;
+using GyroShell.Library.Services.Environment;
+using GyroShell.Library.Services.Helpers;
+using GyroShell.Library.Services.Managers;
+using Microsoft.UI.Xaml.Media.Imaging;
+using static GyroShell.Library.Helpers.Win32.Win32Interop;
+using static GyroShell.Library.Helpers.Win32.WindowChecks;
+using static GyroShell.Library.Models.InternalData.IconModel;
+
+namespace GyroShell.Services.Environment
+{
+    public class ShellHookService : IShellHookService
+    {
+        private readonly IAppHelperService m_appHelper;
+        private readonly IIconHelperService m_iconHelper;
+        private readonly IExplorerManagerService m_explorerManager;
+
+        private int _wmShellHook;
+
+        private WndProcDelegate _procedureDelegate = null;
+        private IntPtr _oldWndProc;
+
+        private WinEventDelegate _winEventDelegate;
+        private IntPtr _nameChangeHook;
+        private IntPtr _cloakUncloakHook;
+
+        public IntPtr MainWindowHandle { get; set; }
+
+        private ObservableCollection<IconModel> _currentWindows;
+
+        public ShellHookService(
+            IAppHelperService appHelper, 
+            IIconHelperService iconHelper,
+            IExplorerManagerService explorerManager) 
+        {
+            m_appHelper = appHelper;
+            m_iconHelper = iconHelper;
+            m_explorerManager = explorerManager;
+
+            _currentWindows = new ObservableCollection<IconModel>();
+        }
+
+        public void Initialize()
+        {
+            _oldWndProc = SetWndProc(WndProcCallback);
+
+            EnumWindows(EnumWindowsCallback, IntPtr.Zero);
+
+            _wmShellHook = RegisterWindowMessage("SHELLHOOK");
+            RegisterShellHook(MainWindowHandle, 3);
+
+            _winEventDelegate = WinEventCallback;
+            _nameChangeHook = SetWinEventHook(EVENT_OBJECT_NAMECHANGED, EVENT_OBJECT_NAMECHANGED, IntPtr.Zero, _winEventDelegate, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
+            _cloakUncloakHook = SetWinEventHook(EVENT_OBJECT_UNCLOAKED, EVENT_OBJECT_UNCLOAKED, IntPtr.Zero, _winEventDelegate, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
+
+            ShellDDEInit(true);
+        }
+
+        public void Uninitialize()
+        {
+            UnhookWinEvent(_nameChangeHook);
+        }
+
+
+        private IntPtr SetWndProc(WndProcDelegate procDelegate)
+        {
+            _procedureDelegate = procDelegate;
+            IntPtr wndProcPtr = Marshal.GetFunctionPointerForDelegate(_procedureDelegate);
+            if (IntPtr.Size == 8) { return SetWindowLongPtr(MainWindowHandle, GWLP_WNDPROC, wndProcPtr); }
+            else { return SetWindowLong(MainWindowHandle, GWLP_WNDPROC, wndProcPtr); }
+        }
+        private IntPtr WndProcCallback(IntPtr hwnd, uint message, IntPtr wParam, IntPtr lParam)
+        {
+            if (message == _wmShellHook)
+            {
+                return ShellHookCallback(wParam.ToInt32(), lParam);
+            }
+            return CallWindowProc(_oldWndProc, hwnd, message, wParam, lParam);
+        }
+
+
+        private bool EnumWindowsCallback(IntPtr hwnd, IntPtr lParam)
+        {
+            try
+            {
+                if (IsUserWindow(hwnd))
+                {
+                    WindowState initialState = GetForegroundWindow() == hwnd ? WindowState.Active : WindowState.Inactive;
+                    AddWindow(hwnd, initialState);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+            return true;
+        }
+
+
+        private void WinEventCallback(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
+        {
+            switch (eventType)
+            {
+                case EVENT_OBJECT_CLOAKED:
+                    switch (m_appHelper.GetWindowTitle(hwnd))
+                    {
+                        case "Start":
+                            //m_explorerManager.IsStartMenuOpen = false;
+                            break;
+                        case "Quick settings":
+                            //m_explorerManager.IsSystemControlsOpen = false;
+                            break;
+                        case "Windows Shell Experience Host":
+                        case "Notification Center":
+                            //m_explorerManager.IsActionCenterOpen = false;
+                            break;
+                    }
+                    break;
+                case EVENT_OBJECT_UNCLOAKED:
+                    switch (m_appHelper.GetWindowTitle(hwnd))
+                    {
+                        case "Start":
+                            //m_explorerManager.IsStartMenuOpen = true;
+                            break;
+                        case "Quick settings":
+                            //m_explorerManager.IsSystemControlsOpen = true;
+                            break;
+                        case "Windows Shell Experience Host":
+                        case "Notification Center":
+                            //m_explorerManager.IsActionCenterOpen = true;
+                            break;
+                    }
+                    break;
+                case EVENT_OBJECT_NAMECHANGED:
+                    if (_currentWindows.Any(wnd => wnd.Id == hwnd))
+                    {
+                        _currentWindows.First(win => win.Id == hwnd).IconName = m_appHelper.GetWindowTitle(hwnd);
+                    }
+                    break;
+            }
+        }
+
+
+        private IntPtr ShellHookCallback(int message, IntPtr hWnd)
+        {
+            switch (message)
+            {
+                case HSHELL_WINDOWCREATED:
+                    if (!_currentWindows.Any(win => win.Id == hWnd))
+                    {
+                        AddWindow(hWnd);
+                    }
+                    break;
+                case HSHELL_WINDOWDESTROYED:
+                    RemoveWindow(hWnd);
+                    break;
+                case HSHELL_WINDOWREPLACING:
+                    if (_currentWindows.Any(wnd => wnd.Id == hWnd))
+                    {
+                        IconModel win = _currentWindows.First(i => i.Id == hWnd);
+                        win.State = WindowState.Inactive;
+                        if (!IsUserWindow(hWnd))
+                        {
+                            RemoveWindow(hWnd);
+                        }
+                    }
+                    else
+                    {
+                        AddWindow(hWnd);
+                    }
+                    break;
+                case HSHELL_WINDOWREPLACED:
+                    RemoveWindow(hWnd);
+                    break;
+                case HSHELL_WINDOWACTIVATED:
+                case HSHELL_RUDEAPPACTIVATED:
+                    if (hWnd == MainWindowHandle || hWnd == IntPtr.Zero) { break; }
+                    foreach (IconModel win in _currentWindows.Where(w => w.State == WindowState.Active))
+                    {
+                        win.State = WindowState.Inactive;
+                    }
+
+                    IconModel model = null;
+                    if (_currentWindows.Any(w => w.Id == hWnd))
+                    {
+                        model = _currentWindows.First(w => w.Id == hWnd);
+                        model.State = WindowState.Active;
+                    }
+                    else
+                    {
+                        AddWindow(hWnd, WindowState.Active);
+                    }
+                    break;
+                case HSHELL_FLASH:
+                    if (_currentWindows.Any(win => win.Id == hWnd))
+                    {
+                        IconModel win = _currentWindows.First(wnd => wnd.Id == hWnd);
+                        if (win.State != WindowState.Active)
+                        {
+                            win.State = WindowState.Flashing;
+                        }
+                    }
+                    else
+                    {
+                        AddWindow(hWnd);
+                    }
+                    break;
+                case HSHELL_ENDTASK:
+                    RemoveWindow(hWnd);
+                    break;
+            }
+            return IntPtr.Zero;
+        }
+
+        private void AddWindow(IntPtr hWnd, WindowState initialState = WindowState.Inactive)
+        {
+            if (IsUserWindow(hWnd))
+            {
+                _currentWindows.Add(CreateNewIcon(hWnd, initialState));
+            }
+        }
+        private void RemoveWindow(IntPtr hWnd)
+        {
+            if (_currentWindows.Any(win => win.Id == hWnd))
+            {
+                do
+                {
+                    _currentWindows.Remove(_currentWindows.First(wdw => wdw.Id == hWnd));
+                }
+                while (_currentWindows.Any(win => win.Id == hWnd));
+            }
+        }
+
+        private IconModel CreateNewIcon(IntPtr hWnd, WindowState initialState)
+        {
+            SoftwareBitmapSource bmp = m_iconHelper.GetUwpOrWin32Icon(hWnd, 32);
+            string windowName = m_appHelper.GetWindowTitle(hWnd);
+            return new IconModel { IconName = windowName, Id = hWnd, AppIcon = bmp, State = initialState };
+        }
+
+
+        public ObservableCollection<IconModel> CurrentWindows
+        {
+            get => _currentWindows;
+        }
+    }
+}

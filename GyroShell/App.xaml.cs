@@ -1,4 +1,6 @@
 ﻿using GyroShell.Controls;
+using GyroShell.Library.Services.Environment;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using System;
 using System.Threading.Tasks;
@@ -8,8 +10,9 @@ namespace GyroShell
 {
     public partial class App : Application
     {
-        internal static StartupScreen startupScreen;
+        internal static StartupWindow startupScreen;
         private Window m_window;
+        private IntPtr handle;
 
         public App()
         {
@@ -28,7 +31,7 @@ namespace GyroShell
 
         private async Task LoadStartupScreenContentAsync()
         {
-            startupScreen = new StartupScreen();
+            startupScreen = new StartupWindow();
             startupScreen.Activate();
             await Task.Delay(200);
         }

@@ -15,13 +15,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Commands\**" />
-    <Compile Remove="NewFolder\**" />
     <EmbeddedResource Remove="Commands\**" />
-    <EmbeddedResource Remove="NewFolder\**" />
     <None Remove="Commands\**" />
-    <None Remove="NewFolder\**" />
     <Page Remove="Commands\**" />
-    <Page Remove="NewFolder\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,10 +30,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.WinUI.Connectivity" Version="7.1.2" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
     <PackageReference Include="CoreAudio" Version="1.37.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.230913002" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.231008000" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
     <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
     <Manifest Include="$(ApplicationManifest)" />
@@ -68,24 +64,36 @@
     <Content Remove="Assets\WindowIcon.ico" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Controls\DebugDialog.xaml" />
     <None Remove="Controls\DefaultTaskbar.xaml" />
-    <None Remove="Controls\StartupScreen.xaml" />
+    <None Remove="Controls\StartupWindow.xaml" />
     <None Remove="Controls\StartWindow.xaml" />
+    <None Remove="Controls\TaskButton.xaml" />
     <None Remove="Settings\AboutPage.xaml" />
-    <None Remove="Settings\Customization.xaml" />
-    <None Remove="Settings\MoudlesPage.xaml" />
     <None Remove="Settings\SettingsWindow.xaml" />
+    <None Remove="Views\ModulesSettingView.xaml" />
+    <None Remove="Views\StartupPage.xaml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GyroShell.Library\GyroShell.Library.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Settings\MoudlesPage.xaml">
+    <Page Update="Controls\TaskButton.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Controls\StartupScreen.xaml">
+    <Page Update="Controls\DebugDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\StartupPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Controls\StartupWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
@@ -115,6 +123,8 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <PRIResource Remove="NewFolder\**" />
+    <Page Update="Views\ModulesSettingView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 </Project>

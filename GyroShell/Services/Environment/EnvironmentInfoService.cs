@@ -2,15 +2,35 @@
 using System;
 using System.IO;
 using Windows.ApplicationModel;
-using static GyroShell.Helpers.Win32.Win32Interop;
+using static GyroShell.Library.Helpers.Win32.Win32Interop;
 
 namespace GyroShell.Services.Environment
 {
-    internal class EnvironmentInfoService : IEnvironmentInfoService
+    public class EnvironmentInfoService : IEnvironmentInfoService
     {
         public string SystemArchitecture { get; init; }
         public Version AppVersion { get; init; }
         public DateTime AppBuildDate { get; init; }
+
+
+        private IntPtr _mainWindowHandle;
+        public IntPtr MainWindowHandle
+        {
+            get => _mainWindowHandle;
+            set => _mainWindowHandle = value;
+        }
+
+        private int _settingsInstances;
+        public int SettingsInstances
+        {
+            get => _settingsInstances;
+            set => _settingsInstances = value;
+        }
+
+        public bool IsSystemUsingDarkmode
+        {
+            get => ShouldSystemUseDarkMode(); 
+        }
 
         public bool IsWindows11
         {

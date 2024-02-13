@@ -18,5 +18,10 @@ namespace GyroShell.Library.Services.Hardware
         /// </summary>
         /// <returns>The new <see cref="BatteryReport"/> object.</returns>
         public BatteryReport GetStatusReport();
+
+        /// <summary>
+        /// Checks if there is a battery installed in the system.
+        /// </summary>
+        public bool IsBatteryInstalled { get; }
     }
 }

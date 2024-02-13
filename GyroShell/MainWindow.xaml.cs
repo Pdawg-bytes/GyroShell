@@ -16,8 +16,8 @@ using Windows.Graphics;
 using Windows.UI;
 using WinRT;
 
-using static GyroShell.Helpers.Win32.Win32Interop;
-using static GyroShell.Helpers.Win32.WindowChecks;
+using static GyroShell.Library.Helpers.Win32.Win32Interop;
+using static GyroShell.Library.Helpers.Win32.WindowChecks;
 
 using AppWindow = Microsoft.UI.Windowing.AppWindow;
 
@@ -26,18 +26,15 @@ namespace GyroShell
     internal sealed partial class MainWindow : Window
     {
         private AppWindow m_AppWindow;
-        private IEnvironmentInfoService m_envService;
-        private ISettingsService m_appSettings;
-        private ITaskbarManagerService m_tbManager;
-        private IAppHelperService m_appHelper;
+        private readonly IEnvironmentInfoService m_envService;
+        private readonly ISettingsService m_appSettings;
+        private readonly IExplorerManagerService m_explorerManager;
 
-        private IntPtr _oldWndProc;
         internal static IntPtr hWnd;
 
         internal static int uCallBack;
 
         internal static bool fBarRegistered = false;
-        private bool finalOpt;
 
         internal MainWindow()
         {
@@ -46,10 +43,9 @@ namespace GyroShell
 
             m_envService = App.ServiceProvider.GetRequiredService<IEnvironmentInfoService>();
             m_appSettings = App.ServiceProvider.GetRequiredService<ISettingsService>();
-            m_appHelper = App.ServiceProvider.GetRequiredService<IAppHelperService>();
-            m_tbManager = App.ServiceProvider.GetRequiredService<ITaskbarManagerService>();
+            m_explorerManager = App.ServiceProvider.GetRequiredService<IExplorerManagerService>();
 
-            m_tbManager.Initialize();
+            m_explorerManager.Initialize();
 
             // Presenter handling code
             OverlappedPresenter presenter = GetAppWindowAndPresenter();
@@ -62,6 +58,12 @@ namespace GyroShell
             m_AppWindow.SetPresenter(AppWindowPresenterKind.Default);
 
             hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+            m_envService.MainWindowHandle = hWnd;
+
+            IShellHookService shHookService = App.ServiceProvider.GetRequiredService<IShellHookService>();
+            shHookService.MainWindowHandle = hWnd;
+            shHookService.Initialize();
+
             WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
             AppWindow appWindow = AppWindow.GetFromWindowId(windowId);
             if (m_envService.IsWindows11)
@@ -89,12 +91,9 @@ namespace GyroShell
 
             // Init stuff
             RegisterBar();
-            RegisterWinEventHook();
-            _oldWndProc = SetWndProc(WindowProcess);
             MonitorSummon();
             TaskbarFrame.Navigate(typeof(Controls.DefaultTaskbar), null, new SuppressNavigationTransitionInfo());
             SetBackdrop();
-            ShellDDEInit(true);
 
             // Show GyroShell when everything is ready
             m_AppWindow.Show();
@@ -103,10 +102,7 @@ namespace GyroShell
         #region Window Handling
         private void OnProcessExit(object sender, EventArgs e)
         {
-            m_tbManager.ShowTaskbar();
-            //UnhookWinEvent(foregroundHook);
-            //UnhookWinEvent(cloakedHook);
-            //UnhookWinEvent(nameChangeHook);
+            m_explorerManager.ShowTaskbar();
         }
 
         private OverlappedPresenter GetAppWindowAndPresenter()
@@ -145,7 +141,7 @@ namespace GyroShell
 
         private void SetBackdrop()
         {
-            bool? option = m_appSettings.EnableCustomTransparency;
+            bool option = m_appSettings.EnableCustomTransparency;
 
             byte alpha = m_appSettings.AlphaTint;
             byte red = m_appSettings.RedTint;
@@ -163,30 +159,30 @@ namespace GyroShell
                 default:
                     if (m_envService.IsWindows11)
                     {
-                        TrySetMicaBackdrop(MicaKind.BaseAlt, alpha, red, green, blue, tintOpacity, luminOpacity);
+                        TrySetMicaBackdrop(MicaKind.BaseAlt, alpha, red, green, blue, tintOpacity, luminOpacity, option);
                     }
                     else
                     {
-                        TrySetAcrylicBackdrop(alpha, red, green, blue, tintOpacity, luminOpacity);
+                        TrySetAcrylicBackdrop(alpha, red, green, blue, tintOpacity, luminOpacity, option);
                     }
                     break;
                 case 1:
                     if (m_envService.IsWindows11)
                     {
-                        TrySetMicaBackdrop(MicaKind.Base, alpha, red, green, blue, tintOpacity, luminOpacity);
+                        TrySetMicaBackdrop(MicaKind.Base, alpha, red, green, blue, tintOpacity, luminOpacity, option);
                     }
                     else
                     {
-                        TrySetAcrylicBackdrop(alpha, red, green, blue, tintOpacity, luminOpacity);
+                        TrySetAcrylicBackdrop(alpha, red, green, blue, tintOpacity, luminOpacity, option);
                     }
                     break;
                 case 2:
-                    TrySetAcrylicBackdrop(alpha, red, green, blue, tintOpacity, luminOpacity);
+                    TrySetAcrylicBackdrop(alpha, red, green, blue, tintOpacity, luminOpacity, option);
                     break;
             }
         }
 
-        bool TrySetMicaBackdrop(MicaKind micaKind, byte alpha, byte red, byte green, byte blue, float tintOpacity, float luminOpacity)
+        bool TrySetMicaBackdrop(MicaKind micaKind, byte alpha, byte red, byte green, byte blue, float tintOpacity, float luminOpacity, bool customTransparency)
         {
             if (MicaController.IsSupported())
             {
@@ -205,7 +201,7 @@ namespace GyroShell
                 micaController = new MicaController();
                 micaController.Kind = micaKind;
 
-                if (finalOpt == true)
+                if (customTransparency)
                 {
                     micaController.TintColor = Color.FromArgb(alpha, red, green, blue);
                     micaController.TintOpacity = tintOpacity;
@@ -217,12 +213,12 @@ namespace GyroShell
                 return true;
             }
 
-            TrySetAcrylicBackdrop(alpha, red, green, blue, tintOpacity, luminOpacity);
+            TrySetAcrylicBackdrop(alpha, red, green, blue, tintOpacity, luminOpacity, customTransparency);
 
             return false;
         }
 
-        bool TrySetAcrylicBackdrop(byte alpha, byte red, byte green, byte blue, float tintOpacity, float luminOpacity)
+        bool TrySetAcrylicBackdrop(byte alpha, byte red, byte green, byte blue, float tintOpacity, float luminOpacity, bool customTransparency)
         {
             if (DesktopAcrylicController.IsSupported())
             {
@@ -319,7 +315,7 @@ namespace GyroShell
         #endregion
 
         #region AppBar
-        internal void RegisterBar()
+        private void RegisterBar()
         {
             APPBARDATA abd = new APPBARDATA();
 
@@ -335,10 +331,10 @@ namespace GyroShell
                 bool regShellHook = RegisterShellHookWindow(hWnd);
                 fBarRegistered = true;
 
-                m_tbManager.ToggleAutoHideExplorer(true);
+                m_explorerManager.ToggleAutoHideExplorer(true);
                 ABSetPos();
-                m_tbManager.ToggleAutoHideExplorer(false);
-                m_tbManager.HideTaskbar();
+                m_explorerManager.ToggleAutoHideExplorer(false);
+                m_explorerManager.HideTaskbar();
                 SetWindowPos(hWnd, (IntPtr)WindowZOrder.HWND_TOPMOST, 0, 0, 0, 0, (int)SWPFlags.SWP_NOMOVE | (int)SWPFlags.SWP_NOSIZE | (int)SWPFlags.SWP_SHOWWINDOW);
             }
             else
@@ -393,107 +389,6 @@ namespace GyroShell
 
             SHAppBarMessage((int)ABMsg.ABM_SETPOS, ref abd);
             MoveWindow(abd.hWnd, abd.rc.left, abd.rc.top, abd.rc.right - abd.rc.left, abd.rc.bottom - abd.rc.top, true);
-        }
-        #endregion
-
-        #region Callbacks
-
-        #region SetWinEventHook Init
-        private int WM_ShellHook;
-
-        private void RegisterWinEventHook()
-        {
-            WM_ShellHook = RegisterWindowMessage("SHELLHOOK");
-
-            RegisterShellHook(hWnd, 3);
-        }
-        #endregion
-
-        #region WndProc Init
-        private static WndProcDelegate _currDelegate = null;
-        internal static IntPtr SetWndProc(WndProcDelegate newProc)
-        {
-            _currDelegate = newProc;
-
-            IntPtr newWndProcPtr = Marshal.GetFunctionPointerForDelegate(newProc);
-
-            if (IntPtr.Size == 8)
-            {
-                return SetWindowLongPtr(hWnd, GWLP_WNDPROC, newWndProcPtr);
-            }
-            else
-            {
-                return SetWindowLong(hWnd, GWLP_WNDPROC, newWndProcPtr);
-            }
-        }
-        #endregion
-
-        // WNDPROC Callback
-        private IntPtr WindowProcess(IntPtr hwnd, uint message, IntPtr wParam, IntPtr lParam)
-        {
-            /*Debug.WriteLine("------------");
-            Debug.WriteLine("MESSAGE: " + (WM_CODE)message);
-            Debug.WriteLine(wParam);
-            Debug.WriteLine(lParam);*/
-            if (message == WM_ShellHook)
-            {
-                //return HandleShellHook(wParam.ToInt32(), lParam);
-            }
-
-            return CallWindowProc(_oldWndProc, hwnd, message, wParam, lParam);
-        }
-
-        // WM_ShellHook Callback
-        private IntPtr HandleShellHook(int iCode, IntPtr hwnd)
-        {
-            switch (iCode)
-            {
-                case HSHELL_GETMINRECT: //HSHELL_GETMINRECT
-                    return new IntPtr(1);
-                case (4 | 0x8000): // HSHELL_RUDEAPPACTIVATED
-                    break;
-                case HSHELL_WINDOWACTIVATED:
-                    break;
-                case HSHELL_WINDOWCREATED:
-                    if (isUserWindow(hwnd))
-                    {
-                        Debug.WriteLine("Window created: " + m_appHelper.GetWindowTitle(hwnd) + " | Handle: " + (hwnd));
-                        //indexedWindows.Add(hwnd);
-                    }
-                    break;
-                case HSHELL_WINDOWDESTROYED:
-                    /*if (indexedWindows.Contains(hwnd))
-                    {
-                        Debug.WriteLine("Window destroyed: " + GetWindowTitle(hwnd) + " | Handle: " + (hwnd));
-                        //indexedWindows.Remove(hwnd);
-                    }*/
-                    break;
-                case HSHELL_APPCOMMAND:
-                    int appCommand = ((short)((((uint)hwnd) >> 16) & ushort.MaxValue)) & ~FAPPCOMMAND_MASK;
-
-                    Debug.WriteLine("App command: " + appCommand);
-
-                    if (appCommand == 8)
-                    {
-                        Debug.WriteLine("Volume muted");
-                    }
-                    break;
-                case 16:
-                    return new IntPtr(1);
-                case HSHELL_REDRAW:
-                    //Debug.WriteLine("Window redraw: " + GetWindowTitle(hwnd) + " | Handle: " + (hwnd));
-                    break;
-                case HSHELL_FULLSCREEN_ENABLED:
-                    //m_AppWindow.Hide();
-                    break;
-                case HSHELL_FULLSCREEN_DISABLED:
-                    //m_AppWindow.Show();
-                    break;
-                default:
-                    Debug.WriteLine("Unknown shhook code: " + iCode + " with window: " + m_appHelper.GetWindowTitle(hwnd));
-                    break;
-            }
-            return IntPtr.Zero;
         }
         #endregion
     }

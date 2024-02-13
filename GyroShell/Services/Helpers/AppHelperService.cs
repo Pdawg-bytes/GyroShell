@@ -7,10 +7,13 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading.Tasks;
 using Windows.ApplicationModel;
+using Windows.ApplicationModel.Core;
 using Windows.Management.Deployment;
-using static GyroShell.Helpers.Win32.Win32Interop;
-using static GyroShell.Interfaces.AUMIDIPropertyStore;
+using Windows.Storage.Streams;
+using static GyroShell.Library.Helpers.Win32.Win32Interop;
+using static GyroShell.Library.Interfaces.IPropertyStoreAUMID;
 
 namespace GyroShell.Services.Helpers
 {
@@ -18,33 +21,16 @@ namespace GyroShell.Services.Helpers
     {
         private Dictionary<string, string> m_pkgFamilyMap;
         private PackageManager m_pkgManager;
-        private IBitmapHelperService m_bmpHelper;
 
-        public AppHelperService(IBitmapHelperService bitmapHelper)
+        public AppHelperService()
         {
             m_pkgFamilyMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             m_pkgManager = new PackageManager();
-            m_bmpHelper = bitmapHelper;
 
             IEnumerable<Package> packages = m_pkgManager.FindPackagesForUser(null);
             foreach (Package package in packages)
             {
                 m_pkgFamilyMap[package.Id.FamilyName] = package.Id.FullName;
-            }
-        }
-
-        public bool IsUwpWindow(IntPtr hWnd) =>
-            GetPackageFromAppHandle(hWnd) != null;
-
-        public Bitmap GetUwpOrWin32Icon(IntPtr hwnd, int targetSize)
-        {
-            if (IsUwpWindow(hwnd))
-            {
-                return GetGdiBitmapFromUwpApp(hwnd);
-            }
-            else
-            {
-                return GetGdiBitmapFromWin32App(hwnd, targetSize);
             }
         }
 
@@ -58,13 +44,45 @@ namespace GyroShell.Services.Helpers
             return sb.ToString();
         }
 
-        #region UWP Helper
+
+        public RandomAccessStreamReference GetUwpIconStream(IntPtr hWnd)
+        {
+            Package pkg = GetPackageFromAppHandle(hWnd);
+            AppListEntry entry = pkg.GetAppListEntries().First(ent => ent.DisplayInfo.DisplayName.ToLower().Contains(GetWindowTitle(hWnd).ToLower()));
+
+            if (entry != null)
+            {
+                return entry.DisplayInfo.GetLogo(new Windows.Foundation.Size(176, 176));
+            }
+            return null;
+        }
+
         public string GetUwpAppIconPath(IntPtr hWnd)
         {
             string normalPath = Uri.UnescapeDataString(Uri.UnescapeDataString(GetPackageFromAppHandle(hWnd).Logo.AbsolutePath)).Replace("/", "\\");
-            string finalPath = GetUwpExtraIcons(normalPath, GetWindowTitle(hWnd), normalPath);
+            string finalPath = GetUwpExtraIcons(normalPath, GetWindowTitle(hWnd));
 
             return finalPath;
+        }
+        private string GetUwpExtraIcons(string path, string appName)
+        {
+            string[] pathParts = path.Split('\\');
+            string rootAssetsFolder = string.Join("\\", pathParts.Take(pathParts.Length - 1));
+
+            string[] allFiles = Directory.GetFiles(rootAssetsFolder);
+            foreach (string filePath in allFiles)
+            {
+                if (Path.GetFileName(filePath).Contains("StoreLogo.scale-100"))
+                {
+                    string e = filePath.Replace(" ", "").ToLower();
+                    if (e.Contains(appName.Replace(" ", "").ToLower()))
+                    {
+                        return filePath;
+                    }
+                }
+            }
+
+            return path;
         }
 
         public Package GetPackageFromAppHandle(IntPtr hWnd)
@@ -119,68 +137,6 @@ namespace GyroShell.Services.Helpers
             }
 
             return null;
-        }
-        #endregion UWP Helper
-
-        private string GetUwpExtraIcons(string path, string appName, string normalPath)
-        {
-            string[] pathParts = path.Split('\\');
-            string rootAssetsFolder = string.Join("\\", pathParts.Take(pathParts.Length - 1));
-
-            string[] allFiles = Directory.GetFiles(rootAssetsFolder);
-            foreach (string filePath in allFiles)
-            {
-                if (Path.GetFileName(filePath).Contains("StoreLogo.scale-100"))
-                {
-                    string e = filePath.Replace(" ", "").ToLower();
-                    if (e.Contains(appName.Replace(" ", "").ToLower()))
-                    {
-                        return filePath;
-                    }
-                }
-            }
-
-            return normalPath;
-        }
-
-        private Bitmap GetGdiBitmapFromUwpApp(IntPtr hWnd)
-        {
-            try
-            {
-                string iconPath = GetUwpAppIconPath(hWnd);
-
-                using (Bitmap temp = m_bmpHelper.LoadBitmapFromPath(iconPath))
-                {
-                    return m_bmpHelper.RemoveTransparentPadding(temp);
-                }
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e.Message);
-                return null;
-            }
-        }
-
-        private Bitmap GetGdiBitmapFromWin32App(IntPtr hwnd, int targetSize)
-        {
-            try
-            {
-                GetWindowThreadProcessId(hwnd, out uint pid);
-                Process proc = Process.GetProcessById((int)pid);
-                Icon icon = Icon.ExtractAssociatedIcon(proc.MainModule.FileName);
-
-                if (icon != null)
-                {
-                    Bitmap resizedIcon = new Bitmap(icon.ToBitmap(), new Size(targetSize, targetSize));
-                    return resizedIcon;
-                }
-                return null;
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("GetHandleIcon => GetIcon: " + ex.Message);
-                return null;
-            }
         }
     }
 }

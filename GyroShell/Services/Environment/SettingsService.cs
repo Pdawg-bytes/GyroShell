@@ -1,88 +1,121 @@
 ﻿using GyroShell.Library.Services.Environment;
+using System;
 using Windows.Storage;
 
 namespace GyroShell.Services.Environment
 {
-    internal class SettingsService : ISettingsService
+    public class SettingsService : ISettingsService
     {
         private readonly ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
 
+        public event EventHandler<string> SettingUpdated;
+        public event EventHandler<string> SettingAdded;
+
+        public T GetSetting<T>(string key)
+        {
+            if (localSettings.Values.TryGetValue(key, out var value) && value is T)
+            {
+                return (T)value;
+            }
+            return default;
+        }
+
+        public void SetSetting<T>(string key, T value)
+        {
+            localSettings.Values[key] = value;
+            SettingUpdated?.Invoke(this, key);
+        }
+
+        public bool RemoveSetting(string key)
+        {
+            return localSettings.Values.Remove(key);
+        }
+
+        public void AddSetting<T>(string key, T value)
+        {
+            if (!localSettings.Values.ContainsKey(key))
+            {
+                localSettings.Values.Add(key, value);
+                SettingAdded?.Invoke(this, key);
+            }
+        }
+
         public int IconStyle
         {
-            get => localSettings.Values["iconStyle"] as int? != null ? (int)localSettings.Values["iconStyle"] : 0;
-            set => localSettings.Values["iconStyle"] = value;
+            get => GetSetting<int?>("iconStyle") ?? 0;
+            set => SetSetting("iconStyle", value);
         }
 
         public bool EnableSeconds
         {
-            get => localSettings.Values["isSeconds"] as bool? != null ? (bool)localSettings.Values["isSeconds"] : false;
-            set => localSettings.Values["isSeconds"] = value;
+            get => GetSetting<bool?>("isSeconds") ?? false;
+            set => SetSetting("isSeconds", value);
         }
 
         public bool EnableMilitaryTime
         {
-            get => localSettings.Values["is24HR"] as bool? != null ? (bool)localSettings.Values["is24HR"] : false;
-            set => localSettings.Values["is24HR"] = value;
+            get => GetSetting<bool?>("is24HR") ?? false;
+            set => SetSetting("is24HR", value);
         }
 
         public int TaskbarAlignment
         {
-            get => localSettings.Values["tbAlignment"] as int? != null ? (int)localSettings.Values["tbAlignment"] : 0;
-            set => localSettings.Values["tbAlignment"] = value;
+            get => GetSetting<int?>("tbAlignment") ?? 0;
+            set => SetSetting("tbAlignment", value);
         }
 
         public bool EnableCustomTransparency
         {
-            get => localSettings.Values["isCustomTransparency"] as bool? != null ? (bool)localSettings.Values["isCustomTransparency"] : false;
-            set => localSettings.Values["isCustomTransparency"] = value;
+            get => GetSetting<bool?>("isCustomTransparency") ?? false;
+            set => SetSetting("isCustomTransparency", value);
         }
 
         public byte AlphaTint
         {
-            get => localSettings.Values["aTint"] as byte? != null ? (byte)localSettings.Values["aTint"] : (byte)0;
-            set => localSettings.Values["aTint"] = value;
+            get => GetSetting<byte?>("aTint") ?? 255;
+            set => SetSetting("aTint", value);
         }
 
         public byte RedTint
         {
-            get => localSettings.Values["rTint"] as byte? != null ? (byte)localSettings.Values["rTint"] : (byte)0;
-            set => localSettings.Values["rTint"] = value;
+            get => GetSetting<byte?>("rTint") ?? 32; 
+            set => SetSetting("rTint", value);
         }
 
         public byte GreenTint
         {
-            get => localSettings.Values["gTint"] as byte? != null ? (byte)localSettings.Values["gTint"] : (byte)0;
-            set => localSettings.Values["gTint"] = value;
+            get => GetSetting<byte?>("gTint") ?? 32;
+            set => SetSetting("gTint", value);
         }
 
         public byte BlueTint
         {
-            get => localSettings.Values["bTint"] as byte? != null ? (byte)localSettings.Values["bTint"] : (byte)0;
-            set => localSettings.Values["bTint"] = value;
+            get => GetSetting<byte?>("bTint") ?? 32;
+            set => SetSetting("bTint", value);
         }
 
         public float LuminosityOpacity
         {
-            get => localSettings.Values["luminOpacity"] as float? != null ? (float)localSettings.Values["luminOpacity"] : 0.2f;
-            set => localSettings.Values["luminOpacity"] = value;
+            get => GetSetting<float?>("luminOpacity") ?? 0.96f;
+            set => SetSetting("luminOpacity", value);
         }
 
         public float TintOpacity
         {
-            get => localSettings.Values["tintOpacity"] as float? != null ? (float)localSettings.Values["tintOpacity"] : 0.3f;
-            set => localSettings.Values["tintOpacity"] = value;
+            get => GetSetting<float?>("tintOpacity") ?? 0.50f;
+            set => SetSetting("tintOpacity", value);
         }
 
         public int TransparencyType
         {
-            get => localSettings.Values["transparencyType"] as int? != null ? (int)localSettings.Values["transparencyType"] : 0;
-            set => localSettings.Values["transparencyType"] = value;
+            get => GetSetting<int?>("transparencyType") ?? 2;
+            set => SetSetting("transparencyType", value);
         }
 
         public string ModulesFolderPath
         {
-            get => localSettings.Values["modulesFolderPath"] as string != null ? (string)localSettings.Values["modulesFolderPath"] : string.Empty;
-            set => localSettings.Values["modulesFolderPath"] = value;
+            get => GetSetting<string>("modulesFolderPath") ?? string.Empty;
+            set => SetSetting("modulesFolderPath", value);
         }
     }
 }

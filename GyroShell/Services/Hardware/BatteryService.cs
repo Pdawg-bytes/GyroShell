@@ -9,6 +9,15 @@ namespace GyroShell.Services.Hardware
 {
     internal class BatteryService : IBatteryService
     {
+        public bool IsBatteryInstalled
+        {
+            get
+            {
+                BatteryReport report = GetStatusReport();
+                return report.PowerStatus != BatteryPowerStatus.NotInstalled;
+            }
+        }
+
         public event EventHandler BatteryStatusChanged;
 
         public BatteryService()
@@ -37,7 +46,7 @@ namespace GyroShell.Services.Hardware
                 _ => BatteryPowerStatus.NotInstalled
             };
 
-            if(batteryReport.PowerStatus != BatteryPowerStatus.NotInstalled)
+            if (batteryReport.PowerStatus != BatteryPowerStatus.NotInstalled)
                 batteryReport.ChargePercentage = (int)Math.Ceiling((double)(batteryReport.RemainingCapacity / batteryReport.FullCapacity) * 100);
             else
                 batteryReport.ChargePercentage = 0;

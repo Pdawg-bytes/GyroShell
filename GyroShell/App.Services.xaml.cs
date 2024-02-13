@@ -2,6 +2,7 @@
 using GyroShell.Library.Services.Hardware;
 using GyroShell.Library.Services.Helpers;
 using GyroShell.Library.Services.Managers;
+using GyroShell.Library.ViewModels;
 using GyroShell.Services.Environment;
 using GyroShell.Services.Hardware;
 using GyroShell.Services.Helpers;
@@ -30,13 +31,26 @@ namespace GyroShell
         {
             IServiceCollection collection = new ServiceCollection()
                 .AddTransient<IBitmapHelperService, BitmapHelperService>()
+                .AddTransient<IIconHelperService, IconHelperService>()
                 .AddSingleton<IAppHelperService, AppHelperService>()
                 .AddSingleton<IEnvironmentInfoService, EnvironmentInfoService>()
-                .AddTransient<ISettingsService, SettingsService>()
+                .AddSingleton<IShellHookService, ShellHookService>()
+                .AddSingleton<ISettingsService, SettingsService>()
                 .AddSingleton<INetworkService, NetworkService>()
                 .AddSingleton<IBatteryService, BatteryService>()
                 .AddSingleton<ISoundService, SoundService>()
-                .AddTransient<ITaskbarManagerService, TaskbarManagerService>();
+                .AddSingleton<IExplorerManagerService, ExplorerManagerService>()
+                .AddSingleton<IModuleManager, ModuleManager>()
+                .AddSingleton<IInternalLauncher, InternalLauncher>()
+                .AddSingleton<IDispatcherService, DispatcherService>()
+                .AddSingleton<INotificationManager, NotificationManager>()
+                .AddSingleton<ITimeService, TimeService>()
+                .AddTransient<StartupScreenViewModel>()
+                .AddTransient<AboutSettingViewModel>()
+                .AddTransient<ModulesSettingViewModel>()
+                .AddTransient<SettingsWindowViewModel>()
+                .AddTransient<DefaultTaskbarViewModel>()
+                .AddTransient<CustomizationSettingViewModel>();
 
             m_serviceProvider = collection.BuildServiceProvider(true);
         }
@@ -45,6 +59,8 @@ namespace GyroShell
         {
             _ = m_serviceProvider.GetRequiredService<IEnvironmentInfoService>();
             _ = m_serviceProvider.GetRequiredService<IAppHelperService>();
+            _ = m_serviceProvider.GetRequiredService<IBitmapHelperService>();
+            _ = m_serviceProvider.GetRequiredService<IDispatcherService>();
         }
     }
 }

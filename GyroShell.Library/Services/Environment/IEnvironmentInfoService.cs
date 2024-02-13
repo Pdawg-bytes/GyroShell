@@ -28,6 +28,11 @@ namespace GyroShell.Library.Services.Environment
         public bool IsWindows11 { get; }
 
         /// <summary>
+        /// Checks if the system theme is set to dark mode.
+        /// </summary>
+        public bool IsSystemUsingDarkmode { get; }
+
+        /// <summary>
         /// Gets the principal monitor's width in pixels.
         /// </summary>
         public int MonitorWidth { get; }
@@ -36,5 +41,18 @@ namespace GyroShell.Library.Services.Environment
         /// Gets the principal monitor's height in pixels.
         /// </summary>
         public int MonitorHeight { get; }
+
+        /// <summary>
+        /// Gets the handle of the MainWindow.
+        /// </summary>
+        public IntPtr MainWindowHandle { get; set; }
+
+        /// <summary>
+        /// The amount of settings windows currently running.
+        /// </summary>
+        /// <remarks>
+        /// Instance count should never exceed 1. If it does, the internal launcher will not launch another instance.
+        /// </remarks>
+        public int SettingsInstances { get; set; }
     }
 }

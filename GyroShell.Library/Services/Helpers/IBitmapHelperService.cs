@@ -31,19 +31,5 @@ namespace GyroShell.Library.Services.Helpers
         /// <param name="filePath">The file path to use.</param>
         /// <returns>The loaded <see cref="Bitmap"/>.</returns>
         public Bitmap LoadBitmapFromPath(string filePath);
-
-        /// <summary>
-        /// Converts a native GDI bitmap into a WinRT bitmap.
-        /// </summary>
-        /// <param name="bmp">The target <see cref="Bitmap"/>.</param>
-        /// <returns>The converted <see cref="SoftwareBitmapSource"/>.</returns>
-        public Task<SoftwareBitmapSource> GetXamlBitmapFromGdiBitmapAsync(Bitmap bmp);
-
-        /// <summary>
-        /// Converts a native GDI icon into a WinRT bitmap.
-        /// </summary>
-        /// <param name="icon">The target <see cref="Icon"/>.</param>
-        /// <returns>The converted <see cref="SoftwareBitmapSource"/>.</returns>
-        public Task<SoftwareBitmapSource> GetXamlBitmapFromGdiIconAsync(Icon icon);
     }
 }
