@@ -7,21 +7,21 @@ using System;
 using System.Collections.ObjectModel;
 using Windows.Storage.Pickers;
 
-using static GyroShell.Services.Managers.ModuleManager;
+using static GyroShell.Services.Managers.PluginManager;
 using GyroShell.Library.Models.InternalData;
 using GyroShell.Library.ViewModels;
 
 namespace GyroShell.Views
 {
-    public sealed partial class ModulesSettingView : Page
+    public sealed partial class PluginsSettingView : Page
     {
-        public ModulesSettingView()
+        public PluginsSettingView()
         {
             this.InitializeComponent();
 
-            DataContext = App.ServiceProvider.GetRequiredService<ModulesSettingViewModel>();
+            DataContext = App.ServiceProvider.GetRequiredService<PluginSettingViewModel>();
         }
 
-        public ModulesSettingViewModel ViewModel => (ModulesSettingViewModel)this.DataContext;
+        public PluginSettingViewModel ViewModel => (PluginSettingViewModel)this.DataContext;
     }
 }

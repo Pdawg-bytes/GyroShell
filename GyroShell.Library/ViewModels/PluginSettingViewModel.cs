@@ -13,10 +13,10 @@ using GyroShell.Library.Services.Managers;
 
 namespace GyroShell.Library.ViewModels
 {
-    public sealed class ModulesSettingViewModel : ObservableObject
+    public sealed class PluginSettingViewModel : ObservableObject
     {
-        private ObservableCollection<ModuleModel> _moduleCollection;
-        public ObservableCollection<ModuleModel> ModuleCollection
+        private ObservableCollection<PluginUIModel> _moduleCollection;
+        public ObservableCollection<PluginUIModel> ModuleCollection
         {
             get => _moduleCollection;
             set => SetProperty(ref _moduleCollection, value);
@@ -24,9 +24,9 @@ namespace GyroShell.Library.ViewModels
 
         private readonly ISettingsService m_appSettings;
         private readonly IEnvironmentInfoService m_envService;
-        private readonly IModuleManager m_moduleManager;
+        private readonly IPluginManager m_moduleManager;
 
-        public ModulesSettingViewModel(ISettingsService appSettings, IEnvironmentInfoService envService, IModuleManager moduleManager)
+        public PluginSettingViewModel(ISettingsService appSettings, IEnvironmentInfoService envService, IPluginManager moduleManager)
         {
             m_appSettings = appSettings;
             m_envService = envService;
@@ -36,8 +36,8 @@ namespace GyroShell.Library.ViewModels
             {
                 try
                 {
-                    m_moduleManager.InitializeModuleList(m_appSettings.ModulesFolderPath);
-                    ModuleCollection = new ObservableCollection<ModuleModel>(m_moduleManager.GetModules());
+                    m_moduleManager.InitializePluginList(m_appSettings.ModulesFolderPath);
+                    ModuleCollection = new ObservableCollection<PluginUIModel>(m_moduleManager.GetPlugins());
                     if(ModuleCollection.Count <= 0)
                     {
                         IsParseFailureInfoOpen = true;
@@ -85,15 +85,16 @@ namespace GyroShell.Library.ViewModels
             folderPicker.SuggestedStartLocation = PickerLocationId.Desktop;
             folderPicker.FileTypeFilter.Add("*");
 
-            StorageFolder folder = folderPicker.PickSingleFolderAsync().AsTask().Result;
+            StorageFolder folder = await folderPicker.PickSingleFolderAsync();
 
             if (folder != null)
             {
                 m_appSettings.ModulesFolderPath = folder.Path;
                 try
                 {
-                    m_moduleManager.InitializeModuleList(m_appSettings.ModulesFolderPath);
-                    ModuleCollection = new ObservableCollection<ModuleModel>(m_moduleManager.GetModules());
+                    m_moduleManager.InitializePluginList(m_appSettings.ModulesFolderPath);
+                    //ModuleCollection = new ObservableCollection<PluginUIModel>(m_moduleManager.GetPlugins());
+                    m_moduleManager.LoadAndRunPlugins();
                     IsParseFailureInfoOpen = false;
                 }
                 catch

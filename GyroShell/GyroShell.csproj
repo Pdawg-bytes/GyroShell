@@ -71,7 +71,7 @@
     <None Remove="Controls\TaskButton.xaml" />
     <None Remove="Settings\AboutPage.xaml" />
     <None Remove="Settings\SettingsWindow.xaml" />
-    <None Remove="Views\ModulesSettingView.xaml" />
+    <None Remove="Views\PluginsSettingView.xaml" />
     <None Remove="Views\StartupPage.xaml" />
   </ItemGroup>
   <ItemGroup>
@@ -123,7 +123,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\ModulesSettingView.xaml">
+    <Page Update="Views\PluginsSettingView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

@@ -209,7 +209,7 @@ namespace GyroShell.Controls
                         contentFrame.Navigate(typeof(CustomizationSettingView));
                         break;
                     case "Modules":
-                        contentFrame.Navigate(typeof(ModulesSettingView));
+                        contentFrame.Navigate(typeof(PluginsSettingView));
                         break;
                     case "AboutPage":
                         contentFrame.Navigate(typeof(AboutSettingView));

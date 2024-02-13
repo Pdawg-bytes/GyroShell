@@ -4,13 +4,13 @@ using System.Runtime.CompilerServices;
 
 namespace GyroShell.Library.Models.InternalData
 {
-    public class ModuleModel : INotifyPropertyChanged
+    public class PluginUIModel : INotifyPropertyChanged
     {
-        public string ModuleName { get; set; }
+        public string PluginName { get; set; }
 
-        public string ModuleVersion { get; set; }
+        public string PluginVersion { get; set; }
 
-        public Guid ModuleId { get; set; }
+        public Guid PluginId { get; set; }
 
         private bool isLoaded;
         public bool IsLoaded
