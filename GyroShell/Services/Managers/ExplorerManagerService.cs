@@ -1,5 +1,8 @@
-﻿using GyroShell.Library.Services.Managers;
+﻿using GyroShell.Library.Events;
+using GyroShell.Library.Services.Managers;
 using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using static GyroShell.Library.Helpers.Win32.Win32Interop;
 
@@ -24,6 +27,42 @@ namespace GyroShell.Services.Managers
                 m_hStartMenu = FindWindow("Button", null);
             }
         }
+
+        public event EventHandler<SystemTaskbarControlChangedEventArgs> SystemControlStateChanged;
+
+        private bool _isStartMenuOpen;
+        public bool IsStartMenuOpen
+        {
+            get => _isStartMenuOpen;
+            set
+            {
+                _isStartMenuOpen = value;
+                SystemControlStateChanged?.Invoke(this, new SystemTaskbarControlChangedEventArgs(SystemTaskbarControlChangedEventArgs.SystemControlChangedType.Start, value));
+            }
+        }
+
+        private bool _isActionCenterOpen;
+        public bool IsActionCenterOpen
+        {
+            get => _isActionCenterOpen;
+            set
+            {
+                _isActionCenterOpen = value;
+                SystemControlStateChanged?.Invoke(this, new SystemTaskbarControlChangedEventArgs(SystemTaskbarControlChangedEventArgs.SystemControlChangedType.ActionCenter, value));
+            }
+        }
+
+        private bool _isSystemControlsOpen;
+        public bool IsSystemControlsOpen
+        {
+            get => _isSystemControlsOpen;
+            set
+            {
+                _isActionCenterOpen = value;
+                SystemControlStateChanged?.Invoke(this, new SystemTaskbarControlChangedEventArgs(SystemTaskbarControlChangedEventArgs.SystemControlChangedType.SystemControls, value));
+            }
+        }
+
 
         public void ShowTaskbar()
         {
@@ -75,7 +114,7 @@ namespace GyroShell.Services.Managers
                 SHAppBarMessage((int)ABMsg.ABM_SETSTATE, ref abd);
 
                 // MultiBar
-                if (m_hTaskBar != IntPtr.Zero)
+                if (m_hMultiTaskBar != IntPtr.Zero)
                 {
                     APPBARDATA abdM = new APPBARDATA();
 

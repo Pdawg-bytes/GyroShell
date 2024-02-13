@@ -27,7 +27,7 @@
                                 <CubicEase EasingMode="EaseInOut"/>
                             </ColorAnimation.EasingFunction>
                         </ColorAnimation>
-                        <ColorAnimation Duration="0:0:0.15" To="Gray" Storyboard.TargetName="HighlightBorder" Storyboard.TargetProperty="(Control.Background).(SolidColorBrush.Color)">
+                        <ColorAnimation Duration="0:0:0.15" To="#8BFFFFFF" Storyboard.TargetName="HighlightBorder" Storyboard.TargetProperty="(Control.Background).(SolidColorBrush.Color)">
                             <ColorAnimation.EasingFunction>
                                 <CubicEase EasingMode="EaseInOut"/>
                             </ColorAnimation.EasingFunction>
@@ -53,7 +53,7 @@
                                 <CubicEase EasingMode="EaseInOut"/>
                             </ColorAnimation.EasingFunction>
                         </ColorAnimation>
-                        <ColorAnimation Duration="0:0:0.15" From="Gray" To="{StaticResource SystemAccentColorLight2}" Storyboard.TargetName="HighlightBorder" Storyboard.TargetProperty="(Control.Background).(SolidColorBrush.Color)">
+                        <ColorAnimation Duration="0:0:0.15" From="#8BFFFFFF" To="{StaticResource SystemAccentColorLight2}" Storyboard.TargetName="HighlightBorder" Storyboard.TargetProperty="(Control.Background).(SolidColorBrush.Color)">
                             <ColorAnimation.EasingFunction>
                                 <CubicEase EasingMode="EaseInOut"/>
                             </ColorAnimation.EasingFunction>
@@ -75,10 +75,11 @@
                 <VisualState x:Name="Flashing">
                     <Storyboard RepeatBehavior="Forever">
                         <ColorAnimationUsingKeyFrames Storyboard.TargetName="BackgroundButton" Storyboard.TargetProperty="(Control.Background).(SolidColorBrush.Color)">
-                            <LinearColorKeyFrame Value="#66CC5500" KeyTime="0:0:0.5"/>
-                            <LinearColorKeyFrame Value="#33707070" KeyTime="0:0:1.4"/>
+                            <LinearColorKeyFrame Value="#00AA3030" KeyTime="0:0:0.0"/>
+                            <LinearColorKeyFrame Value="#66AA3030" KeyTime="0:0:0.5"/>
+                            <LinearColorKeyFrame Value="#00AA3030" KeyTime="0:0:1.5"/>
                         </ColorAnimationUsingKeyFrames>
-                        <ColorAnimation Duration="0:0:0.8" From="#FFCC5500" To="#FFCC5500" Storyboard.TargetName="HighlightBorder" Storyboard.TargetProperty="(Control.Background).(SolidColorBrush.Color)">
+                        <ColorAnimation Duration="0:0:0.8" From="#FFFE98A4" To="#FFFE98A4" Storyboard.TargetName="HighlightBorder" Storyboard.TargetProperty="(Control.Background).(SolidColorBrush.Color)">
                             <ColorAnimation.EasingFunction>
                                 <CubicEase EasingMode="EaseInOut"/>
                             </ColorAnimation.EasingFunction>
@@ -95,7 +96,7 @@
         <Button Height="40" Width="40" Background="#33707070" CornerRadius="4" x:Name="BackgroundButton" BorderBrush="Transparent" BorderThickness="0" Click="BackgroundButton_Click" ContextFlyout="{StaticResource IconRightFlyout}"/>
         
         <Image IsHitTestVisible="False" Source="{Binding Path=AppIcon}" Height="24" Width="24" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,2" />
-        <Border IsHitTestVisible="False" x:Name="HighlightBorder" Width="8" Height="3" CornerRadius="2" Background="Gray" VerticalAlignment="Bottom" Margin="0,2,0,0" HorizontalAlignment="Center" RenderTransformOrigin="0.45,0">
+        <Border IsHitTestVisible="False" x:Name="HighlightBorder" Width="8" Height="3" CornerRadius="2" Background="#8BFFFFFF" VerticalAlignment="Bottom" Margin="0,2,0,0" HorizontalAlignment="Center" RenderTransformOrigin="0.45,0">
             <Border.RenderTransform>
                 <ScaleTransform x:Name="HighlightBorderTransform" ScaleX="1" ScaleY="1"/>
             </Border.RenderTransform>

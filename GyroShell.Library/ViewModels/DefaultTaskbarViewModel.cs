@@ -86,6 +86,8 @@ namespace GyroShell.Library.ViewModels
             m_timeService.UpdateClockBinding += TimeService_UpdateClockBinding;
 
             m_appSettings.SettingUpdated += AppSettings_SettingUpdated;
+
+            //m_explorerManager.SystemControlStateChanged += ExplorerManager_SystemControlStateChanged;
         }
 
         public ObservableCollection<IconModel> CurrentWindows => m_shellHookService.CurrentWindows;
@@ -185,7 +187,31 @@ namespace GyroShell.Library.ViewModels
             //await TaskbarManager.ShowSysTray(); /* Does nothing, no action */
         }
 
+        [ObservableProperty]
+        private bool isStartOpen;
+        [ObservableProperty]
+        private bool isActionCenterOpen;
+        [ObservableProperty]
+        private bool isSystemControlsOpen;
 
+        private void ExplorerManager_SystemControlStateChanged(object sender, SystemTaskbarControlChangedEventArgs e)
+        {
+            switch (e.Type)
+            {
+                case SystemTaskbarControlChangedEventArgs.SystemControlChangedType.Start:
+                    IsStartOpen = e.Value;
+                    break;
+                case SystemTaskbarControlChangedEventArgs.SystemControlChangedType.ActionCenter:
+                    IsActionCenterOpen = e.Value;
+                    break;
+                case SystemTaskbarControlChangedEventArgs.SystemControlChangedType.SystemControls:
+                    IsSystemControlsOpen = e.Value;
+                    break;
+            }
+        }
+
+
+        #region Sound
         [ObservableProperty]
         private string soundStatusText;
         [ObservableProperty]
@@ -231,8 +257,10 @@ namespace GyroShell.Library.ViewModels
                 SoundBackIconVisibility = (statusTextBuf == "\uE198") ? Visibility.Collapsed : Visibility.Visible;
             });
         }
+        #endregion
 
 
+        #region Battery
         [ObservableProperty]
         private string batteryStatusCharacter;
         [ObservableProperty]
@@ -276,8 +304,10 @@ namespace GyroShell.Library.ViewModels
                 BatteryStatusCharacter = IconConstants.BatteryIcons[indexDischarge];
             }
         }
+        #endregion
 
 
+        #region Network
         [ObservableProperty]
         private string networkStatusCharacter;
 
@@ -317,8 +347,10 @@ namespace GyroShell.Library.ViewModels
                 NetworkStatusCharacter = statusTextBuf;
             });
         }
+        #endregion
 
 
+        #region Notifications
         [ObservableProperty]
         private Visibility notifIndicatorVisibility;
 
@@ -336,8 +368,10 @@ namespace GyroShell.Library.ViewModels
                 NotifIndicatorVisibility = notifsToast.Count > 0 || notifsOther.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
             });
         }
+        #endregion
 
 
+        #region Clock
         [ObservableProperty]
         private string timeText;
         [ObservableProperty]
@@ -351,6 +385,7 @@ namespace GyroShell.Library.ViewModels
                 DateText = DateTime.Now.ToString(m_timeService.DateFormat);
             });
         }
+        #endregion
 
 
         public void Dispose()

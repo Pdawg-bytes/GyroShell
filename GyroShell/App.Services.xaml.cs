@@ -39,7 +39,7 @@ namespace GyroShell
                 .AddSingleton<INetworkService, NetworkService>()
                 .AddSingleton<IBatteryService, BatteryService>()
                 .AddSingleton<ISoundService, SoundService>()
-                .AddTransient<IExplorerManagerService, ExplorerManagerService>()
+                .AddSingleton<IExplorerManagerService, ExplorerManagerService>()
                 .AddSingleton<IModuleManager, ModuleManager>()
                 .AddSingleton<IInternalLauncher, InternalLauncher>()
                 .AddSingleton<IDispatcherService, DispatcherService>()

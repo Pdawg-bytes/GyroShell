@@ -7,15 +7,16 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     x:Name="DefaultTaskbarPage"
+    Background="Transparent"
     >
 
-    <Grid x:Name="MainShellGrid" Loaded="MainShellGrid_Loaded">
+    <Grid x:Name="MainShellGrid" Loaded="MainShellGrid_Loaded" Background="Transparent">
         <Grid.Resources>
             <MenuFlyout x:Name="IconRightFlyout" x:Key="IconRightFlyout" AreOpenCloseAnimationsEnabled="True" ShouldConstrainToRootBounds="False">
                 <MenuFlyoutItem Text="Close window"/>
             </MenuFlyout>
         </Grid.Resources>
-        <Border Height="1" VerticalAlignment="Top" HorizontalAlignment="Stretch" x:Name="BarBorder" Opacity="0.6"/>
+        <Border Height="1" VerticalAlignment="Top" HorizontalAlignment="Stretch" x:Name="BarBorder" Opacity="1" Background="#66757575"/>
         <Frame Visibility="Collapsed" Background="{ThemeResource SystemControlAcrylicWindowBrush}">
             <MenuFlyout x:Name="StartFlyout" AreOpenCloseAnimationsEnabled="True" ShouldConstrainToRootBounds="False">
                 <MenuFlyoutItem Text="Shell Settings" Command="{x:Bind ViewModel.StartFlyoutCommands.OpenShellSettingsCommand}" Tag="ShellSettings"/>
@@ -42,7 +43,7 @@
                     <EntranceThemeTransition IsStaggeringEnabled="True" />
                 </TransitionCollection>
             </StackPanel.ChildrenTransitions>
-            <ToggleButton Command="{x:Bind ViewModel.StartButtonCheckedCommand}" HorizontalAlignment="Left" Height="40" Width="40" Margin="5,0,0,0" Background="Transparent" BorderBrush="Transparent" x:Name="StartButton" RightTapped="StartButton_RightTapped">
+            <ToggleButton Command="{x:Bind ViewModel.StartButtonCheckedCommand}" IsChecked="{x:Bind ViewModel.IsStartOpen, Mode=OneWay}" HorizontalAlignment="Left" Height="40" Width="40" Margin="5,0,0,0" Background="Transparent" BorderBrush="Transparent" x:Name="StartButton" RightTapped="StartButton_RightTapped">
                 <ToggleButton.Content>
                     <TextBlock FontFamily="HoloLens MDL2 Assets" Text="&#xE782;" VerticalAlignment="Center" Margin="0" FontSize="16"/>
                 </ToggleButton.Content>
@@ -80,7 +81,7 @@
                     <TextBlock Text="&#xE70E;" FontFamily="Segoe MDL2 Assets" x:Name="TrayIcon" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,2,0,0" FontSize="12"/>
                 </Button.Content>
             </Button>
-            <ToggleButton Command="{x:Bind ViewModel.SystemControlsCheckedCommand}" VerticalAlignment="Center" x:Name="SystemControls" HorizontalAlignment="Right" Height="40" Background="Transparent" BorderBrush="Transparent" Margin="0,0,2,0" ToolTipService.ToolTip="Control Center">
+            <ToggleButton Command="{x:Bind ViewModel.SystemControlsCheckedCommand}" IsChecked="{x:Bind ViewModel.IsSystemControlsOpen, Mode=OneWay}" VerticalAlignment="Center" x:Name="SystemControls" HorizontalAlignment="Right" Height="40" Background="Transparent" BorderBrush="Transparent" Margin="0,0,2,0" ToolTipService.ToolTip="Control Center">
                 <ToggleButton.Content>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock FontFamily="{x:Bind ViewModel.IconFontFamily, Mode=OneWay}" Text="{x:Bind ViewModel.BatteryStatusCharacter, Mode=OneWay}" VerticalAlignment="Center" Margin="{x:Bind ViewModel.BatteryStatusMargin, Mode=OneWay}" FontSize="16" x:Name="BattStatus" Visibility="Visible"/>
@@ -88,14 +89,14 @@
                             <TextBlock FontFamily="{x:Bind ViewModel.IconFontFamily, Mode=OneWay}" Text="{x:Bind ViewModel.NetworkStatusCharacter, Mode=OneWay}" VerticalAlignment="Center" Margin="{x:Bind ViewModel.NetworkStatusMargin, Mode=OneWay}" FontSize="16" x:Name="NetworkStatus"/>
                         </Grid>
                         <Grid>
-                            <TextBlock FontFamily="{x:Bind ViewModel.IconFontFamily, Mode=OneWay}" Text="&#xE995;" Visibility="{x:Bind ViewModel.SoundBackIconVisibility, Mode=OneWay}" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="{x:Bind ViewModel.SoundStatusMargin}" FontSize="16" Foreground="Gray" Opacity="0.5"/>
+                            <TextBlock FontFamily="{x:Bind ViewModel.IconFontFamily, Mode=OneWay}" Text="&#xE995;" Visibility="{x:Bind ViewModel.SoundBackIconVisibility, Mode=OneWay}" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="{x:Bind ViewModel.SoundStatusMargin}" FontSize="16" Opacity="0.3"/>
                             <TextBlock FontFamily="{x:Bind ViewModel.IconFontFamily, Mode=OneWay}" Text="{x:Bind ViewModel.SoundStatusText, Mode=OneWay}" VerticalAlignment="Center" Margin="{x:Bind ViewModel.SoundStatusMargin, Mode=OneWay}" FontSize="16" x:Name="SndStatus"/>
                         </Grid>
                     </StackPanel>
                 </ToggleButton.Content>
             </ToggleButton>
             <!--<Border x:Name="RightClockSeperator" Height="28" VerticalAlignment="Center" Width="1" Opacity="0.3" CornerRadius="1"/>-->
-            <ToggleButton Command="{x:Bind ViewModel.ActionCenterCheckedCommand}" HorizontalAlignment="Right" VerticalAlignment="Center" Height="40" Margin="0,0,5,0" Background="Transparent" BorderBrush="Transparent" x:Name="ActionCenter" ToolTipService.ToolTip="Notification Center">
+            <ToggleButton Command="{x:Bind ViewModel.ActionCenterCheckedCommand}" IsChecked="{x:Bind ViewModel.IsActionCenterOpen, Mode=OneWay}" HorizontalAlignment="Right" VerticalAlignment="Center" Height="40" Margin="0,0,5,0" Background="Transparent" BorderBrush="Transparent" x:Name="ActionCenter" ToolTipService.ToolTip="Notification Center">
                 <ToggleButton.Content>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{x:Bind ViewModel.TimeText, Mode=OneWay}" FontSize="14" VerticalAlignment="Center" x:Name="TimeText" Margin="-4,1,0,0"/>

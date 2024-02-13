@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GyroShell.Library.Events;
+using System;
 
 namespace GyroShell.Library.Services.Managers
 {
@@ -64,5 +65,25 @@ namespace GyroShell.Library.Services.Managers
         /// The handle of the start menu.
         /// </summary>
         public IntPtr m_hStartMenu { get; set; }
+
+        /// <summary>
+        /// The state of the start menu.
+        /// </summary>
+        public bool IsStartMenuOpen { get; set; }
+
+        /// <summary>
+        /// The state of the action center.
+        /// </summary>
+        public bool IsActionCenterOpen { get; set; }
+
+        /// <summary>
+        /// The state of the system controls menu.
+        /// </summary>
+        public bool IsSystemControlsOpen { get; set; }
+
+        /// <summary>
+        /// An event that is rasied when any of the Windows taskbar controls' state changes.
+        /// </summary>
+        public event EventHandler<SystemTaskbarControlChangedEventArgs> SystemControlStateChanged;
     }
 }
