@@ -10,36 +10,47 @@
     <Grid>
         <ScrollViewer HorizontalScrollMode="Disabled" HorizontalAlignment="Stretch" Margin="10">
             <StackPanel>
-                <TextBlock Text="Shell Modules" Style="{StaticResource TitleTextBlockStyle}" Margin="20" VerticalAlignment="Top" HorizontalAlignment="Left" TextWrapping="WrapWholeWords"/>
-                <Expander x:Name="ModuleListExpander" HorizontalAlignment="Stretch" Margin="20,20,0,0" HorizontalContentAlignment="Left">
-                    <Expander.Header>
-                        <StackPanel Orientation="Horizontal" Padding="5,10,5,10">
-                            <TextBlock Text="&#xED2A;" FontFamily="{x:Bind ViewModel.IconFontFamily, Mode=OneWay}" Margin="0,13,10,10" FontSize="22" x:Name="ModuleIcon"/>
-                            <TextBlock Text="Modules" Margin="10,13,10,10"/>
-                        </StackPanel>
-                    </Expander.Header>
-                    <Expander.Content>
-                        <StackPanel Padding="48,0,48,0">
-                            <ListView x:Name="ModulesListView" SelectionMode="None" ItemsSource="{x:Bind ViewModel.ModuleCollection, Mode=OneWay}">
-                                <ListView.ItemContainerTransitions>
-                                    <TransitionCollection>
-                                        <ReorderThemeTransition/>
-                                        <EntranceThemeTransition IsStaggeringEnabled="True" />
-                                        <RepositionThemeTransition/>
-                                    </TransitionCollection>
-                                </ListView.ItemContainerTransitions>
-                                <ListView.ItemTemplate>
-                                    <DataTemplate>
-                                        <StackPanel>
-                                            <TextBlock Text="{Binding ModuleName}"/>
-                                            <TextBlock Text="{Binding ModuleVersion}"/>
+                <TextBlock Text="Shell Plugins" Style="{StaticResource TitleTextBlockStyle}" Margin="20" VerticalAlignment="Top" HorizontalAlignment="Left" TextWrapping="WrapWholeWords"/>
+                <ListView x:Name="ModulesListView" SelectionMode="None" ItemsSource="{x:Bind ViewModel.ModuleCollection, Mode=OneWay}">
+                    <ListView.ItemContainerTransitions>
+                        <TransitionCollection>
+                            <ReorderThemeTransition/>
+                            <EntranceThemeTransition IsStaggeringEnabled="True" />
+                            <RepositionThemeTransition/>
+                        </TransitionCollection>
+                    </ListView.ItemContainerTransitions>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <Expander x:Name="ModuleListExpander" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="0">
+                                    <Expander.Header>
+                                        <StackPanel Orientation="Horizontal" Padding="5,10,5,10">
+                                            <TextBlock Text="&#xEA86;" FontFamily="Segoe MDL2 Assets" Margin="0,13,10,10" FontSize="22" x:Name="ModuleIcon"/>
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding PluginName}" Margin="15,6,10,0"/>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding PluginVersion}" Margin="15,0,10,0" FontSize="12" Opacity="0.7"/>
+                                                    <Border Background="{ThemeResource ApplicationForegroundThemeBrush}" Opacity="0.6" Width="2" Height="12" CornerRadius="1" Margin="-4,0,0,0"/>
+                                                    <TextBlock Text="{Binding PublisherName}" Margin="6,0,10,0" FontSize="12" Opacity="0.7"/>
+                                                </StackPanel>
+                                            </StackPanel>
                                         </StackPanel>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
-                        </StackPanel>
-                    </Expander.Content>
-                </Expander>
+                                    </Expander.Header>
+                                    <Expander.Content>
+                                        <Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="0" Height="46" CornerRadius="3" Background="Transparent" BorderBrush="Transparent" BorderThickness="0">
+                                            <Grid Margin="68,0,16,0">
+                                                <TextBlock Text="Manage plugin" Height="22"/>
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Height="26" Margin="0,-8,0,0">
+                                                    <ToggleSwitch Height="30" Margin="0,-4,0,0" FlowDirection="RightToLeft"/>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Button>
+                                    </Expander.Content>
+                                </Expander>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
             </StackPanel>
         </ScrollViewer>
         <StackPanel VerticalAlignment="Bottom">

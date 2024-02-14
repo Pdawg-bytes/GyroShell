@@ -28,7 +28,7 @@
                     </NavigationViewItem>
                     <NavigationViewItem Content="Modules" Tag="Modules">
                         <NavigationViewItem.Icon>
-                            <FontIcon FontFamily="{x:Bind ViewModel.IconFontFamily, Mode=OneWay}" Glyph="&#xED2A;"/>
+                            <FontIcon FontFamily="{x:Bind ViewModel.IconFontFamily, Mode=OneWay}" Glyph="&#xEA86;"/>
                         </NavigationViewItem.Icon>
                     </NavigationViewItem>
                     <NavigationViewItem Content="About" Tag="AboutPage">

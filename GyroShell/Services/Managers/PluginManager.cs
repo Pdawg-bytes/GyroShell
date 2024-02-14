@@ -26,18 +26,19 @@ namespace GyroShell.Services.Managers
 
         public void LoadAndRunPlugins()
         {
-            foreach (string dllFile in Directory.GetFiles(pluginDirectory, "*.dll"))
+            foreach (string dllFile in Directory.GetFiles(pluginDirectory, "*.dll").Where(file => !file.Contains("GyroShell.Library")))
             {
                 try
                 {
                     Assembly assembly = pluginLoadContext.LoadFromAssemblyPath(Path.GetFullPath(dllFile));
 
-                    foreach (Type type in assembly.GetTypes().Where(asm => !asm.FullName.Contains("GyroShell.Library")))
+                    foreach (Type type in assembly.GetTypes())
                     {
                         if (typeof(IPlugin).IsAssignableFrom(type) && type.Name == "PluginRoot")
                         {
                             IPlugin plugin = Activator.CreateInstance(type) as IPlugin;
                             plugin.Initialize();
+                            loadedPlugins[plugin.PluginInformation.Name] = assembly;
                         }
                     }
                 }
@@ -51,7 +52,7 @@ namespace GyroShell.Services.Managers
         public List<PluginUIModel> GetPlugins()
         {
             List<PluginUIModel> returnList = new List<PluginUIModel>();
-            foreach (string dllFile in Directory.GetFiles(pluginDirectory, "*.dll"))
+            foreach (string dllFile in Directory.GetFiles(pluginDirectory, "*.dll").Where(file => !file.Contains("GyroShell.Library")))
             {
                 try
                 {
@@ -59,21 +60,20 @@ namespace GyroShell.Services.Managers
 
                     foreach (Type type in assembly.GetTypes())
                     {
-                        if (type.IsClass)
+                        if (typeof(IPlugin).IsAssignableFrom(type) && type.Name == "PluginRoot")
                         {
-                            MethodInfo initializeMethod = type.GetMethod("Initialize");
-                            MethodInfo runMethod = type.GetMethod("Run");
-
-                            if (initializeMethod != null && runMethod != null)
-                            {
-                                object pluginInstance = Activator.CreateInstance(type);
-                                string pluginName = (string)type.GetProperty("PluginName")?.GetValue(pluginInstance);
-                                string pluginVersion = (string)type.GetProperty("PluginVersion")?.GetValue(pluginInstance);
-                                Guid pluginGuid = (Guid)type.GetProperty("PluginId")?.GetValue(pluginInstance);
-                                returnList.Add(new PluginUIModel { PluginName = pluginName, PluginVersion = pluginVersion, PluginId = pluginGuid, IsLoaded = false });
-                            }
+                            IPlugin plugin = Activator.CreateInstance(type) as IPlugin;
+                            returnList.Add(
+                                new PluginUIModel 
+                                { 
+                                    PluginName = plugin.PluginInformation.Name, 
+                                    Description = plugin.PluginInformation.Description,
+                                    PublisherName = plugin.PluginInformation.Publisher,
+                                    PluginVersion = "Version " + plugin.PluginInformation.Version, 
+                                    PluginId = plugin.PluginInformation.PluginId, 
+                                    IsLoaded = false 
+                                });
                         }
-
                     }
                 }
                 catch (Exception ex)
@@ -93,16 +93,14 @@ namespace GyroShell.Services.Managers
                 string pluginName = plugin.Key;
                 if (loadedPlugins.TryGetValue(pluginName, out var pluginAssembly))
                 {
-                    MethodInfo stopMethod = pluginAssembly.GetTypes().SelectMany(t => t.GetMethods()).FirstOrDefault(m => m.Name == "Stop" && m.GetParameters().Length == 0);
-
-                    if (stopMethod != null)
+                    foreach (Type type in pluginAssembly.GetTypes())
                     {
-                        object pluginInstance = Activator.CreateInstance(stopMethod.DeclaringType);
-                        if ((bool)stopMethod.Invoke(pluginInstance, null))
+                        if (typeof(IPlugin).IsAssignableFrom(type) && type.Name == "PluginRoot")
                         {
-                            pluginLoadContext.Unload();
+                            IPlugin pluginObj = Activator.CreateInstance(type) as IPlugin;
+                            pluginObj.Shutdown();
                             loadedPlugins.Remove(pluginName);
-                            Debug.WriteLine($"[+] PluginManager: plugin '{pluginName}' unloaded.");
+                            Debug.WriteLine($"[+] ModuleManager: Module '{pluginName}' unloaded.");
                         }
                     }
                 }
@@ -110,6 +108,7 @@ namespace GyroShell.Services.Managers
                 {
                     Debug.WriteLine($"[-] PluginManager: plugin '{pluginName}' not found or already unloaded.");
                 }
+                pluginLoadContext.Unload();
             }
         }
     }

@@ -93,8 +93,7 @@ namespace GyroShell.Library.ViewModels
                 try
                 {
                     m_moduleManager.InitializePluginList(m_appSettings.ModulesFolderPath);
-                    //ModuleCollection = new ObservableCollection<PluginUIModel>(m_moduleManager.GetPlugins());
-                    m_moduleManager.LoadAndRunPlugins();
+                    ModuleCollection = new ObservableCollection<PluginUIModel>(m_moduleManager.GetPlugins());
                     IsParseFailureInfoOpen = false;
                 }
                 catch

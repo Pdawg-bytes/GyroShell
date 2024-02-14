@@ -8,7 +8,7 @@ namespace GyroShell.Library.Interfaces
 {
     public interface IPlugin
     {
-        //public IPluginInfo PluginInformation { get; }
+        public IPluginInfo PluginInformation { get; }
 
         void Initialize();
 
