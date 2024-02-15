@@ -8,29 +8,52 @@ using System.Reflection;
 using System.Runtime.Loader;
 using GyroShell.Library.Interfaces;
 using GyroShell.Library.Models.InternalData;
+using GyroShell.Library.Services.Environment;
 using GyroShell.Library.Services.Managers;
+using GyroShell.Services.Environment;
 
 namespace GyroShell.Services.Managers
 {
     public class PluginManager : IPluginManager
     {
-        private AssemblyLoadContext pluginLoadContext;
-        private string pluginDirectory;
-        private readonly Dictionary<string, Assembly> loadedPlugins = new Dictionary<string, Assembly>();
+        private readonly Dictionary<AssemblyLoadContext, Assembly> loadedPlugins = new Dictionary<AssemblyLoadContext, Assembly>();
 
-        public void InitializePluginList(string directory)
+        private string pluginDirectory;
+        FileSystemWatcher pluginFolderWatcher;
+
+        private readonly ISettingsService m_settingsService;
+
+
+        public PluginManager(ISettingsService settingsService)
         {
-            pluginDirectory = directory;
-            pluginLoadContext = new AssemblyLoadContext("PluginLoadContext", isCollectible: true);
+            m_settingsService = settingsService;
+            pluginDirectory = m_settingsService.ModulesFolderPath;
+
+            foreach (string pluginName in m_settingsService.PluginsToLoad)
+            {
+                LoadAndRunPlugin(pluginName);
+            }
+
+            pluginFolderWatcher = new FileSystemWatcher(pluginDirectory);
+            pluginFolderWatcher.NotifyFilter = NotifyFilters.LastWrite;
+            pluginFolderWatcher.Filter = "*.dll";
+            pluginFolderWatcher.Changed += OnPluginCreated;
+            pluginFolderWatcher.EnableRaisingEvents = true;
         }
 
-        public void LoadAndRunPlugins()
+        private void OnPluginCreated(object sender, FileSystemEventArgs e)
         {
-            foreach (string dllFile in Directory.GetFiles(pluginDirectory, "*.dll").Where(file => !file.Contains("GyroShell.Library")))
+            GetPlugins();
+        }
+
+        public void LoadAndRunPlugin(string pluginName)
+        {
+            foreach (string dllFile in Directory.GetFiles(pluginDirectory, "*.dll").Where(file => Path.GetFileName(file) == pluginName))
             {
                 try
                 {
-                    Assembly assembly = pluginLoadContext.LoadFromAssemblyPath(Path.GetFullPath(dllFile));
+                    AssemblyLoadContext localPluginLoadContext = new AssemblyLoadContext($"PluginLoadContext_{pluginName}", true);
+                    Assembly assembly = localPluginLoadContext.LoadFromAssemblyPath(Path.GetFullPath(dllFile));
 
                     foreach (Type type in assembly.GetTypes())
                     {
@@ -38,19 +61,28 @@ namespace GyroShell.Services.Managers
                         {
                             IPlugin plugin = Activator.CreateInstance(type) as IPlugin;
                             plugin.Initialize();
-                            loadedPlugins[plugin.PluginInformation.Name] = assembly;
+                            loadedPlugins[localPluginLoadContext] = assembly;
+                            if (m_settingsService.SettingExists($"LoadPlugin_{pluginName}"))
+                            {
+                                m_settingsService.SetSetting($"LoadPlugin_{pluginName}", true);
+                            }
+                            else
+                            {
+                                m_settingsService.AddSetting($"LoadPlugin_{pluginName}", true);
+                            }
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"[-] PluginManager: Error loading and running plugin from {dllFile}: {ex.Message}");
+                    Debug.WriteLine($"[-] PluginManager: Error loading and running plugin from {Path.GetFileName(dllFile)}: {ex.Message}");
                 }
             }
         }
 
         public List<PluginUIModel> GetPlugins()
         {
+            AssemblyLoadContext pluginLoadContext = new AssemblyLoadContext("PluginLoadContext", isCollectible: true);
             List<PluginUIModel> returnList = new List<PluginUIModel>();
             foreach (string dllFile in Directory.GetFiles(pluginDirectory, "*.dll").Where(file => !file.Contains("GyroShell.Library")))
             {
@@ -66,12 +98,13 @@ namespace GyroShell.Services.Managers
                             returnList.Add(
                                 new PluginUIModel 
                                 { 
-                                    PluginName = plugin.PluginInformation.Name, 
+                                    PluginName = plugin.PluginInformation.Name,
+                                    FullName = Path.GetFileName(dllFile),
                                     Description = plugin.PluginInformation.Description,
                                     PublisherName = plugin.PluginInformation.Publisher,
                                     PluginVersion = "Version " + plugin.PluginInformation.Version, 
                                     PluginId = plugin.PluginInformation.PluginId, 
-                                    IsLoaded = false 
+                                    IsLoaded = loadedPlugins.Any(kv => kv.Value.FullName == assembly.FullName)
                                 });
                         }
                     }
@@ -82,16 +115,24 @@ namespace GyroShell.Services.Managers
                     return null;
                 }
             }
+            List<string> pluginsToLoad = m_settingsService.PluginsToLoad;
+            foreach (string pluginName in pluginsToLoad)
+            {
+                if (!returnList.Any(p => p.FullName == pluginName))
+                {
+                    m_settingsService.RemoveSetting("LoadPlugin_" + pluginName);
+                }
+            }
             pluginLoadContext.Unload();
             return returnList;
         }
 
-        public void UnloadPlugins()
+        public void UnloadPlugin(string pluginName)
         {
-            foreach (KeyValuePair<string, Assembly> plugin in loadedPlugins)
+            foreach (KeyValuePair<AssemblyLoadContext, Assembly> plugin in loadedPlugins.Where(asm => asm.Key.Name.Contains(pluginName)))
             {
-                string pluginName = plugin.Key;
-                if (loadedPlugins.TryGetValue(pluginName, out var pluginAssembly))
+                AssemblyLoadContext pluginContext = plugin.Key;
+                if (loadedPlugins.TryGetValue(pluginContext, out var pluginAssembly))
                 {
                     foreach (Type type in pluginAssembly.GetTypes())
                     {
@@ -99,16 +140,23 @@ namespace GyroShell.Services.Managers
                         {
                             IPlugin pluginObj = Activator.CreateInstance(type) as IPlugin;
                             pluginObj.Shutdown();
-                            loadedPlugins.Remove(pluginName);
-                            Debug.WriteLine($"[+] ModuleManager: Module '{pluginName}' unloaded.");
+                            pluginContext.Unload();
+                            loadedPlugins.Remove(pluginContext);
+                            if (m_settingsService.SettingExists($"LoadPlugin_{pluginName}"))
+                            {
+                                m_settingsService.SetSetting($"LoadPlugin_{pluginName}", false);
+                            }
+                            else
+                            {
+                                m_settingsService.AddSetting($"LoadPlugin_{pluginName}", false);
+                            }
                         }
                     }
                 }
                 else
                 {
-                    Debug.WriteLine($"[-] PluginManager: plugin '{pluginName}' not found or already unloaded.");
+                    Debug.WriteLine($"[-] PluginManager: plugin '{plugin.Key.Name}' not found or already unloaded.");
                 }
-                pluginLoadContext.Unload();
             }
         }
     }

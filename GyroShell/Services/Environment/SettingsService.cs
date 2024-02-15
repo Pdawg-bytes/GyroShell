@@ -1,5 +1,7 @@
 ﻿using GyroShell.Library.Services.Environment;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Windows.Storage;
 
 namespace GyroShell.Services.Environment
@@ -37,6 +39,26 @@ namespace GyroShell.Services.Environment
             {
                 localSettings.Values.Add(key, value);
                 SettingAdded?.Invoke(this, key);
+            }
+        }
+
+        public bool SettingExists(string key)
+        {
+            return localSettings.Values.ContainsKey(key);
+        }
+
+        public List<string> PluginsToLoad
+        {
+            get
+            {
+                List<string> result = new List<string>();
+
+                foreach (var key in localSettings.Values.Keys.Where(k => k.Contains("LoadPlugin_") && (bool)localSettings.Values[k] == true))
+                {
+                    result.Add(key.Substring("LoadPlugin_".Length));
+                }
+
+                return result;
             }
         }
 

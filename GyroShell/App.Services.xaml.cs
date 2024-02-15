@@ -61,6 +61,7 @@ namespace GyroShell
             _ = m_serviceProvider.GetRequiredService<IAppHelperService>();
             _ = m_serviceProvider.GetRequiredService<IBitmapHelperService>();
             _ = m_serviceProvider.GetRequiredService<IDispatcherService>();
+            _ = m_serviceProvider.GetRequiredService<IPluginManager>();
         }
     }
 }

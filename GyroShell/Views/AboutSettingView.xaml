@@ -35,13 +35,13 @@
                                 </Grid.RowDefinitions>
 
                                 <TextBlock Grid.Row="0" Text="App Version" Style="{StaticResource BodyStrongTextBlockStyle}" TextWrapping="WrapWholeWords"/>
-                                <TextBlock Grid.Row="0" Grid.Column="1" Text="{x:Bind ViewModel.AppVersion, Mode=OneWay}" Style="{StaticResource BodyTextBlockStyle}" Foreground="LightGray" Margin="5,0,0,0" x:Name="VersionText" TextWrapping="WrapWholeWords"/>
+                                <TextBlock Grid.Row="0" Grid.Column="1" Text="{x:Bind ViewModel.AppVersion, Mode=OneWay}" Style="{StaticResource BodyTextBlockStyle}" Foreground="{ThemeResource ApplicationForegroundThemeBrush}" Opacity="0.6" Margin="5,0,0,0" x:Name="VersionText" TextWrapping="WrapWholeWords"/>
 
                                 <TextBlock Grid.Row="1" Text="App Architecture" Style="{StaticResource BodyStrongTextBlockStyle}" TextWrapping="WrapWholeWords"/>
-                                <TextBlock Grid.Row="1" Grid.Column="1" Text="{x:Bind ViewModel.SystemArchitecture, Mode=OneWay}" Style="{StaticResource BodyTextBlockStyle}" Foreground="LightGray" Margin="5,0,0,0" x:Name="ArchText" TextWrapping="WrapWholeWords"/>
+                                <TextBlock Grid.Row="1" Grid.Column="1" Text="{x:Bind ViewModel.SystemArchitecture, Mode=OneWay}" Style="{StaticResource BodyTextBlockStyle}" Foreground="{ThemeResource ApplicationForegroundThemeBrush}" Opacity="0.6" Margin="5,0,0,0" x:Name="ArchText" TextWrapping="WrapWholeWords"/>
 
                                 <TextBlock Grid.Row="2" Text="Build Date" Style="{StaticResource BodyStrongTextBlockStyle}" TextWrapping="WrapWholeWords"/>
-                                <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind ViewModel.AppBuildDate, Mode=OneWay}" Style="{StaticResource BodyTextBlockStyle}" Foreground="LightGray" Margin="5,0,0,0" x:Name="BDText" TextWrapping="WrapWholeWords"/>
+                                <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind ViewModel.AppBuildDate, Mode=OneWay}" Style="{StaticResource BodyTextBlockStyle}" Foreground="{ThemeResource ApplicationForegroundThemeBrush}" Opacity="0.6" Margin="5,0,0,0" x:Name="BDText" TextWrapping="WrapWholeWords"/>
                             </Grid>
                         </StackPanel>
                     </Expander.Content>

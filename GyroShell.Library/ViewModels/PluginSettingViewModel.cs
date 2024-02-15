@@ -10,17 +10,13 @@ using Windows.Storage;
 using GyroShell.Library.Models.InternalData;
 using GyroShell.Library.Services.Environment;
 using GyroShell.Library.Services.Managers;
+using System.ComponentModel;
 
 namespace GyroShell.Library.ViewModels
 {
-    public sealed class PluginSettingViewModel : ObservableObject
+    public partial class PluginSettingViewModel : ObservableObject
     {
-        private ObservableCollection<PluginUIModel> _moduleCollection;
-        public ObservableCollection<PluginUIModel> ModuleCollection
-        {
-            get => _moduleCollection;
-            set => SetProperty(ref _moduleCollection, value);
-        }
+        public ObservableCollection<PluginUIModel> ModuleCollection;
 
         private readonly ISettingsService m_appSettings;
         private readonly IEnvironmentInfoService m_envService;
@@ -36,9 +32,8 @@ namespace GyroShell.Library.ViewModels
             {
                 try
                 {
-                    m_moduleManager.InitializePluginList(m_appSettings.ModulesFolderPath);
                     ModuleCollection = new ObservableCollection<PluginUIModel>(m_moduleManager.GetPlugins());
-                    if(ModuleCollection.Count <= 0)
+                    if (ModuleCollection.Count <= 0)
                     {
                         IsParseFailureInfoOpen = true;
                     }
@@ -52,21 +47,35 @@ namespace GyroShell.Library.ViewModels
             {
                 IsEmptyDirectoryInfoOpen = true;
             }
+
+            foreach (PluginUIModel model in ModuleCollection)
+            {
+                model.PropertyChanged += PluginPropertyChanged;
+            }
         }
 
-        private bool _isEmptyDirectoryInfoOpen;
-        public bool IsEmptyDirectoryInfoOpen
+        private void PluginPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            get => _isEmptyDirectoryInfoOpen;
-            set => SetProperty(ref _isEmptyDirectoryInfoOpen, value);
+            if (e.PropertyName == "IsLoaded")
+            {
+                var plugin = sender as PluginUIModel;
+                if (plugin == null) return;
+                if (plugin.IsLoaded)
+                {
+                    m_moduleManager.LoadAndRunPlugin(plugin.FullName);
+                }
+                else
+                {
+                    m_moduleManager.UnloadPlugin(plugin.FullName);
+                }
+            }
         }
 
-        private bool _isParseFailureInfoOpen;
-        public bool IsParseFailureInfoOpen
-        {
-            get => _isParseFailureInfoOpen;
-            set => SetProperty(ref _isParseFailureInfoOpen, value);
-        }
+        [ObservableProperty]
+        private bool isEmptyDirectoryInfoOpen;
+
+        [ObservableProperty]
+        private bool isParseFailureInfoOpen;
 
         public FontFamily IconFontFamily => m_appSettings.IconStyle switch
         {
@@ -92,7 +101,6 @@ namespace GyroShell.Library.ViewModels
                 m_appSettings.ModulesFolderPath = folder.Path;
                 try
                 {
-                    m_moduleManager.InitializePluginList(m_appSettings.ModulesFolderPath);
                     ModuleCollection = new ObservableCollection<PluginUIModel>(m_moduleManager.GetPlugins());
                     IsParseFailureInfoOpen = false;
                 }

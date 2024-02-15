@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace GyroShell.Library.Services.Environment
 {
@@ -31,6 +32,13 @@ namespace GyroShell.Library.Services.Environment
         /// <param name="value">The value to set for the specified setting key.</param>
         public void AddSetting<T>(string key, T value);
 
+        /// <summary>
+        /// Detects if a setting already exists in the container.
+        /// </summary>
+        /// <param name="key">The key of the setting in the dictionary.</param>
+        /// <returns>True if the setting was found, false if not.</returns>
+        public bool SettingExists(string key);
+
         /// <summary>An event that is fired when a setting is updated in the local store.</summary>
         /// <remarks>Event payload contains the key of the changed setting.</remarks>
         public event EventHandler<string> SettingUpdated;
@@ -38,6 +46,8 @@ namespace GyroShell.Library.Services.Environment
         /// <summary>An event that is fired when a new setting is added to the local store.</summary>
         /// <remarks>Event payload contains the key of the added setting.</remarks>
         public event EventHandler<string> SettingAdded;
+
+        public List<string> PluginsToLoad { get; }
 
         /// <summary>
         /// The symbol font style to use.

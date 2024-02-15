@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace GyroShell.Library.Services.Managers
 {
@@ -13,14 +14,9 @@ namespace GyroShell.Library.Services.Managers
     public interface IPluginManager
     {
         /// <summary>
-        /// Initializes the plugin list.
+        /// Loads and executes a plugin.
         /// </summary>
-        public void InitializePluginList(string directory);
-
-        /// <summary>
-        /// Loads and execute plugins in the list.
-        /// </summary>
-        public void LoadAndRunPlugins();
+        public void LoadAndRunPlugin(string pluginName);
 
         /// <summary>
         /// Gets a list of plugins without executing them.
@@ -28,8 +24,8 @@ namespace GyroShell.Library.Services.Managers
         public List<PluginUIModel> GetPlugins();
 
         /// <summary>
-        /// Unloads all running plugins.
+        /// Unloads a running plugin.
         /// </summary>
-        public void UnloadPlugins();
+        public void UnloadPlugin(string pluginName);
     }
 }

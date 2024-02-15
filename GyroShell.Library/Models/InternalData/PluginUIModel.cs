@@ -8,6 +8,8 @@ namespace GyroShell.Library.Models.InternalData
     {
         public string PluginName { get; set; }
 
+        public string FullName { get; set; }
+
         public string Description { get; set; }
 
         public string PublisherName { get; set; }
