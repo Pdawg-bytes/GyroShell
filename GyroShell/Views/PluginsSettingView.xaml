@@ -25,7 +25,7 @@
                             <StackPanel>
                                 <Expander x:Name="ModuleListExpander" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="0" Margin="0,0,0,10">
                                     <Expander.Header>
-                                        <StackPanel Orientation="Horizontal" Padding="5,10,5,10">
+                                        <StackPanel Orientation="Horizontal" Padding="5,10,5,10" HorizontalAlignment="Stretch">
                                             <TextBlock Text="&#xEA86;" FontFamily="Segoe MDL2 Assets" Margin="0,13,10,10" FontSize="22" x:Name="ModuleIcon"/>
                                             <StackPanel>
                                                 <TextBlock Text="{Binding PluginName}" Margin="15,6,10,0"/>
@@ -38,15 +38,14 @@
                                         </StackPanel>
                                     </Expander.Header>
                                     <Expander.Content>
-                                        <Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="0" Height="46" CornerRadius="3" Background="Transparent" BorderBrush="Transparent" BorderThickness="0">
+                                        <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="0" Height="46" CornerRadius="3" Background="Transparent">
                                             <Grid Margin="68,0,16,0">
                                                 <TextBlock Text="Manage plugin" Height="22"/>
                                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Height="28" Margin="0,-8,0,0">
-                                                    <ToggleSwitch Margin="0,8,0,0" Style="{StaticResource RightAlignedCompactToggleSwitchStyle}" IsOn="{Binding IsLoaded, Mode=TwoWay}"/>
-                                                    <TextBlock Text="&#xE76C;" FontFamily="Segoe MDL2 Assets" FontSize="9" Margin="20,13,4,0"/>
+                                                    <ToggleSwitch Margin="0,8,4,0" Style="{StaticResource RightAlignedCompactToggleSwitchStyle}" IsOn="{Binding IsLoaded, Mode=TwoWay}"/>
                                                 </StackPanel>
                                             </Grid>
-                                        </Button>
+                                        </Border>
                                     </Expander.Content>
                                 </Expander>
                             </StackPanel>
@@ -56,7 +55,7 @@
             </StackPanel>
         </ScrollViewer>
         <StackPanel VerticalAlignment="Bottom">
-            <InfoBar IsOpen="{x:Bind ViewModel.IsEmptyDirectoryInfoOpen, Mode=TwoWay}" Message="GyroShell is unable to find any modules in the current folder. Please select a new directory." IsClosable="True" Severity="Warning" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,20" x:Name="ModuleNotFoundInfo" Width="425">
+            <InfoBar IsOpen="{x:Bind ViewModel.IsEmptyDirectoryInfoOpen, Mode=TwoWay}" Message="GyroShell was unable to find any modules in the current folder. Please select a new directory." IsClosable="True" Severity="Warning" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,20" x:Name="ModuleNotFoundInfo" Width="425">
                 <InfoBar.Content>
                     <StackPanel Orientation="Horizontal">
                         <Button Command="{x:Bind ViewModel.OpenFolderCommand}" x:Name="OpenFolderInfo" Style="{ThemeResource AccentButtonStyle}" Content="Browse" Margin="0,0,10,20" HorizontalAlignment="Stretch" Width="300"/>
