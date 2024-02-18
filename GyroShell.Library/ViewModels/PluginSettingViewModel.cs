@@ -58,7 +58,7 @@ namespace GyroShell.Library.ViewModels
         {
             if (e.PropertyName == "IsLoaded")
             {
-                var plugin = sender as PluginUIModel;
+                PluginUIModel plugin = sender as PluginUIModel;
                 if (plugin == null) return;
                 if (plugin.IsLoaded)
                 {

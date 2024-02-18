@@ -34,11 +34,14 @@ namespace GyroShell.Services.Managers
                 LoadAndRunPlugin(pluginName);
             }
 
-            pluginFolderWatcher = new FileSystemWatcher(pluginDirectory);
-            pluginFolderWatcher.NotifyFilter = NotifyFilters.LastWrite;
-            pluginFolderWatcher.Filter = "*.dll";
-            pluginFolderWatcher.Changed += OnPluginCreated;
-            pluginFolderWatcher.EnableRaisingEvents = true;
+            if(pluginDirectory != null || pluginDirectory != String.Empty) 
+            {
+                pluginFolderWatcher = new FileSystemWatcher(pluginDirectory);
+                pluginFolderWatcher.NotifyFilter = NotifyFilters.LastWrite;
+                pluginFolderWatcher.Filter = "*.dll";
+                pluginFolderWatcher.Changed += OnPluginCreated;
+                pluginFolderWatcher.EnableRaisingEvents = true;
+            }
         }
 
         private void OnPluginCreated(object sender, FileSystemEventArgs e)
