@@ -53,5 +53,5 @@ People in this section have contributed a significant amount to GyroShell. Thank
 GyroShell is licensed under the **MIT License**, found [here](https://github.com/Pdawg-bytes/GyroShell/blob/main/LICENSE).
 
 # Screenshots (***subject to change***)
-![Screenshot_20221225_101323](https://user-images.githubusercontent.com/83825746/209495446-49c0e040-2537-4f92-b47b-924777dce877.png)
-![Screenshot_20221225_101526](https://user-images.githubusercontent.com/83825746/209495456-f8b4243c-ebab-4640-862e-1b2f51f8d823.png)
+![image](https://github.com/Pdawg-bytes/GyroShell/assets/83825746/2c440e92-4ea8-4717-a1de-ee1f8cd63def)
+
