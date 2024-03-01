@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GyroShell.Library.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,7 +11,7 @@ namespace GyroShell.Library.Interfaces
     {
         public IPluginInfo PluginInformation { get; }
 
-        void Initialize();
+        void Initialize(IServiceProvider localServiceProvider);
 
         void Shutdown();
     }

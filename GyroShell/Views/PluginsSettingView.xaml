@@ -28,20 +28,23 @@
                                         <StackPanel Orientation="Horizontal" Padding="5,10,5,10" HorizontalAlignment="Stretch">
                                             <TextBlock Text="&#xEA86;" FontFamily="Segoe MDL2 Assets" Margin="0,13,10,10" FontSize="22" x:Name="ModuleIcon"/>
                                             <StackPanel>
-                                                <TextBlock Text="{Binding PluginName}" Margin="15,6,10,0"/>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding PluginName}" Margin="15,6,5,0"/>
+                                                </StackPanel>
                                                 <StackPanel Orientation="Horizontal">
                                                     <TextBlock Text="{Binding PluginVersion}" Margin="15,0,10,0" FontSize="12" Opacity="0.7"/>
                                                     <Border Background="{ThemeResource ApplicationForegroundThemeBrush}" Opacity="0.6" Width="2" Height="12" CornerRadius="1" Margin="-4,0,0,0"/>
                                                     <TextBlock Text="{Binding PublisherName}" Margin="6,0,10,0" FontSize="12" Opacity="0.7"/>
+                                                    <TextBlock Text="&#xE946;" FontFamily="Segoe MDL2 Assets" FontSize="16" Margin="0,0,0,0" Opacity="0.7" ToolTipService.ToolTip="{Binding Description}"/>
                                                 </StackPanel>
                                             </StackPanel>
                                         </StackPanel>
                                     </Expander.Header>
                                     <Expander.Content>
                                         <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="0" Height="46" CornerRadius="3" Background="Transparent">
-                                            <Grid Margin="68,0,16,0">
-                                                <TextBlock Text="Manage plugin" Height="22"/>
-                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Height="28" Margin="0,-8,0,0">
+                                            <Grid>
+                                                <TextBlock Margin="68,0,0,0" Text="Manage plugin" Height="22" IsHitTestVisible="False"/>
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Height="28" Margin="0,-8,16,0">
                                                     <ToggleSwitch Margin="0,8,4,0" Style="{StaticResource RightAlignedCompactToggleSwitchStyle}" IsOn="{Binding IsLoaded, Mode=TwoWay}"/>
                                                 </StackPanel>
                                             </Grid>

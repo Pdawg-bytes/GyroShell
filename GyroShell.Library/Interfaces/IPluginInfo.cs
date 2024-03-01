@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GyroShell.Library.Enums;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -33,5 +34,10 @@ namespace GyroShell.Library.Interfaces
         /// The Guid associated with the plugin.
         /// </summary>
         Guid PluginId { get; }
+
+        /// <summary>
+        /// The required services required for the plugin to function.
+        /// </summary>
+        ServiceType[] RequiredServices { get; }
     }
 }

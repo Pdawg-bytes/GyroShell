@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Runtime.Loader;
 using GyroShell.Library.Interfaces;
 using GyroShell.Library.Models.InternalData;
+using GyroShell.Library.Services.Bridges;
 using GyroShell.Library.Services.Environment;
 using GyroShell.Library.Services.Managers;
 using GyroShell.Services.Environment;
@@ -22,12 +23,15 @@ namespace GyroShell.Services.Managers
         FileSystemWatcher pluginFolderWatcher;
 
         private readonly ISettingsService m_settingsService;
+        private readonly IPluginServiceBridge m_pluginServiceBridge;
 
 
-        public PluginManager(ISettingsService settingsService)
+        public PluginManager(ISettingsService settingsService, IPluginServiceBridge pluginServiceBridge)
         {
             m_settingsService = settingsService;
             pluginDirectory = m_settingsService.ModulesFolderPath;
+
+            m_pluginServiceBridge = pluginServiceBridge;
 
             foreach (string pluginName in m_settingsService.PluginsToLoad)
             {
@@ -63,7 +67,7 @@ namespace GyroShell.Services.Managers
                         if (typeof(IPlugin).IsAssignableFrom(type) && type.Name == "PluginRoot")
                         {
                             IPlugin plugin = Activator.CreateInstance(type) as IPlugin;
-                            plugin.Initialize();
+                            plugin.Initialize(m_pluginServiceBridge.GetPluginServiceProvider(plugin.PluginInformation.RequiredServices));
                             loadedPlugins[localPluginLoadContext] = assembly;
                             if (m_settingsService.SettingExists($"LoadPlugin_{pluginName}"))
                             {
@@ -99,14 +103,14 @@ namespace GyroShell.Services.Managers
                         {
                             IPlugin plugin = Activator.CreateInstance(type) as IPlugin;
                             returnList.Add(
-                                new PluginUIModel 
-                                { 
+                                new PluginUIModel
+                                {
                                     PluginName = plugin.PluginInformation.Name,
                                     FullName = Path.GetFileName(dllFile),
                                     Description = plugin.PluginInformation.Description,
                                     PublisherName = plugin.PluginInformation.Publisher,
-                                    PluginVersion = "Version " + plugin.PluginInformation.Version, 
-                                    PluginId = plugin.PluginInformation.PluginId, 
+                                    PluginVersion = "Version " + plugin.PluginInformation.Version,
+                                    PluginId = plugin.PluginInformation.PluginId,
                                     IsLoaded = loadedPlugins.Any(kv => kv.Value.FullName == assembly.FullName)
                                 });
                         }
