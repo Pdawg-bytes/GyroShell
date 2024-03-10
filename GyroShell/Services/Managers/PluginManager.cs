@@ -119,7 +119,7 @@ namespace GyroShell.Services.Managers
                 catch (Exception ex)
                 {
                     Debug.WriteLine($"[-] PluginManager: Error getting plugin from {dllFile}: {ex.Message}");
-                    return null;
+                    return new List<PluginUIModel>();
                 }
             }
             List<string> pluginsToLoad = m_settingsService.PluginsToLoad;
