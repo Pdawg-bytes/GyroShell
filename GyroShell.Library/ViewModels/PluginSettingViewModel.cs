@@ -48,6 +48,7 @@ namespace GyroShell.Library.ViewModels
                 IsEmptyDirectoryInfoOpen = true;
             }
 
+            if (ModuleCollection == null) { return; }
             foreach (PluginUIModel model in ModuleCollection)
             {
                 model.PropertyChanged += PluginPropertyChanged;

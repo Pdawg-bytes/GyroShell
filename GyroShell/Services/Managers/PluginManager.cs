@@ -20,7 +20,6 @@ namespace GyroShell.Services.Managers
         private readonly Dictionary<AssemblyLoadContext, Assembly> loadedPlugins = new Dictionary<AssemblyLoadContext, Assembly>();
 
         private string pluginDirectory;
-        FileSystemWatcher pluginFolderWatcher;
 
         private readonly ISettingsService m_settingsService;
         private readonly IPluginServiceBridge m_pluginServiceBridge;
@@ -36,15 +35,6 @@ namespace GyroShell.Services.Managers
             foreach (string pluginName in m_settingsService.PluginsToLoad)
             {
                 LoadAndRunPlugin(pluginName);
-            }
-
-            if(pluginDirectory != null || pluginDirectory != String.Empty) 
-            {
-                pluginFolderWatcher = new FileSystemWatcher(pluginDirectory);
-                pluginFolderWatcher.NotifyFilter = NotifyFilters.LastWrite;
-                pluginFolderWatcher.Filter = "*.dll";
-                pluginFolderWatcher.Changed += OnPluginCreated;
-                pluginFolderWatcher.EnableRaisingEvents = true;
             }
         }
 

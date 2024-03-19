@@ -136,7 +136,7 @@ namespace GyroShell.Services.Environment
 
         public string ModulesFolderPath
         {
-            get => GetSetting<string>("modulesFolderPath") ?? string.Empty;
+            get => GetSetting<string>("modulesFolderPath") ?? "C:\\";
             set => SetSetting("modulesFolderPath", value);
         }
     }
