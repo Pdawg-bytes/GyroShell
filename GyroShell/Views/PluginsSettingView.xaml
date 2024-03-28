@@ -45,7 +45,7 @@
                                             <Grid>
                                                 <TextBlock Margin="68,0,0,0" Text="Manage plugin" Height="22" IsHitTestVisible="False"/>
                                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Height="28" Margin="0,-8,16,0">
-                                                    <ToggleSwitch Margin="0,8,4,0" Style="{StaticResource RightAlignedCompactToggleSwitchStyle}" IsOn="{Binding IsLoaded, Mode=TwoWay}"/>
+                                                    <ToggleSwitch Margin="0,8,4,0" Style="{StaticResource RightAlignedCompactToggleSwitchStyle}" IsOn="{Binding IsLoaded, Mode=TwoWay}" IsEnabled="{Binding IsLoadingAllowed, Mode=OneWay}"/>
                                                 </StackPanel>
                                             </Grid>
                                         </Border>
@@ -68,6 +68,11 @@
             <InfoBar IsOpen="{x:Bind ViewModel.IsParseFailureInfoOpen, Mode=TwoWay}" Message="GyroShell was unable to parse one or more modules in the selected directory." IsClosable="True" Severity="Error" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,20" x:Name="ModuleParseErrorInfo" Width="425">
                 <InfoBar.Content>
                     <Button Command="{x:Bind ViewModel.OpenFolderCommand}" x:Name="ParseErrorBrowse" Style="{ThemeResource AccentButtonStyle}" Content="Browse" Margin="0,0,10,20" HorizontalAlignment="Stretch" Width="300"/>
+                </InfoBar.Content>
+            </InfoBar>
+            <InfoBar IsOpen="{x:Bind ViewModel.IsPluginRestartErrorOpen, Mode=OneWay}" Message="GyroShell needs to restart to fully unload a plugin. This is mandatory." IsClosable="False" Severity="Warning" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,20" x:Name="ModuleUnloadErrorInfo" Width="425">
+                <InfoBar.Content>
+                    <Button Command="{x:Bind ViewModel.RestartGyroShellCommand, Mode=OneWay}" x:Name="UnloadErrorRestart" Style="{ThemeResource AccentButtonStyle}" Content="Restart now" Margin="0,0,26,20" HorizontalAlignment="Stretch" Width="350"/>
                 </InfoBar.Content>
             </InfoBar>
         </StackPanel>

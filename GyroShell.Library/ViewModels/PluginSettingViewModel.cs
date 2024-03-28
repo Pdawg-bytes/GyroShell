@@ -11,6 +11,7 @@ using GyroShell.Library.Models.InternalData;
 using GyroShell.Library.Services.Environment;
 using GyroShell.Library.Services.Managers;
 using System.ComponentModel;
+using System.Reflection;
 
 namespace GyroShell.Library.ViewModels
 {
@@ -21,12 +22,14 @@ namespace GyroShell.Library.ViewModels
         private readonly ISettingsService m_appSettings;
         private readonly IEnvironmentInfoService m_envService;
         private readonly IPluginManager m_moduleManager;
+        private readonly IInternalLauncher m_internalLauncher;
 
-        public PluginSettingViewModel(ISettingsService appSettings, IEnvironmentInfoService envService, IPluginManager moduleManager)
+        public PluginSettingViewModel(ISettingsService appSettings, IEnvironmentInfoService envService, IPluginManager moduleManager, IInternalLauncher internalLauncher)
         {
             m_appSettings = appSettings;
             m_envService = envService;
             m_moduleManager = moduleManager;
+            m_internalLauncher = internalLauncher;
 
             if (m_appSettings.ModulesFolderPath != null || m_appSettings.ModulesFolderPath == string.Empty)
             {
@@ -48,29 +51,39 @@ namespace GyroShell.Library.ViewModels
                 IsEmptyDirectoryInfoOpen = true;
             }
 
+            IsPluginRestartErrorOpen = false;
+
             if (ModuleCollection == null) { return; }
             foreach (PluginUIModel model in ModuleCollection)
             {
                 model.PropertyChanged += PluginPropertyChanged;
+                model.IsLoadingAllowed = true;
             }
         }
 
         private void PluginPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "IsLoaded")
+            if (e.PropertyName != "IsLoaded") return;
+
+            PluginUIModel plugin = sender as PluginUIModel;
+            if (plugin == null) return;
+            if (plugin.IsLoaded)
             {
-                PluginUIModel plugin = sender as PluginUIModel;
-                if (plugin == null) return;
-                if (plugin.IsLoaded)
-                {
-                    m_moduleManager.LoadAndRunPlugin(plugin.FullName);
-                }
-                else
-                {
-                    m_moduleManager.UnloadPlugin(plugin.FullName);
-                }
+                m_moduleManager.LoadAndRunPlugin(plugin.FullName);
+            }
+            else
+            {
+                m_moduleManager.UnloadPlugin(plugin.FullName);
+                plugin.PropertyChanged -= PluginPropertyChanged;
+                plugin.IsLoadingAllowed = false;
+                IsPluginRestartErrorOpen = true;
+
+
             }
         }
+
+        [ObservableProperty]
+        private bool isPluginRestartErrorOpen;
 
         [ObservableProperty]
         private bool isEmptyDirectoryInfoOpen;
@@ -115,6 +128,12 @@ namespace GyroShell.Library.ViewModels
             {
                 IsEmptyDirectoryInfoOpen = false;
             }
+        }
+
+        [RelayCommand]
+        private void RestartGyroShell()
+        {
+            m_internalLauncher.LaunchNewShellInstance();
         }
     }
 }

@@ -28,11 +28,7 @@ namespace GyroShell.Library.Commands
         public void OpenShellSettings()
         {
             m_envService.SettingsInstances++;
-
-            if (m_envService.SettingsInstances <= 1)
-            {
-                m_internalLauncher.LaunchShellSettings();
-            }
+            m_internalLauncher.LaunchShellSettings();
         }
 
         [RelayCommand]

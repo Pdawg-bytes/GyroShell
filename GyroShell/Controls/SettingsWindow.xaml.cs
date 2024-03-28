@@ -15,13 +15,15 @@ using WinRT;
 using GyroShell.Library.ViewModels;
 using Windows.UI.Core;
 using Windows.System;
+using GyroShell.Library.Services.Managers;
 
 namespace GyroShell.Controls
 {
     public sealed partial class SettingsWindow : Window
     {
-        private readonly ISettingsService m_appSettings;
+        private readonly IPluginManager m_pluginManager;
         private readonly IEnvironmentInfoService m_envService;
+        private readonly IInternalLauncher m_internalLauncher;
 
         private bool _isDebugMenuOpen;
 
@@ -31,8 +33,9 @@ namespace GyroShell.Controls
 
             RootGrid.DataContext = App.ServiceProvider.GetService<SettingsWindowViewModel>();
 
-            m_appSettings = App.ServiceProvider.GetRequiredService<ISettingsService>();
+            m_pluginManager = App.ServiceProvider.GetRequiredService<IPluginManager>();
             m_envService = App.ServiceProvider.GetRequiredService<IEnvironmentInfoService>();
+            m_internalLauncher = App.ServiceProvider.GetRequiredService<IInternalLauncher>();
 
             // Window Handling
             IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
@@ -157,6 +160,10 @@ namespace GyroShell.Controls
             m_configurationSource = null;
 
             m_envService.SettingsInstances = 0;
+            if (m_pluginManager.IsUnloadRestartPending)
+            {
+                m_internalLauncher.LaunchNewShellInstance();
+            }
         }
 
         private void Window_ThemeChanged(FrameworkElement sender, object args)

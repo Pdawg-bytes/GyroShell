@@ -17,7 +17,7 @@ namespace GyroShell.Services.Managers
 {
     public class PluginManager : IPluginManager
     {
-        private readonly Dictionary<AssemblyLoadContext, Assembly> loadedPlugins = new Dictionary<AssemblyLoadContext, Assembly>();
+        private readonly Dictionary<AssemblyLoadContext, IPlugin> loadedPlugins = new Dictionary<AssemblyLoadContext, IPlugin>();
 
         private string pluginDirectory;
 
@@ -36,11 +36,20 @@ namespace GyroShell.Services.Managers
             {
                 LoadAndRunPlugin(pluginName);
             }
+
+            IsUnloadRestartPending = false;
         }
 
         private void OnPluginCreated(object sender, FileSystemEventArgs e)
         {
             GetPlugins();
+        }
+
+        private bool _isUnloadRestartPending;
+        public bool IsUnloadRestartPending
+        {
+            get => _isUnloadRestartPending;
+            set => _isUnloadRestartPending = value;
         }
 
         public void LoadAndRunPlugin(string pluginName)
@@ -58,7 +67,7 @@ namespace GyroShell.Services.Managers
                         {
                             IPlugin plugin = Activator.CreateInstance(type) as IPlugin;
                             plugin.Initialize(m_pluginServiceBridge.GetPluginServiceProvider(plugin.PluginInformation.RequiredServices));
-                            loadedPlugins[localPluginLoadContext] = assembly;
+                            loadedPlugins[localPluginLoadContext] = plugin;
                             if (m_settingsService.SettingExists($"LoadPlugin_{pluginName}"))
                             {
                                 m_settingsService.SetSetting($"LoadPlugin_{pluginName}", true);
@@ -92,17 +101,27 @@ namespace GyroShell.Services.Managers
                         if (typeof(IPlugin).IsAssignableFrom(type) && type.Name == "PluginRoot")
                         {
                             IPlugin plugin = Activator.CreateInstance(type) as IPlugin;
+                            string name = plugin.PluginInformation.Name, fullName = Path.GetFileName(dllFile),
+                                description = plugin.PluginInformation.Description, pubName = plugin.PluginInformation.Publisher, 
+                                version = plugin.PluginInformation.Version;
+
+                            Guid id = plugin.PluginInformation.PluginId;
+                            bool isLoaded = loadedPlugins.Any(kv => kv.Value.PluginInformation.Name == name);
+
                             returnList.Add(
                                 new PluginUIModel
                                 {
-                                    PluginName = plugin.PluginInformation.Name,
-                                    FullName = Path.GetFileName(dllFile),
-                                    Description = plugin.PluginInformation.Description,
-                                    PublisherName = plugin.PluginInformation.Publisher,
-                                    PluginVersion = "Version " + plugin.PluginInformation.Version,
-                                    PluginId = plugin.PluginInformation.PluginId,
-                                    IsLoaded = loadedPlugins.Any(kv => kv.Value.FullName == assembly.FullName)
+                                    PluginName = name,
+                                    FullName = fullName,
+                                    Description = description,
+                                    PublisherName = pubName,
+                                    PluginVersion = "Version " + version,
+                                    PluginId = id,
+                                    IsLoaded = isLoaded
                                 });
+
+                            name = null; fullName = null; description = null; pubName = null; version = null;
+                            GC.Collect();
                         }
                     }
                 }
@@ -126,28 +145,21 @@ namespace GyroShell.Services.Managers
 
         public void UnloadPlugin(string pluginName)
         {
-            foreach (KeyValuePair<AssemblyLoadContext, Assembly> plugin in loadedPlugins.Where(asm => asm.Key.Name.Contains(pluginName)))
+            foreach (KeyValuePair<AssemblyLoadContext, IPlugin> plugin in loadedPlugins.Where(asm => asm.Key.Name.Contains(pluginName)))
             {
                 AssemblyLoadContext pluginContext = plugin.Key;
-                if (loadedPlugins.TryGetValue(pluginContext, out var pluginAssembly))
+                if (loadedPlugins.TryGetValue(pluginContext, out var pluginObj))
                 {
-                    foreach (Type type in pluginAssembly.GetTypes())
+                    pluginObj.Shutdown();
+                    pluginContext.Unload();
+                    IsUnloadRestartPending = true;
+                    if (m_settingsService.SettingExists($"LoadPlugin_{pluginName}"))
                     {
-                        if (typeof(IPlugin).IsAssignableFrom(type) && type.Name == "PluginRoot")
-                        {
-                            IPlugin pluginObj = Activator.CreateInstance(type) as IPlugin;
-                            pluginObj.Shutdown();
-                            pluginContext.Unload();
-                            loadedPlugins.Remove(pluginContext);
-                            if (m_settingsService.SettingExists($"LoadPlugin_{pluginName}"))
-                            {
-                                m_settingsService.SetSetting($"LoadPlugin_{pluginName}", false);
-                            }
-                            else
-                            {
-                                m_settingsService.AddSetting($"LoadPlugin_{pluginName}", false);
-                            }
-                        }
+                        m_settingsService.SetSetting($"LoadPlugin_{pluginName}", false);
+                    }
+                    else
+                    {
+                        m_settingsService.AddSetting($"LoadPlugin_{pluginName}", false);
                     }
                 }
                 else

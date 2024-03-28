@@ -21,13 +21,25 @@ namespace GyroShell.Library.Models.InternalData
         private bool isLoaded;
         public bool IsLoaded
         {
-            get { return isLoaded; }
+            get => isLoaded;
             set
             {
                 if (isLoaded != value)
                 {
-                    isLoaded = value;
-                    OnPropertyChanged();
+                    isLoaded = value; OnPropertyChanged();
+                }
+            }
+        }
+
+        private bool isLoadingAllowed;
+        public bool IsLoadingAllowed
+        {
+            get => isLoadingAllowed;
+            set
+            {
+                if (isLoadingAllowed != value)
+                {
+                    isLoadingAllowed = value; OnPropertyChanged();
                 }
             }
         }

@@ -13,7 +13,5 @@
         <Button VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,-36,0,0" Height="30" Width="30" Padding="0" ToolTipService.ToolTip="Close" Click="CloseButton_Click">
             <TextBlock Text="&#xECC9;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         </Button>
-
-        <local:TaskButton/>
     </Grid>
 </ContentDialog>

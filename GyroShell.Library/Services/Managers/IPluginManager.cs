@@ -27,5 +27,10 @@ namespace GyroShell.Library.Services.Managers
         /// Unloads a running plugin.
         /// </summary>
         public void UnloadPlugin(string pluginName);
+
+        /// <summary>
+        /// If any plugins are in the unload queue.
+        /// </summary>
+        public bool IsUnloadRestartPending { get; set; }
     }
 }
