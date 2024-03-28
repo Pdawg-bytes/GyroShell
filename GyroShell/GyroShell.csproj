@@ -12,6 +12,7 @@
     <EnableMsixTooling>true</EnableMsixTooling>
     <CsWinRTFilters>-include WindowsUdk</CsWinRTFilters>
     <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Commands\**" />

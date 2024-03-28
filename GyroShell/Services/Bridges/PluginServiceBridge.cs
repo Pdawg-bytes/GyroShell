@@ -20,7 +20,7 @@ namespace GyroShell.Services.Bridges
 
         }
 
-        public IServiceProvider GetPluginServiceProvider(ServiceType[] requestedServices)
+        public IServiceProvider CreatePluginServiceProvider(ServiceType[] requestedServices)
         {
             ServiceCollection serviceCollection = new();
             foreach (var serviceType in requestedServices)
