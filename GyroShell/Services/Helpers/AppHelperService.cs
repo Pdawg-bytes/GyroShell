@@ -85,25 +85,22 @@ namespace GyroShell.Services.Helpers
             return path;
         }
 
-        // I'm so sorry for this entire thing it's so incredibly cursed but I added a few comments to help :)
+        // I'm so sorry for this entire thing it's so incredibly cursed
         public Package GetPackageFromAppHandle(IntPtr hWnd)
         {
-            // Get the prop store associated with this handle        /* interface id */
             Guid guidPropertyStore = new Guid("{886D8EEB-8CF2-4446-8D02-CDBA1DBDCF99}");
             IPropertyStore propertyStore;                      
-            int result = SHGetPropertyStoreForWindow(hWnd, ref guidPropertyStore, out propertyStore); // Extract store given interface ID
+            int result = SHGetPropertyStoreForWindow(hWnd, ref guidPropertyStore, out propertyStore);
             if (result != 0)
             {
                 return null;
             }
 
-            // Get the AUMID value from the property store     /* format id */               /* prop id */
-            PropertyKey propertyKey = new PropertyKey(new Guid("9F4C2855-9F79-4B39-A8D0-E1D42DE1D5F3"), 5);
-            PropVariant value = new PropVariant();
+            PropertyKey propertyKey = new(new Guid("9F4C2855-9F79-4B39-A8D0-E1D42DE1D5F3"), 5);
+            PropVariant value = new();
             propertyStore.GetValue(ref propertyKey, out value);
             string aumid = null;
 
-            // Extract AUMID from keystore
             try
             {
                 if (value.VarType == (ushort)VarEnum.VT_LPWSTR)
@@ -121,7 +118,6 @@ namespace GyroShell.Services.Helpers
                 return null;
             }
 
-            // Get the Package object from the AUMID
             try
             {
                 string[] aumidParts = aumid.Split('!');

@@ -66,7 +66,7 @@ namespace GyroShell.Services.Managers
                         if (typeof(IPlugin).IsAssignableFrom(type) && type.Name == "PluginRoot")
                         {
                             IPlugin plugin = Activator.CreateInstance(type) as IPlugin;
-                            plugin.Initialize(m_pluginServiceBridge.GetPluginServiceProvider(plugin.PluginInformation.RequiredServices));
+                            plugin.Initialize(m_pluginServiceBridge.CreatePluginServiceProvider(plugin.PluginInformation.RequiredServices));
                             loadedPlugins[localPluginLoadContext] = plugin;
                             if (m_settingsService.SettingExists($"LoadPlugin_{pluginName}"))
                             {
