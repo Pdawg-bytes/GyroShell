@@ -69,8 +69,8 @@
                     </Expander.Header>
                     <Expander.Content>
                         <StackPanel Orientation="Horizontal" Padding="48,0,48,0">
-                            <HyperlinkButton Content="GitHub - MIT Source License" NavigateUri="https://github.com/Pdawg-bytes/GyroShell/blob/main/LICENSE"/>
-                            <HyperlinkButton Content="OSI - MIT License Information" NavigateUri="https://opensource.org/licenses/MIT"/>
+                            <HyperlinkButton Content="GitHub - BSD3 Source License" NavigateUri="https://github.com/Pdawg-bytes/GyroShell/blob/main/LICENSE"/>
+                            <HyperlinkButton Content="OSI - BSD3 License Information" NavigateUri="https://opensource.org/license/bsd-3-clause"/>
                         </StackPanel>
                     </Expander.Content>
                 </Expander>
