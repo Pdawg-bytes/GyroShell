@@ -50,7 +50,7 @@ People in this section have contributed a significant amount to GyroShell. Thank
 - **Rounak** - Implemented the taskbar icon system and some shell hooking code.
 
 ## :balance_scale: License
-GyroShell is licensed under the **MIT License**, found [here](https://github.com/Pdawg-bytes/GyroShell/blob/main/LICENSE).
+GyroShell is licensed under the **GPLv3 License**, found [here](https://github.com/Pdawg-bytes/GyroShell/blob/main/LICENSE).
 
 # Screenshots (***subject to change***)
 ![image](https://github.com/Pdawg-bytes/GyroShell/assets/83825746/2c440e92-4ea8-4717-a1de-ee1f8cd63def)
