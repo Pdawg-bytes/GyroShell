@@ -54,4 +54,6 @@ GyroShell is licensed under the **Modified BSD License (3-clause)**, found [here
 
 # Screenshots (***subject to change***)
 ![image](https://github.com/Pdawg-bytes/GyroShell/assets/83825746/2c440e92-4ea8-4717-a1de-ee1f8cd63def)
-
+![image](https://github.com/Pdawg-bytes/GyroShell/assets/83825746/ebec31aa-ef2c-4366-9f6d-34ef845f59a7)
+![image](https://github.com/Pdawg-bytes/GyroShell/assets/83825746/87c15bf0-e91e-47d8-91ff-4722b86cb43d)
+![image](https://github.com/Pdawg-bytes/GyroShell/assets/83825746/8ff5f9b5-e67f-43f6-bff9-ba5b4b93dd5e)
