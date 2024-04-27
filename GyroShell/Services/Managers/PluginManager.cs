@@ -109,8 +109,11 @@ namespace GyroShell.Services.Managers
                         if (typeof(IPlugin).IsAssignableFrom(type) && type.Name == "PluginRoot")
                         {
                             IPlugin plugin = Activator.CreateInstance(type) as IPlugin;
-                            string name = plugin.PluginInformation.Name, fullName = Path.GetFileName(dllFile),
-                                description = plugin.PluginInformation.Description, pubName = plugin.PluginInformation.Publisher, 
+                            string 
+                                name = plugin.PluginInformation.Name, 
+                                fullName = Path.GetFileName(dllFile),
+                                description = plugin.PluginInformation.Description,
+                                pubName = plugin.PluginInformation.Publisher, 
                                 version = plugin.PluginInformation.Version;
 
                             Guid id = plugin.PluginInformation.PluginId;
@@ -156,7 +159,7 @@ namespace GyroShell.Services.Managers
             foreach (KeyValuePair<AssemblyLoadContext, IPlugin> plugin in loadedPlugins.Where(asm => asm.Key.Name.Contains(pluginName)))
             {
                 AssemblyLoadContext pluginContext = plugin.Key;
-                if (loadedPlugins.TryGetValue(pluginContext, out var pluginObj))
+                if (loadedPlugins.TryGetValue(pluginContext, out IPlugin pluginObj))
                 {
                     pluginObj.Shutdown();
                     pluginContext.Unload();
