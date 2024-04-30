@@ -5,6 +5,9 @@
     xmlns:local="using:GyroShell.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:media="using:Microsoft.Xaml.Interactions.Media"
     mc:Ignorable="d"
     x:Name="DefaultTaskbarPage"
     Background="Transparent"
@@ -17,7 +20,7 @@
             </MenuFlyout>
         </Grid.Resources>
         <Border Height="1" VerticalAlignment="Top" HorizontalAlignment="Stretch" x:Name="BarBorder" Opacity="1" Background="#66757575"/>
-        <Frame Visibility="Collapsed" Background="{ThemeResource SystemControlAcrylicWindowBrush}">
+        <Frame Visibility="Collapsed" Background="Transparent">
             <MenuFlyout x:Name="StartFlyout" AreOpenCloseAnimationsEnabled="True" ShouldConstrainToRootBounds="False">
                 <MenuFlyoutItem Text="Shell Settings" Command="{x:Bind ViewModel.StartFlyoutCommands.OpenShellSettingsCommand}" Tag="ShellSettings"/>
                 <MenuFlyoutItem Text="Restart GyroShell" Command="{x:Bind ViewModel.StartFlyoutCommands.RestartGyroShellCommand}" Tag="RestartGyroShell"/>
