@@ -118,6 +118,11 @@ namespace GyroShell.Services.Helpers
         #region Common
         private SoftwareBitmapSource ConvertIconBitmapToSoftwareBitmapSource(Bitmap bmp)
         {
+            if (bmp == null)
+            {
+                return null;
+            }
+
             using (Bitmap croppedBmp = m_bmpHelper.RemoveTransparentPadding(bmp))
             {
                 Bitmap resampledBmp = m_bmpHelper.FilterAndScaleBitmap(croppedBmp, croppedBmp.Width, croppedBmp.Height);

@@ -348,3 +348,9 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+# C++
+**/vcpkg_installed/**
+
+# Other
+Gyroshell/Resources/rmclient.dll
