@@ -15,6 +15,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
+using System.Xml.Linq;
 using GyroShell.Library.Interfaces;
 using GyroShell.Library.Models.InternalData;
 using GyroShell.Library.Services.Bridges;
@@ -108,30 +109,20 @@ namespace GyroShell.Services.Managers
                     {
                         if (typeof(IPlugin).IsAssignableFrom(type) && type.Name == "PluginRoot")
                         {
-                            IPlugin plugin = Activator.CreateInstance(type) as IPlugin;
-                            string 
-                                name = plugin.PluginInformation.Name, 
-                                fullName = Path.GetFileName(dllFile),
-                                description = plugin.PluginInformation.Description,
-                                pubName = plugin.PluginInformation.Publisher, 
-                                version = plugin.PluginInformation.Version;
-
-                            Guid id = plugin.PluginInformation.PluginId;
-                            bool isLoaded = loadedPlugins.Any(kv => kv.Value.PluginInformation.Name == name);
+                            IPlugin plugin = Activator.CreateInstance(type) as IPlugin; 
 
                             returnList.Add(
                                 new PluginUIModel
                                 {
-                                    PluginName = name,
-                                    FullName = fullName,
-                                    Description = description,
-                                    PublisherName = pubName,
-                                    PluginVersion = "Version " + version,
-                                    PluginId = id,
-                                    IsLoaded = isLoaded
+                                    PluginName = plugin.PluginInformation.Name,
+                                    FullName = Path.GetFileName(dllFile),
+                                    Description = plugin.PluginInformation.Description,
+                                    PublisherName = plugin.PluginInformation.Publisher,
+                                    PluginVersion = "Version " + plugin.PluginInformation.Version,
+                                    PluginId = plugin.PluginInformation.PluginId,
+                                    IsLoaded = loadedPlugins.Any(kv => kv.Value.PluginInformation.Name == plugin.PluginInformation.Name)
                                 });
 
-                            name = null; fullName = null; description = null; pubName = null; version = null;
                             GC.Collect();
                         }
                     }

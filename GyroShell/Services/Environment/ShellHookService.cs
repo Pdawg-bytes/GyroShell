@@ -74,6 +74,7 @@ namespace GyroShell.Services.Environment
         public void Uninitialize()
         {
             UnhookWinEvent(_nameChangeHook);
+            UnhookWinEvent(_cloakUncloakHook);
         }
 
 
@@ -120,14 +121,14 @@ namespace GyroShell.Services.Environment
                     switch (m_appHelper.GetWindowTitle(hwnd))
                     {
                         case "Start":
-                            //m_explorerManager.IsStartMenuOpen = false;
+                            m_explorerManager.IsStartMenuOpen = false;
                             break;
                         case "Quick settings":
-                            //m_explorerManager.IsSystemControlsOpen = false;
+                            m_explorerManager.IsSystemControlsOpen = false;
                             break;
                         case "Windows Shell Experience Host":
                         case "Notification Center":
-                            //m_explorerManager.IsActionCenterOpen = false;
+                            m_explorerManager.IsActionCenterOpen = false;
                             break;
                     }
                     break;
@@ -135,14 +136,14 @@ namespace GyroShell.Services.Environment
                     switch (m_appHelper.GetWindowTitle(hwnd))
                     {
                         case "Start":
-                            //m_explorerManager.IsStartMenuOpen = true;
+                            m_explorerManager.IsStartMenuOpen = true;
                             break;
                         case "Quick settings":
-                            //m_explorerManager.IsSystemControlsOpen = true;
+                            m_explorerManager.IsSystemControlsOpen = true;
                             break;
                         case "Windows Shell Experience Host":
                         case "Notification Center":
-                            //m_explorerManager.IsActionCenterOpen = true;
+                            m_explorerManager.IsActionCenterOpen = true;
                             break;
                     }
                     break;

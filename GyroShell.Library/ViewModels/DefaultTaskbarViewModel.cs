@@ -90,7 +90,7 @@ namespace GyroShell.Library.ViewModels
 
             m_appSettings.SettingUpdated += AppSettings_SettingUpdated;
 
-            //m_explorerManager.SystemControlStateChanged += ExplorerManager_SystemControlStateChanged;
+            m_explorerManager.SystemControlStateChanged += ExplorerManager_SystemControlStateChanged;
         }
 
         public ObservableCollection<IconModel> CurrentWindows => m_shellHookService.CurrentWindows;
@@ -396,7 +396,10 @@ namespace GyroShell.Library.ViewModels
             m_soundService.OnVolumeChanged -= SoundService_OnVolumeChanged;
             m_powerService.BatteryStatusChanged -= BatteryService_BatteryStatusChanged;
             m_netService.InternetStatusChanged -= NetworkService_InternetStatusChanged;
+            m_notifManager.NotifcationChanged -= NotificationManager_NotificationChanged;
             m_timeService.UpdateClockBinding -= TimeService_UpdateClockBinding;
+            m_appSettings.SettingUpdated -= AppSettings_SettingUpdated;
+            m_explorerManager.SystemControlStateChanged -= ExplorerManager_SystemControlStateChanged;
         }
     }
 }
