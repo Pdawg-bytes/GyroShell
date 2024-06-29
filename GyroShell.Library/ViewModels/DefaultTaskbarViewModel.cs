@@ -84,7 +84,7 @@ namespace GyroShell.Library.ViewModels
             UpdateNetworkStatus();
 
             m_notifManager.NotifcationChanged += NotificationManager_NotificationChanged;
-            Task.Run(UpdateNotifications).Wait();
+            //Task.Run(UpdateNotifications).Wait();
 
             m_timeService.UpdateClockBinding += TimeService_UpdateClockBinding;
 

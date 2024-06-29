@@ -8,6 +8,7 @@
  */
 #endregion
 
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using System.ComponentModel;
@@ -38,8 +39,8 @@ namespace GyroShell.Library.Models.InternalData
             }
         }
 
-        private SoftwareBitmapSource appIcon;
-        public SoftwareBitmapSource AppIcon
+        private ImageSource appIcon;
+        public ImageSource AppIcon
         {
             get { return appIcon; }
             set

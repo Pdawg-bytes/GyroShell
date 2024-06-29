@@ -16,10 +16,12 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Xml.Linq;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Core;
 using Windows.Management.Deployment;
 using Windows.Storage.Streams;
+using Windows.UI.Popups;
 using static GyroShell.Library.Helpers.Win32.Win32Interop;
 using static GyroShell.Library.Interfaces.IPropertyStoreAUMID;
 
@@ -27,19 +29,8 @@ namespace GyroShell.Services.Helpers
 {
     internal class AppHelperService : IAppHelperService
     {
-        private Dictionary<string, string> m_pkgFamilyMap;
-        private PackageManager m_pkgManager;
-
         public AppHelperService()
         {
-            m_pkgFamilyMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            m_pkgManager = new PackageManager();
-
-            IEnumerable<Package> packages = m_pkgManager.FindPackagesForUser(null);
-            foreach (Package package in packages)
-            {
-                m_pkgFamilyMap[package.Id.FamilyName] = package.Id.FullName;
-            }
         }
 
         public string GetWindowTitle(IntPtr hWnd)
@@ -52,96 +43,149 @@ namespace GyroShell.Services.Helpers
             return sb.ToString();
         }
 
-
-        public RandomAccessStreamReference GetUwpIconStream(IntPtr hWnd)
-        {
-            Package pkg = GetPackageFromAppHandle(hWnd);
-            AppListEntry entry = pkg.GetAppListEntries().First(ent => ent.DisplayInfo.DisplayName.ToLower().Contains(GetWindowTitle(hWnd).ToLower()));
-
-            if (entry != null)
-            {
-                return entry.DisplayInfo.GetLogo(new Windows.Foundation.Size(176, 176));
-            }
-            return null;
-        }
-
         public string GetUwpAppIconPath(IntPtr hWnd)
         {
-            string normalPath = Uri.UnescapeDataString(Uri.UnescapeDataString(GetPackageFromAppHandle(hWnd).Logo.AbsolutePath)).Replace("/", "\\");
-            string finalPath = GetUwpExtraIcons(normalPath, GetWindowTitle(hWnd));
+            var values = GetPackageFromAppHandle(hWnd);
+            string normalPath = Uri.UnescapeDataString(values.Item1);
+            string entrypoint = values.Item2;
+            string finalPath = GetUwpExtraIcons(normalPath, entrypoint);
 
             return finalPath;
         }
-        private string GetUwpExtraIcons(string path, string appName)
+        private string GetUwpExtraIcons(string path, string entrypoint)
         {
-            string[] pathParts = path.Split('\\');
-            string rootAssetsFolder = string.Join("\\", pathParts.Take(pathParts.Length - 1));
+            // read manifest
+            string manifestPath = Path.Combine(path, "AppXManifest.xml");
+            using FileStream stream = File.Open(manifestPath, FileMode.Open, FileAccess.Read, FileShare.Read);
 
-            string[] allFiles = Directory.GetFiles(rootAssetsFolder);
-            foreach (string filePath in allFiles)
+            XDocument xml = XDocument.Load(stream);
+            XNamespace ns = "http://schemas.microsoft.com/appx/manifest/foundation/windows10";
+            XNamespace uap = "http://schemas.microsoft.com/appx/manifest/uap/windows10";
+
+            string iconPath = Uri.UnescapeDataString(xml.Element(ns + "Package")
+                                          .Element(ns + "Properties")
+                                          .Element(ns + "Logo").Value);
+
+            /*
+            var resScale = xml.Element(ns + "Package")
+                                .Element(ns + "Resources")
+                                .Elements(ns + "Resource")
+                                .FirstOrDefault(e => e.Attribute(uap + "Scale") != null);
+            string scale = resScale != null ? ".scale-" + resScale.Attribute(uap + "Scale").Value : "";
+            */
+
+            // idk
+            List<string> scales = new() { ".scale-100", ".scale-200", ".scale-300", ".scale-400" };
+
+            var resApp = xml.Element(ns + "Package")
+                                .Element(ns + "Applications")
+                                .Elements(ns + "Application")
+                                .FirstOrDefault(e => e.Attribute("Executable") != null && e.Attribute("Executable").Value == entrypoint);
+            string logo = resApp.Element(uap + "VisualElements").Attribute("Square44x44Logo").Value;
+
+            string ext = Path.GetExtension(iconPath);
+            string dir = Path.GetDirectoryName(iconPath);
+
+            foreach (string scale in scales)
             {
-                if (Path.GetFileName(filePath).Contains("StoreLogo.scale-100"))
+                string finalPath = Path.Combine(path, dir, Path.GetFileNameWithoutExtension(logo) + scale + ext);
+                if (File.Exists(finalPath))
                 {
-                    string e = filePath.Replace(" ", "").ToLower();
-                    if (e.Contains(appName.Replace(" ", "").ToLower()))
-                    {
-                        return filePath;
-                    }
+                    //Debug.WriteLine(finalPath);
+                    return finalPath;
                 }
             }
-
-            return path;
+            return null;
         }
-
-        // I'm so sorry for this entire thing it's so incredibly cursed
-        public Package GetPackageFromAppHandle(IntPtr hWnd)
+        public static List<IntPtr> GetChildWindows(IntPtr parent)
         {
-            Guid guidPropertyStore = new Guid("{886D8EEB-8CF2-4446-8D02-CDBA1DBDCF99}");
-            IPropertyStore propertyStore;                      
-            int result = SHGetPropertyStoreForWindow(hWnd, ref guidPropertyStore, out propertyStore);
-            if (result != 0)
-            {
-                return null;
-            }
-
-            PropertyKey propertyKey = new(new Guid("9F4C2855-9F79-4B39-A8D0-E1D42DE1D5F3"), 5);
-            PropVariant value = new();
-            propertyStore.GetValue(ref propertyKey, out value);
-            string aumid = null;
-
+            List<IntPtr> result = new List<IntPtr>();
+            GCHandle listHandle = GCHandle.Alloc(result);
             try
             {
-                if (value.VarType == (ushort)VarEnum.VT_LPWSTR)
-                {
-                    aumid = Marshal.PtrToStringUni(value.Data);
-                }
+                EnumWindowProc childProc = new EnumWindowProc(EnumWindow);
+                EnumChildWindows(parent, childProc, GCHandle.ToIntPtr(listHandle));
             }
             finally
             {
-                value.Dispose();
+                if (listHandle.IsAllocated)
+                    listHandle.Free();
             }
+            return result;
+        }
 
-            if (string.IsNullOrEmpty(aumid))
+        private static bool EnumWindow(IntPtr handle, IntPtr pointer)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(pointer);
+            List<IntPtr> list = gch.Target as List<IntPtr> ?? throw new InvalidCastException("GCHandle Target could not be cast as List<IntPtr>");
+            list.Add(handle);
+            return true;
+        }
+
+        // I'm so sorry for this entire thing it's so incredibly cursed
+        public Tuple<string, string> GetPackageFromAppHandle(IntPtr hWnd)
+        {
+            GetWindowThreadProcessId(hWnd, out uint pid);
+            var origTitle = GetWindowTitle(hWnd);
+            IntPtr hProcess = OpenProcess(ProcessQueryLimitedInformation, false, pid);
+
+            StringBuilder processName = new StringBuilder(256);
+            GetProcessImageFileName(hProcess, processName, 256);
+            var processname = processName.ToString().Split('\\').Reverse().ToArray()[0];
+
+
+
+            uint realpid = 0;
+            if (processname.ToLower() == "applicationframehost.exe")
             {
-                return null;
-            }
-
-            try
-            {
-                string[] aumidParts = aumid.Split('!');
-                string packageFamilyName = aumidParts[0];
-
-                if (m_pkgFamilyMap.TryGetValue(packageFamilyName, out string packageFullName))
+                var lis = GetChildWindows(hWnd);
+                foreach (IntPtr wnd in lis)
                 {
-                    return m_pkgManager.FindPackageForUser(null, packageFullName);
+                    GetWindowThreadProcessId(wnd, out uint tmppid);
+                    var s = GetWindowTitle(wnd);
+                    if (!string.IsNullOrWhiteSpace(s) && origTitle.Contains(s))
+                    {
+                        //Debug.WriteLine("UWP realpid: " + tmppid.ToString());
+                        realpid = tmppid;
+                    }
                 }
-                return null;
             }
-            catch (Exception e)
-            {
-                Debug.WriteLine("UWPWindowHelper => AUMID Filter: " + e.Message);
-            }
+            Marshal.FreeHGlobal(hProcess);
 
+            if (realpid != 0)
+            {
+                hProcess = OpenProcess(ProcessQueryLimitedInformation, false, realpid);
+                uint len = 0;
+                GetPackageId(hProcess, ref len, IntPtr.Zero);
+                if (len > 0)
+                {
+                    IntPtr infoBuffer = Marshal.AllocHGlobal((int)len);
+                    GetPackageId(hProcess, ref len, infoBuffer);
+
+                    var info = Marshal.PtrToStructure<PACKAGE_ID>(infoBuffer);
+
+                    //Debug.WriteLine("UWP: " + Marshal.PtrToStringUni(info.name));
+
+                    uint pathLength = 0;
+                    GetPackagePath(ref info, 0, ref pathLength, IntPtr.Zero);
+                    if (pathLength > 0)
+                    {
+                        IntPtr pathPtr = Marshal.AllocHGlobal((int)(pathLength * sizeof(char)));
+                        GetPackagePath(ref info, 0, ref pathLength, pathPtr);
+                        string packagePath = Marshal.PtrToStringUni(pathPtr);
+
+                        StringBuilder uwpSb = new StringBuilder(256);
+                        GetProcessImageFileName(hProcess, uwpSb, 256);
+                        var uwpProcName = uwpSb.ToString().Split('\\').Reverse().ToArray()[0];
+
+                        //Debug.WriteLine("UWP: " + packagePath + ", " + uwpProcName);
+
+                        Marshal.FreeHGlobal(infoBuffer);
+                        Marshal.FreeHGlobal(pathPtr);
+                        return new Tuple<string, string>(packagePath, uwpProcName);
+                    }
+                }
+            }
             return null;
         }
     }

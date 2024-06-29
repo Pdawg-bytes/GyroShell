@@ -8,6 +8,7 @@
  */
 #endregion
 
+using Microsoft.UI.Xaml.Media.Imaging;
 using System.Drawing;
 
 namespace GyroShell.Library.Services.Helpers
@@ -22,7 +23,7 @@ namespace GyroShell.Library.Services.Helpers
         /// </summary>
         /// <param name="bmp">The target <see cref="Bitmap"/>.</param>
         /// <returns>The modified <see cref="Bitmap"/>.</returns>
-        public Bitmap RemoveTransparentPadding(Bitmap bmp);
+        public WriteableBitmap RemoveTransparentPadding(WriteableBitmap bmp);
 
         /// <summary>
         /// Applies bicubic filtering and optionally scales a bitmap.

@@ -13,10 +13,12 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using GyroShell.Library.Models.InternalData;
 using GyroShell.Library.Services.Environment;
 using GyroShell.Library.Services.Helpers;
 using GyroShell.Library.Services.Managers;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using static GyroShell.Library.Helpers.Win32.Win32Interop;
 using static GyroShell.Library.Helpers.Win32.WindowChecks;
@@ -228,11 +230,11 @@ namespace GyroShell.Services.Environment
             return IntPtr.Zero;
         }
 
-        private void AddWindow(IntPtr hWnd, WindowState initialState = WindowState.Inactive)
+        private async void AddWindow(IntPtr hWnd, WindowState initialState = WindowState.Inactive)
         {
             if (IsUserWindow(hWnd))
             {
-                _currentWindows.Add(CreateNewIcon(hWnd, initialState));
+                _currentWindows.Add(await CreateNewIcon(hWnd, initialState));
             }
         }
         private void RemoveWindow(IntPtr hWnd)
@@ -247,9 +249,9 @@ namespace GyroShell.Services.Environment
             }
         }
 
-        private IconModel CreateNewIcon(IntPtr hWnd, WindowState initialState)
+        private async Task<IconModel> CreateNewIcon(IntPtr hWnd, WindowState initialState)
         {
-            SoftwareBitmapSource bmp = m_iconHelper.GetUwpOrWin32Icon(hWnd, 32);
+            ImageSource bmp = await m_iconHelper.GetUwpOrWin32Icon(hWnd, 32);
             string windowName = m_appHelper.GetWindowTitle(hWnd);
             return new IconModel { IconName = windowName, Id = hWnd, AppIcon = bmp, State = initialState };
         }
