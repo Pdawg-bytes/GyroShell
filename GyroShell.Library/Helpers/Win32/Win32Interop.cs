@@ -549,5 +549,8 @@ namespace GyroShell.Library.Helpers.Win32
             uint reserved,
             ref uint pathLength,
             IntPtr path);
+
+        [DllImport("ext-ms-win-ntuser-window-l1-1-4.dll")]
+        public static extern void SwitchToThisWindow(IntPtr hWnd, bool fUnknown);
     }
 }
