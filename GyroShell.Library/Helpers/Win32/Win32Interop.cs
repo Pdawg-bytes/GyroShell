@@ -123,72 +123,19 @@ namespace GyroShell.Library.Helpers.Win32
 
         [DllImport("dwmapi.dll")]
         public static extern int DwmGetWindowAttribute(IntPtr hwnd, int dwAttribute, out int pvAttribute, int cbAttribute);
-        public enum DwmWindowAttribute : int
-        {
-            NCRenderingEnabled = 1,
-            NCRenderingPolicy,
-            TransitionsForceDisabled,
-            AllowNCPaint,
-            CaptionButtonBounds,
-            NonClientRtlLayout,
-            ForceIconicRepresentation,
-            Flip3DPolicy,
-            ExtendedFrameBounds,
-            HasIconicBitmap,
-            DisallowPeek,
-            ExcludedFromPeek,
-            Cloak,
-            Cloaked,
-            FreezeRepresentation,
-            PassiveUpdateMode,
-            UseHostBackdropBrush,
-            UseImmersiveDarkMode = 20,
-            WindowCornerPreference = 33,
-            BorderColor,
-            CaptionColor,
-            TextColor,
-            VisibleFrameBorderThickness,
-            SystemBackdropType,
-            Last
-        }
-
+        
         [DllImport("user32.dll", ExactSpelling = true)]
         public static extern IntPtr GetAncestor(IntPtr hwnd, GetAncestorFlags flags);
         public enum GetAncestorFlags
         {
-            /// <summary>
-            /// Retrieves the parent window. This does not include the owner, as it does with the GetParent function.
-            /// </summary>
             GetParent = 1,
-            /// <summary>
-            /// Retrieves the root window by walking the chain of parent windows.
-            /// </summary>
             GetRoot = 2,
-            /// <summary>
-            /// Retrieves the owned root window by walking the chain of parent and owner windows returned by GetParent.
-            /// </summary>
             GetRootOwner = 3
         }
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern IntPtr GetWindow(IntPtr hWnd, GetWindowType uCmd);
         public enum GetWindowType : uint
-        {
-            GW_HWNDFIRST = 0,
-            GW_HWNDLAST = 1,
-            GW_HWNDNEXT = 2,
-            GW_HWNDPREV = 3,
-            GW_OWNER = 4,
-            GW_CHILD = 5,
-            GW_ENABLEDPOPUP = 6
-        }
-
-        [DllImport("user32.dll", SetLastError = true)]
-        public static extern IntPtr LoadIcon(IntPtr hInstance, IntPtr lpIconName);
-
-        [DllImport("user32.dll", SetLastError = true)]
-        public static extern IntPtr GetWindow(IntPtr hWnd, GetWindowCmd uCmd);
-        public enum GetWindowCmd : uint
         {
             GW_HWNDFIRST = 0,
             GW_HWNDLAST = 1,
@@ -211,24 +158,6 @@ namespace GyroShell.Library.Helpers.Win32
         [DllImport("user32.dll")]
         public static extern IntPtr GetForegroundWindow();
 
-        [DllImport("kernel32.dll", SetLastError = true)]
-        public static extern bool GetPackageFamilyName(IntPtr hProcess, ref uint packageFamilyNameLength, [Out] char[] packageFamilyName, out uint outLength);
-
-        [DllImport("user32.dll", SetLastError = true)]
-        public static extern IntPtr GetWindowIcon(IntPtr hWnd, int flags);
-
-        [DllImport("user32.dll", SetLastError = true)]
-        public static extern bool DestroyIcon(IntPtr hIcon);
-
-        [DllImport("user32.dll")]
-        public static extern bool IsIconic(IntPtr hWnd);
-
-        [DllImport("user32.dll")]
-        public static extern bool SetForegroundWindow(IntPtr hWnd);
-
-        [DllImport("user32.dll")]
-        public static extern IntPtr GetPropA(IntPtr hwnd, string name);
-
         [DllImport("user32.dll")]
         public static extern bool EnumWindows(EnumWindowsCallback lpEnumFunc, IntPtr lParam);
         public delegate bool EnumWindowsCallback(IntPtr hwnd, IntPtr lParam);
@@ -239,21 +168,6 @@ namespace GyroShell.Library.Helpers.Win32
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool IsWindowVisible(IntPtr hWnd);
-
-        public delegate IntPtr ShellProc(int code, IntPtr wParam, IntPtr lParam);
-
-        [DllImport("user32.dll")]
-        public static extern IntPtr SetWindowsHookEx(int idHook, ShellProc lpfn, IntPtr hMod, uint dwThreadId);
-
-        [DllImport("user32.dll")]
-        public static extern bool UnhookWindowsHookEx(IntPtr hhk);
-
-        [DllImport("user32.dll")]
-        public static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
-
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool IsTopLevelWindow(IntPtr hWnd);
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
@@ -318,9 +232,6 @@ namespace GyroShell.Library.Helpers.Win32
         public static extern IntPtr SendMessage(IntPtr hWnd, int wMsg, IntPtr wParam, IntPtr lParam);
 
         [DllImport("user32.dll")]
-        public static extern IntPtr SendMessageW(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
-
-        [DllImport("user32.dll")]
         public static extern uint SendMessageTimeout(IntPtr hWnd, uint messageId, uint wparam, uint lparam, uint timeoutFlags, uint timeout, ref IntPtr retval);
 
         [DllImport("Shell32.dll", CharSet = CharSet.Auto, SetLastError = true)]
@@ -334,9 +245,6 @@ namespace GyroShell.Library.Helpers.Win32
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint processId);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        public static extern bool QueryFullProcessImageName([In] IntPtr hProcess, [In] int dwFlags, [Out] StringBuilder lpExeName, ref int lpdwSize);
 
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern IntPtr OpenProcess(uint processAccess, bool bInheritHandle, uint processId);
@@ -437,7 +345,6 @@ namespace GyroShell.Library.Helpers.Win32
 
         public delegate IntPtr WndProcDelegate(IntPtr hwnd, uint message, IntPtr wParam, IntPtr lParam);
 
-
         [DllImport("SHELL32", CallingConvention = CallingConvention.StdCall)]
         public static extern uint SHAppBarMessage(int dwMessage, ref APPBARDATA pData);
 
@@ -446,9 +353,6 @@ namespace GyroShell.Library.Helpers.Win32
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern int RegisterWindowMessage(string msg);
-
-        [DllImport("user32.dll", SetLastError = true)]
-        public static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
@@ -488,17 +392,6 @@ namespace GyroShell.Library.Helpers.Win32
         public static extern IntPtr GetClassLongPtr64(IntPtr hWnd, int nIndex);
 
         [StructLayout(LayoutKind.Sequential, Pack = 4)]
-        public struct PACKAGE_INFO
-        {
-            public int reserved;
-            public int flags;
-            public IntPtr path;
-            public IntPtr packageFullName;
-            public IntPtr packageFamilyName;
-            public PACKAGE_ID packageId;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 4)]
         public struct PACKAGE_ID
         {
             public int reserved;
@@ -517,9 +410,6 @@ namespace GyroShell.Library.Helpers.Win32
             Neutral = 11,
             Arm64 = 12
         }
-
-        [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
-        public static extern int GetApplicationUserModelId(IntPtr hProcess, ref int applicationUserModelIdLength, StringBuilder applicationUserModelId);
 
         public delegate bool EnumWindowProc(IntPtr hwnd, IntPtr lParam);
 
