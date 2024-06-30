@@ -105,7 +105,7 @@ namespace GyroShell.Services.Helpers
 
                 var transform = new BitmapTransform()
                 {
-                    InterpolationMode = BitmapInterpolationMode.Cubic
+                    InterpolationMode = BitmapInterpolationMode.Fant
                 };
 
                 // Get the pixel data with the applied transform
