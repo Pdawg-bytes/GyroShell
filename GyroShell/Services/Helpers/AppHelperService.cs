@@ -11,19 +11,12 @@
 using GyroShell.Library.Services.Helpers;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Xml.Linq;
-using Windows.ApplicationModel;
-using Windows.ApplicationModel.Core;
-using Windows.Management.Deployment;
-using Windows.Storage.Streams;
-using Windows.UI.Popups;
 using static GyroShell.Library.Helpers.Win32.Win32Interop;
-using static GyroShell.Library.Interfaces.IPropertyStoreAUMID;
 
 namespace GyroShell.Services.Helpers
 {

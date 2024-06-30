@@ -11,8 +11,6 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using Windows.ApplicationModel;
-using static GyroShell.Library.Interfaces.IPropertyStoreAUMID;
 
 namespace GyroShell.Library.Helpers.Win32
 {
@@ -212,9 +210,6 @@ namespace GyroShell.Library.Helpers.Win32
 
         [DllImport("user32.dll")]
         public static extern IntPtr GetForegroundWindow();
-
-        [DllImport("ole32.dll")]
-        public static extern int PropVariantClear(ref Interfaces.IPropertyStoreAUMID.PropVariant pvar);
 
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern bool GetPackageFamilyName(IntPtr hProcess, ref uint packageFamilyNameLength, [Out] char[] packageFamilyName, out uint outLength);
@@ -442,8 +437,6 @@ namespace GyroShell.Library.Helpers.Win32
 
         public delegate IntPtr WndProcDelegate(IntPtr hwnd, uint message, IntPtr wParam, IntPtr lParam);
 
-        [DllImport("shell32.dll")]
-        public static extern int SHGetPropertyStoreForWindow(IntPtr hwnd, ref Guid iid, [Out, MarshalAs(UnmanagedType.Interface)] out IPropertyStore propertyStore);
 
         [DllImport("SHELL32", CallingConvention = CallingConvention.StdCall)]
         public static extern uint SHAppBarMessage(int dwMessage, ref APPBARDATA pData);
