@@ -63,10 +63,12 @@ namespace GyroShell.Controls
             if (window.State == WindowState.Active)
             {
                 ShowWindow(window.Id, 6);
+                //SwitchToThisWindow(window.Id, false);
             }
             else
             {
-                ShowWindow(window.Id, 9);
+                //ShowWindow(window.Id, 9);
+                SwitchToThisWindow(window.Id, true);
             }
         }
 

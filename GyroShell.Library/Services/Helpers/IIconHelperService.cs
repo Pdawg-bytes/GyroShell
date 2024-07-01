@@ -8,8 +8,11 @@
  */
 #endregion
 
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System;
+using System.Threading.Tasks;
+using Windows.Graphics.Imaging;
 
 namespace GyroShell.Library.Services.Helpers
 {
@@ -28,6 +31,6 @@ namespace GyroShell.Library.Services.Helpers
         /// <param name="hwnd">The handle of the target window.</param>
         /// <param name="targetSize">The target size of the returned icon.</param>
         /// <returns>A <see cref="SoftwareBitmapSource"/> containing the window's icon.</returns>
-        public SoftwareBitmapSource GetUwpOrWin32Icon(IntPtr hWnd, int targetSize);
+        public Task<ImageSource> GetUwpOrWin32Icon(IntPtr hWnd, int targetSize);
     }
 }

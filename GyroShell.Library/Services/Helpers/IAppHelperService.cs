@@ -31,7 +31,7 @@ namespace GyroShell.Library.Services.Helpers
         /// </summary>
         /// <param name="hWnd">The window handle of the target UWP app.</param>
         /// <returns>The app's <see cref="Package"/> object.</returns>
-        public Package GetPackageFromAppHandle(IntPtr hWnd);
+        public Tuple<string, string> GetPackageFromAppHandle(IntPtr hWnd);
 
         /// <summary>
         /// Gets the window title of a window.
@@ -39,12 +39,5 @@ namespace GyroShell.Library.Services.Helpers
         /// <param name="hWnd">The handle of the target window.</param>
         /// <returns>The window title.</returns>
         public string GetWindowTitle(IntPtr hWnd);
-
-        /// <summary>
-        /// Gets a stream reference to a UWP app's icon.
-        /// </summary>
-        /// <param name="hWnd">The window handle of the target UWP app.</param>
-        /// <returns>A <see cref="RandomAccessStreamReference"/> containing the apps' icon.</returns>
-        public RandomAccessStreamReference GetUwpIconStream(IntPtr hWnd);
     }
 }

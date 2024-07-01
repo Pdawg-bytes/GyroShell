@@ -9,10 +9,13 @@
 #endregion
 
 using GyroShell.Library.Services.Helpers;
+using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.Graphics.Imaging;
 
 namespace GyroShell.Services.Helpers
 {
@@ -45,7 +48,7 @@ namespace GyroShell.Services.Helpers
             return resampledImage;
         }
 
-        public Bitmap RemoveTransparentPadding(Bitmap bmp)
+        public WriteableBitmap RemoveTransparentPadding(WriteableBitmap bmp)
         {
             Rectangle bounds = GetNonTransparentBounds(bmp);
 
@@ -54,24 +57,48 @@ namespace GyroShell.Services.Helpers
                 return null;
             }
 
-            Bitmap croppedBitmap = new Bitmap(bounds.Width, bounds.Height);
-            using (Graphics g = Graphics.FromImage(croppedBitmap))
+            int croppedWidth = (int)bounds.Width;
+            int croppedHeight = (int)bounds.Height;
+            WriteableBitmap croppedBitmap = new WriteableBitmap(croppedWidth, croppedHeight);
+
+            byte[] pixels = bmp.PixelBuffer.ToArray();
+            byte[] croppedPixels = new byte[croppedWidth * croppedHeight * 4];
+
+            for (int y = 0; y < croppedHeight; y++)
             {
-                g.DrawImage(bmp, new Rectangle(0, 0, croppedBitmap.Width, croppedBitmap.Height), bounds, GraphicsUnit.Pixel);
+                for (int x = 0; x < croppedWidth; x++)
+                {
+                    int srcIndex = ((bounds.Top + y) * bmp.PixelWidth + bounds.Left + x) * 4;
+                    int destIndex = (y * croppedWidth + x) * 4;
+
+                    croppedPixels[destIndex] = pixels[srcIndex];       // Blue
+                    croppedPixels[destIndex + 1] = pixels[srcIndex + 1]; // Green
+                    croppedPixels[destIndex + 2] = pixels[srcIndex + 2]; // Red
+                    croppedPixels[destIndex + 3] = pixels[srcIndex + 3]; // Alpha
+                }
+            }
+            using (var stream = croppedBitmap.PixelBuffer.AsStream())
+            {
+                stream.Write(croppedPixels, 0, croppedPixels.Length);
             }
 
             return croppedBitmap;
         }
-        private Rectangle GetNonTransparentBounds(Bitmap bmp)
+        private Rectangle GetNonTransparentBounds(WriteableBitmap bmp)
         {
-            int left = bmp.Width, right = 0, top = bmp.Height, bottom = 0;
+            if (bmp == null) return Rectangle.Empty;
 
-            for (int y = 0; y < bmp.Height; y++)
+            byte[] pixels = bmp.PixelBuffer.ToArray();
+            int left = bmp.PixelWidth, right = 0, top = bmp.PixelHeight, bottom = 0;
+
+            for (int y = 0; y < bmp.PixelHeight; y++)
             {
-                for (int x = 0; x < bmp.Width; x++)
+                for (int x = 0; x < bmp.PixelWidth; x++)
                 {
-                    Color pixelColor = bmp.GetPixel(x, y);
-                    if (pixelColor.A != 0)
+                    int pixelIndex = (y * bmp.PixelWidth + x) * 4;
+                    byte alpha = pixels[pixelIndex + 3];
+
+                    if (alpha != 0)
                     {
                         if (x < left) left = x;
                         if (x > right) right = x;

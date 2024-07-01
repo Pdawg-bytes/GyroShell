@@ -16,10 +16,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using Windows.ApplicationModel;
-using Windows.ApplicationModel.Core;
-using Windows.Management.Deployment;
-using Windows.Storage.Streams;
+using System.Xml.Linq;
 using static GyroShell.Library.Helpers.Win32.Win32Interop;
 using static GyroShell.Library.Interfaces.IPropertyStoreAUMID;
 
@@ -27,19 +24,8 @@ namespace GyroShell.Services.Helpers
 {
     internal class AppHelperService : IAppHelperService
     {
-        private Dictionary<string, string> m_pkgFamilyMap;
-        private PackageManager m_pkgManager;
-
         public AppHelperService()
         {
-            m_pkgFamilyMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            m_pkgManager = new PackageManager();
-
-            IEnumerable<Package> packages = m_pkgManager.FindPackagesForUser(null);
-            foreach (Package package in packages)
-            {
-                m_pkgFamilyMap[package.Id.FamilyName] = package.Id.FullName;
-            }
         }
 
         public string GetWindowTitle(IntPtr hWnd)
@@ -52,58 +38,91 @@ namespace GyroShell.Services.Helpers
             return sb.ToString();
         }
 
-
-        public RandomAccessStreamReference GetUwpIconStream(IntPtr hWnd)
-        {
-            Package pkg = GetPackageFromAppHandle(hWnd);
-            AppListEntry entry = pkg.GetAppListEntries().First(ent => ent.DisplayInfo.DisplayName.ToLower().Contains(GetWindowTitle(hWnd).ToLower()));
-
-            if (entry != null)
-            {
-                return entry.DisplayInfo.GetLogo(new Windows.Foundation.Size(176, 176));
-            }
-            return null;
-        }
-
         public string GetUwpAppIconPath(IntPtr hWnd)
         {
-            string normalPath = Uri.UnescapeDataString(Uri.UnescapeDataString(GetPackageFromAppHandle(hWnd).Logo.AbsolutePath)).Replace("/", "\\");
-            string finalPath = GetUwpExtraIcons(normalPath, GetWindowTitle(hWnd));
+            var values = GetPackageFromAppHandle(hWnd);
+            string normalPath = Uri.UnescapeDataString(values.Item1);
+            string entrypoint = values.Item2;
+            string finalPath = GetUwpExtraIcons(normalPath, entrypoint);
 
             return finalPath;
         }
-        private string GetUwpExtraIcons(string path, string appName)
+        private string GetUwpExtraIcons(string path, string entrypoint)
         {
-            string[] pathParts = path.Split('\\');
-            string rootAssetsFolder = string.Join("\\", pathParts.Take(pathParts.Length - 1));
+            // read manifest
+            string manifestPath = Path.Combine(path, "AppXManifest.xml");
+            using FileStream stream = File.Open(manifestPath, FileMode.Open, FileAccess.Read, FileShare.Read);
 
-            string[] allFiles = Directory.GetFiles(rootAssetsFolder);
-            foreach (string filePath in allFiles)
+            XDocument xml = XDocument.Load(stream);
+            XNamespace ns = "http://schemas.microsoft.com/appx/manifest/foundation/windows10";
+            XNamespace uap = "http://schemas.microsoft.com/appx/manifest/uap/windows10";
+
+            /*
+            var resScale = xml.Element(ns + "Package")
+                                .Element(ns + "Resources")
+                                .Elements(ns + "Resource")
+                                .FirstOrDefault(e => e.Attribute(uap + "Scale") != null);
+            string scale = resScale != null ? ".scale-" + resScale.Attribute(uap + "Scale").Value : "";
+            */
+
+            // idk
+            List<string> scales = new() { ".scale-100", ".scale-200", ".scale-300", ".scale-400" };
+
+            var resApp = xml.Element(ns + "Package")
+                                .Element(ns + "Applications")
+                                .Elements(ns + "Application")
+                                .FirstOrDefault(e => e.Attribute("Id") != null && e.Attribute("Id").Value == entrypoint);
+            string logo = resApp.Element(uap + "VisualElements").Attribute("Square44x44Logo").Value;
+
+            string ext = Path.GetExtension(logo);
+            string dir = Path.GetDirectoryName(logo);
+
+            foreach (string scale in scales)
             {
-                if (Path.GetFileName(filePath).Contains("StoreLogo.scale-100"))
+                string finalPath = Path.Combine(path, dir, Path.GetFileNameWithoutExtension(logo) + scale + ext);
+                Debug.WriteLine(finalPath);
+                if (File.Exists(finalPath))
                 {
-                    string e = filePath.Replace(" ", "").ToLower();
-                    if (e.Contains(appName.Replace(" ", "").ToLower()))
-                    {
-                        return filePath;
-                    }
+                    Debug.WriteLine("found:" + finalPath);
+                    return finalPath;
                 }
             }
-
-            return path;
+            return null;
         }
+        private static string[] GetPackages(string familyName)
+        {
+            uint count = 0;
+            uint bufferLength = 0;
 
+            // get size
+            GetPackagesByPackageFamily(familyName, ref count, IntPtr.Zero, ref bufferLength, IntPtr.Zero);
+
+            IntPtr packageFullNamesPtr = Marshal.AllocHGlobal((int)(count * IntPtr.Size));
+            IntPtr bufferPtr = Marshal.AllocHGlobal((int)bufferLength * sizeof(char));
+
+            try
+            {
+                GetPackagesByPackageFamily(familyName, ref count, packageFullNamesPtr, ref bufferLength, bufferPtr);
+                string[] packageFullNames = new string[count];
+                for (int i = 0; i < count; i++)
+                {
+                    IntPtr ptr = Marshal.ReadIntPtr(packageFullNamesPtr, i * IntPtr.Size);
+                    packageFullNames[i] = Marshal.PtrToStringUni(ptr);
+                }
+                return packageFullNames;
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(bufferPtr);
+                Marshal.FreeHGlobal(packageFullNamesPtr);
+            }
+        }
         // I'm so sorry for this entire thing it's so incredibly cursed
-        public Package GetPackageFromAppHandle(IntPtr hWnd)
+        public Tuple<string, string> GetPackageFromAppHandle(IntPtr hWnd)
         {
             Guid guidPropertyStore = new Guid("{886D8EEB-8CF2-4446-8D02-CDBA1DBDCF99}");
-            IPropertyStore propertyStore;                      
+            IPropertyStore propertyStore;
             int result = SHGetPropertyStoreForWindow(hWnd, ref guidPropertyStore, out propertyStore);
-            if (result != 0)
-            {
-                return null;
-            }
-
             PropertyKey propertyKey = new(new Guid("9F4C2855-9F79-4B39-A8D0-E1D42DE1D5F3"), 5);
             PropVariant value = new();
             propertyStore.GetValue(ref propertyKey, out value);
@@ -121,27 +140,33 @@ namespace GyroShell.Services.Helpers
                 value.Dispose();
             }
 
-            if (string.IsNullOrEmpty(aumid))
+            if (string.IsNullOrWhiteSpace(aumid) || !aumid.Contains('!'))
             {
                 return null;
             }
 
-            try
-            {
-                string[] aumidParts = aumid.Split('!');
-                string packageFamilyName = aumidParts[0];
+            string[] aumidParts = aumid.Split('!');
+            string packageFamilyName = aumidParts[0];
+            string entrypoint = aumidParts[1];
 
-                if (m_pkgFamilyMap.TryGetValue(packageFamilyName, out string packageFullName))
-                {
-                    return m_pkgManager.FindPackageForUser(null, packageFullName);
-                }
-                return null;
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine("UWPWindowHelper => AUMID Filter: " + e.Message);
-            }
+            // should return 1 package, idk
+            string[] packages = GetPackages(packageFamilyName);
+            string package = packages.Last();
 
+
+            uint pathLength = 0;
+
+            GetPackagePathByFullName(package, ref pathLength, IntPtr.Zero);
+            IntPtr pathPtr = Marshal.AllocHGlobal((int)(pathLength * sizeof(char)));
+            if (pathLength > 0)
+            {
+                result = GetPackagePathByFullName(package, ref pathLength, pathPtr);
+                string packagePath = Marshal.PtrToStringUni(pathPtr);
+                Debug.WriteLine(packagePath + ", aumid: " + aumid);
+                Marshal.FreeHGlobal(pathPtr);
+
+                return new Tuple<string, string>(packagePath, entrypoint);
+            }
             return null;
         }
     }

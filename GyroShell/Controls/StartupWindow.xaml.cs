@@ -66,7 +66,7 @@ namespace GyroShell.Controls
             m_AppWindow.SetPresenter(AppWindowPresenterKind.Default);
 
             hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
-            WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
+            Microsoft.UI.WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
             AppWindow appWindow = AppWindow.GetFromWindowId(windowId);
 
             // Hide in ALT+TAB view
@@ -111,7 +111,7 @@ namespace GyroShell.Controls
         private OverlappedPresenter GetAppWindowAndPresenter()
         {
             IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
-            WindowId WndId = Win32Interop.GetWindowIdFromWindow(hWnd);
+            Microsoft.UI.WindowId WndId = Win32Interop.GetWindowIdFromWindow(hWnd);
             AppWindow _apw = AppWindow.GetFromWindowId(WndId);
 
             return _apw.Presenter as OverlappedPresenter;
@@ -119,7 +119,7 @@ namespace GyroShell.Controls
         private AppWindow GetAppWindowForCurrentWindow()
         {
             IntPtr hWndApp = WinRT.Interop.WindowNative.GetWindowHandle(this);
-            WindowId WndIdApp = Win32Interop.GetWindowIdFromWindow(hWndApp);
+            Microsoft.UI.WindowId WndIdApp = Win32Interop.GetWindowIdFromWindow(hWndApp);
 
             return AppWindow.GetFromWindowId(WndIdApp);
         }
