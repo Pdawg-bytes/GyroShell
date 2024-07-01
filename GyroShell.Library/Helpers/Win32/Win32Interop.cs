@@ -11,6 +11,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
+using static GyroShell.Library.Interfaces.IPropertyStoreAUMID;
 
 namespace GyroShell.Library.Helpers.Win32
 {
@@ -411,29 +412,37 @@ namespace GyroShell.Library.Helpers.Win32
             Arm64 = 12
         }
 
-        public delegate bool EnumWindowProc(IntPtr hwnd, IntPtr lParam);
-
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool EnumChildWindows(IntPtr hwndParent, EnumWindowProc lpEnumFunc, IntPtr lParam);
-
         [DllImport("psapi.dll")]
         public static extern uint GetProcessImageFileName(
             IntPtr hProcess,
             [Out] StringBuilder lpImageFileName,
             [In][MarshalAs(UnmanagedType.U4)] int nSize);
 
-        [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
-        public static extern ulong GetPackageId(IntPtr hProcess, ref UInt32 bufferLength, IntPtr buffer);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        public static extern int GetPackagePath(
-            ref PACKAGE_ID packageId,
-            uint reserved,
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        public static extern int GetPackagePathByFullName(
+            string packageFullName,
             ref uint pathLength,
             IntPtr path);
 
         [DllImport("ext-ms-win-ntuser-window-l1-1-4.dll")]
         public static extern void SwitchToThisWindow(IntPtr hWnd, bool fUnknown);
+
+        [DllImport("ole32.dll")]
+        public static extern int PropVariantClear(ref PropVariant pvar);
+
+        [DllImport("shell32.dll")]
+        public static extern int SHGetPropertyStoreForWindow(IntPtr hwnd, ref Guid iid, [Out, MarshalAs(UnmanagedType.Interface)] out IPropertyStore propertyStore);
+
+        [DllImport("user32.dll", EntryPoint = "#2573")]
+        public static extern bool IsShellFrameWindow(IntPtr hWnd);
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        public static extern int GetPackagesByPackageFamily(
+        string packageFamilyName,
+        ref uint count,
+        [Out, Optional] IntPtr packageFullNames,
+        ref uint bufferLength,
+        [Out, Optional] IntPtr buffer);
+
     }
 }

@@ -38,9 +38,7 @@ namespace GyroShell.Services.Helpers
             m_appHelper = appHelper;
         }
 
-
-        public bool IsUwpWindow(IntPtr hWnd) =>
-            m_appHelper.GetPackageFromAppHandle(hWnd) != null;
+        public bool IsUwpWindow(IntPtr hWnd) => IsShellFrameWindow(hWnd);
 
         public async Task<ImageSource> GetUwpOrWin32Icon(IntPtr hWnd, int targetSize)
         {
