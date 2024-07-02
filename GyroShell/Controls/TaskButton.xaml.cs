@@ -14,6 +14,9 @@ using System.ComponentModel;
 using static GyroShell.Library.Models.InternalData.IconModel;
 using static GyroShell.Library.Helpers.Win32.Win32Interop;
 using GyroShell.Library.Models.InternalData;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
 
 namespace GyroShell.Controls
 {
@@ -21,9 +24,25 @@ namespace GyroShell.Controls
     {
         private IconModel window;
 
+        private static Dictionary<WindowState, string> _visualStateStringPairs;
+
         public TaskButton()
         {
             this.InitializeComponent();
+            _visualStateStringPairs = new Dictionary<WindowState, string>()
+            {
+                { WindowState.Active, "Active" },
+                { WindowState.Inactive, "Inactive" },
+                { WindowState.Flashing, "Flashing" },
+                { WindowState.Hidden, "Hidden" }
+            };
+        }
+
+        private void TaskButton_ActualThemeChanged(FrameworkElement sender, object args)
+        {
+            WindowState originalState = window.State;
+            VisualStateManager.GoToState(this, "Unused", false);
+            VisualStateManager.GoToState(this, _visualStateStringPairs[originalState], false);
         }
 
         private void TaskButton_Loaded(object sender, RoutedEventArgs e)
@@ -32,6 +51,7 @@ namespace GyroShell.Controls
             window.PropertyChanged += Window_PropertyChanged;
 
             VisualStateManager.GoToState(this, "Inactive", true);
+            this.ActualThemeChanged += TaskButton_ActualThemeChanged;
         }
 
         private void Window_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -52,6 +72,7 @@ namespace GyroShell.Controls
                             VisualStateManager.GoToState(this, "Flashing", true);
                             break;
                         case WindowState.Hidden:
+                            VisualStateManager.GoToState(this, "Hidden", true);
                             break;
                     }
                     break;

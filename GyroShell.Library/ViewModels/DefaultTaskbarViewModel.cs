@@ -314,6 +314,9 @@ namespace GyroShell.Library.ViewModels
         [ObservableProperty]
         private string networkStatusCharacter;
 
+        [ObservableProperty]
+        private string networkBackCharacter;
+
         private void NetworkService_InternetStatusChanged(object sender, EventArgs e)
         {
             UpdateNetworkStatus();
@@ -321,33 +324,40 @@ namespace GyroShell.Library.ViewModels
         private void UpdateNetworkStatus()
         {
             string statusTextBuf = "\uE774";
+            string backTextBuf = "\uE774";
             if (m_netService.IsInternetAvailable)
             {
                 switch (m_netService.InternetType)
                 {
                     case InternetConnection.Wired:
                         statusTextBuf = "\uE839";
+                        backTextBuf = "\uE839";
                         OnPropertyChanged(nameof(NetworkStatusMargin));
                         break;
                     case InternetConnection.Wireless:
-                        statusTextBuf = IconConstants.WiFiIcons[m_netService.SignalStrength];
+                        statusTextBuf = IconConstants.WiFiIcons[(int)m_netService.SignalStrength];
+                        backTextBuf = "\uE701";
                         break;
                     case InternetConnection.Data:
-                        statusTextBuf = IconConstants.DataIcons[m_netService.SignalStrength];
+                        statusTextBuf = IconConstants.DataIcons[(int)m_netService.SignalStrength];
+                        backTextBuf = "\uEC3B";
                         break;
                     case InternetConnection.Unknown:
                     default:
                         statusTextBuf = "\uE774";
+                        backTextBuf = "\uE774";
                         break;
                 }
             }
             else
             {
                 statusTextBuf = "\uEB55";
+                backTextBuf = "\uEB55";
             }
             m_dispatcherService.DispatcherQueue.TryEnqueue(() =>
             {
                 NetworkStatusCharacter = statusTextBuf;
+                NetworkBackCharacter = backTextBuf;
             });
         }
         #endregion

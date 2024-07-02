@@ -61,8 +61,8 @@
             <GridView ItemsSource="{x:Bind ViewModel.CurrentWindows, Mode=OneWay}" ReorderMode="Enabled" CanReorderItems="True" ScrollViewer.VerticalScrollMode="Disabled" ScrollViewer.VerticalScrollBarVisibility="Hidden" x:Name="TbOpenGrid" Height="48" Background="Transparent" SelectionMode="None" Padding="0" VerticalAlignment="Center" Margin="5,5,0,0">
                 <GridView.ItemContainerTransitions>
                     <TransitionCollection>
-                        <ReorderThemeTransition/>
                         <EntranceThemeTransition IsStaggeringEnabled="True" />
+                        <ReorderThemeTransition/>
                         <RepositionThemeTransition/>
                     </TransitionCollection>
                 </GridView.ItemContainerTransitions>
@@ -74,11 +74,6 @@
             </GridView>
         </StackPanel>
         <StackPanel x:Name="RightControls" Orientation="Horizontal" HorizontalAlignment="Right">
-            <StackPanel.ChildrenTransitions>
-                <TransitionCollection>
-                    <EntranceThemeTransition IsStaggeringEnabled="True" />
-                </TransitionCollection>
-            </StackPanel.ChildrenTransitions>
             <Button x:Name="SysTray" Command="{x:Bind ViewModel.SystemTrayClickedCommand}" HorizontalAlignment="Right" VerticalAlignment="Center" Height="40" Background="Transparent" BorderBrush="Transparent" Margin="4,4,10,4" Padding="4" ToolTipService.ToolTip="System Tray">
                 <Button.Content>
                     <TextBlock Text="&#xE70E;" FontFamily="Segoe MDL2 Assets" x:Name="TrayIcon" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,2,0,0" FontSize="12"/>
@@ -89,10 +84,11 @@
                     <StackPanel Orientation="Horizontal">
                         <TextBlock FontFamily="{x:Bind ViewModel.IconFontFamily, Mode=OneWay}" Text="{x:Bind ViewModel.BatteryStatusCharacter, Mode=OneWay}" VerticalAlignment="Center" Margin="{x:Bind ViewModel.BatteryStatusMargin, Mode=OneWay}" FontSize="16" x:Name="BattStatus" Visibility="Visible"/>
                         <Grid>
+                            <TextBlock FontFamily="{x:Bind ViewModel.IconFontFamily, Mode=OneWay}" Text="{x:Bind ViewModel.NetworkBackCharacter, Mode=OneWay}" VerticalAlignment="Center" Margin="{x:Bind ViewModel.NetworkStatusMargin, Mode=OneWay}" FontSize="16" x:Name="NetworkBack" Foreground="{ThemeResource SystemChromeGrayColor}" Opacity="0.5"/>
                             <TextBlock FontFamily="{x:Bind ViewModel.IconFontFamily, Mode=OneWay}" Text="{x:Bind ViewModel.NetworkStatusCharacter, Mode=OneWay}" VerticalAlignment="Center" Margin="{x:Bind ViewModel.NetworkStatusMargin, Mode=OneWay}" FontSize="16" x:Name="NetworkStatus"/>
                         </Grid>
                         <Grid>
-                            <TextBlock FontFamily="{x:Bind ViewModel.IconFontFamily, Mode=OneWay}" Text="&#xE995;" Visibility="{x:Bind ViewModel.SoundBackIconVisibility, Mode=OneWay}" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="{x:Bind ViewModel.SoundStatusMargin}" FontSize="16" Opacity="0.3"/>
+                            <TextBlock FontFamily="{x:Bind ViewModel.IconFontFamily, Mode=OneWay}" Text="&#xE995;" Visibility="{x:Bind ViewModel.SoundBackIconVisibility, Mode=OneWay}" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="{x:Bind ViewModel.SoundStatusMargin}" FontSize="16" Foreground="{ThemeResource SystemChromeGrayColor}" Opacity="0.5"/>
                             <TextBlock FontFamily="{x:Bind ViewModel.IconFontFamily, Mode=OneWay}" Text="{x:Bind ViewModel.SoundStatusText, Mode=OneWay}" VerticalAlignment="Center" Margin="{x:Bind ViewModel.SoundStatusMargin, Mode=OneWay}" FontSize="16" x:Name="SndStatus"/>
                         </Grid>
                     </StackPanel>

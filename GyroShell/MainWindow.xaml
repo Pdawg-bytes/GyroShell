@@ -8,6 +8,6 @@
     mc:Ignorable="d"
     >
     <Grid>
-        <Frame x:Name="TaskbarFrame"/>
+        <Frame Background="Transparent" BorderBrush="Transparent" BorderThickness="0" x:Name="TaskbarFrame"/>
     </Grid>
 </Window>

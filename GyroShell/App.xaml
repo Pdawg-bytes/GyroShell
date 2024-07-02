@@ -8,8 +8,42 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
-                <!-- Other merged dictionaries here -->
             </ResourceDictionary.MergedDictionaries>
+
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Dark">
+                    <Color x:Key="DefaultTaskButtonBackgroundColor">#00FFFFFF</Color>
+                    <Color x:Key="DefaultTaskButtonHighlightBorderColor">#8BFFFFFF</Color>
+
+                    <Color x:Key="TaskButtonOuterBorderColorTop">#18FFFFFF</Color>
+                    <Color x:Key="TaskButtonOuterBorderColorBottom">#13FFFFFF</Color>
+
+                    <Color x:Key="InactiveTaskButtonBackgroundColor">#00FFFFFF</Color>
+                    <Color x:Key="InactiveTaskButtonHighlightBorderColor">#8BFFFFFF</Color>
+
+                    <Color x:Key="ActiveTaskButtonBackgroundColor">#0FFFFFFF</Color>
+
+                    <Color x:Key="FlashingTaskButtonBackgroundFilled">#FF442726</Color>
+                    <Color x:Key="FlashingTaskButtonBackgroundTransparent">#00442726</Color>
+                    <Color x:Key="FlashingTaskButtonHighlightBorderColor">#FFFF99A4</Color>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Light">
+                    <Color x:Key="DefaultTaskButtonBackgroundColor">#00FFFFFF</Color>
+                    <Color x:Key="DefaultTaskButtonHighlightBorderColor">#72000000</Color>
+                    
+                    <Color x:Key="TaskButtonOuterBorderColorTop">#12000000</Color>
+                    <Color x:Key="TaskButtonOuterBorderColorBottom">#02000000</Color>
+
+                    <Color x:Key="InactiveTaskButtonBackgroundColor">#00FFFFFF</Color>
+                    <Color x:Key="InactiveTaskButtonHighlightBorderColor">#72000000</Color>
+
+                    <Color x:Key="ActiveTaskButtonBackgroundColor">#80FFFFFF</Color>
+
+                    <Color x:Key="FlashingTaskButtonBackgroundFilled">#FFFDE7E9</Color>
+                    <Color x:Key="FlashingTaskButtonBackgroundTransparent">#00FDE7E9</Color>
+                    <Color x:Key="FlashingTaskButtonHighlightBorderColor">#FFC42B1C</Color>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
 
             <Style x:Key="RightAlignedCompactToggleSwitchStyle" BasedOn="{StaticResource DefaultToggleSwitchStyle}" TargetType="ToggleSwitch">
                 <Style.Setters>
