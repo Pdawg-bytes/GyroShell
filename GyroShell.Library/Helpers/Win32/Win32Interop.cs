@@ -48,6 +48,7 @@ namespace GyroShell.Library.Helpers.Win32
         public const int SW_MINIMIZE = 6;
         public const int SW_SHOW = 5;
         public const int SW_HIDE = 0;
+        public const int SW_MAXIMIZE = 3;
 
         public const int SPI_SETWORKAREA = 0x002F;
         public const int SPI_GETWORKAREA = 0x0030;
@@ -75,6 +76,7 @@ namespace GyroShell.Library.Helpers.Win32
         public const int WS_EX_TOOLWINDOW = 0x00000080;
         public const int WS_EX_NOACTIVATE = 0x08000000;
         public const int WS_EX_WINDOWEDGE = 0x100;
+        public const int WS_EX_TOPMOST = 0x00000008;
         public const int WS_VISIBLE = 0x10000000;
         public const int WS_CHILD = 0x40000000;
 
@@ -118,13 +120,15 @@ namespace GyroShell.Library.Helpers.Win32
         public const int GW_OWNER = 4;
         public const long OBJID_WINDOW = 0x00000000L;
 
+        public const uint PROCESS_QUERY_INFORMATION = 0x0400;
+
         public const uint EWX_LOGOFF = 0x00000000;
 
         public delegate bool EnumThreadProc(IntPtr hwnd, IntPtr lParam);
 
         [DllImport("dwmapi.dll")]
         public static extern int DwmGetWindowAttribute(IntPtr hwnd, int dwAttribute, out int pvAttribute, int cbAttribute);
-        
+
         [DllImport("user32.dll", ExactSpelling = true)]
         public static extern IntPtr GetAncestor(IntPtr hwnd, GetAncestorFlags flags);
         public enum GetAncestorFlags
@@ -176,6 +180,12 @@ namespace GyroShell.Library.Helpers.Win32
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool IsWindow(IntPtr hWnd);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+
+        [DllImport("user32.dll")]
+        public static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
 
         [DllImport("user32.dll", EntryPoint = "GetWindowLongPtr")]
         public static extern IntPtr GetWindowLongPtr(IntPtr hWnd, int nIndex);
@@ -436,13 +446,48 @@ namespace GyroShell.Library.Helpers.Win32
         [DllImport("user32.dll", EntryPoint = "#2573")]
         public static extern bool IsShellFrameWindow(IntPtr hWnd);
 
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool GetWindowBand([In] IntPtr hWnd, [Out] out UIntPtr pdwBand);
+        public enum ZBID : uint
+        {
+            ZBID_DEFAULT = 0,
+            ZBID_DESKTOP = 1,
+            ZBID_UIACCESS = 2,
+            ZBID_IMMERSIVE_IHM = 3,
+            ZBID_IMMERSIVE_NOTIFICATION = 4,
+            ZBID_IMMERSIVE_APPCHROME = 5,
+            ZBID_IMMERSIVE_MOGO = 6,
+            ZBID_IMMERSIVE_EDGY = 7,
+            ZBID_IMMERSIVE_INACTIVEMOBODY = 8,
+            ZBID_IMMERSIVE_INACTIVEDOCK = 9,
+            ZBID_IMMERSIVE_ACTIVEMOBODY = 10,
+            ZBID_IMMERSIVE_ACTIVEDOCK = 11,
+            ZBID_IMMERSIVE_BACKGROUND = 12,
+            ZBID_IMMERSIVE_SEARCH = 13,
+            ZBID_GENUINE_WINDOWS = 14,
+            ZBID_IMMERSIVE_RESTRICTED = 15,
+            ZBID_SYSTEM_TOOLS = 16,
+            ZBID_LOCK = 17,
+            ZBID_ABOVELOCK_UX = 18,
+        };
+
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         public static extern int GetPackagesByPackageFamily(
-        string packageFamilyName,
-        ref uint count,
-        [Out, Optional] IntPtr packageFullNames,
-        ref uint bufferLength,
-        [Out, Optional] IntPtr buffer);
+            string packageFamilyName,
+            ref uint count,
+            [Out, Optional] IntPtr packageFullNames,
+            ref uint bufferLength,
+            [Out, Optional] IntPtr buffer);
 
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool SetForegroundWindow(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetLastActivePopup(IntPtr hWnd);
+
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        public static extern bool QueryFullProcessImageName(IntPtr hProcess, uint dwFlags, [Out, MarshalAs(UnmanagedType.LPTStr)] StringBuilder lpExeName, ref uint lpdwSize);
     }
 }

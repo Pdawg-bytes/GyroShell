@@ -93,7 +93,7 @@ namespace GyroShell.Library.ViewModels
             m_explorerManager.SystemControlStateChanged += ExplorerManager_SystemControlStateChanged;
         }
 
-        public ObservableCollection<IconModel> CurrentWindows => m_shellHookService.CurrentWindows;
+        public ObservableCollection<WindowModel> CurrentWindows => m_shellHookService.CurrentWindows;
 
         private void AppSettings_SettingUpdated(object sender, string key)
         {

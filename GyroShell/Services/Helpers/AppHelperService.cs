@@ -38,6 +38,22 @@ namespace GyroShell.Services.Helpers
             return sb.ToString();
         }
 
+        public string GetHandlePath(IntPtr hWnd)
+        {
+            StringBuilder sb = new StringBuilder(1024);
+            uint handleProcId;
+            GetWindowThreadProcessId(hWnd, out handleProcId);
+
+            if (handleProcId == 0) return "";
+
+            IntPtr procHandle = OpenProcess(PROCESS_QUERY_INFORMATION, false, handleProcId);
+
+            uint pathLength = (uint)sb.Capacity;
+            QueryFullProcessImageName(procHandle, 0, sb, ref pathLength);
+
+            return sb.ToString();
+        }
+
         public string GetUwpAppIconPath(IntPtr hWnd)
         {
             var values = GetPackageFromAppHandle(hWnd);
@@ -57,15 +73,6 @@ namespace GyroShell.Services.Helpers
             XNamespace ns = "http://schemas.microsoft.com/appx/manifest/foundation/windows10";
             XNamespace uap = "http://schemas.microsoft.com/appx/manifest/uap/windows10";
 
-            /*
-            var resScale = xml.Element(ns + "Package")
-                                .Element(ns + "Resources")
-                                .Elements(ns + "Resource")
-                                .FirstOrDefault(e => e.Attribute(uap + "Scale") != null);
-            string scale = resScale != null ? ".scale-" + resScale.Attribute(uap + "Scale").Value : "";
-            */
-
-            // idk
             List<string> scales = new() { ".scale-100", ".scale-200", ".scale-300", ".scale-400" };
 
             var resApp = xml.Element(ns + "Package")

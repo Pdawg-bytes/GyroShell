@@ -39,5 +39,12 @@ namespace GyroShell.Library.Services.Helpers
         /// <param name="hWnd">The handle of the target window.</param>
         /// <returns>The window title.</returns>
         public string GetWindowTitle(IntPtr hWnd);
+
+        /// <summary>
+        /// Gets the path of the current windows' backing image.
+        /// </summary>
+        /// <param name="hWnd">The handle to the window.</param>
+        /// <returns>The path of the windows' backing image.</returns>
+        public string GetHandlePath(IntPtr hWnd);
     }
 }
