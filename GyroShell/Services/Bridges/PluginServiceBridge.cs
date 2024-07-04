@@ -66,6 +66,9 @@ namespace GyroShell.Services.Bridges
                     case ServiceType.NotificationManager:
                         serviceCollection.AddSingleton(App.ServiceProvider.GetRequiredService<INotificationManager>());
                         break;
+                    case ServiceType.DispatcherService:
+                        serviceCollection.AddSingleton(App.ServiceProvider.GetRequiredService<IDispatcherService>());
+                        break;
                     default:
                         throw new ArgumentException($"Unknown service type: {serviceType}");
                 }

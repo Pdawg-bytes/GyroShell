@@ -28,8 +28,6 @@ namespace GyroShell.Services.Managers
     {
         private readonly Dictionary<AssemblyLoadContext, IPlugin> loadedPlugins = new Dictionary<AssemblyLoadContext, IPlugin>();
 
-        private string pluginDirectory;
-
         private readonly ISettingsService m_settingsService;
         private readonly IPluginServiceBridge m_pluginServiceBridge;
 
@@ -37,7 +35,6 @@ namespace GyroShell.Services.Managers
         public PluginManager(ISettingsService settingsService, IPluginServiceBridge pluginServiceBridge)
         {
             m_settingsService = settingsService;
-            pluginDirectory = m_settingsService.ModulesFolderPath;
 
             m_pluginServiceBridge = pluginServiceBridge;
 
@@ -63,7 +60,7 @@ namespace GyroShell.Services.Managers
 
         public void LoadAndRunPlugin(string pluginName)
         {
-            foreach (string dllFile in Directory.GetFiles(pluginDirectory, "*.dll").Where(file => Path.GetFileName(file) == pluginName))
+            foreach (string dllFile in Directory.GetFiles(m_settingsService.ModulesFolderPath, "*.dll").Where(file => Path.GetFileName(file) == pluginName))
             {
                 try
                 {
@@ -99,7 +96,7 @@ namespace GyroShell.Services.Managers
         {
             AssemblyLoadContext pluginLoadContext = new AssemblyLoadContext("PluginLoadContext", isCollectible: true);
             List<PluginUIModel> returnList = new List<PluginUIModel>();
-            foreach (string dllFile in Directory.GetFiles(pluginDirectory, "*.dll").Where(file => !file.Contains("GyroShell.Library")))
+            foreach (string dllFile in Directory.GetFiles(m_settingsService.ModulesFolderPath, "*.dll").Where(file => !file.Contains("GyroShell.Library")))
             {
                 try
                 {

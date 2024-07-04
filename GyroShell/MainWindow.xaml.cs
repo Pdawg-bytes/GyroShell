@@ -18,6 +18,7 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Animation;
 using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Windows.Graphics;

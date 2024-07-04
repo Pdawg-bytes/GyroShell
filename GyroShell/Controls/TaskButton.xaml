@@ -60,7 +60,7 @@
                                 <CubicEase EasingMode="EaseInOut"/>
                             </ColorAnimation.EasingFunction>
                         </ColorAnimation>
-                        <ColorAnimation Duration="0:0:0.15" To="{StaticResource SystemAccentColorLight2}" Storyboard.TargetName="HighlightBorder" Storyboard.TargetProperty="(Control.Background).(SolidColorBrush.Color)">
+                        <ColorAnimation Duration="0:0:0.15" To="{ThemeResource ActiveTaskButtonHighlightBorderColor}" Storyboard.TargetName="HighlightBorder" Storyboard.TargetProperty="(Control.Background).(SolidColorBrush.Color)">
                             <ColorAnimation.EasingFunction>
                                 <CubicEase EasingMode="EaseInOut"/>
                             </ColorAnimation.EasingFunction>

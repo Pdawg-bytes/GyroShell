@@ -22,6 +22,7 @@
                     <Color x:Key="InactiveTaskButtonHighlightBorderColor">#8BFFFFFF</Color>
 
                     <Color x:Key="ActiveTaskButtonBackgroundColor">#0FFFFFFF</Color>
+                    <StaticResource x:Key="ActiveTaskButtonHighlightBorderColor" ResourceKey="SystemAccentColorLight2" />
 
                     <Color x:Key="FlashingTaskButtonBackgroundFilled">#FF442726</Color>
                     <Color x:Key="FlashingTaskButtonBackgroundTransparent">#00442726</Color>
@@ -38,6 +39,7 @@
                     <Color x:Key="InactiveTaskButtonHighlightBorderColor">#72000000</Color>
 
                     <Color x:Key="ActiveTaskButtonBackgroundColor">#80FFFFFF</Color>
+                    <StaticResource x:Key="ActiveTaskButtonHighlightBorderColor" ResourceKey="SystemAccentColor" />
 
                     <Color x:Key="FlashingTaskButtonBackgroundFilled">#FFFDE7E9</Color>
                     <Color x:Key="FlashingTaskButtonBackgroundTransparent">#00FDE7E9</Color>

@@ -242,7 +242,7 @@ namespace GyroShell.Services.Environment
             if (IsUserWindow(hWnd) || checkUwp)
             {
                 _currentWindows.Add(await CreateNewIcon(hWnd, initialState));
-                Debug.WriteLine(m_appHelper.GetWindowTitle(hWnd) + "; " + hWnd + "; " + m_appHelper.GetHandlePath(hWnd));
+                //Debug.WriteLine(m_appHelper.GetWindowTitle(hWnd) + "; " + hWnd + "; " + m_appHelper.GetHandlePath(hWnd));
             }
         }
         private void RemoveWindow(IntPtr hWnd)
