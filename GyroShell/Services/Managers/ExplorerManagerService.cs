@@ -33,13 +33,19 @@ namespace GyroShell.Services.Managers
 
         public void Initialize()
         {
-            //m_hTaskBar = FindWindowW("Shell_TrayWnd", null);
-            //m_hMultiTaskBar = FindWindowW("Shell_SecondaryTrayWnd", null);
-            //m_hStartMenu = FindWindowExW(m_hStartMenu, IntPtr.Zero, "Button", "Start");
+            m_hTaskBar = FindWindow("Shell_TrayWnd", null);
+            m_hMultiTaskBar = FindWindow("Shell_SecondaryTrayWnd", null);
+            m_hStartMenu = FindWindowEx(m_hStartMenu, IntPtr.Zero, "Button", "Start");
 
             if (m_hStartMenu == IntPtr.Zero)
             {
-                m_hStartMenu = FindWindowW("Button", null);
+                m_hStartMenu = FindWindow("Button", null);
+            }
+
+            if (m_hTaskBar != IntPtr.Zero)
+            {
+                // Explorer is probably already running.
+                return;
             }
 
             RegisterTaskmanWindow();
@@ -83,62 +89,61 @@ namespace GyroShell.Services.Managers
             if (message == 1)
             {
                 // WM_CREATE
-                //if (!SetTaskmanWindow(hwnd))
-                //{
-                //    throw new Win32Exception();
-                //}
-                // TODO: This causes an issue??
+                if (!SetTaskmanWindow(hwnd))
+                {
+                    throw new Win32Exception();
+                }
                 windowMessage = RegisterWindowMessageW("SHELLHOOK");
                 if (!RegisterShellHookWindow(hwnd))
                 {
                     throw new Win32Exception();
                 }
             }
-            //else if (message == 2)
-            //{
-            //    // WM_DESTROY
-            //    if (GetTaskmanWindow() == hwnd)
-            //    {
-            //        SetTaskmanWindow(0);
-            //    }
-            //    DeregisterShellHookWindow(hwnd);
-            //}
-            //else if (message == windowMessage || message == 0x312) //WM_HOTKEY
-            //{
-            //    if (HookService == null)
-            //    {
-            //        var x = (Library.Helpers.Win32.Win32Interop.IServiceProvider)new CImmersiveShell();
-            //        if (x.QueryService(ref SID_ImmersiveShellHookService, ref ImmersiveShellHookServiceInterface, out object shellhooksrv) < 0)
-            //        {
-            //            Console.WriteLine("failed to get the immersive shell hook service");
-            //            return 0;
-            //        }
-            //        else
-            //        {
-            //            HookService = (IImmersiveShellHookService)shellhooksrv;
-            //        }
+            else if (message == 2)
+            {
+                // WM_DESTROY
+                if (GetTaskmanWindow() == hwnd)
+                {
+                    SetTaskmanWindow(0);
+                }
+                DeregisterShellHookWindow(hwnd);
+            }
+            else if (message == windowMessage || message == 0x312) //WM_HOTKEY
+            {
+                if (HookService == null)
+                {
+                    var x = (Library.Helpers.Win32.Win32Interop.IServiceProvider)new CImmersiveShell();
+                    if (x.QueryService(ref SID_ImmersiveShellHookService, ref ImmersiveShellHookServiceInterface, out object shellhooksrv) < 0)
+                    {
+                        Console.WriteLine("failed to get the immersive shell hook service");
+                        return 0;
+                    }
+                    else
+                    {
+                        HookService = (IImmersiveShellHookService)shellhooksrv;
+                    }
 
-            //        return 0;
-            //    }
+                    return 0;
+                }
 
-            //    // Pass the message to TwinUI to allow UWP apps to work correctly.
+                // Pass the message to TwinUI to allow UWP apps to work correctly.
 
-            //    bool handle = true;
-            //    if (wParam == 12)
-            //    {
-            //        Console.WriteLine("set window");
-            //        HookService.SetTargetWindowForSerialization(lParam);
-            //    }
-            //    else if (wParam == 0x32)
-            //    {
-            //        handle = false;
-            //    }
-            //    if (handle)
-            //    {
-            //        HookService.PostShellHookMessage(wParam, lParam);
-            //    }
-            //    return 0;
-            //}
+                bool handle = true;
+                if (wParam == 12)
+                {
+                    Console.WriteLine("set window");
+                    HookService.SetTargetWindowForSerialization(lParam);
+                }
+                else if (wParam == 0x32)
+                {
+                    handle = false;
+                }
+                if (handle)
+                {
+                    HookService.PostShellHookMessage(wParam, lParam);
+                }
+                return 0;
+            }
 
             return DefWindowProcW(hwnd, message, wParam, lParam);
         }
@@ -148,20 +153,19 @@ namespace GyroShell.Services.Managers
             progman.style = 8;
             progman.hInstance = Marshal.GetHINSTANCE(typeof(ExplorerManagerService).Module);
             progman.lpszClassName = "TaskmanWndClass";
-            //progman.lpfnWndProc = Marshal.GetFunctionPointerForDelegate((WndProcDelegate)TaskmanWindowProc);
+            progman.lpfnWndProc = Marshal.GetFunctionPointerForDelegate((WndProcDelegate)TaskmanWindowProc);
 
             ushort atom = RegisterClassExW(ref progman);
             if (atom == 0)
             {
-                //  throw new Win32Exception();
-                return;
+                throw new Win32Exception();
             }
 
             var hwnd = CreateWindowExW(0, progman.lpszClassName, null, 0x82000000, 0, 0, 0, 0, IntPtr.Zero, IntPtr.Zero, Marshal.GetHINSTANCE(typeof(ExplorerManagerService).Module), IntPtr.Zero);
 
             if (hwnd == IntPtr.Zero)
             {
-               // throw new Win32Exception();
+                throw new Win32Exception();
             }
         }
 

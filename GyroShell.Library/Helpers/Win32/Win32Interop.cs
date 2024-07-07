@@ -175,7 +175,7 @@ namespace GyroShell.Library.Helpers.Win32
         public static extern bool IsWindowVisible(IntPtr hWnd);
 
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern IntPtr FindWindowW(string lpClassName, string lpWindowName);
+        public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -204,7 +204,7 @@ namespace GyroShell.Library.Helpers.Win32
         public static extern int GetWindowTextLength(IntPtr hWnd);
 
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern IntPtr FindWindowExW(IntPtr parentHandle, IntPtr childAfter, string className, string windowTitle);
+        public static extern IntPtr FindWindowEx(IntPtr parentHandle, IntPtr childAfter, string className, string windowTitle);
 
         [DllImport("user32.dll")]
         public static extern int ShowWindow(IntPtr hwnd, int nCmdShow);
@@ -310,7 +310,7 @@ namespace GyroShell.Library.Helpers.Win32
        IntPtr lpParam);
         [DllImport("user32.dll")]
         public static extern IntPtr DefWindowProcW(nint hWnd, uint uMsg, nint wParam, nint lParam);
-        [DllImport("user32.dll")]
+        [DllImport("user32.dll", SetLastError = true)]
         public static extern bool SetTaskmanWindow(nint hWnd);
         [DllImport("user32.dll")]
         public static extern nint GetTaskmanWindow();
