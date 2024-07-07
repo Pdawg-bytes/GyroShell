@@ -46,7 +46,7 @@ namespace GyroShell.Controls
 
             // Window Handling
             IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
-            WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
+            Microsoft.UI.WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
             AppWindow appWindow = AppWindow.GetFromWindowId(windowId);
 
             appWindow.MoveInZOrderAtTop();

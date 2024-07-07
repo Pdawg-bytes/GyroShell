@@ -18,6 +18,7 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Animation;
 using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Windows.Graphics;
@@ -71,7 +72,7 @@ namespace GyroShell
             shHookService.MainWindowHandle = hWnd;
             shHookService.Initialize();
 
-            WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
+            Microsoft.UI.WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
             AppWindow appWindow = AppWindow.GetFromWindowId(windowId);
             if (m_envService.IsWindows11)
             {
@@ -115,7 +116,7 @@ namespace GyroShell
         private OverlappedPresenter GetAppWindowAndPresenter()
         {
             IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
-            WindowId WndId = Win32Interop.GetWindowIdFromWindow(hWnd);
+            Microsoft.UI.WindowId WndId = Win32Interop.GetWindowIdFromWindow(hWnd);
             AppWindow _apw = AppWindow.GetFromWindowId(WndId);
 
             return _apw.Presenter as OverlappedPresenter;
@@ -123,7 +124,7 @@ namespace GyroShell
         private AppWindow GetAppWindowForCurrentWindow()
         {
             IntPtr hWndApp = WinRT.Interop.WindowNative.GetWindowHandle(this);
-            WindowId WndIdApp = Win32Interop.GetWindowIdFromWindow(hWndApp);
+            Microsoft.UI.WindowId WndIdApp = Win32Interop.GetWindowIdFromWindow(hWndApp);
 
             return AppWindow.GetFromWindowId(WndIdApp);
         }

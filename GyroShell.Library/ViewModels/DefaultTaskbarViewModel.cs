@@ -84,16 +84,16 @@ namespace GyroShell.Library.ViewModels
             UpdateNetworkStatus();
 
             m_notifManager.NotifcationChanged += NotificationManager_NotificationChanged;
-            Task.Run(UpdateNotifications).Wait();
+            //Task.Run(UpdateNotifications).Wait();
 
             m_timeService.UpdateClockBinding += TimeService_UpdateClockBinding;
 
             m_appSettings.SettingUpdated += AppSettings_SettingUpdated;
 
-            //m_explorerManager.SystemControlStateChanged += ExplorerManager_SystemControlStateChanged;
+            m_explorerManager.SystemControlStateChanged += ExplorerManager_SystemControlStateChanged;
         }
 
-        public ObservableCollection<IconModel> CurrentWindows => m_shellHookService.CurrentWindows;
+        public ObservableCollection<WindowModel> CurrentWindows => m_shellHookService.CurrentWindows;
 
         private void AppSettings_SettingUpdated(object sender, string key)
         {
@@ -314,6 +314,9 @@ namespace GyroShell.Library.ViewModels
         [ObservableProperty]
         private string networkStatusCharacter;
 
+        [ObservableProperty]
+        private string networkBackCharacter;
+
         private void NetworkService_InternetStatusChanged(object sender, EventArgs e)
         {
             UpdateNetworkStatus();
@@ -321,33 +324,40 @@ namespace GyroShell.Library.ViewModels
         private void UpdateNetworkStatus()
         {
             string statusTextBuf = "\uE774";
+            string backTextBuf = "\uE774";
             if (m_netService.IsInternetAvailable)
             {
                 switch (m_netService.InternetType)
                 {
                     case InternetConnection.Wired:
                         statusTextBuf = "\uE839";
+                        backTextBuf = "\uE839";
                         OnPropertyChanged(nameof(NetworkStatusMargin));
                         break;
                     case InternetConnection.Wireless:
-                        statusTextBuf = IconConstants.WiFiIcons[m_netService.SignalStrength];
+                        statusTextBuf = IconConstants.WiFiIcons[(int)m_netService.SignalStrength];
+                        backTextBuf = "\uE701";
                         break;
                     case InternetConnection.Data:
-                        statusTextBuf = IconConstants.DataIcons[m_netService.SignalStrength];
+                        statusTextBuf = IconConstants.DataIcons[(int)m_netService.SignalStrength];
+                        backTextBuf = "\uEC3B";
                         break;
                     case InternetConnection.Unknown:
                     default:
                         statusTextBuf = "\uE774";
+                        backTextBuf = "\uE774";
                         break;
                 }
             }
             else
             {
                 statusTextBuf = "\uEB55";
+                backTextBuf = "\uEB55";
             }
             m_dispatcherService.DispatcherQueue.TryEnqueue(() =>
             {
                 NetworkStatusCharacter = statusTextBuf;
+                NetworkBackCharacter = backTextBuf;
             });
         }
         #endregion
@@ -396,7 +406,10 @@ namespace GyroShell.Library.ViewModels
             m_soundService.OnVolumeChanged -= SoundService_OnVolumeChanged;
             m_powerService.BatteryStatusChanged -= BatteryService_BatteryStatusChanged;
             m_netService.InternetStatusChanged -= NetworkService_InternetStatusChanged;
+            m_notifManager.NotifcationChanged -= NotificationManager_NotificationChanged;
             m_timeService.UpdateClockBinding -= TimeService_UpdateClockBinding;
+            m_appSettings.SettingUpdated -= AppSettings_SettingUpdated;
+            m_explorerManager.SystemControlStateChanged -= ExplorerManager_SystemControlStateChanged;
         }
     }
 }

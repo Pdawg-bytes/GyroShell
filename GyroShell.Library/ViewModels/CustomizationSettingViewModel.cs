@@ -195,12 +195,14 @@ namespace GyroShell.Library.ViewModels
             {
                 TransparencyColorPickerValue = Color.FromArgb(255, 232, 232, 232);
             }
-            TintOpacity = 0;
-            LuminosityOpacity = 95;
+            TintOpacity = 50;
+            LuminosityOpacity = 96;
+            CurrentTransparencyTypeIndex = 2;
 
             OnPropertyChanged(nameof(TransparencyColorPickerValue));
             OnPropertyChanged(nameof(TintOpacity));
             OnPropertyChanged(nameof(LuminosityOpacity));
+            OnPropertyChanged(nameof(CurrentTransparencyTypeIndex));
 
             m_appSettings.EnableCustomTransparency = false;
         }

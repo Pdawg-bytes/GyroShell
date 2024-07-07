@@ -13,14 +13,17 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using GyroShell.Library.Models.InternalData;
 using GyroShell.Library.Services.Environment;
 using GyroShell.Library.Services.Helpers;
 using GyroShell.Library.Services.Managers;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using static GyroShell.Library.Helpers.Win32.Win32Interop;
 using static GyroShell.Library.Helpers.Win32.WindowChecks;
-using static GyroShell.Library.Models.InternalData.IconModel;
+using static GyroShell.Library.Interfaces.IPropertyStoreAUMID;
+using static GyroShell.Library.Models.InternalData.WindowModel;
 
 namespace GyroShell.Services.Environment
 {
@@ -41,18 +44,18 @@ namespace GyroShell.Services.Environment
 
         public IntPtr MainWindowHandle { get; set; }
 
-        private ObservableCollection<IconModel> _currentWindows;
+        private ObservableCollection<WindowModel> _currentWindows;
 
         public ShellHookService(
-            IAppHelperService appHelper, 
+            IAppHelperService appHelper,
             IIconHelperService iconHelper,
-            IExplorerManagerService explorerManager) 
+            IExplorerManagerService explorerManager)
         {
             m_appHelper = appHelper;
             m_iconHelper = iconHelper;
             m_explorerManager = explorerManager;
 
-            _currentWindows = new ObservableCollection<IconModel>();
+            _currentWindows = new ObservableCollection<WindowModel>();
         }
 
         public void Initialize()
@@ -74,6 +77,7 @@ namespace GyroShell.Services.Environment
         public void Uninitialize()
         {
             UnhookWinEvent(_nameChangeHook);
+            UnhookWinEvent(_cloakUncloakHook);
         }
 
 
@@ -101,7 +105,7 @@ namespace GyroShell.Services.Environment
                 if (IsUserWindow(hwnd))
                 {
                     WindowState initialState = GetForegroundWindow() == hwnd ? WindowState.Active : WindowState.Inactive;
-                    AddWindow(hwnd, initialState);
+                    AddWindow(hwnd, false, initialState);
                 }
             }
             catch (Exception ex)
@@ -120,14 +124,14 @@ namespace GyroShell.Services.Environment
                     switch (m_appHelper.GetWindowTitle(hwnd))
                     {
                         case "Start":
-                            //m_explorerManager.IsStartMenuOpen = false;
+                            m_explorerManager.IsStartMenuOpen = false;
                             break;
                         case "Quick settings":
-                            //m_explorerManager.IsSystemControlsOpen = false;
+                            m_explorerManager.IsSystemControlsOpen = false;
                             break;
                         case "Windows Shell Experience Host":
                         case "Notification Center":
-                            //m_explorerManager.IsActionCenterOpen = false;
+                            m_explorerManager.IsActionCenterOpen = false;
                             break;
                     }
                     break;
@@ -135,21 +139,21 @@ namespace GyroShell.Services.Environment
                     switch (m_appHelper.GetWindowTitle(hwnd))
                     {
                         case "Start":
-                            //m_explorerManager.IsStartMenuOpen = true;
+                            m_explorerManager.IsStartMenuOpen = true;
                             break;
                         case "Quick settings":
-                            //m_explorerManager.IsSystemControlsOpen = true;
+                            m_explorerManager.IsSystemControlsOpen = true;
                             break;
                         case "Windows Shell Experience Host":
                         case "Notification Center":
-                            //m_explorerManager.IsActionCenterOpen = true;
+                            m_explorerManager.IsActionCenterOpen = true;
                             break;
                     }
                     break;
                 case EVENT_OBJECT_NAMECHANGED:
                     if (_currentWindows.Any(wnd => wnd.Id == hwnd))
                     {
-                        _currentWindows.First(win => win.Id == hwnd).IconName = m_appHelper.GetWindowTitle(hwnd);
+                        _currentWindows.First(win => win.Id == hwnd).WindowName = m_appHelper.GetWindowTitle(hwnd);
                     }
                     break;
             }
@@ -163,16 +167,22 @@ namespace GyroShell.Services.Environment
                 case HSHELL_WINDOWCREATED:
                     if (!_currentWindows.Any(win => win.Id == hWnd))
                     {
-                        AddWindow(hWnd);
+                        AddWindow(hWnd, false);
                     }
                     break;
                 case HSHELL_WINDOWDESTROYED:
                     RemoveWindow(hWnd);
                     break;
+                case HSHELL_REDRAW:
+                    if (!_currentWindows.Any(win => win.Id == hWnd))
+                    {
+                        AddWindow(hWnd, IsShellFrameWindow(hWnd));
+                    }
+                    break;
                 case HSHELL_WINDOWREPLACING:
                     if (_currentWindows.Any(wnd => wnd.Id == hWnd))
                     {
-                        IconModel win = _currentWindows.First(i => i.Id == hWnd);
+                        WindowModel win = _currentWindows.First(i => i.Id == hWnd);
                         win.State = WindowState.Inactive;
                         if (!IsUserWindow(hWnd))
                         {
@@ -181,7 +191,7 @@ namespace GyroShell.Services.Environment
                     }
                     else
                     {
-                        AddWindow(hWnd);
+                        AddWindow(hWnd, false);
                     }
                     break;
                 case HSHELL_WINDOWREPLACED:
@@ -189,13 +199,13 @@ namespace GyroShell.Services.Environment
                     break;
                 case HSHELL_WINDOWACTIVATED:
                 case HSHELL_RUDEAPPACTIVATED:
-                    if (hWnd == MainWindowHandle || hWnd == IntPtr.Zero) { break; }
-                    foreach (IconModel win in _currentWindows.Where(w => w.State == WindowState.Active))
+                    if (hWnd == IntPtr.Zero) { break; }
+                    foreach (WindowModel win in _currentWindows.Where(w => w.State == WindowState.Active))
                     {
                         win.State = WindowState.Inactive;
                     }
 
-                    IconModel model = null;
+                    WindowModel model = null;
                     if (_currentWindows.Any(w => w.Id == hWnd))
                     {
                         model = _currentWindows.First(w => w.Id == hWnd);
@@ -203,13 +213,13 @@ namespace GyroShell.Services.Environment
                     }
                     else
                     {
-                        AddWindow(hWnd, WindowState.Active);
+                        AddWindow(hWnd, false, WindowState.Active);
                     }
                     break;
                 case HSHELL_FLASH:
                     if (_currentWindows.Any(win => win.Id == hWnd))
                     {
-                        IconModel win = _currentWindows.First(wnd => wnd.Id == hWnd);
+                        WindowModel win = _currentWindows.First(wnd => wnd.Id == hWnd);
                         if (win.State != WindowState.Active)
                         {
                             win.State = WindowState.Flashing;
@@ -217,7 +227,7 @@ namespace GyroShell.Services.Environment
                     }
                     else
                     {
-                        AddWindow(hWnd);
+                        AddWindow(hWnd, false);
                     }
                     break;
                 case HSHELL_ENDTASK:
@@ -227,11 +237,12 @@ namespace GyroShell.Services.Environment
             return IntPtr.Zero;
         }
 
-        private void AddWindow(IntPtr hWnd, WindowState initialState = WindowState.Inactive)
+        private async void AddWindow(IntPtr hWnd, bool checkUwp, WindowState initialState = WindowState.Inactive)
         {
-            if (IsUserWindow(hWnd))
+            if (IsUserWindow(hWnd) || checkUwp)
             {
-                _currentWindows.Add(CreateNewIcon(hWnd, initialState));
+                _currentWindows.Add(await CreateNewIcon(hWnd, initialState));
+                //Debug.WriteLine(m_appHelper.GetWindowTitle(hWnd) + "; " + hWnd + "; " + m_appHelper.GetHandlePath(hWnd));
             }
         }
         private void RemoveWindow(IntPtr hWnd)
@@ -246,15 +257,15 @@ namespace GyroShell.Services.Environment
             }
         }
 
-        private IconModel CreateNewIcon(IntPtr hWnd, WindowState initialState)
+        private async Task<WindowModel> CreateNewIcon(IntPtr hWnd, WindowState initialState)
         {
-            SoftwareBitmapSource bmp = m_iconHelper.GetUwpOrWin32Icon(hWnd, 32);
+            ImageSource bmp = await m_iconHelper.GetUwpOrWin32Icon(hWnd, 32);
             string windowName = m_appHelper.GetWindowTitle(hWnd);
-            return new IconModel { IconName = windowName, Id = hWnd, AppIcon = bmp, State = initialState };
+            return new WindowModel { WindowName = windowName, Id = hWnd, AppIcon = bmp, State = initialState };
         }
 
 
-        public ObservableCollection<IconModel> CurrentWindows
+        public ObservableCollection<WindowModel> CurrentWindows
         {
             get => _currentWindows;
         }

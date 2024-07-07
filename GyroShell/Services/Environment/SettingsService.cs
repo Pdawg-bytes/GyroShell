@@ -74,7 +74,7 @@ namespace GyroShell.Services.Environment
 
         public int IconStyle
         {
-            get => GetSetting<int?>("iconStyle") ?? 0;
+            get => GetSetting<int?>("iconStyle") ?? 1;
             set => SetSetting("iconStyle", value);
         }
 

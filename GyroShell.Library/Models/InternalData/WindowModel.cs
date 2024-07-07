@@ -8,26 +8,23 @@
  */
 #endregion
 
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using static GyroShell.Library.Helpers.Win32.Win32Interop;
 
 namespace GyroShell.Library.Models.InternalData
 {
-    public class IconModel : INotifyPropertyChanged
+    public class WindowModel : INotifyPropertyChanged
     {
-        public void CloseWindow()
-        {
-            IntPtr retval = IntPtr.Zero;
-            SendMessageTimeout(Id, WM_SYSCOMMAND, SC_CLOSE, 0, 2, 200, ref retval);
-        }
-
         private string iconName;
-        public string IconName
+        public string WindowName
         {
-            get { return iconName; }
+            get => iconName;
             set
             {
                 if (iconName != value)
@@ -38,10 +35,10 @@ namespace GyroShell.Library.Models.InternalData
             }
         }
 
-        private SoftwareBitmapSource appIcon;
-        public SoftwareBitmapSource AppIcon
+        private ImageSource appIcon;
+        public ImageSource AppIcon
         {
-            get { return appIcon; }
+            get => appIcon;
             set
             {
                 if (appIcon != value)
@@ -64,6 +61,35 @@ namespace GyroShell.Library.Models.InternalData
         }
 
         public IntPtr Id { get; set; }
+
+        private uint _processId;
+        public uint ProcessId
+        {
+            get
+            {
+                if (_processId == 0)
+                    { GetWindowThreadProcessId(Id, out _processId); return _processId; }
+                else
+                    return _processId;
+            }
+        }
+
+        public IntPtr CloseWindow()
+        {
+            IntPtr returnValue = IntPtr.Zero;
+            SendMessageTimeout(Id, WM_SYSCOMMAND, SC_CLOSE, 0, 2, 200, ref returnValue);
+            return returnValue;
+        }
+
+        public int WindowStyle
+        {
+            get => (int)GetWindowLongPtr(Id, GWL_STYLE);
+        }
+
+        public int ExtendedWindowStyle
+        {
+            get => (int)GetWindowLongPtr(Id, GWL_EXSTYLE);
+        }
 
 
         public enum WindowState

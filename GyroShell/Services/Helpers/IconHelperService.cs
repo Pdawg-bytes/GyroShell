@@ -18,6 +18,12 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Runtime.InteropServices;
 using Windows.Graphics.Imaging;
 using static GyroShell.Library.Helpers.Win32.Win32Interop;
+using System.Threading.Tasks;
+using WinRT;
+using Microsoft.UI.Xaml.Media;
+using Windows.Storage;
+using Windows.Storage.Streams;
+using System.IO;
 
 namespace GyroShell.Services.Helpers
 {
@@ -32,15 +38,13 @@ namespace GyroShell.Services.Helpers
             m_appHelper = appHelper;
         }
 
+        public bool IsUwpWindow(IntPtr hWnd) => IsShellFrameWindow(hWnd);
 
-        public bool IsUwpWindow(IntPtr hWnd) =>
-            m_appHelper.GetPackageFromAppHandle(hWnd) != null;
-
-        public SoftwareBitmapSource GetUwpOrWin32Icon(IntPtr hWnd, int targetSize)
+        public async Task<ImageSource> GetUwpOrWin32Icon(IntPtr hWnd, int targetSize)
         {
             if (IsUwpWindow(hWnd))
             {
-                return ConvertIconBitmapToSoftwareBitmapSource(GetUWPBitmap(hWnd));
+                return m_bmpHelper.RemoveTransparentPadding(await GetUWPBitmap(hWnd));
             }
             else
             {
@@ -54,12 +58,20 @@ namespace GyroShell.Services.Helpers
         {
             try
             {
-                GetWindowThreadProcessId(hWnd, out uint pid);
-                Process proc = Process.GetProcessById((int)pid);
-                Icon icon = Icon.ExtractAssociatedIcon(proc.MainModule.FileName);
+                // get the icon from the HWND
+                IntPtr hIcon = SendMessage(hWnd, WM_GETICON, (IntPtr)ICON_BIG, IntPtr.Zero);
+                if (hIcon == IntPtr.Zero)
+                    hIcon = SendMessage(hWnd, WM_GETICON, (IntPtr)ICON_SMALL, IntPtr.Zero);
+                if (hIcon == IntPtr.Zero)
+                    hIcon = SendMessage(hWnd, WM_GETICON, (IntPtr)ICON_SMALL2, IntPtr.Zero);
+                if (hIcon == IntPtr.Zero)
+                    hIcon = GetClassLongPtr64(hWnd, -14);
+                if (hIcon == IntPtr.Zero)
+                    hIcon = GetClassLongPtr64(hWnd, -34);
 
-                if (icon != null)
+                if (hIcon != IntPtr.Zero)
                 {
+                    Icon icon = Icon.FromHandle(hIcon);
                     Bitmap resizedBitmap = new Bitmap(icon.ToBitmap(), new Size(targetSize, targetSize));
                     Icon resizedIcon = Icon.FromHandle(resizedBitmap.GetHicon());
                     return resizedIcon.ToBitmap();
@@ -75,37 +87,41 @@ namespace GyroShell.Services.Helpers
         #endregion
 
         #region UWP
-        private Bitmap GetUWPBitmap(IntPtr hWnd)
+        private async Task<WriteableBitmap> GetUWPBitmap(IntPtr hWnd)
         {
             try
             {
                 string iconPath = m_appHelper.GetUwpAppIconPath(hWnd);
-                return (Bitmap)Image.FromFile(iconPath);
+                WriteableBitmap writeableBitmap;
 
-                /*using (IRandomAccessStream stream = await m_appHelper.GetUwpIconStream(hWnd).OpenReadAsync())
+                // Open the file as a stream
+                StorageFile file = await StorageFile.GetFileFromPathAsync(iconPath);
+                using IRandomAccessStream fileStream = await file.OpenAsync(FileAccessMode.Read);
+
+                BitmapImage bi = new(new Uri(iconPath));
+                BitmapDecoder decoder = await BitmapDecoder.CreateAsync(fileStream);
+
+                var transform = new BitmapTransform()
                 {
-                    BitmapDecoder decoder = await BitmapDecoder.CreateAsync(stream);
-                    SoftwareBitmap softwareBitmap = await decoder.GetSoftwareBitmapAsync();
+                    InterpolationMode = BitmapInterpolationMode.Fant
+                };
 
-                    Bitmap bitmap;
-                    using (MemoryStream memoryStream = new MemoryStream())
-                    {
-                        BitmapEncoder encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, memoryStream.AsRandomAccessStream());
-                        encoder.SetSoftwareBitmap(softwareBitmap);
-                        await encoder.FlushAsync();
+                // Get the pixel data with the applied transform
+                var pixelData = await decoder.GetPixelDataAsync(
+                    decoder.BitmapPixelFormat,
+                    BitmapAlphaMode.Premultiplied,
+                    transform,
+                    ExifOrientationMode.IgnoreExifOrientation,
+                    ColorManagementMode.DoNotColorManage
+                );
 
-                        memoryStream.Seek(0, SeekOrigin.Begin);
-
-                        using (MemoryStream copiedStream = new MemoryStream())
-                        {
-                            await memoryStream.CopyToAsync(copiedStream);
-                            copiedStream.Seek(0, SeekOrigin.Begin);
-                            bitmap = new Bitmap(copiedStream);
-                        }
-                    }
-
-                    return bitmap;
-                }*/
+                writeableBitmap = new WriteableBitmap((int)decoder.PixelWidth, (int)decoder.PixelHeight);
+                using (Stream pixelStream = writeableBitmap.PixelBuffer.AsStream())
+                {
+                    byte[] pixels = pixelData.DetachPixelData();
+                    await pixelStream.WriteAsync(pixels, 0, pixels.Length);
+                }
+                return writeableBitmap;
             }
             catch (Exception e)
             {
@@ -118,27 +134,29 @@ namespace GyroShell.Services.Helpers
         #region Common
         private SoftwareBitmapSource ConvertIconBitmapToSoftwareBitmapSource(Bitmap bmp)
         {
-            if (bmp == null)
-            {
-                return null;
-            }
+            if (bmp == null) return null;
+            Bitmap resampledBmp = m_bmpHelper.FilterAndScaleBitmap(bmp, bmp.Width, bmp.Height);
 
-            using (Bitmap croppedBmp = m_bmpHelper.RemoveTransparentPadding(bmp))
-            {
-                Bitmap resampledBmp = m_bmpHelper.FilterAndScaleBitmap(croppedBmp, croppedBmp.Width, croppedBmp.Height);
+            BitmapData data = resampledBmp.LockBits(
+                new Rectangle(0, 0, resampledBmp.Width, resampledBmp.Height),
+                ImageLockMode.ReadOnly,
+                resampledBmp.PixelFormat);
 
-                BitmapData data = resampledBmp.LockBits(new Rectangle(0, 0, resampledBmp.Width, resampledBmp.Height), ImageLockMode.ReadOnly, resampledBmp.PixelFormat);
-                byte[] bytes = new byte[data.Stride * data.Height];
-                Marshal.Copy(data.Scan0, bytes, 0, bytes.Length);
-                resampledBmp.UnlockBits(data);
+            byte[] bytes = new byte[data.Stride * data.Height];
+            Marshal.Copy(data.Scan0, bytes, 0, bytes.Length);
+            resampledBmp.UnlockBits(data);
 
-                SoftwareBitmap softwareBitmap = new SoftwareBitmap(BitmapPixelFormat.Bgra8, resampledBmp.Width, resampledBmp.Height, BitmapAlphaMode.Premultiplied);
-                softwareBitmap.CopyFromBuffer(bytes.AsBuffer());
+            SoftwareBitmap softwareBitmap = new SoftwareBitmap(
+                BitmapPixelFormat.Bgra8,
+                resampledBmp.Width,
+                resampledBmp.Height,
+                BitmapAlphaMode.Premultiplied);
+            softwareBitmap.CopyFromBuffer(bytes.AsBuffer());
 
-                SoftwareBitmapSource source = new SoftwareBitmapSource();
-                source.SetBitmapAsync(softwareBitmap);
-                return source;
-            }
+            SoftwareBitmapSource source = new SoftwareBitmapSource();
+            source.SetBitmapAsync(softwareBitmap);
+
+            return source;
         }
         #endregion
     }

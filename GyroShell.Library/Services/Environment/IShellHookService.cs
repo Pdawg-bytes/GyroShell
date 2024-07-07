@@ -20,6 +20,6 @@ namespace GyroShell.Library.Services.Environment
 
         public IntPtr MainWindowHandle { get; set; }
 
-        public ObservableCollection<IconModel> CurrentWindows { get; }
+        public ObservableCollection<WindowModel> CurrentWindows { get; }
     }
 }

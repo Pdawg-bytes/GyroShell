@@ -59,18 +59,21 @@ namespace GyroShell.Services.Environment
 
         public EnvironmentInfoService()
         {
-            if (Package.Current.InstalledLocation != null)
+            try
             {
-                Package package = Package.Current;
-                SystemArchitecture = package.Id.Architecture.ToString();
+                if (Package.Current.InstalledLocation != null)
+                {
+                    Package package = Package.Current;
+                    SystemArchitecture = package.Id.Architecture.ToString();
 
-                PackageVersion version = package.Id.Version;
-                AppVersion = new Version(version.Major, version.Minor, version.Build, version.Revision);
+                    PackageVersion version = package.Id.Version;
+                    AppVersion = new Version(version.Major, version.Minor, version.Build, version.Revision);
 
-                string mainExecutablePath = Path.Combine(Package.Current.InstalledLocation.Path, "GyroShell.exe");
-                AppBuildDate = File.GetLastWriteTime(mainExecutablePath);
+                    string mainExecutablePath = Path.Combine(Package.Current.InstalledLocation.Path, "GyroShell.exe");
+                    AppBuildDate = File.GetLastWriteTime(mainExecutablePath);
+                }
             }
-            else
+            catch
             {
                 SYSTEM_INFO sysInfo = new SYSTEM_INFO();
                 GetNativeSystemInfo(out sysInfo);
@@ -86,8 +89,8 @@ namespace GyroShell.Services.Environment
                     _ => "Unknown Processor",
                 };
 
-                AppVersion = new Version(0, 0, 0, 0);
-                AppBuildDate = new DateTime(2023, 9, 28);
+                AppVersion = new Version(1, 0, 0, 0);
+                AppBuildDate = new DateTime(2024, 7, 4);
             }
         }
     }

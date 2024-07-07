@@ -13,6 +13,7 @@ namespace GyroShell.Library.Enums
     public enum ServiceType
     {
         InternalLauncher,
+        DispatcherService,
         SettingsService,
         ShellHookService,
         TimeService,
