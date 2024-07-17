@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
@@ -21,6 +22,7 @@ using GyroShell.Library.Models.InternalData;
 using GyroShell.Library.Services.Bridges;
 using GyroShell.Library.Services.Environment;
 using GyroShell.Library.Services.Managers;
+using Windows.Storage;
 
 namespace GyroShell.Services.Managers
 {
@@ -51,6 +53,17 @@ namespace GyroShell.Services.Managers
             GetPlugins();
         }
 
+        private void ExtractPluginResources(string pluginName)
+        {
+            // TODO: Implement extracting ZIP from Assembly resources.
+
+            string pluginResourceCollection = Directory.GetFiles(m_settingsService.ModulesFolderPath, "*.zip").Where(file => Path.GetFileName(file) == pluginName + ".zip").First();
+            string tempFolder = ApplicationData.Current.TemporaryFolder.Path;
+
+            //ZipFile.ExtractToDirectory(pluginResourceCollection, tempFolder);
+            //Debug.WriteLine($"{pluginName}'s resources extracted to {tempFolder}");
+        }
+
         private bool _isUnloadRestartPending;
         public bool IsUnloadRestartPending
         {
@@ -72,6 +85,18 @@ namespace GyroShell.Services.Managers
                         if (typeof(IPlugin).IsAssignableFrom(type) && type.Name == "PluginRoot")
                         {
                             IPlugin plugin = Activator.CreateInstance(type) as IPlugin;
+
+                            switch (plugin.PluginInformation.PluginType)
+                            {
+                                case Library.Enums.PluginType.Backend:
+                                    break;
+                                case Library.Enums.PluginType.InternalUI: 
+                                    break;
+                                case Library.Enums.PluginType.ExternalUI:
+                                    ExtractPluginResources(pluginName.Substring(0, pluginName.Length - 4));
+                                    break;
+                            }
+
                             plugin.Initialize(m_pluginServiceBridge.CreatePluginServiceProvider(plugin.PluginInformation.RequiredServices));
                             loadedPlugins[localPluginLoadContext] = plugin;
                             if (m_settingsService.SettingExists($"LoadPlugin_{pluginName}"))

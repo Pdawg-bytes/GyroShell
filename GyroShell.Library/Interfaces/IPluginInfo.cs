@@ -44,5 +44,10 @@ namespace GyroShell.Library.Interfaces
         /// The required services required for the plugin to function.
         /// </summary>
         ServiceType[] RequiredServices { get; }
+
+        /// <summary>
+        /// The type of plugin that is being loaded.
+        /// </summary>
+        PluginType PluginType { get; }
     }
 }
