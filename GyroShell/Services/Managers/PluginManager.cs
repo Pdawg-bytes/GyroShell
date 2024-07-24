@@ -46,6 +46,7 @@ namespace GyroShell.Services.Managers
             }
 
             IsUnloadRestartPending = false;
+            Debug.WriteLine(ApplicationData.Current.TemporaryFolder.Path);
         }
 
         private void OnPluginCreated(object sender, FileSystemEventArgs e)
@@ -57,8 +58,8 @@ namespace GyroShell.Services.Managers
         {
             // TODO: Implement extracting ZIP from Assembly resources.
 
-            string pluginResourceCollection = Directory.GetFiles(m_settingsService.ModulesFolderPath, "*.zip").Where(file => Path.GetFileName(file) == pluginName + ".zip").First();
-            string tempFolder = ApplicationData.Current.TemporaryFolder.Path;
+            //string pluginResourceCollection = Directory.GetFiles(m_settingsService.ModulesFolderPath, "*.zip").Where(file => Path.GetFileName(file) == pluginName + ".zip").First();
+            //string tempFolder = ApplicationData.Current.TemporaryFolder.Path;
 
             //ZipFile.ExtractToDirectory(pluginResourceCollection, tempFolder);
             //Debug.WriteLine($"{pluginName}'s resources extracted to {tempFolder}");
