@@ -18,6 +18,7 @@ namespace GyroShell.Services.Environment
     {
         private Timer updateCheck;
         private int lastUpdateSecond;
+        private DateTime currentTime;
 
         private readonly ISettingsService m_appSettings;
 
@@ -41,7 +42,7 @@ namespace GyroShell.Services.Environment
 
         private void UpdateCheck_Elapsed(object sender, ElapsedEventArgs e)
         {
-            DateTime currentTime = DateTime.Now;
+            currentTime = DateTime.Now;
             if (currentTime.Second != lastUpdateSecond)
             {
                 lastUpdateSecond = currentTime.Second;
