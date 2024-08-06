@@ -62,7 +62,7 @@ namespace GyroShell.Library.Helpers.Win32
 
         private static bool ClassNameCheck(IntPtr hWnd)
         {
-            GetClassName(hWnd, className, className.Capacity);
+            GetClassNameW(hWnd, className, className.Capacity);
 
             if (className.ToString() == "ApplicationFrameWindow" || className.ToString() == "Windows.UI.Core.CoreWindow")
             {

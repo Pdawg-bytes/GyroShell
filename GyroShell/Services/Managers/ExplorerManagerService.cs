@@ -11,6 +11,9 @@
 using GyroShell.Library.Events;
 using GyroShell.Library.Services.Managers;
 using System;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
 using static GyroShell.Library.Helpers.Win32.Win32Interop;
 
@@ -24,6 +27,10 @@ namespace GyroShell.Services.Managers
         public IntPtr m_hMultiTaskBar { get; set; }
         public IntPtr m_hStartMenu { get; set; }
 
+        private static Guid SID_ImmersiveShellHookService = new Guid("4624bd39-5fc3-44a8-a809-163a836e9031");
+        private static Guid ImmersiveShellHookServiceInterface = new Guid("914d9b3a-5e53-4e14-bbba-46062acb35a4");
+        private static IImmersiveShellHookService? HookService;
+
         public void Initialize()
         {
             m_hTaskBar = FindWindow("Shell_TrayWnd", null);
@@ -33,6 +40,132 @@ namespace GyroShell.Services.Managers
             if (m_hStartMenu == IntPtr.Zero)
             {
                 m_hStartMenu = FindWindow("Button", null);
+            }
+
+            if (m_hTaskBar != IntPtr.Zero)
+            {
+                // Explorer is probably already running.
+                return;
+            }
+
+            RegisterTaskmanWindow();
+
+            /* In order to allow Immersive processes (packaged apps, uwp apps, etc) to run, we need to use the CImmersiveShellController interface.
+             However, that API requires IAM access, which means that the app must be signed by Microsoft and must have the .imsrv PE header section.
+             In order to circumvent this, we need to copy runtimebroker.exe to a temp folder which meets those requirements, inject a DLL into it
+             to replace WinMain with our own, and then run it. This will allow us to start the Immersive Shell Controller and allow Immersive processes to run.
+
+             Copy runtimebroker.exe to a temp folder, write injected dll, and start it.
+             */
+
+            string tempPath = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), "Temp", "GyroshellImmersiveUtility");
+            string process = Path.Combine(tempPath, "GryoShellImmersiveShell.exe");
+            Directory.CreateDirectory(tempPath);
+
+            // todo: remove this hack
+            Process.Start("taskkill", "/f /im GryoShellImmersiveShell.exe").WaitForExit();
+            Process.Start("taskkill", "/f /im explorer.exe").WaitForExit();
+
+            try
+            {
+                File.Delete(process);
+                File.Delete(Path.Combine(tempPath, "rmclient.dll"));
+            }
+            catch
+            {
+                Debugger.Break();
+            }
+
+            File.Copy(Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.System), "RuntimeBroker.exe"), process, true);
+            File.WriteAllBytes(Path.Combine(tempPath, "rmclient.dll"), Properties.Resources.ImmersiveShellHook);
+
+            // start the process
+            Process.Start(process);
+        }
+        private static uint windowMessage;
+        delegate nint WndProcDelegate(nint hwnd, uint message, nint wParam, nint lParam);
+        private static nint TaskmanWindowProc(nint hwnd, uint message, nint wParam, nint lParam)
+        {
+            if (message == 1)
+            {
+                // WM_CREATE
+                if (!SetTaskmanWindow(hwnd))
+                {
+                    throw new Win32Exception();
+                }
+                windowMessage = RegisterWindowMessageW("SHELLHOOK");
+                if (!RegisterShellHookWindow(hwnd))
+                {
+                    throw new Win32Exception();
+                }
+            }
+            else if (message == 2)
+            {
+                // WM_DESTROY
+                if (GetTaskmanWindow() == hwnd)
+                {
+                    SetTaskmanWindow(0);
+                }
+                DeregisterShellHookWindow(hwnd);
+            }
+            else if (message == windowMessage || message == 0x312) //WM_HOTKEY
+            {
+                if (HookService == null)
+                {
+                    var x = (Library.Helpers.Win32.Win32Interop.IServiceProvider)new CImmersiveShell();
+                    if (x.QueryService(ref SID_ImmersiveShellHookService, ref ImmersiveShellHookServiceInterface, out object shellhooksrv) < 0)
+                    {
+                        Console.WriteLine("failed to get the immersive shell hook service");
+                        return 0;
+                    }
+                    else
+                    {
+                        HookService = (IImmersiveShellHookService)shellhooksrv;
+                    }
+
+                    return 0;
+                }
+
+                // Pass the message to TwinUI to allow UWP apps to work correctly.
+
+                bool handle = true;
+                if (wParam == 12)
+                {
+                    Console.WriteLine("set window");
+                    HookService.SetTargetWindowForSerialization(lParam);
+                }
+                else if (wParam == 0x32)
+                {
+                    handle = false;
+                }
+                if (handle)
+                {
+                    HookService.PostShellHookMessage(wParam, lParam);
+                }
+                return 0;
+            }
+
+            return DefWindowProcW(hwnd, message, wParam, lParam);
+        }
+        private void RegisterTaskmanWindow()
+        {
+            WNDCLASSEX progman = WNDCLASSEX.Build();
+            progman.style = 8;
+            progman.hInstance = Marshal.GetHINSTANCE(typeof(ExplorerManagerService).Module);
+            progman.lpszClassName = "TaskmanWndClass";
+            progman.lpfnWndProc = Marshal.GetFunctionPointerForDelegate((WndProcDelegate)TaskmanWindowProc);
+
+            ushort atom = RegisterClassExW(ref progman);
+            if (atom == 0)
+            {
+                throw new Win32Exception();
+            }
+
+            var hwnd = CreateWindowExW(0, progman.lpszClassName, null, 0x82000000, 0, 0, 0, 0, IntPtr.Zero, IntPtr.Zero, Marshal.GetHINSTANCE(typeof(ExplorerManagerService).Module), IntPtr.Zero);
+
+            if (hwnd == IntPtr.Zero)
+            {
+                throw new Win32Exception();
             }
         }
 

@@ -59,7 +59,7 @@ namespace GyroShell.Controls
             OverlappedPresenter presenter = GetAppWindowAndPresenter();
             presenter.IsMaximizable = false;
             presenter.IsMinimizable = false;
-            presenter.IsAlwaysOnTop = true;
+            presenter.IsAlwaysOnTop = false;
             presenter.IsResizable = false;
             presenter.SetBorderAndTitleBar(false, false);
             m_AppWindow = GetAppWindowForCurrentWindow();
@@ -101,7 +101,7 @@ namespace GyroShell.Controls
 
         private new void Close()
         {
-            MessageBox(hWnd, "If you keep seeing this message, please contact the developers.", "GyroShell was unable to start.", 0x00000000 | 0x00000030);
+            MessageBoxW(hWnd, "If you keep seeing this message, please contact the developers.", "GyroShell was unable to start.", 0x00000000 | 0x00000030);
             m_explorerManager.ShowTaskbar();
             appProcess.Kill();
         }
