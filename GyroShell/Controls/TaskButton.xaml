@@ -129,7 +129,7 @@
         </Button>
 
         <Image IsHitTestVisible="False" Source="{Binding Path=AppIcon}" Height="24" Width="24" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,2" />
-        <Border IsHitTestVisible="False" x:Name="HighlightBorder" Width="8" Height="3" CornerRadius="2" Background="{ThemeResource DefaultTaskButtonHighlightBorderColor}" VerticalAlignment="Bottom" Margin="0,2,0,0" HorizontalAlignment="Center" RenderTransformOrigin="0.45,0">
+        <Border IsHitTestVisible="False" x:Name="HighlightBorder" Width="8" Height="3" CornerRadius="2" Background="{ThemeResource DefaultTaskButtonHighlightBorderColor}" VerticalAlignment="Bottom" Margin="0,2,0,0" HorizontalAlignment="Center" RenderTransformOrigin="0.46,0">
             <Border.RenderTransform>
                 <ScaleTransform x:Name="HighlightBorderTransform" ScaleX="1" ScaleY="1"/>
             </Border.RenderTransform>
