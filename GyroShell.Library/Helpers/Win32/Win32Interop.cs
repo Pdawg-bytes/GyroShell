@@ -152,7 +152,7 @@ namespace GyroShell.Library.Helpers.Win32
         }
 
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        public static extern int MessageBox(IntPtr hWnd, string text, string caption, uint type);
+        public static extern int MessageBoxW(IntPtr hWnd, string text, string caption, uint type);
 
         [DllImport("PowrProf.dll")]
         public static extern bool SetSuspendState(bool hibernate, bool forceCritical, bool disableWakeEvent);
@@ -167,8 +167,8 @@ namespace GyroShell.Library.Helpers.Win32
         public static extern bool EnumWindows(EnumWindowsCallback lpEnumFunc, IntPtr lParam);
         public delegate bool EnumWindowsCallback(IntPtr hwnd, IntPtr lParam);
 
-        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        public static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        public static extern int GetClassNameW(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -251,6 +251,9 @@ namespace GyroShell.Library.Helpers.Win32
         [DllImport("user32.dll", SetLastError = true)]
         public static extern bool RegisterShellHookWindow(IntPtr hWnd);
 
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        public static extern uint RegisterWindowMessageW(string lpString);
+
         [DllImport("user32.dll")]
         public static extern bool DeregisterShellHookWindow(IntPtr hWnd);
 
@@ -288,6 +291,59 @@ namespace GyroShell.Library.Helpers.Win32
 
         [DllImport("shell32.dll", SetLastError = true, EntryPoint = "#181")]
         public static extern bool RegisterShellHook(IntPtr hwnd, int fInstall);
+        [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.U2)]
+        public static extern ushort RegisterClassExW([In] ref WNDCLASSEX lpwcx);
+        [DllImport("user32.dll", SetLastError = true, CharSet =CharSet.Unicode)]
+        public static extern IntPtr CreateWindowExW(
+            uint dwExStyle,
+       string lpClassName,
+       string lpWindowName,
+       uint dwStyle,
+       int x,
+       int y,
+       int nWidth,
+       int nHeight,
+       IntPtr hWndParent,
+       IntPtr hMenu,
+       IntPtr hInstance,
+       IntPtr lpParam);
+        [DllImport("user32.dll")]
+        public static extern IntPtr DefWindowProcW(nint hWnd, uint uMsg, nint wParam, nint lParam);
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool SetTaskmanWindow(nint hWnd);
+        [DllImport("user32.dll")]
+        public static extern nint GetTaskmanWindow();
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+        public struct WNDCLASSEX
+        {
+            [MarshalAs(UnmanagedType.U4)]
+            public int cbSize;
+            [MarshalAs(UnmanagedType.U4)]
+            public int style;
+            public IntPtr lpfnWndProc; // not WndProc
+            public int cbClsExtra;
+            public int cbWndExtra;
+            public IntPtr hInstance;
+            public IntPtr hIcon;
+            public IntPtr hCursor;
+            public IntPtr hbrBackground;
+            public string lpszMenuName;
+            public string lpszClassName;
+            public IntPtr hIconSm;
+
+            //Use this function to make a new one with cbSize already filled in.
+            //For example:
+            //var WndClss = WNDCLASSEX.Build()
+            public static WNDCLASSEX Build()
+            {
+                var nw = new WNDCLASSEX();
+                nw.cbSize = Marshal.SizeOf(typeof(WNDCLASSEX));
+                return nw;
+            }
+        }
+
 
         [StructLayout(LayoutKind.Sequential)]
         public struct SYSTEM_INFO
@@ -397,6 +453,36 @@ namespace GyroShell.Library.Helpers.Win32
 
         [DllImport("UXTheme.dll", SetLastError = true, EntryPoint = "#138")]
         public static extern bool ShouldSystemUseDarkMode();
+
+        [ComImport]
+        [Guid("914d9b3a-5e53-4e14-bbba-46062acb35a4")]
+        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        public interface IImmersiveShellHookService
+        {
+            int Register(); //TODO args
+            int Unregister(uint cookie);
+            int PostShellHookMessage(nint wparam, nint lparam);
+            int SetTargetWindowForSerialization(nint hwnd);
+            int PostShellHookMessageWithSerialization();//todo: args
+            int UpdateWindowApplicationId(nint hwnd, string pszAppid);
+            int HandleWindowReplacement(nint hwndOld, nint hwndNew);
+            bool IsExecutionOnSerializedThread();
+        }
+        [ComImport]
+        [Guid("6d5140c1-7436-11ce-8034-00aa006009fa")]
+        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        public interface IServiceProvider
+        {
+            int QueryService(ref Guid guidService, ref Guid riid,
+                       [MarshalAs(UnmanagedType.Interface)] out object ppvObject);
+        }
+        [ComImport]
+        [Guid("c2f03a33-21f5-47fa-b4bb-156362a2f239")]
+        [ClassInterface(ClassInterfaceType.None)]
+        public class CImmersiveShell
+        {
+
+        }
 
 
         [DllImport("user32.dll", EntryPoint = "GetClassLongPtr")]
