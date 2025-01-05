@@ -9,6 +9,8 @@
 #endregion
 
 using System;
+using System.Drawing.Printing;
+using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
 using System.Text;
 using static GyroShell.Library.Interfaces.IPropertyStoreAUMID;
@@ -77,6 +79,7 @@ namespace GyroShell.Library.Helpers.Win32
         public const int WS_EX_NOACTIVATE = 0x08000000;
         public const int WS_EX_WINDOWEDGE = 0x100;
         public const int WS_EX_TOPMOST = 0x00000008;
+        public const int WS_EX_LAYERED = 0x80000;
         public const int WS_VISIBLE = 0x10000000;
         public const int WS_CHILD = 0x40000000;
 
@@ -123,6 +126,9 @@ namespace GyroShell.Library.Helpers.Win32
         public const uint PROCESS_QUERY_INFORMATION = 0x0400;
 
         public const uint EWX_LOGOFF = 0x00000000;
+
+        public const int LWA_ALPHA = 0x2;
+        public const int LWA_COLORKEY = 0x1;
 
         public delegate bool EnumThreadProc(IntPtr hwnd, IntPtr lParam);
 
@@ -489,5 +495,56 @@ namespace GyroShell.Library.Helpers.Win32
 
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         public static extern bool QueryFullProcessImageName(IntPtr hProcess, uint dwFlags, [Out, MarshalAs(UnmanagedType.LPTStr)] StringBuilder lpExeName, ref uint lpdwSize);
+
+        [DllImport("user32.dll")]
+        public static extern bool SetLayeredWindowAttributes(IntPtr hwnd, uint crKey, byte bAlpha, uint dwFlags);
+        
+        [DllImport("gdi32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool DeleteObject(IntPtr hObject);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr GetDC(IntPtr hWnd);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool GetClientRect(IntPtr hWnd, out RECT lpRect);
+
+        [DllImport("gdi32.dll")]
+        public static extern IntPtr CreateSolidBrush(uint crColor);
+
+        [DllImport("gdi32.dll")]
+        public static extern IntPtr CreateRectRgn(int nLeftRect, int nTopRect, int nRightRect, int nBottomRect);
+
+        [DllImport("dwmapi.dll")]
+        public static extern int DwmExtendFrameIntoClientArea(IntPtr hwnd, ref MARGINS margins);
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MARGINS
+        {
+            public int Left;
+            public int Right;
+            public int Top;
+            public int Bottom;
+
+            public MARGINS(int left, int right, int top, int bottom)
+            {
+                Left = left;
+                Right = right;
+                Top = top;
+                Bottom = bottom;
+            }
+        }
+
+        [DllImport("dwmapi.dll")]
+        public static extern void DwmEnableBlurBehindWindow(IntPtr hwnd, ref DWM_BLURBEHIND blurBehind);
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct DWM_BLURBEHIND
+        {
+            public uint dwFlags;
+            public bool fEnable;
+            public IntPtr hRgnBlur;
+            public bool fTransitionOnMaximized;
+        }
     }
 }

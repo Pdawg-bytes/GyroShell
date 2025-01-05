@@ -14,6 +14,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using GyroShell.Library.ViewModels;
+using GyroShell.Library.Controls;
 
 namespace GyroShell.Controls
 {
