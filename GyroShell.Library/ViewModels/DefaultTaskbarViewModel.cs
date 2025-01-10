@@ -390,12 +390,17 @@ namespace GyroShell.Library.ViewModels
         [ObservableProperty]
         private string dateText;
 
+        [ObservableProperty]
+        private bool openTest; // DELETE THIS
+
         private void TimeService_UpdateClockBinding(object sender, EventArgs e)
         {
             m_dispatcherService.DispatcherQueue.TryEnqueue(() =>
             {
-                TimeText = DateTime.Now.ToString(m_timeService.ClockFormat);
-                DateText = DateTime.Now.ToString(m_timeService.DateFormat);
+                DateTime now = DateTime.Now;
+                TimeText = now.ToString(m_timeService.ClockFormat);
+                DateText = now.ToString(m_timeService.DateFormat);
+                OpenTest = now.Second % 2 == 0;
             });
         }
         #endregion

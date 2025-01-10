@@ -6,12 +6,15 @@ using Windows.Graphics;
 using GyroShell.Library.Helpers.Composition;
 
 using AppWindow = Microsoft.UI.Windowing.AppWindow;
+using static GyroShell.Library.Helpers.Win32.Win32Interop;
 
 namespace GyroShell.Library.Controls
 {
-    public partial class FlyoutWindow : Window
+    internal partial class FlyoutWindow : Window
     {
-        public FlyoutWindow()
+        AppWindow appWindow;
+
+        internal FlyoutWindow()
         {
             this.InitializeComponent();
 
@@ -23,30 +26,36 @@ namespace GyroShell.Library.Controls
             presenter.IsAlwaysOnTop = true;
             presenter.IsResizable = false;
             presenter.SetBorderAndTitleBar(false, false);
-            AppWindow appWindow = GetAppWindowForCurrentWindow();
-
             appWindow.SetPresenter(AppWindowPresenterKind.Default);
+
+            IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+            int exStyle = (int)GetWindowLongPtr(hWnd, -20);
+            exStyle |= 128;
+            SetWindowLongPtr(hWnd, GWL_EXSTYLE, (IntPtr)exStyle);
+
+            DWMWINDOWATTRIBUTE cornerAttrib = DWMWINDOWATTRIBUTE.DWMWA_WINDOW_CORNER_PREFERENCE;
+            int cornerPref = (int)DWM_WINDOW_CORNER_PREFERENCE.DWMWCP_DONOTROUND;
+            DwmSetWindowAttribute(hWnd, cornerAttrib, ref cornerPref, sizeof(uint));
+
+            DWMWINDOWATTRIBUTE shadowAttrib = DWMWINDOWATTRIBUTE.DWMWA_NCRENDERING_POLICY;
+            int shadowPref = (int)DWMNCRENDERINGPOLICY.DWMNCRP_DISABLED;
+            DwmSetWindowAttribute(hWnd, shadowAttrib, ref shadowPref, sizeof(uint));
+
             appWindow.Resize(new SizeInt32 { Width = 300, Height = 300 });
             appWindow.Move(new PointInt32 { X = 200, Y = 300 });
             appWindow.MoveInZOrderAtTop();
         }
 
-        #region Window Handling
         private OverlappedPresenter GetAppWindowAndPresenter()
         {
             IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
-            Microsoft.UI.WindowId WndId = Win32Interop.GetWindowIdFromWindow(hWnd);
-            AppWindow _apw = AppWindow.GetFromWindowId(WndId);
+            WindowId wndId = Win32Interop.GetWindowIdFromWindow(hWnd);
+            appWindow = AppWindow.GetFromWindowId(wndId);
 
-            return _apw.Presenter as OverlappedPresenter;
+            return appWindow.Presenter as OverlappedPresenter;
         }
-        private AppWindow GetAppWindowForCurrentWindow()
-        {
-            IntPtr hWndApp = WinRT.Interop.WindowNative.GetWindowHandle(this);
-            Microsoft.UI.WindowId WndIdApp = Win32Interop.GetWindowIdFromWindow(hWndApp);
 
-            return AppWindow.GetFromWindowId(WndIdApp);
-        }
-        #endregion
+        internal void ShowWindow() { if (appWindow != null) appWindow.Show(); }
+        internal void HideWindow() { if (appWindow != null) appWindow.Hide(); }
     }
 }

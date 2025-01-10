@@ -57,7 +57,7 @@ namespace GyroShell
 
             m_explorerManager.Initialize();
 
-            // Presenter handling code
+
             OverlappedPresenter presenter = GetAppWindowAndPresenter();
             presenter.IsMaximizable = false;
             presenter.IsMinimizable = false;
@@ -79,7 +79,7 @@ namespace GyroShell
             if (m_envService.IsWindows11)
             {
                 DWMWINDOWATTRIBUTE attribute = DWMWINDOWATTRIBUTE.DWMWA_WINDOW_CORNER_PREFERENCE;
-                DWM_WINDOW_CORNER_PREFERENCE preference = DWM_WINDOW_CORNER_PREFERENCE.DWMWCP_DONOTROUND;
+                int preference = (int)DWM_WINDOW_CORNER_PREFERENCE.DWMWCP_DONOTROUND;
                 DwmSetWindowAttribute(hWnd, attribute, ref preference, sizeof(uint));
             }
 

@@ -24,18 +24,17 @@ namespace GyroShell.Controls
     {
         private WindowModel window;
 
-        private static Dictionary<WindowState, string> _visualStateStringPairs;
+        private static readonly Dictionary<WindowState, string> _visualStateStringPairs = new()
+        {
+            { WindowState.Active, "Active" },
+            { WindowState.Inactive, "Inactive" },
+            { WindowState.Flashing, "Flashing" },
+            { WindowState.Hidden, "Hidden" }
+        };
 
         public TaskButton()
         {
             this.InitializeComponent();
-            _visualStateStringPairs = new Dictionary<WindowState, string>()
-            {
-                { WindowState.Active, "Active" },
-                { WindowState.Inactive, "Inactive" },
-                { WindowState.Flashing, "Flashing" },
-                { WindowState.Hidden, "Hidden" }
-            };
         }
 
         private void TaskButton_ActualThemeChanged(FrameworkElement sender, object args)

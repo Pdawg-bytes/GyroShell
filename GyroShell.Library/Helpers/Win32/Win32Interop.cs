@@ -80,8 +80,13 @@ namespace GyroShell.Library.Helpers.Win32
         public const int WS_EX_WINDOWEDGE = 0x100;
         public const int WS_EX_TOPMOST = 0x00000008;
         public const int WS_EX_LAYERED = 0x80000;
+
+        public const long WS_BORDER = 0x00800000L;
+        public const long WS_THICKFRAME = 0x00040000L;
+        public const long WS_CAPTION = 0x00C00000L;
         public const int WS_VISIBLE = 0x10000000;
         public const int WS_CHILD = 0x40000000;
+        public const long WS_POPUP = 0x80000000L;
 
         public const int HSHELL_WINDOWCREATED = 1;
         public const int HSHELL_WINDOWDESTROYED = 2;
@@ -271,21 +276,45 @@ namespace GyroShell.Library.Helpers.Win32
         // DWM API attrib
         public enum DWMWINDOWATTRIBUTE
         {
+            DWMWA_NCRENDERING_ENABLED = 1,
+            DWMWA_NCRENDERING_POLICY = 2,
+            DWMWA_TRANSITIONS_FORCEDISABLED = 3,
+            DWMWA_ALLOW_NCPAINT = 4,
+            DWMWA_CAPTION_BUTTON_BOUNDS = 5,
+            DWMWA_NONCLIENT_RTL_LAYOUT = 6,
+            DWMWA_FORCE_ICONIC_REPRESENTATION = 7,
+            DWMWA_FLIP3D_POLICY = 8,
+            DWMWA_EXTENDED_FRAME_BOUNDS = 9,
+            DWMWA_HAS_ICONIC_BITMAP = 10,
+            DWMWA_DISALLOW_PEEK = 11,
+            DWMWA_EXCLUDED_FROM_PEEK = 12,
+            DWMWA_CLOAK = 13,
+            DWMWA_CLOAKED = 14,
+            DWMWA_FREEZE_REPRESENTATION = 15,
+            DWMWA_LAST = 16,
             DWMWA_WINDOW_CORNER_PREFERENCE = 33
         }
+
         // Copied from dwmapi.h
-        public enum DWM_WINDOW_CORNER_PREFERENCE
+        public enum DWM_WINDOW_CORNER_PREFERENCE : int
         {
             DWMWCP_DEFAULT = 0,
             DWMWCP_DONOTROUND = 1,
             DWMWCP_ROUND = 2,
             DWMWCP_ROUNDSMALL = 3
         }
-        // DwmSetWindowAttribute
-        [DllImport("dwmapi.dll", CharSet = CharSet.Unicode, PreserveSig = false)]
-        public static extern void DwmSetWindowAttribute(IntPtr hwnd, DWMWINDOWATTRIBUTE attribute, ref DWM_WINDOW_CORNER_PREFERENCE pvAttribute, uint cbAttribute);
+        public enum DWMNCRENDERINGPOLICY : int
+        {
+            DWMNCRP_USEWINDOWSTYLE,
+            DWMNCRP_DISABLED,
+            DWMNCRP_ENABLED
+        }
 
-        // Proc info API for unpackaged
+        public const int DWMNCRP_DISABLED = 1;
+
+        [DllImport("dwmapi.dll", CharSet = CharSet.Unicode, PreserveSig = false)]
+        public static extern void DwmSetWindowAttribute(IntPtr hwnd, DWMWINDOWATTRIBUTE dwAttribute, ref int pvAttribute, uint cbAttribute);
+
         [DllImport("kernel32.dll")]
         public static extern void GetNativeSystemInfo(out SYSTEM_INFO lpSystemInfo);
 

@@ -12,11 +12,9 @@ namespace GyroShell.Library.Helpers.Composition
     public partial class TransparentTintBackdrop : Microsoft.UI.Xaml.Media.SystemBackdrop
     {
         private readonly Windows.UI.Composition.Compositor _compositor;
-        private Windows.UI.Composition.CompositionColorBrush? _brush;
+        private Windows.UI.Composition.CompositionColorBrush _brush;
         private IntPtr _backgroundBrush = IntPtr.Zero;
         private Windows.UI.Color _tintColor;
-
-        private IntPtr _windowHandle;
 
         public TransparentTintBackdrop(Windows.UI.Composition.Compositor compositor, Windows.UI.Color tintColor)
         {
