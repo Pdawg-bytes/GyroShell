@@ -43,7 +43,7 @@
         </Frame>
         <fl:ShellFlyout IsOpen="{x:Bind ViewModel.OpenTest, Mode=OneWay}" x:Name="TestFlyout">
             <fl:ShellFlyout.FlyoutContent>
-                <Button Content="Hello" Width="300"></Button>
+                <Grid BorderBrush="Gray" BorderThickness="1" Background="#22FFFFFF"/>
             </fl:ShellFlyout.FlyoutContent>
         </fl:ShellFlyout>
         <StackPanel Orientation="Horizontal" x:Name="LeftControls" HorizontalAlignment="{x:Bind ViewModel.TaskbarIconAlignment, Mode=OneWay}">
@@ -57,7 +57,6 @@
                     <TextBlock FontFamily="HoloLens MDL2 Assets" Text="&#xE782;" VerticalAlignment="Center" Margin="0" FontSize="16"/>
                 </ToggleButton.Content>
             </ToggleButton>
-            <TextBox Height="32" PlaceholderText="Type here to search..." Width="200" Margin="5,2,0,0" CornerRadius="15" BorderThickness="0"/>
             <Button HorizontalAlignment="Left" Height="40" Width="40" Margin="5,0,10,0" Background="Transparent" BorderBrush="Transparent" x:Name="TaskView" Padding="0" ToolTipService.ToolTip="Task View">
                 <Button.Content>
                     <TextBlock FontFamily="{x:Bind ViewModel.IconFontFamily, Mode=OneWay}" Text="&#xE7C4;" VerticalAlignment="Center" Margin="0" FontSize="16" x:Name="TaskViewIcon"/>

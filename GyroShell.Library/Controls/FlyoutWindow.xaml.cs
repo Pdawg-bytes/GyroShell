@@ -44,6 +44,8 @@ namespace GyroShell.Library.Controls
             appWindow.Resize(new SizeInt32 { Width = 300, Height = 300 });
             appWindow.Move(new PointInt32 { X = 200, Y = 300 });
             appWindow.MoveInZOrderAtTop();
+
+            appWindow.Hide();
         }
 
         private OverlappedPresenter GetAppWindowAndPresenter()

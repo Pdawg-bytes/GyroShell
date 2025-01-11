@@ -391,7 +391,7 @@ namespace GyroShell.Library.ViewModels
         private string dateText;
 
         [ObservableProperty]
-        private bool openTest; // DELETE THIS
+        private bool openTest = true;
 
         private void TimeService_UpdateClockBinding(object sender, EventArgs e)
         {
@@ -400,7 +400,6 @@ namespace GyroShell.Library.ViewModels
                 DateTime now = DateTime.Now;
                 TimeText = now.ToString(m_timeService.ClockFormat);
                 DateText = now.ToString(m_timeService.DateFormat);
-                OpenTest = now.Second % 2 == 0;
             });
         }
         #endregion
