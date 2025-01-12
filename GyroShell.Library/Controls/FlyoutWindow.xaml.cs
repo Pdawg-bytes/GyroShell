@@ -7,6 +7,10 @@ using GyroShell.Library.Helpers.Composition;
 
 using AppWindow = Microsoft.UI.Windowing.AppWindow;
 using static GyroShell.Library.Helpers.Win32.Win32Interop;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Composition.SystemBackdrops;
+using Windows.UI;
+using System.Runtime.InteropServices;
 
 namespace GyroShell.Library.Controls
 {
@@ -30,7 +34,7 @@ namespace GyroShell.Library.Controls
 
             IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
             int exStyle = (int)GetWindowLongPtr(hWnd, -20);
-            exStyle |= 128;
+            exStyle |= 128 | WS_EX_LAYERED;
             SetWindowLongPtr(hWnd, GWL_EXSTYLE, (IntPtr)exStyle);
 
             DWMWINDOWATTRIBUTE cornerAttrib = DWMWINDOWATTRIBUTE.DWMWA_WINDOW_CORNER_PREFERENCE;
@@ -51,7 +55,7 @@ namespace GyroShell.Library.Controls
         private OverlappedPresenter GetAppWindowAndPresenter()
         {
             IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
-            WindowId wndId = Win32Interop.GetWindowIdFromWindow(hWnd);
+            Microsoft.UI.WindowId wndId = Win32Interop.GetWindowIdFromWindow(hWnd);
             appWindow = AppWindow.GetFromWindowId(wndId);
 
             return appWindow.Presenter as OverlappedPresenter;

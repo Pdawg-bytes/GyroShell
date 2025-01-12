@@ -301,7 +301,7 @@ namespace GyroShell
 
                     if (acrylicController != null)
                     {
-                        acrylicController.TintColor = Color.FromArgb(255, 0, 0, 0);
+                        acrylicController.TintColor = Color.FromArgb(255, 32, 32, 32);
                     }
                     break;
                 case ElementTheme.Light:
@@ -309,7 +309,7 @@ namespace GyroShell
 
                     if (acrylicController != null)
                     {
-                        acrylicController.TintColor = Color.FromArgb(255, 255, 255, 255);
+                        acrylicController.TintColor = Color.FromArgb(255, 232, 232, 232);
                     }
                     break;
                 case ElementTheme.Default:

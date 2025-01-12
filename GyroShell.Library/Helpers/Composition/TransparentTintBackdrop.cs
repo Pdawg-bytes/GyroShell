@@ -72,14 +72,14 @@ namespace GyroShell.Library.Helpers.Composition
         {
             IntPtr _windowHandle = (IntPtr)hWnd;
 
-            MARGINS margins = new() { };
+            MARGINS margins = new() { Left = -1, Right = -1, Bottom = -1, Top = -1 };
             DwmExtendFrameIntoClientArea(_windowHandle, ref margins);
 
             DWM_BLURBEHIND blur = new()
             {
                 dwFlags = 3,
                 fEnable = true,
-                hRgnBlur = CreateRectRgn(-2, -2, -1, -1),
+                hRgnBlur = 0,
                 fTransitionOnMaximized = true,
             };
             DwmEnableBlurBehindWindow(_windowHandle, ref blur);

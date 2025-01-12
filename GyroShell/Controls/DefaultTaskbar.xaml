@@ -43,7 +43,7 @@
         </Frame>
         <fl:ShellFlyout IsOpen="{x:Bind ViewModel.OpenTest, Mode=OneWay}" x:Name="TestFlyout">
             <fl:ShellFlyout.FlyoutContent>
-                <Grid BorderBrush="Gray" BorderThickness="1" Background="#22FFFFFF"/>
+                <Grid BorderBrush="Gray" BorderThickness="1" Background="{ThemeResource SystemControlAcrylicWindowBrush}"/>
             </fl:ShellFlyout.FlyoutContent>
         </fl:ShellFlyout>
         <StackPanel Orientation="Horizontal" x:Name="LeftControls" HorizontalAlignment="{x:Bind ViewModel.TaskbarIconAlignment, Mode=OneWay}">
@@ -52,7 +52,7 @@
                     <EntranceThemeTransition IsStaggeringEnabled="True" />
                 </TransitionCollection>
             </StackPanel.ChildrenTransitions>
-            <ToggleButton Command="{x:Bind ViewModel.StartButtonCheckedCommand}" IsChecked="{x:Bind TestFlyout.IsOpen, Mode=OneWay}" HorizontalAlignment="Left" Height="40" Width="40" Margin="5,0,0,0" Background="Transparent" BorderBrush="Transparent" x:Name="StartButton" RightTapped="StartButton_RightTapped">
+            <ToggleButton Command="{x:Bind ViewModel.StartButtonCheckedCommand}" IsChecked="{x:Bind ViewModel.IsStartOpen, Mode=OneWay}" HorizontalAlignment="Left" Height="40" Width="40" Margin="5,0,0,0" Background="Transparent" BorderBrush="Transparent" x:Name="StartButton" RightTapped="StartButton_RightTapped">
                 <ToggleButton.Content>
                     <TextBlock FontFamily="HoloLens MDL2 Assets" Text="&#xE782;" VerticalAlignment="Center" Margin="0" FontSize="16"/>
                 </ToggleButton.Content>
