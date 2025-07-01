@@ -31,19 +31,19 @@ namespace GyroShell.Library.ViewModels
 {
     public partial class DefaultTaskbarViewModel : ObservableObject, IDisposable
     {
-        private readonly IEnvironmentInfoService m_envService;
-        private readonly ISettingsService m_appSettings;
-        private readonly IInternalLauncher m_internalLauncher;
-        private readonly IDispatcherService m_dispatcherService;
-        private readonly ITimeService m_timeService;
-        private readonly IShellHookService m_shellHookService;
+        private readonly IEnvironmentInfoService _envService;
+        private readonly ISettingsService _appSettings;
+        private readonly IInternalLauncher _internalLauncher;
+        private readonly IDispatcherService _dispatcherService;
+        private readonly ITimeService _timeService;
+        private readonly IShellHookService _shellHookService;
 
-        private readonly IExplorerManagerService m_explorerManager;
-        private readonly INotificationManager m_notifManager;
+        private readonly IExplorerManagerService _explorerManager;
+        private readonly INotificationManager _notifManager;
 
-        private readonly INetworkService m_netService;
-        private readonly IBatteryService m_powerService;
-        private readonly ISoundService m_soundService;
+        private readonly INetworkService _netService;
+        private readonly IBatteryService _powerService;
+        private readonly ISoundService _soundService;
 
         public StartFlyoutCommands StartFlyoutCommands { get; }
 
@@ -60,40 +60,40 @@ namespace GyroShell.Library.ViewModels
             ITimeService timeService,
             IShellHookService shellHookService)
         {
-            m_envService = envService;
-            m_appSettings = appSettings;
-            m_explorerManager = explorerManager;
-            m_netService = netService;
-            m_powerService = powerService;
-            m_soundService = soundService;
-            m_internalLauncher = internalLauncher;
-            m_dispatcherService = dispatcherService;
-            m_notifManager = notifManager;
-            m_timeService = timeService;
-            m_shellHookService = shellHookService;
+            _envService = envService;
+            _appSettings = appSettings;
+            _explorerManager = explorerManager;
+            _netService = netService;
+            _powerService = powerService;
+            _soundService = soundService;
+            _internalLauncher = internalLauncher;
+            _dispatcherService = dispatcherService;
+            _notifManager = notifManager;
+            _timeService = timeService;
+            _shellHookService = shellHookService;
 
-            StartFlyoutCommands = new StartFlyoutCommands(m_envService, m_internalLauncher);
+            StartFlyoutCommands = new StartFlyoutCommands(_envService, _internalLauncher);
 
-            m_soundService.OnVolumeChanged += SoundService_OnVolumeChanged;
+            _soundService.OnVolumeChanged += SoundService_OnVolumeChanged;
             AudioCheck();
 
-            m_powerService.BatteryStatusChanged += BatteryService_BatteryStatusChanged;
+            _powerService.BatteryStatusChanged += BatteryService_BatteryStatusChanged;
             DetectBatteryPresence();
 
-            m_netService.InternetStatusChanged += NetworkService_InternetStatusChanged;
+            _netService.InternetStatusChanged += NetworkService_InternetStatusChanged;
             UpdateNetworkStatus();
 
-            m_notifManager.NotifcationChanged += NotificationManager_NotificationChanged;
+            _notifManager.NotifcationChanged += NotificationManager_NotificationChanged;
             //Task.Run(UpdateNotifications).Wait();
 
-            m_timeService.UpdateClockBinding += TimeService_UpdateClockBinding;
+            _timeService.UpdateClockBinding += TimeService_UpdateClockBinding;
 
-            m_appSettings.SettingUpdated += AppSettings_SettingUpdated;
+            _appSettings.SettingUpdated += AppSettings_SettingUpdated;
 
-            m_explorerManager.SystemControlStateChanged += ExplorerManager_SystemControlStateChanged;
+            _explorerManager.SystemControlStateChanged += ExplorerManager_SystemControlStateChanged;
         }
 
-        public ObservableCollection<WindowModel> CurrentWindows => m_shellHookService.CurrentWindows;
+        public ObservableCollection<WindowModel> CurrentWindows => _shellHookService.CurrentWindows;
 
         private void AppSettings_SettingUpdated(object sender, string key)
         {
@@ -109,7 +109,7 @@ namespace GyroShell.Library.ViewModels
             }
         }
 
-        public FontFamily IconFontFamily => m_appSettings.IconStyle switch
+        public FontFamily IconFontFamily => _appSettings.IconStyle switch
         {
             0 => new FontFamily("Segoe MDL2 Assets"),
             1 => new FontFamily("Segoe Fluent Icons"),
@@ -120,12 +120,12 @@ namespace GyroShell.Library.ViewModels
         {
             get
             {
-                switch (m_netService.InternetType)
+                switch (_netService.InternetType)
                 {
                     case InternetConnection.Wired:
                         return new Thickness(0, 2, 7, 0);
                     default:
-                        return m_appSettings.IconStyle switch
+                        return _appSettings.IconStyle switch
                         {
                             0 => new Thickness(0, -2, 7, 0),
                             1 => new Thickness(0, 2, 7, 0),
@@ -139,8 +139,8 @@ namespace GyroShell.Library.ViewModels
         {
             get
             {
-                if (!m_powerService.IsBatteryInstalled) { return new Thickness(0); }
-                return m_appSettings.IconStyle switch
+                if (!_powerService.IsBatteryInstalled) { return new Thickness(0); }
+                return _appSettings.IconStyle switch
                 {
                     0 => new Thickness(0, 2, 12, 0),
                     1 => new Thickness(0, 3, 14, 0),
@@ -149,14 +149,14 @@ namespace GyroShell.Library.ViewModels
             }
         }
 
-        public Thickness SoundStatusMargin => m_appSettings.IconStyle switch
+        public Thickness SoundStatusMargin => _appSettings.IconStyle switch
         {
             0 => new Thickness(6, 1, 0, 0),
             1 => new Thickness(5, 0, 0, 0),
             _ => new Thickness(6, 1, 0, 0)
         };
 
-        public HorizontalAlignment TaskbarIconAlignment => m_appSettings.TaskbarAlignment switch
+        public HorizontalAlignment TaskbarIconAlignment => _appSettings.TaskbarAlignment switch
         {
             0 => HorizontalAlignment.Left,
             1 => HorizontalAlignment.Center,
@@ -167,20 +167,20 @@ namespace GyroShell.Library.ViewModels
         [RelayCommand]
         public void SystemControlsChecked()
         {
-            if (m_envService.IsWindows11) { m_explorerManager.ToggleControlCenter(); }
-            else { m_explorerManager.ToggleActionCenter(); }
+            if (_envService.IsWindows11) { _explorerManager.ToggleControlCenter(); }
+            else { _explorerManager.ToggleActionCenter(); }
         }
 
         [RelayCommand]
         public void StartButtonChecked()
         {
-            m_explorerManager.ToggleStartMenu();
+            _explorerManager.ToggleStartMenu();
         }
 
         [RelayCommand]
         public void ActionCenterChecked()
         {
-            m_explorerManager.ToggleActionCenter();
+            _explorerManager.ToggleActionCenter();
         }
 
         [RelayCommand]
@@ -226,7 +226,7 @@ namespace GyroShell.Library.ViewModels
         }
         private void AudioCheck()
         {
-            int currentVolume = m_soundService.Volume;
+            int currentVolume = _soundService.Volume;
             string statusTextBuf = "\uEA85";
 
             if (currentVolume == 0 || currentVolume == -1)
@@ -249,12 +249,12 @@ namespace GyroShell.Library.ViewModels
                 }
             }
 
-            if (m_soundService.IsMuted)
+            if (_soundService.IsMuted)
             {
                 statusTextBuf = "\uE198";
             }
 
-            m_dispatcherService.DispatcherQueue.TryEnqueue(() =>
+            _dispatcherService.DispatcherQueue.TryEnqueue(() =>
             {
                 SoundStatusText = statusTextBuf;
                 SoundBackIconVisibility = (statusTextBuf == "\uE198") ? Visibility.Collapsed : Visibility.Visible;
@@ -271,14 +271,14 @@ namespace GyroShell.Library.ViewModels
 
         private void BatteryService_BatteryStatusChanged(object sender, EventArgs e)
         {
-            m_dispatcherService.DispatcherQueue.TryEnqueue(() =>
+            _dispatcherService.DispatcherQueue.TryEnqueue(() =>
             {
                 AggregateBattery();
             });
         }
         private void DetectBatteryPresence()
         {
-            BatteryReport report = m_powerService.GetStatusReport();
+            BatteryReport report = _powerService.GetStatusReport();
             BatteryPowerStatus status = report.PowerStatus;
 
             if (status == BatteryPowerStatus.NotInstalled)
@@ -293,7 +293,7 @@ namespace GyroShell.Library.ViewModels
         }
         private void AggregateBattery()
         {
-            BatteryReport report = m_powerService.GetStatusReport();
+            BatteryReport report = _powerService.GetStatusReport();
             double battLevel = report.ChargePercentage;
             BatteryPowerStatus status = report.PowerStatus;
             if (status == BatteryPowerStatus.Charging || status == BatteryPowerStatus.Idle)
@@ -325,9 +325,9 @@ namespace GyroShell.Library.ViewModels
         {
             string statusTextBuf = "\uE774";
             string backTextBuf = "\uE774";
-            if (m_netService.IsInternetAvailable)
+            if (_netService.IsInternetAvailable)
             {
-                switch (m_netService.InternetType)
+                switch (_netService.InternetType)
                 {
                     case InternetConnection.Wired:
                         statusTextBuf = "\uE839";
@@ -335,11 +335,11 @@ namespace GyroShell.Library.ViewModels
                         OnPropertyChanged(nameof(NetworkStatusMargin));
                         break;
                     case InternetConnection.Wireless:
-                        statusTextBuf = IconConstants.WiFiIcons[(int)m_netService.SignalStrength];
+                        statusTextBuf = IconConstants.WiFiIcons[(int)_netService.SignalStrength];
                         backTextBuf = "\uE701";
                         break;
                     case InternetConnection.Data:
-                        statusTextBuf = IconConstants.DataIcons[(int)m_netService.SignalStrength];
+                        statusTextBuf = IconConstants.DataIcons[(int)_netService.SignalStrength];
                         backTextBuf = "\uEC3B";
                         break;
                     case InternetConnection.Unknown:
@@ -354,7 +354,7 @@ namespace GyroShell.Library.ViewModels
                 statusTextBuf = "\uEB55";
                 backTextBuf = "\uEB55";
             }
-            m_dispatcherService.DispatcherQueue.TryEnqueue(() =>
+            _dispatcherService.DispatcherQueue.TryEnqueue(() =>
             {
                 NetworkStatusCharacter = statusTextBuf;
                 NetworkBackCharacter = backTextBuf;
@@ -373,10 +373,10 @@ namespace GyroShell.Library.ViewModels
         }
         private async Task UpdateNotifications()
         {
-            IReadOnlyList<UserNotification> notifsToast = await m_notifManager.NotificationListener.GetNotificationsAsync(NotificationKinds.Toast);
-            IReadOnlyList<UserNotification> notifsOther = await m_notifManager.NotificationListener.GetNotificationsAsync(NotificationKinds.Unknown);
+            IReadOnlyList<UserNotification> notifsToast = await _notifManager.NotificationListener.GetNotificationsAsync(NotificationKinds.Toast);
+            IReadOnlyList<UserNotification> notifsOther = await _notifManager.NotificationListener.GetNotificationsAsync(NotificationKinds.Unknown);
 
-            m_dispatcherService.DispatcherQueue.TryEnqueue((Microsoft.UI.Dispatching.DispatcherQueuePriority)CoreDispatcherPriority.Normal, () =>
+            _dispatcherService.DispatcherQueue.TryEnqueue((Microsoft.UI.Dispatching.DispatcherQueuePriority)CoreDispatcherPriority.Normal, () =>
             {
                 NotifIndicatorVisibility = notifsToast.Count > 0 || notifsOther.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
             });
@@ -395,11 +395,11 @@ namespace GyroShell.Library.ViewModels
 
         private void TimeService_UpdateClockBinding(object sender, EventArgs e)
         {
-            m_dispatcherService.DispatcherQueue.TryEnqueue(() =>
+            _dispatcherService.DispatcherQueue.TryEnqueue(() =>
             {
                 DateTime now = DateTime.Now;
-                TimeText = now.ToString(m_timeService.ClockFormat);
-                DateText = now.ToString(m_timeService.DateFormat);
+                TimeText = now.ToString(_timeService.ClockFormat);
+                DateText = now.ToString(_timeService.DateFormat);
             });
         }
         #endregion
@@ -407,13 +407,13 @@ namespace GyroShell.Library.ViewModels
 
         public void Dispose()
         {
-            m_soundService.OnVolumeChanged -= SoundService_OnVolumeChanged;
-            m_powerService.BatteryStatusChanged -= BatteryService_BatteryStatusChanged;
-            m_netService.InternetStatusChanged -= NetworkService_InternetStatusChanged;
-            m_notifManager.NotifcationChanged -= NotificationManager_NotificationChanged;
-            m_timeService.UpdateClockBinding -= TimeService_UpdateClockBinding;
-            m_appSettings.SettingUpdated -= AppSettings_SettingUpdated;
-            m_explorerManager.SystemControlStateChanged -= ExplorerManager_SystemControlStateChanged;
+            _soundService.OnVolumeChanged -= SoundService_OnVolumeChanged;
+            _powerService.BatteryStatusChanged -= BatteryService_BatteryStatusChanged;
+            _netService.InternetStatusChanged -= NetworkService_InternetStatusChanged;
+            _notifManager.NotifcationChanged -= NotificationManager_NotificationChanged;
+            _timeService.UpdateClockBinding -= TimeService_UpdateClockBinding;
+            _appSettings.SettingUpdated -= AppSettings_SettingUpdated;
+            _explorerManager.SystemControlStateChanged -= ExplorerManager_SystemControlStateChanged;
         }
     }
 }

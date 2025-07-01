@@ -92,7 +92,7 @@ namespace GyroShell.Controls
             }
         }
 
-        private void CloseWindowFlyoutItem_Click(object sender, RoutedEventArgs e)
+        private void CloseWindowFlyoutIte_Click(object sender, RoutedEventArgs e)
         {
             window.CloseWindow();
         }

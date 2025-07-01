@@ -17,7 +17,7 @@ namespace GyroShell.Controls
 {
     public sealed partial class StartWindow : Window
     {
-        private AppWindow m_appWindow;
+        private AppWindow _appWindow;
 
         public StartWindow()
         {
@@ -30,9 +30,9 @@ namespace GyroShell.Controls
             presenter.IsAlwaysOnTop = true;
             presenter.IsResizable = true;
             presenter.SetBorderAndTitleBar(false, false);
-            m_appWindow = GetAppWindowForCurrentWindow();
-            m_appWindow.SetPresenter(AppWindowPresenterKind.FullScreen);
-            m_appWindow.Show();
+            _appWindow = GetAppWindowForCurrentWindow();
+            _appWindow.SetPresenter(AppWindowPresenterKind.FullScreen);
+            _appWindow.Show();
 
             // Resize Window
             IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);

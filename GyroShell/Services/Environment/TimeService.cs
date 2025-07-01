@@ -20,15 +20,15 @@ namespace GyroShell.Services.Environment
         private int lastUpdateSecond;
         private DateTime currentTime;
 
-        private readonly ISettingsService m_appSettings;
+        private readonly ISettingsService _appSettings;
 
         public string ClockFormat { get; set; }
         public string DateFormat { get; set; }
 
         public TimeService(ISettingsService appSettings)
         {
-            m_appSettings = appSettings;
-            ClockFormat = m_appSettings.EnableSeconds ? (m_appSettings.EnableMilitaryTime ? "H:mm:ss" : "T") : (m_appSettings.EnableMilitaryTime ? "H:mm" : "t");
+            _appSettings = appSettings;
+            ClockFormat = _appSettings.EnableSeconds ? (_appSettings.EnableMilitaryTime ? "H:mm:ss" : "T") : (_appSettings.EnableMilitaryTime ? "H:mm" : "t");
             DateFormat = "M/d/yyyy";
 
             updateCheck = new Timer();
@@ -37,7 +37,7 @@ namespace GyroShell.Services.Environment
 
             updateCheck.Start();
 
-            m_appSettings.SettingUpdated += AppSettings_SettingUpdated;
+            _appSettings.SettingUpdated += AppSettings_SettingUpdated;
         }
 
         private void UpdateCheck_Elapsed(object sender, ElapsedEventArgs e)
@@ -58,7 +58,7 @@ namespace GyroShell.Services.Environment
             {
                 case "isSeconds":
                 case "is24HR":
-                    ClockFormat = m_appSettings.EnableSeconds ? (m_appSettings.EnableMilitaryTime ? "H:mm:ss" : "T") : (m_appSettings.EnableMilitaryTime ? "H:mm" : "t");
+                    ClockFormat = _appSettings.EnableSeconds ? (_appSettings.EnableMilitaryTime ? "H:mm:ss" : "T") : (_appSettings.EnableMilitaryTime ? "H:mm" : "t");
                     DateFormat = "M/d/yyyy";
                     break;
             }

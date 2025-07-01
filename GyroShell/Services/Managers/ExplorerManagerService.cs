@@ -20,19 +20,19 @@ namespace GyroShell.Services.Managers
     {
         private const uint EVENT_MODIFY_STATE = 0x0002;
 
-        public IntPtr m_hTaskBar { get; set; }
-        public IntPtr m_hMultiTaskBar { get; set; }
-        public IntPtr m_hStartMenu { get; set; }
+        public IntPtr _hTaskBar { get; set; }
+        public IntPtr _hMultiTaskBar { get; set; }
+        public IntPtr _hStartMenu { get; set; }
 
         public void Initialize()
         {
-            m_hTaskBar = FindWindow("Shell_TrayWnd", null);
-            m_hMultiTaskBar = FindWindow("Shell_SecondaryTrayWnd", null);
-            m_hStartMenu = FindWindowEx(m_hStartMenu, IntPtr.Zero, "Button", "Start");
+            _hTaskBar = FindWindow("Shell_TrayWnd", null);
+            _hMultiTaskBar = FindWindow("Shell_SecondaryTrayWnd", null);
+            _hStartMenu = FindWindowEx(_hStartMenu, IntPtr.Zero, "Button", "Start");
 
-            if (m_hStartMenu == IntPtr.Zero)
+            if (_hStartMenu == IntPtr.Zero)
             {
-                m_hStartMenu = FindWindow("Button", null);
+                _hStartMenu = FindWindow("Button", null);
             }
         }
 
@@ -84,7 +84,7 @@ namespace GyroShell.Services.Managers
 
         public void ToggleStartMenu()
         {
-            SendMessage(m_hTaskBar, /*WM_SYSCOMMAND*/ 0x0112, (IntPtr) /*SC_TASKLIST*/ 0xF130, (IntPtr)0);
+            SendMessage(_hTaskBar, /*WM_SYSCOMMAND*/ 0x0112, (IntPtr) /*SC_TASKLIST*/ 0xF130, (IntPtr)0);
         }
 
         public void ToggleControlCenter()
@@ -105,7 +105,7 @@ namespace GyroShell.Services.Managers
                 APPBARDATA abd = new APPBARDATA();
 
                 abd.cbSize = Marshal.SizeOf(abd);
-                abd.hWnd = m_hTaskBar;
+                abd.hWnd = _hTaskBar;
                 abd.lParam = (IntPtr)ABState.ABS_AUTOHIDE;
 
                 SHAppBarMessage((int)ABMsg.ABM_SETSTATE, ref abd);
@@ -116,18 +116,18 @@ namespace GyroShell.Services.Managers
                 APPBARDATA abd = new APPBARDATA();
 
                 abd.cbSize = Marshal.SizeOf(abd);
-                abd.hWnd = m_hTaskBar;
+                abd.hWnd = _hTaskBar;
                 abd.lParam = (IntPtr)ABState.ABS_TOP;
 
                 SHAppBarMessage((int)ABMsg.ABM_SETSTATE, ref abd);
 
                 // MultiBar
-                if (m_hMultiTaskBar != IntPtr.Zero)
+                if (_hMultiTaskBar != IntPtr.Zero)
                 {
                     APPBARDATA abdM = new APPBARDATA();
 
                     abd.cbSize = Marshal.SizeOf(abdM);
-                    abd.hWnd = m_hMultiTaskBar;
+                    abd.hWnd = _hMultiTaskBar;
                     abd.lParam = (IntPtr)ABState.ABS_TOP;
 
                     SHAppBarMessage((int)ABMsg.ABM_SETSTATE, ref abdM);
@@ -150,13 +150,13 @@ namespace GyroShell.Services.Managers
         {
             if (!isVisible)
             {
-                SetWindowPos(m_hTaskBar, (IntPtr)WindowZOrder.HWND_BOTTOM, 0, 0, 0, 0, (int)SWPFlags.SWP_HIDEWINDOW | (int)SWPFlags.SWP_NOMOVE | (int)SWPFlags.SWP_NOSIZE | (int)SWPFlags.SWP_NOACTIVATE);
-                SetWindowPos(m_hMultiTaskBar, (IntPtr)WindowZOrder.HWND_BOTTOM, 0, 0, 0, 0, (int)SWPFlags.SWP_HIDEWINDOW | (int)SWPFlags.SWP_NOMOVE | (int)SWPFlags.SWP_NOSIZE | (int)SWPFlags.SWP_NOACTIVATE);
+                SetWindowPos(_hTaskBar, (IntPtr)WindowZOrder.HWND_BOTTOM, 0, 0, 0, 0, (int)SWPFlags.SWP_HIDEWINDOW | (int)SWPFlags.SWP_NOMOVE | (int)SWPFlags.SWP_NOSIZE | (int)SWPFlags.SWP_NOACTIVATE);
+                SetWindowPos(_hMultiTaskBar, (IntPtr)WindowZOrder.HWND_BOTTOM, 0, 0, 0, 0, (int)SWPFlags.SWP_HIDEWINDOW | (int)SWPFlags.SWP_NOMOVE | (int)SWPFlags.SWP_NOSIZE | (int)SWPFlags.SWP_NOACTIVATE);
             }
             else
             {
-                SetWindowPos(m_hTaskBar, (IntPtr)WindowZOrder.HWND_TOPMOST, 0, 48, 0, 0, (int)SWPFlags.SWP_SHOWWINDOW);
-                SetWindowPos(m_hMultiTaskBar, (IntPtr)WindowZOrder.HWND_TOPMOST, 0, 48, 0, 0, (int)SWPFlags.SWP_SHOWWINDOW);
+                SetWindowPos(_hTaskBar, (IntPtr)WindowZOrder.HWND_TOPMOST, 0, 48, 0, 0, (int)SWPFlags.SWP_SHOWWINDOW);
+                SetWindowPos(_hMultiTaskBar, (IntPtr)WindowZOrder.HWND_TOPMOST, 0, 48, 0, 0, (int)SWPFlags.SWP_SHOWWINDOW);
             }
         }
     }

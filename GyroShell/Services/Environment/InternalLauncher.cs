@@ -20,16 +20,16 @@ namespace GyroShell.Services.Environment
 {
     public class InternalLauncher : IInternalLauncher
     {
-        private readonly IEnvironmentInfoService m_envService;
+        private readonly IEnvironmentInfoService _envService;
 
         public InternalLauncher(IEnvironmentInfoService envService) 
         {
-            m_envService = envService;
+            _envService = envService;
         }
 
         public void LaunchShellSettings()
         {
-            if (m_envService.SettingsInstances > 1) return; 
+            if (_envService.SettingsInstances > 1) return; 
 
             SettingsWindow _settingsWindow = new SettingsWindow();
             _settingsWindow.Activate();

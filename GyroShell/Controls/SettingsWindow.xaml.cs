@@ -28,9 +28,9 @@ namespace GyroShell.Controls
 {
     public sealed partial class SettingsWindow : Window
     {
-        private readonly IPluginManager m_pluginManager;
-        private readonly IEnvironmentInfoService m_envService;
-        private readonly IInternalLauncher m_internalLauncher;
+        private readonly IPluginManager _pluginManager;
+        private readonly IEnvironmentInfoService _envService;
+        private readonly IInternalLauncher _internalLauncher;
 
         private bool _isDebugMenuOpen;
 
@@ -40,9 +40,9 @@ namespace GyroShell.Controls
 
             RootGrid.DataContext = App.ServiceProvider.GetService<SettingsWindowViewModel>();
 
-            m_pluginManager = App.ServiceProvider.GetRequiredService<IPluginManager>();
-            m_envService = App.ServiceProvider.GetRequiredService<IEnvironmentInfoService>();
-            m_internalLauncher = App.ServiceProvider.GetRequiredService<IInternalLauncher>();
+            _pluginManager = App.ServiceProvider.GetRequiredService<IPluginManager>();
+            _envService = App.ServiceProvider.GetRequiredService<IEnvironmentInfoService>();
+            _internalLauncher = App.ServiceProvider.GetRequiredService<IInternalLauncher>();
 
             // Window Handling
             IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
@@ -82,30 +82,30 @@ namespace GyroShell.Controls
         public SettingsWindowViewModel ViewModel => (SettingsWindowViewModel)RootGrid.DataContext;
 
         #region Backdrop Stuff
-        WindowsSystemDispatcherQueueHelper m_wsdqHelper;
+        WindowsSystemDispatcherQueueHelper _wsdqHelper;
         MicaController micaController;
         DesktopAcrylicController acrylicController;
-        SystemBackdropConfiguration m_configurationSource;
+        SystemBackdropConfiguration _configurationSource;
         bool TrySetMicaBackdrop()
         {
             if (MicaController.IsSupported())
             {
-                m_wsdqHelper = new WindowsSystemDispatcherQueueHelper();
-                m_wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
-                m_configurationSource = new SystemBackdropConfiguration();
+                _wsdqHelper = new WindowsSystemDispatcherQueueHelper();
+                _wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
+                _configurationSource = new SystemBackdropConfiguration();
 
                 this.Activated += Window_Activated;
                 this.Closed += Window_Closed;
                 ((FrameworkElement)this.Content).ActualThemeChanged += Window_ThemeChanged;
 
-                m_configurationSource.IsInputActive = true;
+                _configurationSource.IsInputActive = true;
                 SetConfigurationSourceTheme();
 
                 micaController = new MicaController();
 
                 micaController.Kind = MicaKind.Base;
                 micaController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
-                micaController.SetSystemBackdropConfiguration(m_configurationSource);
+                micaController.SetSystemBackdropConfiguration(_configurationSource);
 
                 return true;
             }
@@ -118,14 +118,14 @@ namespace GyroShell.Controls
         {
             if (DesktopAcrylicController.IsSupported())
             {
-                m_wsdqHelper = new WindowsSystemDispatcherQueueHelper();
-                m_wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
-                m_configurationSource = new SystemBackdropConfiguration();
+                _wsdqHelper = new WindowsSystemDispatcherQueueHelper();
+                _wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
+                _configurationSource = new SystemBackdropConfiguration();
 
                 this.Activated += Window_Activated;
                 this.Closed += Window_Closed;
 
-                m_configurationSource.IsInputActive = true;
+                _configurationSource.IsInputActive = true;
                 SetConfigurationSourceTheme();
 
                 acrylicController = new DesktopAcrylicController();
@@ -137,7 +137,7 @@ namespace GyroShell.Controls
                 ((FrameworkElement)this.Content).ActualThemeChanged += Window_ThemeChanged;
 
                 acrylicController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
-                acrylicController.SetSystemBackdropConfiguration(m_configurationSource);
+                acrylicController.SetSystemBackdropConfiguration(_configurationSource);
 
                 return true;
             }
@@ -147,7 +147,7 @@ namespace GyroShell.Controls
 
         private void Window_Activated(object sender, Microsoft.UI.Xaml.WindowActivatedEventArgs args)
         {
-            m_configurationSource.IsInputActive = args.WindowActivationState != WindowActivationState.Deactivated;
+            _configurationSource.IsInputActive = args.WindowActivationState != WindowActivationState.Deactivated;
         }
 
         private void Window_Closed(object sender, WindowEventArgs args)
@@ -164,18 +164,18 @@ namespace GyroShell.Controls
             }
 
             this.Activated -= Window_Activated;
-            m_configurationSource = null;
+            _configurationSource = null;
 
-            m_envService.SettingsInstances = 0;
-            if (m_pluginManager.IsUnloadRestartPending)
+            _envService.SettingsInstances = 0;
+            if (_pluginManager.IsUnloadRestartPending)
             {
-                m_internalLauncher.LaunchNewShellInstance();
+                _internalLauncher.LaunchNewShellInstance();
             }
         }
 
         private void Window_ThemeChanged(FrameworkElement sender, object args)
         {
-            if (m_configurationSource != null)
+            if (_configurationSource != null)
             {
                 SetConfigurationSourceTheme();
             }
@@ -186,21 +186,21 @@ namespace GyroShell.Controls
             switch (((FrameworkElement)this.Content).ActualTheme)
             {
                 case ElementTheme.Dark: 
-                    m_configurationSource.Theme = SystemBackdropTheme.Dark; 
+                    _configurationSource.Theme = SystemBackdropTheme.Dark; 
                     if (acrylicController != null) 
                     { 
                         acrylicController.TintColor = Color.FromArgb(255, 0, 0, 0); 
                     } 
                     break;
                 case ElementTheme.Light: 
-                    m_configurationSource.Theme = SystemBackdropTheme.Light; 
+                    _configurationSource.Theme = SystemBackdropTheme.Light; 
                     if (acrylicController != null) 
                     { 
                         acrylicController.TintColor = Color.FromArgb(255, 255, 255, 255); 
                     } 
                     break;
                 case ElementTheme.Default: 
-                    m_configurationSource.Theme = SystemBackdropTheme.Default; 
+                    _configurationSource.Theme = SystemBackdropTheme.Default; 
                     if (acrylicController != null) 
                     { 
                         acrylicController.TintColor = Color.FromArgb(255, 50, 50, 50); 

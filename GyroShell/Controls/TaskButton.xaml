@@ -14,7 +14,7 @@
     <Grid x:Name="RootGrid" ToolTipService.ToolTip="{Binding Path=WindowName}" Height="40" Width="40">
         <Grid.Resources>
             <MenuFlyout x:Name="IconRightFlyout" x:Key="IconRightFlyout" AreOpenCloseAnimationsEnabled="True" ShouldConstrainToRootBounds="False">
-                <MenuFlyoutItem x:Name="CloseWindowFlyoutItem" Text="Close window" Icon="Clear" Click="CloseWindowFlyoutItem_Click"/>
+                <MenuFlyoutItem x:Name="CloseWindowFlyoutItem" Text="Close window" Icon="Clear" Click="CloseWindowFlyoutIte_Click"/>
             </MenuFlyout>
         </Grid.Resources>
         

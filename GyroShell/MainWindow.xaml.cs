@@ -21,8 +21,8 @@ namespace GyroShell
 {
     internal sealed partial class MainWindow : Library.Helpers.Window.ShellWindow
     {
-        private readonly IEnvironmentInfoService m_envService;
-        private readonly IExplorerManagerService m_explorerManager;
+        private readonly IEnvironmentInfoService _envService;
+        private readonly IExplorerManagerService _explorerManager;
 
         internal static int uCallBack;
 
@@ -32,16 +32,16 @@ namespace GyroShell
             : base(App.ServiceProvider.GetRequiredService<ISettingsService>(), width: GetSystemMetrics(SM_CXSCREEN), height: 48, dockBottom: true)
         {
             this.InitializeComponent();
-            AppDomain.CurrentDomain.ProcessExit += (_, _) => m_explorerManager.ShowTaskbar();
+            AppDomain.CurrentDomain.ProcessExit += (_, _) => _explorerManager.ShowTaskbar();
 
-            m_envService = App.ServiceProvider.GetRequiredService<IEnvironmentInfoService>();
-            m_explorerManager = App.ServiceProvider.GetRequiredService<IExplorerManagerService>();
+            _envService = App.ServiceProvider.GetRequiredService<IEnvironmentInfoService>();
+            _explorerManager = App.ServiceProvider.GetRequiredService<IExplorerManagerService>();
 
-            m_explorerManager.Initialize();
+            _explorerManager.Initialize();
 
             base.Title = "GyroShell";
 
-            m_envService.MainWindowHandle = base.WindowHandle;
+            _envService.MainWindowHandle = base.WindowHandle;
 
             IShellHookService shHookService = App.ServiceProvider.GetRequiredService<IShellHookService>();
             shHookService.MainWindowHandle = base.WindowHandle;
@@ -77,10 +77,10 @@ namespace GyroShell
 
                 _appBarRegistered = true;
 
-                m_explorerManager.ToggleAutoHideExplorer(true);
+                _explorerManager.ToggleAutoHideExplorer(true);
                 SetAppBarPosition();
-                m_explorerManager.ToggleAutoHideExplorer(false);
-                m_explorerManager.HideTaskbar();
+                _explorerManager.ToggleAutoHideExplorer(false);
+                _explorerManager.HideTaskbar();
 
                 SetWindowPos(base.WindowHandle, (IntPtr)WindowZOrder.HWND_TOPMOST, 0, 0, 0, 0,
                     (int)(SWPFlags.SWP_NOMOVE | SWPFlags.SWP_NOSIZE | SWPFlags.SWP_SHOWWINDOW));
@@ -99,7 +99,7 @@ namespace GyroShell
             abd.uEdge = (int)ABEdge.ABE_BOTTOM;
 
             abd.rc.left = 0;
-            abd.rc.right = m_envService.MonitorWidth;
+            abd.rc.right = _envService.MonitorWidth;
 
             if (abd.uEdge == (int)ABEdge.ABE_TOP)
             {
@@ -108,7 +108,7 @@ namespace GyroShell
             }
             else
             {
-                abd.rc.bottom = m_envService.MonitorHeight;
+                abd.rc.bottom = _envService.MonitorHeight;
                 abd.rc.top = abd.rc.bottom - base.Height;
             }
 

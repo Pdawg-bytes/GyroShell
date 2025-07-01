@@ -20,7 +20,7 @@ namespace GyroShell.Controls
 {
     public sealed partial class DefaultTaskbar : Page
     {
-        private IExplorerManagerService m_explorerManager;
+        private IExplorerManagerService _explorerManager;
 
         public DefaultTaskbar()
         {
@@ -28,9 +28,9 @@ namespace GyroShell.Controls
 
             DataContext = App.ServiceProvider.GetRequiredService<DefaultTaskbarViewModel>();
 
-            m_explorerManager = App.ServiceProvider.GetRequiredService<IExplorerManagerService>();
+            _explorerManager = App.ServiceProvider.GetRequiredService<IExplorerManagerService>();
 
-            m_explorerManager.NotifyWinlogonShowShell();
+            _explorerManager.NotifyWinlogonShowShell();
         }
 
         public DefaultTaskbarViewModel ViewModel => (DefaultTaskbarViewModel)this.DataContext;

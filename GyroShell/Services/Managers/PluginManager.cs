@@ -30,17 +30,17 @@ namespace GyroShell.Services.Managers
     {
         private readonly Dictionary<AssemblyLoadContext, IPlugin> loadedPlugins = new Dictionary<AssemblyLoadContext, IPlugin>();
 
-        private readonly ISettingsService m_settingsService;
-        private readonly IPluginServiceBridge m_pluginServiceBridge;
+        private readonly ISettingsService _settingsService;
+        private readonly IPluginServiceBridge _pluginServiceBridge;
 
 
         public PluginManager(ISettingsService settingsService, IPluginServiceBridge pluginServiceBridge)
         {
-            m_settingsService = settingsService;
+            _settingsService = settingsService;
 
-            m_pluginServiceBridge = pluginServiceBridge;
+            _pluginServiceBridge = pluginServiceBridge;
 
-            foreach (string pluginName in m_settingsService.PluginsToLoad)
+            foreach (string pluginName in _settingsService.PluginsToLoad)
             {
                 LoadAndRunPlugin(pluginName);
             }
@@ -58,7 +58,7 @@ namespace GyroShell.Services.Managers
         {
             // TODO: Implement extracting ZIP from Assembly resources.
 
-            //string pluginResourceCollection = Directory.GetFiles(m_settingsService.ModulesFolderPath, "*.zip").Where(file => Path.GetFileName(file) == pluginName + ".zip").First();
+            //string pluginResourceCollection = Directory.GetFiles(_settingsService.ModulesFolderPath, "*.zip").Where(file => Path.GetFileName(file) == pluginName + ".zip").First();
             //string tempFolder = ApplicationData.Current.TemporaryFolder.Path;
 
             //ZipFile.ExtractToDirectory(pluginResourceCollection, tempFolder);
@@ -74,7 +74,7 @@ namespace GyroShell.Services.Managers
 
         public void LoadAndRunPlugin(string pluginName)
         {
-            foreach (string dllFile in Directory.GetFiles(m_settingsService.ModulesFolderPath, "*.dll").Where(file => Path.GetFileName(file) == pluginName))
+            foreach (string dllFile in Directory.GetFiles(_settingsService.ModulesFolderPath, "*.dll").Where(file => Path.GetFileName(file) == pluginName))
             {
                 try
                 {
@@ -98,15 +98,15 @@ namespace GyroShell.Services.Managers
                                     break;
                             }
 
-                            plugin.Initialize(m_pluginServiceBridge.CreatePluginServiceProvider(plugin.PluginInformation.RequiredServices));
+                            plugin.Initialize(_pluginServiceBridge.CreatePluginServiceProvider(plugin.PluginInformation.RequiredServices));
                             loadedPlugins[localPluginLoadContext] = plugin;
-                            if (m_settingsService.SettingExists($"LoadPlugin_{pluginName}"))
+                            if (_settingsService.SettingExists($"LoadPlugin_{pluginName}"))
                             {
-                                m_settingsService.SetSetting($"LoadPlugin_{pluginName}", true);
+                                _settingsService.SetSetting($"LoadPlugin_{pluginName}", true);
                             }
                             else
                             {
-                                m_settingsService.AddSetting($"LoadPlugin_{pluginName}", true);
+                                _settingsService.AddSetting($"LoadPlugin_{pluginName}", true);
                             }
                         }
                     }
@@ -122,7 +122,7 @@ namespace GyroShell.Services.Managers
         {
             AssemblyLoadContext pluginLoadContext = new AssemblyLoadContext("PluginLoadContext", isCollectible: true);
             List<PluginUIModel> returnList = new List<PluginUIModel>();
-            foreach (string dllFile in Directory.GetFiles(m_settingsService.ModulesFolderPath, "*.dll").Where(file => !file.Contains("GyroShell.Library")))
+            foreach (string dllFile in Directory.GetFiles(_settingsService.ModulesFolderPath, "*.dll").Where(file => !file.Contains("GyroShell.Library")))
             {
                 try
                 {
@@ -156,12 +156,12 @@ namespace GyroShell.Services.Managers
                     return new List<PluginUIModel>();
                 }
             }
-            List<string> pluginsToLoad = m_settingsService.PluginsToLoad;
+            List<string> pluginsToLoad = _settingsService.PluginsToLoad;
             foreach (string pluginName in pluginsToLoad)
             {
                 if (!returnList.Any(p => p.FullName == pluginName))
                 {
-                    m_settingsService.RemoveSetting("LoadPlugin_" + pluginName);
+                    _settingsService.RemoveSetting("LoadPlugin_" + pluginName);
                 }
             }
             pluginLoadContext.Unload();
@@ -178,13 +178,13 @@ namespace GyroShell.Services.Managers
                     pluginObj.Shutdown();
                     pluginContext.Unload();
                     IsUnloadRestartPending = true;
-                    if (m_settingsService.SettingExists($"LoadPlugin_{pluginName}"))
+                    if (_settingsService.SettingExists($"LoadPlugin_{pluginName}"))
                     {
-                        m_settingsService.SetSetting($"LoadPlugin_{pluginName}", false);
+                        _settingsService.SetSetting($"LoadPlugin_{pluginName}", false);
                     }
                     else
                     {
-                        m_settingsService.AddSetting($"LoadPlugin_{pluginName}", false);
+                        _settingsService.AddSetting($"LoadPlugin_{pluginName}", false);
                     }
                 }
                 else

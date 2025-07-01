@@ -21,38 +21,38 @@ namespace GyroShell.Library.Commands
 {
     public partial class StartFlyoutCommands
     {
-        private readonly IEnvironmentInfoService m_envService;
-        private readonly IInternalLauncher m_internalLauncher;
+        private readonly IEnvironmentInfoService _envService;
+        private readonly IInternalLauncher _internalLauncher;
 
         public StartFlyoutCommands(IEnvironmentInfoService envService, IInternalLauncher internalLauncher)
         {
-            m_envService = envService;
-            m_internalLauncher = internalLauncher;
+            _envService = envService;
+            _internalLauncher = internalLauncher;
         }
 
         [RelayCommand]
         public void OpenShellSettings()
         {
-            m_envService.SettingsInstances++;
-            m_internalLauncher.LaunchShellSettings();
+            _envService.SettingsInstances++;
+            _internalLauncher.LaunchShellSettings();
         }
 
         [RelayCommand]
         public void RestartGyroShell()
         {
-            m_internalLauncher.LaunchNewShellInstance();
+            _internalLauncher.LaunchNewShellInstance();
         }
 
         [RelayCommand]
         public void ExitGyroShell()
         {
-            m_internalLauncher.ExitGyroShell();
+            _internalLauncher.ExitGyroShell();
         }
 
         [RelayCommand]
         public void LaunchTaskManager()
         {
-            m_internalLauncher.LaunchProcess("taskmgr.exe", false, true);
+            _internalLauncher.LaunchProcess("taskmgr.exe", false, true);
         }
 
         [RelayCommand]
@@ -88,13 +88,13 @@ namespace GyroShell.Library.Commands
         [RelayCommand]
         public void ShutdownWindows()
         {
-            m_internalLauncher.LaunchProcess("shutdown /s /t 00", false, true);
+            _internalLauncher.LaunchProcess("shutdown /s /t 00", false, true);
         }
 
         [RelayCommand]
         public void RestartWindows()
         {
-            m_internalLauncher.LaunchProcess("shutdown /r /t 00", false, true);
+            _internalLauncher.LaunchProcess("shutdown /r /t 00", false, true);
         }
 
         [RelayCommand]

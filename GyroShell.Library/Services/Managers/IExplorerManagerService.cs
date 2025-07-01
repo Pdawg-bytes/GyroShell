@@ -64,17 +64,17 @@ namespace GyroShell.Library.Services.Managers
         /// <summary>
         /// The handle of the primary taskbar.
         /// </summary>
-        public IntPtr m_hTaskBar { get; set; }
+        public IntPtr _hTaskBar { get; set; }
 
         /// <summary>
         /// The handle of the secondary, tertiary, etc taskbar.
         /// </summary>
-        public IntPtr m_hMultiTaskBar { get; set; }
+        public IntPtr _hMultiTaskBar { get; set; }
 
         /// <summary>
         /// The handle of the start menu.
         /// </summary>
-        public IntPtr m_hStartMenu { get; set; }
+        public IntPtr _hStartMenu { get; set; }
 
         /// <summary>
         /// The state of the start menu.

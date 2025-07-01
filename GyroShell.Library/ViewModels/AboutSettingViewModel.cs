@@ -16,31 +16,31 @@ namespace GyroShell.Library.ViewModels
 {
     public sealed class AboutSettingViewModel
     {
-        private readonly ISettingsService m_appSettings;
-        private readonly IEnvironmentInfoService m_envService;
+        private readonly ISettingsService _appSettings;
+        private readonly IEnvironmentInfoService _envService;
 
         public AboutSettingViewModel(ISettingsService appSettings, IEnvironmentInfoService envService)
         {
-            m_appSettings = appSettings;
-            m_envService = envService;
+            _appSettings = appSettings;
+            _envService = envService;
         }
 
         public string SystemArchitecture
         {
-            get => m_envService.SystemArchitecture;
+            get => _envService.SystemArchitecture;
         }
 
         public Version AppVersion
         {
-            get => m_envService.AppVersion;
+            get => _envService.AppVersion;
         }
 
         public string AppBuildDate
         {
-            get => m_envService.AppBuildDate.ToString("MMMM dd, yyyy");
+            get => _envService.AppBuildDate.ToString("MMMM dd, yyyy");
         }
 
-        public FontFamily IconFontFamily => m_appSettings.IconStyle switch
+        public FontFamily IconFontFamily => _appSettings.IconStyle switch
         {
             0 => new FontFamily("Segoe MDL2 Assets"),
             1 => new FontFamily("Segoe Fluent Icons"),

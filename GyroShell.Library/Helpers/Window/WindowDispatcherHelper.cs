@@ -25,7 +25,7 @@ namespace GyroShell.Library.Helpers.Window
         [DllImport("CoreMessaging.dll")]
         private static extern int CreateDispatcherQueueController([In] DispatcherQueueOptions options, [In, Out, MarshalAs(UnmanagedType.IUnknown)] ref object dispatcherQueueController);
 
-        object m_dispatcherQueueController = null;
+        object _dispatcherQueueController = null;
         public void EnsureWindowsSystemDispatcherQueueController()
         {
             if (Windows.System.DispatcherQueue.GetForCurrentThread() != null)
@@ -33,7 +33,7 @@ namespace GyroShell.Library.Helpers.Window
                 return;
             }
 
-            if (m_dispatcherQueueController == null)
+            if (_dispatcherQueueController == null)
             {
                 DispatcherQueueOptions options;
 
@@ -41,7 +41,7 @@ namespace GyroShell.Library.Helpers.Window
                 options.threadType = 2;
                 options.apartmentType = 2;
 
-                CreateDispatcherQueueController(options, ref m_dispatcherQueueController);
+                CreateDispatcherQueueController(options, ref _dispatcherQueueController);
             }
         }
     }

@@ -29,13 +29,13 @@ namespace GyroShell.Services.Helpers
 {
     public class IconHelperService : IIconHelperService
     {
-        private readonly IBitmapHelperService m_bmpHelper;
-        private readonly IAppHelperService m_appHelper;
+        private readonly IBitmapHelperService _bmpHelper;
+        private readonly IAppHelperService _appHelper;
 
         public IconHelperService(IBitmapHelperService bmpHelper, IAppHelperService appHelper)
         {
-            m_bmpHelper = bmpHelper;
-            m_appHelper = appHelper;
+            _bmpHelper = bmpHelper;
+            _appHelper = appHelper;
         }
 
         public bool IsUwpWindow(IntPtr hWnd) => IsShellFrameWindow(hWnd);
@@ -44,7 +44,7 @@ namespace GyroShell.Services.Helpers
         {
             if (IsUwpWindow(hWnd))
             {
-                return m_bmpHelper.RemoveTransparentPadding(await GetUWPBitmap(hWnd));
+                return _bmpHelper.RemoveTransparentPadding(await GetUWPBitmap(hWnd));
             }
             else
             {
@@ -91,7 +91,7 @@ namespace GyroShell.Services.Helpers
         {
             try
             {
-                string iconPath = m_appHelper.GetUwpAppIconPath(hWnd);
+                string iconPath = _appHelper.GetUwpAppIconPath(hWnd);
                 WriteableBitmap writeableBitmap;
 
                 // Open the file as a stream
@@ -135,7 +135,7 @@ namespace GyroShell.Services.Helpers
         private SoftwareBitmapSource ConvertIconBitmapToSoftwareBitmapSource(Bitmap bmp)
         {
             if (bmp == null) return null;
-            Bitmap resampledBmp = m_bmpHelper.FilterAndScaleBitmap(bmp, bmp.Width, bmp.Height);
+            Bitmap resampledBmp = _bmpHelper.FilterAndScaleBitmap(bmp, bmp.Width, bmp.Height);
 
             BitmapData data = resampledBmp.LockBits(
                 new Rectangle(0, 0, resampledBmp.Width, resampledBmp.Height),

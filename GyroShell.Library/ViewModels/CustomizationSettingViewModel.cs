@@ -23,22 +23,22 @@ namespace GyroShell.Library.ViewModels
 {
     public partial class CustomizationSettingViewModel : ObservableObject
     {
-        private readonly ISettingsService m_appSettings;
-        private readonly IInternalLauncher m_internalLauncher;
-        private readonly IEnvironmentInfoService m_envService;
-        private readonly INotificationManager m_notifManager;
+        private readonly ISettingsService _appSettings;
+        private readonly IInternalLauncher _internalLauncher;
+        private readonly IEnvironmentInfoService _envService;
+        private readonly INotificationManager _notifManager;
 
         public CustomizationSettingViewModel(ISettingsService appSettings, IInternalLauncher internalLauncher, IEnvironmentInfoService envService, INotificationManager notifManager)
         {
-            m_appSettings = appSettings;
-            m_internalLauncher = internalLauncher;
-            m_envService = envService;
-            m_notifManager = notifManager;
+            _appSettings = appSettings;
+            _internalLauncher = internalLauncher;
+            _envService = envService;
+            _notifManager = notifManager;
 
             IsRestartInfoOpen = false;
-            IsNotifInfoOpen = m_notifManager.NotificationAccessStatus != UserNotificationListenerAccessStatus.Allowed;
+            IsNotifInfoOpen = _notifManager.NotificationAccessStatus != UserNotificationListenerAccessStatus.Allowed;
 
-            m_appSettings.SettingUpdated += AppSettings_SettingUpdated;
+            _appSettings.SettingUpdated += AppSettings_SettingUpdated;
         }
 
         private void AppSettings_SettingUpdated(object sender, string key)
@@ -49,7 +49,7 @@ namespace GyroShell.Library.ViewModels
             }
         }
 
-        public FontFamily IconFontFamily => m_appSettings.IconStyle switch
+        public FontFamily IconFontFamily => _appSettings.IconStyle switch
         {
             0 => new FontFamily("Segoe MDL2 Assets"),
             1 => new FontFamily("Segoe Fluent Icons"),
@@ -57,19 +57,19 @@ namespace GyroShell.Library.ViewModels
         };
 
 
-        public bool IsWindows11 => m_envService.IsWindows11;
+        public bool IsWindows11 => _envService.IsWindows11;
 
 
         public bool Is24HourToggleChecked
         {
-            get => m_appSettings.EnableMilitaryTime;
-            set => m_appSettings.EnableMilitaryTime = value;
+            get => _appSettings.EnableMilitaryTime;
+            set => _appSettings.EnableMilitaryTime = value;
         }
 
         public bool IsSecondToggleChecked
         {
-            get => m_appSettings.EnableSeconds;
-            set => m_appSettings.EnableSeconds = value;
+            get => _appSettings.EnableSeconds;
+            set => _appSettings.EnableSeconds = value;
         }
 
 
@@ -80,20 +80,20 @@ namespace GyroShell.Library.ViewModels
             {
                 case "Icon10":
                 default:
-                    m_appSettings.IconStyle = 0;
+                    _appSettings.IconStyle = 0;
                     break;
                 case "Icon11":
-                    m_appSettings.IconStyle = 1;
+                    _appSettings.IconStyle = 1;
                     break;
             }
         }
         public bool Icon10Selected
         {
-            get => m_appSettings.IconStyle == 0;
+            get => _appSettings.IconStyle == 0;
         }
         public bool Icon11Selected
         {
-            get => m_appSettings.IconStyle == 1;
+            get => _appSettings.IconStyle == 1;
         }
 
 
@@ -103,7 +103,7 @@ namespace GyroShell.Library.ViewModels
         [RelayCommand]
         public void RestartGyroShell()
         {
-            m_internalLauncher.LaunchNewShellInstance();
+            _internalLauncher.LaunchNewShellInstance();
         }
 
         [RelayCommand]
@@ -131,12 +131,12 @@ namespace GyroShell.Library.ViewModels
 
         public int CurrentTransparencyTypeIndex
         {
-            get => m_appSettings.TransparencyType;
+            get => _appSettings.TransparencyType;
             set
             {
-                if (!m_appSettings.EnableCustomTransparency) { DefaultTransparencySettings(); }
+                if (!_appSettings.EnableCustomTransparency) { DefaultTransparencySettings(); }
 
-                m_appSettings.TransparencyType = value;
+                _appSettings.TransparencyType = value;
                 OnPropertyChanged(nameof(LuminositySliderEnabled));
                 OnPropertyChanged(nameof(LuminosityOpacity));
             }
@@ -144,26 +144,26 @@ namespace GyroShell.Library.ViewModels
 
         public bool LuminositySliderEnabled
         {
-            get => m_appSettings.TransparencyType == 2;
+            get => _appSettings.TransparencyType == 2;
         }
         public int LuminosityOpacity
         {
-            get => (int)Math.Round((decimal)m_appSettings.LuminosityOpacity * 100, 1);
+            get => (int)Math.Round((decimal)_appSettings.LuminosityOpacity * 100, 1);
             set
             {
-                m_appSettings.LuminosityOpacity = (float)value / 100;
-                m_appSettings.EnableCustomTransparency = true;
+                _appSettings.LuminosityOpacity = (float)value / 100;
+                _appSettings.EnableCustomTransparency = true;
 
                 IsRestartInfoOpen = true;
             }
         }
         public int TintOpacity
         {
-            get => (int)Math.Round((decimal)m_appSettings.TintOpacity * 100, 1);
+            get => (int)Math.Round((decimal)_appSettings.TintOpacity * 100, 1);
             set
             {
-                m_appSettings.TintOpacity = (float)value / 100;
-                m_appSettings.EnableCustomTransparency = true;
+                _appSettings.TintOpacity = (float)value / 100;
+                _appSettings.EnableCustomTransparency = true;
 
                 IsRestartInfoOpen = true;
             }
@@ -171,14 +171,14 @@ namespace GyroShell.Library.ViewModels
 
         public Color TransparencyColorPickerValue
         {
-            get => Color.FromArgb(m_appSettings.AlphaTint, m_appSettings.RedTint, m_appSettings.GreenTint, m_appSettings.BlueTint);
+            get => Color.FromArgb(_appSettings.AlphaTint, _appSettings.RedTint, _appSettings.GreenTint, _appSettings.BlueTint);
             set
             {
-                m_appSettings.AlphaTint = value.A;
-                m_appSettings.RedTint = value.R;
-                m_appSettings.GreenTint = value.G;
-                m_appSettings.BlueTint = value.B;
-                m_appSettings.EnableCustomTransparency = true;
+                _appSettings.AlphaTint = value.A;
+                _appSettings.RedTint = value.R;
+                _appSettings.GreenTint = value.G;
+                _appSettings.BlueTint = value.B;
+                _appSettings.EnableCustomTransparency = true;
 
                 IsRestartInfoOpen = true;
             }
@@ -187,7 +187,7 @@ namespace GyroShell.Library.ViewModels
         [RelayCommand]
         public void DefaultTransparencySettings()
         {
-            if (m_envService.IsSystemUsingDarkmode)
+            if (_envService.IsSystemUsingDarkmode)
             {
                 TransparencyColorPickerValue = Color.FromArgb(255, 32, 32, 32);
             }
@@ -204,14 +204,14 @@ namespace GyroShell.Library.ViewModels
             OnPropertyChanged(nameof(LuminosityOpacity));
             OnPropertyChanged(nameof(CurrentTransparencyTypeIndex));
 
-            m_appSettings.EnableCustomTransparency = false;
+            _appSettings.EnableCustomTransparency = false;
         }
 
 
         public int CurrentAlignmentIndex
         {
-            get => m_appSettings.TaskbarAlignment;
-            set => m_appSettings.TaskbarAlignment = value;
+            get => _appSettings.TaskbarAlignment;
+            set => _appSettings.TaskbarAlignment = value;
         }
     }
 }

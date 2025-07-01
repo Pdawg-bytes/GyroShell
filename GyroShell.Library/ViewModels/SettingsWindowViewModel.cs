@@ -16,13 +16,13 @@ namespace GyroShell.Library.ViewModels
 {
     public partial class SettingsWindowViewModel : ObservableObject
     {
-        private readonly ISettingsService m_appSettings;
+        private readonly ISettingsService _appSettings;
         
         public SettingsWindowViewModel(ISettingsService appSettings)
         {
-            m_appSettings = appSettings;
+            _appSettings = appSettings;
 
-            m_appSettings.SettingUpdated += AppSettings_SettingUpdated;
+            _appSettings.SettingUpdated += AppSettings_SettingUpdated;
         }
 
         private void AppSettings_SettingUpdated(object sender, string key)
@@ -33,7 +33,7 @@ namespace GyroShell.Library.ViewModels
             }
         }
 
-        public FontFamily IconFontFamily => m_appSettings.IconStyle switch
+        public FontFamily IconFontFamily => _appSettings.IconStyle switch
         {
             0 => new FontFamily("Segoe MDL2 Assets"),
             1 => new FontFamily("Segoe Fluent Icons"),

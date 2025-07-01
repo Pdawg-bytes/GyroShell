@@ -26,13 +26,13 @@ namespace GyroShell
 {
     partial class App
     {
-        private IServiceProvider m_serviceProvider;
+        private IServiceProvider _serviceProvider;
 
         public static IServiceProvider ServiceProvider
         {
             get
             {
-                IServiceProvider serviceProvider = (Current as App).m_serviceProvider ??
+                IServiceProvider serviceProvider = (Current as App)._serviceProvider ??
                     throw new InvalidOperationException("Service provider was not initialized before accessing.");
 
                 return serviceProvider;
@@ -65,16 +65,16 @@ namespace GyroShell
                 .AddTransient<DefaultTaskbarViewModel>()
                 .AddTransient<CustomizationSettingViewModel>();
 
-            m_serviceProvider = collection.BuildServiceProvider(true);
+            _serviceProvider = collection.BuildServiceProvider(true);
         }
 
         private void PreloadServices()
         {
-            _ = m_serviceProvider.GetRequiredService<IEnvironmentInfoService>();
-            _ = m_serviceProvider.GetRequiredService<IAppHelperService>();
-            _ = m_serviceProvider.GetRequiredService<IBitmapHelperService>();
-            _ = m_serviceProvider.GetRequiredService<IDispatcherService>();
-            _ = m_serviceProvider.GetRequiredService<IPluginManager>();
+            _ = _serviceProvider.GetRequiredService<IEnvironmentInfoService>();
+            _ = _serviceProvider.GetRequiredService<IAppHelperService>();
+            _ = _serviceProvider.GetRequiredService<IBitmapHelperService>();
+            _ = _serviceProvider.GetRequiredService<IDispatcherService>();
+            _ = _serviceProvider.GetRequiredService<IPluginManager>();
         }
     }
 }

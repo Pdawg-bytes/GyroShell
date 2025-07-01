@@ -28,23 +28,23 @@ namespace GyroShell.Library.ViewModels
     {
         public ObservableCollection<PluginUIModel> ModuleCollection;
 
-        private readonly ISettingsService m_appSettings;
-        private readonly IEnvironmentInfoService m_envService;
-        private readonly IPluginManager m_moduleManager;
-        private readonly IInternalLauncher m_internalLauncher;
+        private readonly ISettingsService _appSettings;
+        private readonly IEnvironmentInfoService _envService;
+        private readonly IPluginManager _moduleManager;
+        private readonly IInternalLauncher _internalLauncher;
 
         public PluginSettingViewModel(ISettingsService appSettings, IEnvironmentInfoService envService, IPluginManager moduleManager, IInternalLauncher internalLauncher)
         {
-            m_appSettings = appSettings;
-            m_envService = envService;
-            m_moduleManager = moduleManager;
-            m_internalLauncher = internalLauncher;
+            _appSettings = appSettings;
+            _envService = envService;
+            _moduleManager = moduleManager;
+            _internalLauncher = internalLauncher;
 
-            if (m_appSettings.ModulesFolderPath != null || m_appSettings.ModulesFolderPath == string.Empty)
+            if (_appSettings.ModulesFolderPath != null || _appSettings.ModulesFolderPath == string.Empty)
             {
                 try
                 {
-                    ModuleCollection = new ObservableCollection<PluginUIModel>(m_moduleManager.GetPlugins());
+                    ModuleCollection = new ObservableCollection<PluginUIModel>(_moduleManager.GetPlugins());
                     if (ModuleCollection.Count <= 0)
                     {
                         IsParseFailureInfoOpen = true;
@@ -78,11 +78,11 @@ namespace GyroShell.Library.ViewModels
             if (plugin == null) return;
             if (plugin.IsLoaded)
             {
-                m_moduleManager.LoadAndRunPlugin(plugin.FullName);
+                _moduleManager.LoadAndRunPlugin(plugin.FullName);
             }
             else
             {
-                m_moduleManager.UnloadPlugin(plugin.FullName);
+                _moduleManager.UnloadPlugin(plugin.FullName);
                 plugin.PropertyChanged -= PluginPropertyChanged;
                 plugin.IsLoadingAllowed = false;
                 IsPluginRestartErrorOpen = true;
@@ -100,7 +100,7 @@ namespace GyroShell.Library.ViewModels
         [ObservableProperty]
         private bool isParseFailureInfoOpen;
 
-        public FontFamily IconFontFamily => m_appSettings.IconStyle switch
+        public FontFamily IconFontFamily => _appSettings.IconStyle switch
         {
             0 => new FontFamily("Segoe MDL2 Assets"),
             1 => new FontFamily("Segoe Fluent Icons"),
@@ -112,7 +112,7 @@ namespace GyroShell.Library.ViewModels
         {
             FolderPicker folderPicker = new FolderPicker();
 
-            WinRT.Interop.InitializeWithWindow.Initialize(folderPicker, m_envService.MainWindowHandle);
+            WinRT.Interop.InitializeWithWindow.Initialize(folderPicker, _envService.MainWindowHandle);
 
             folderPicker.SuggestedStartLocation = PickerLocationId.Desktop;
             folderPicker.FileTypeFilter.Add("*");
@@ -121,10 +121,10 @@ namespace GyroShell.Library.ViewModels
 
             if (folder != null)
             {
-                m_appSettings.ModulesFolderPath = folder.Path;
+                _appSettings.ModulesFolderPath = folder.Path;
                 try
                 {
-                    ModuleCollection = new ObservableCollection<PluginUIModel>(m_moduleManager.GetPlugins());
+                    ModuleCollection = new ObservableCollection<PluginUIModel>(_moduleManager.GetPlugins());
                     IsParseFailureInfoOpen = false;
                 }
                 catch
@@ -142,7 +142,7 @@ namespace GyroShell.Library.ViewModels
         [RelayCommand]
         private void RestartGyroShell()
         {
-            m_internalLauncher.LaunchNewShellInstance();
+            _internalLauncher.LaunchNewShellInstance();
         }
     }
 }
