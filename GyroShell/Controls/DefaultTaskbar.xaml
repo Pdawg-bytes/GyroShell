@@ -41,25 +41,20 @@
                 <MenuFlyoutItem Text="Desktop" Command="{x:Bind ViewModel.StartFlyoutCommands.ShowDesktopCommand}" Tag="Desktop"/>
             </MenuFlyout>
         </Frame>
-        <fl:ShellFlyout IsOpen="{x:Bind ViewModel.OpenTest, Mode=OneWay}" x:Name="TestFlyout">
-            <fl:ShellFlyout.FlyoutContent>
-                <Grid BorderBrush="Gray" BorderThickness="1" Background="{ThemeResource SystemControlAcrylicWindowBrush}"/>
-            </fl:ShellFlyout.FlyoutContent>
-        </fl:ShellFlyout>
         <StackPanel Orientation="Horizontal" x:Name="LeftControls" HorizontalAlignment="{x:Bind ViewModel.TaskbarIconAlignment, Mode=OneWay}">
             <StackPanel.ChildrenTransitions>
                 <TransitionCollection>
                     <EntranceThemeTransition IsStaggeringEnabled="True" />
                 </TransitionCollection>
             </StackPanel.ChildrenTransitions>
-            <ToggleButton Command="{x:Bind ViewModel.StartButtonCheckedCommand}" IsChecked="{x:Bind ViewModel.IsStartOpen, Mode=OneWay}" HorizontalAlignment="Left" Height="40" Width="40" Margin="5,0,0,0" Background="Transparent" BorderBrush="Transparent" x:Name="StartButton" RightTapped="StartButton_RightTapped">
-                <ToggleButton.Content>
-                    <TextBlock FontFamily="HoloLens MDL2 Assets" Text="&#xE782;" VerticalAlignment="Center" Margin="0" FontSize="16"/>
-                </ToggleButton.Content>
-            </ToggleButton>
-            <Button HorizontalAlignment="Left" Height="40" Width="40" Margin="5,0,10,0" Background="Transparent" BorderBrush="Transparent" x:Name="TaskView" Padding="0" ToolTipService.ToolTip="Task View">
+            <Button Command="{x:Bind ViewModel.StartButtonCheckedCommand}" Padding="0,0,0,0" HorizontalAlignment="Left" Height="40" Width="40" Margin="5,0,0,0" Background="Transparent" BorderBrush="Transparent" x:Name="StartButton" RightTapped="StartButton_RightTapped">
                 <Button.Content>
-                    <TextBlock FontFamily="{x:Bind ViewModel.IconFontFamily, Mode=OneWay}" Text="&#xE7C4;" VerticalAlignment="Center" Margin="0" FontSize="16" x:Name="TaskViewIcon"/>
+                    <Grid Height="29" Width="29">
+                        <Rectangle Fill="{ThemeResource ToggleButtonCheckedPressedForegroundThemeBrush}" Width="10" Height="10" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="4,4,0,0"/>
+                        <Rectangle Fill="{ThemeResource ToggleButtonCheckedPressedForegroundThemeBrush}" Width="10" Height="10" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="4,0,0,4"/>
+                        <Rectangle Fill="{ThemeResource ToggleButtonCheckedPressedForegroundThemeBrush}" Width="10" Height="10" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,4,4,0"/>
+                        <Rectangle Fill="{ThemeResource ToggleButtonCheckedPressedForegroundThemeBrush}" Width="10" Height="10" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,4,4"/>
+                    </Grid>
                 </Button.Content>
             </Button>
             <!--<Border x:Name="LeftControlsSeperator" Height="28" VerticalAlignment="Center" Width="1" Opacity="0.3" CornerRadius="1"/>-->

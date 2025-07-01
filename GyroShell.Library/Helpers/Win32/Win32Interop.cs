@@ -81,6 +81,7 @@ namespace GyroShell.Library.Helpers.Win32
         public const int WS_EX_TOPMOST = 0x00000008;
         public const int WS_EX_LAYERED = 0x80000;
         public const int WS_EX_TRANSPARENT = 0x00000020;
+        public const int WS_DLGFRAME = 0x00400000;
 
         public const long WS_BORDER = 0x00800000L;
         public const long WS_THICKFRAME = 0x00040000L;

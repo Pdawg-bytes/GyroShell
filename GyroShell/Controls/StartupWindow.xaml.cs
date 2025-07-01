@@ -8,34 +8,22 @@
  */
 #endregion
 
-using Microsoft.UI.Windowing;
-using Microsoft.UI;
 using System;
-using Windows.Graphics;
-using Microsoft.UI.Xaml;
-using GyroShell.Helpers;
-using Microsoft.UI.Composition.SystemBackdrops;
-using Windows.UI;
-using WinRT;
 using System.Timers;
+using GyroShell.Views;
 using System.Threading;
 using System.Diagnostics;
+using GyroShell.Library.Services.Managers;
+using GyroShell.Library.Services.Environment;
+using Microsoft.Extensions.DependencyInjection;
 
 using static GyroShell.Library.Helpers.Win32.Win32Interop;
-using GyroShell.Views;
-
-using AppWindow = Microsoft.UI.Windowing.AppWindow;
-using Microsoft.Extensions.DependencyInjection;
-using GyroShell.Library.Services.Managers;
 
 namespace GyroShell.Controls
 {
-    internal partial class StartupWindow : Window
+    internal partial class StartupWindow : Library.Helpers.Window.ShellWindow
     {
-        private AppWindow m_AppWindow;
         private IExplorerManagerService m_explorerManager;
-
-        private IntPtr hWnd;
 
         private System.Timers.Timer timer;
 
@@ -43,199 +31,46 @@ namespace GyroShell.Controls
         private Process appProcess;
         private Thread timeThread;
 
-        internal StartupWindow()
+        private const int WIDTH = 550;
+        private const int HEIGHT = 300;
+
+        internal StartupWindow() 
+            : base(App.ServiceProvider.GetRequiredService<ISettingsService>(), 
+                  width: WIDTH, height: HEIGHT, 
+                  x: (GetSystemMetrics(SM_CXSCREEN) - WIDTH) / 2, y: (GetSystemMetrics(SM_CYSCREEN) - HEIGHT) / 2,
+                  round: true,
+                  customTransparency: false)
         {
             this.InitializeComponent();
             RootPageFrame.Navigate(typeof(StartupPage));
 
-            Title = "GyroShell Startup Host";
+            base.Title = "GyroShell Startup Host";
 
             m_explorerManager = App.ServiceProvider.GetRequiredService<IExplorerManagerService>();
 
             appProcessId = Process.GetCurrentProcess().Id;
             appProcess = Process.GetProcessById(appProcessId);
-            TrySetAcrylicBackdrop();
-
-            OverlappedPresenter presenter = GetAppWindowAndPresenter();
-            presenter.IsMaximizable = false;
-            presenter.IsMinimizable = false;
-            presenter.IsAlwaysOnTop = true;
-            presenter.IsResizable = false;
-            presenter.SetBorderAndTitleBar(false, false);
-            m_AppWindow = GetAppWindowForCurrentWindow();
-            m_AppWindow.SetPresenter(AppWindowPresenterKind.Default);
-
-            hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
-            Microsoft.UI.WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
-            AppWindow appWindow = AppWindow.GetFromWindowId(windowId);
-
-            // Hide in ALT+TAB view
-            int exStyle = (int)GetWindowLongPtr(hWnd, -20);
-            exStyle |= 128;
-            SetWindowLongPtr(hWnd, -20, (IntPtr)exStyle);
-
-            int screenWidth = GetSystemMetrics(SM_CXSCREEN);
-            int screenHeight = GetSystemMetrics(SM_CYSCREEN);
-
-            int windowWidth = 550;
-            int windowHeight = 300;
-            int windowX = (screenWidth - windowWidth) / 2;
-            int windowY = (screenHeight - windowHeight) / 2;
-
-            appWindow.Resize(new SizeInt32 { Width = windowWidth, Height = windowHeight });
-            appWindow.Move(new PointInt32 { X = windowX, Y = windowY });
-            appWindow.MoveInZOrderAtTop();
 
             timer = new System.Timers.Timer(10000);
             timer.Elapsed += CloseTimer_Elapsed;
             timer.Start();
+
+            base.Closed += (_, _) => timer.Stop();
         }
 
-        #region Emergency Thread
+
         private void CloseTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            timeThread = new Thread(Close);
+            timeThread = new Thread(Kill);
             timeThread.Start();
             timer.Stop();
         }
 
-        private new void Close()
+        private void Kill()
         {
-            MessageBox(hWnd, "If you keep seeing this message, please contact the developers.", "GyroShell was unable to start.", 0x00000000 | 0x00000030);
+            MessageBox(base.WindowHandle, "If you keep seeing this message, please contact the developers.", "GyroShell was unable to start.", 0x00000000 | 0x00000030);
             m_explorerManager.ShowTaskbar();
             appProcess.Kill();
         }
-        #endregion
-
-        #region Window Handling
-        private OverlappedPresenter GetAppWindowAndPresenter()
-        {
-            IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
-            Microsoft.UI.WindowId WndId = Win32Interop.GetWindowIdFromWindow(hWnd);
-            AppWindow _apw = AppWindow.GetFromWindowId(WndId);
-
-            return _apw.Presenter as OverlappedPresenter;
-        }
-        private AppWindow GetAppWindowForCurrentWindow()
-        {
-            IntPtr hWndApp = WinRT.Interop.WindowNative.GetWindowHandle(this);
-            Microsoft.UI.WindowId WndIdApp = Win32Interop.GetWindowIdFromWindow(hWndApp);
-
-            return AppWindow.GetFromWindowId(WndIdApp);
-        }
-        #endregion
-
-        #region Backdrop Stuff
-        WindowsSystemDispatcherQueueHelper m_wsdqHelper;
-        DesktopAcrylicController acrylicController;
-        SystemBackdropConfiguration m_configurationSource;
-        bool TrySetAcrylicBackdrop()
-        {
-            if (DesktopAcrylicController.IsSupported())
-            {
-                m_wsdqHelper = new WindowsSystemDispatcherQueueHelper();
-                m_wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
-                m_configurationSource = new SystemBackdropConfiguration();
-
-                this.Activated += Window_Activated;
-                this.Closed += Window_Closed;
-
-                m_configurationSource.IsInputActive = true;
-
-                SystemBackdropTheme theme = SetConfigurationSourceTheme();
-
-                acrylicController = new DesktopAcrylicController();
-
-                SetThemeColor(theme);
-
-                acrylicController.TintOpacity = 0.3f;
-                acrylicController.LuminosityOpacity = 0.2f;
-
-                ((FrameworkElement)this.Content).ActualThemeChanged += Window_ThemeChanged;
-
-                acrylicController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
-                acrylicController.SetSystemBackdropConfiguration(m_configurationSource);
-
-                return true;
-            }
-
-            return false;
-        }
-
-        private void Window_Activated(object sender, WindowActivatedEventArgs args)
-        {
-            m_configurationSource.IsInputActive = true;
-        }
-
-        private void Window_Closed(object sender, WindowEventArgs args)
-        {
-            timer.Stop();
-            if (acrylicController != null)
-            {
-                acrylicController.Dispose();
-                acrylicController = null;
-            }
-
-            this.Activated -= Window_Activated;
-            m_configurationSource = null;
-        }
-
-        private void Window_ThemeChanged(FrameworkElement sender, object args)
-        {
-            if (m_configurationSource != null)
-            {
-                SetConfigurationSourceTheme();
-            }
-        }
-        private SystemBackdropTheme SetConfigurationSourceTheme()
-        {
-            switch (((FrameworkElement)this.Content).ActualTheme)
-            {
-                case ElementTheme.Dark:
-                    m_configurationSource.Theme = SystemBackdropTheme.Dark;
-
-                    if (acrylicController != null)
-                    {
-                        acrylicController.TintColor = Color.FromArgb(255, 0, 0, 0);
-                    }
-                    return SystemBackdropTheme.Dark;
-                case ElementTheme.Light:
-                    m_configurationSource.Theme = SystemBackdropTheme.Light;
-
-                    if (acrylicController != null)
-                    {
-                        acrylicController.TintColor = Color.FromArgb(255, 255, 255, 255);
-                    }
-                    return SystemBackdropTheme.Light;
-                case ElementTheme.Default:
-                default:
-                    m_configurationSource.Theme = SystemBackdropTheme.Default;
-
-                    if (acrylicController != null)
-                    {
-                        acrylicController.TintColor = Color.FromArgb(255, 0, 0, 0);
-                    }
-                    return SystemBackdropTheme.Dark;
-            }
-        }
-
-        private void SetThemeColor(SystemBackdropTheme theme)
-        {
-            switch (theme)
-            {
-                case SystemBackdropTheme.Dark:
-                    acrylicController.TintColor = Color.FromArgb(255, 0, 0, 0);
-                    break;
-                case SystemBackdropTheme.Light:
-                    acrylicController.TintColor = Color.FromArgb(255, 255, 255, 255);
-                    break;
-                case SystemBackdropTheme.Default:
-                default: 
-                    acrylicController.TintColor = Color.FromArgb(255, 0, 0, 0);
-                    break;
-
-            }
-        }
-        #endregion
     }
 }

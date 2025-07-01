@@ -8,17 +8,19 @@
  */
 #endregion
 
-using GyroShell.Controls;
-using Microsoft.UI.Xaml;
+
 using System;
+using Microsoft.UI.Xaml;
+using GyroShell.Controls;
 using System.Threading.Tasks;
+using GyroShell.Library.Helpers.Window;
 
 namespace GyroShell
 {
     public partial class App : Application
     {
         internal static StartupWindow startupScreen;
-        private Window m_window;
+        private ShellWindow m_window;
         private IntPtr handle;
 
         public App()

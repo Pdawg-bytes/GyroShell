@@ -8,132 +8,52 @@
  */
 #endregion
 
-using GyroShell.Helpers;
-using GyroShell.Library.Services.Environment;
-using GyroShell.Library.Services.Managers;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.UI;
-using Microsoft.UI.Composition.SystemBackdrops;
-using Microsoft.UI.Windowing;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Media.Animation;
 using System;
-using System.Diagnostics;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading;
-using Windows.Graphics;
-using Windows.Storage;
-using Windows.UI;
-using WinRT;
+using Microsoft.UI.Xaml.Media.Animation;
+using GyroShell.Library.Services.Managers;
+using GyroShell.Library.Services.Environment;
+using Microsoft.Extensions.DependencyInjection;
 
 using static GyroShell.Library.Helpers.Win32.Win32Interop;
 
-using AppWindow = Microsoft.UI.Windowing.AppWindow;
-
 namespace GyroShell
 {
-    internal sealed partial class MainWindow : Window
+    internal sealed partial class MainWindow : Library.Helpers.Window.ShellWindow
     {
-        private AppWindow m_AppWindow;
         private readonly IEnvironmentInfoService m_envService;
-        private readonly ISettingsService m_appSettings;
         private readonly IExplorerManagerService m_explorerManager;
-
-        internal static IntPtr hWnd;
 
         internal static int uCallBack;
 
-        internal static bool fBarRegistered = false;
+        internal static bool _appBarRegistered = false;
 
         internal MainWindow()
+            : base(App.ServiceProvider.GetRequiredService<ISettingsService>(), width: GetSystemMetrics(SM_CXSCREEN), height: 48, dockBottom: true)
         {
             this.InitializeComponent();
-            AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
+            AppDomain.CurrentDomain.ProcessExit += (_, _) => m_explorerManager.ShowTaskbar();
 
             m_envService = App.ServiceProvider.GetRequiredService<IEnvironmentInfoService>();
-            m_appSettings = App.ServiceProvider.GetRequiredService<ISettingsService>();
             m_explorerManager = App.ServiceProvider.GetRequiredService<IExplorerManagerService>();
 
             m_explorerManager.Initialize();
 
+            base.Title = "GyroShell";
 
-            OverlappedPresenter presenter = GetAppWindowAndPresenter();
-            presenter.IsMaximizable = false;
-            presenter.IsMinimizable = false;
-            presenter.IsAlwaysOnTop = true;
-            presenter.IsResizable = false;
-            presenter.SetBorderAndTitleBar(false, false);
-            m_AppWindow = GetAppWindowForCurrentWindow();
-            m_AppWindow.SetPresenter(AppWindowPresenterKind.Default);
-
-            hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
-            m_envService.MainWindowHandle = hWnd;
+            m_envService.MainWindowHandle = base.WindowHandle;
 
             IShellHookService shHookService = App.ServiceProvider.GetRequiredService<IShellHookService>();
-            shHookService.MainWindowHandle = hWnd;
+            shHookService.MainWindowHandle = base.WindowHandle;
             shHookService.Initialize();
 
-            Microsoft.UI.WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
-            AppWindow appWindow = AppWindow.GetFromWindowId(windowId);
-            if (m_envService.IsWindows11)
-            {
-                DWMWINDOWATTRIBUTE attribute = DWMWINDOWATTRIBUTE.DWMWA_WINDOW_CORNER_PREFERENCE;
-                int preference = (int)DWM_WINDOW_CORNER_PREFERENCE.DWMWCP_DONOTROUND;
-                DwmSetWindowAttribute(hWnd, attribute, ref preference, sizeof(uint));
-            }
-
-            // Hide in ALT+TAB view
-            int exStyle = (int)GetWindowLongPtr(hWnd, -20);
-            exStyle |= 128;
-            SetWindowLongPtr(hWnd, -20, (IntPtr)exStyle);
-
-            Thread.Sleep(20); //TODO: Stop the window message from moving our window into the wokring area
-
-            int screenWidth = GetSystemMetrics(SM_CXSCREEN);
-            int screenHeight = GetSystemMetrics(SM_CYSCREEN);
-            int barHeight = 48;
-
-            Title = "GyroShell";
-            appWindow.Resize(new SizeInt32 { Width = screenWidth, Height = barHeight });
-            appWindow.Move(new PointInt32 { X = 0, Y = screenHeight - barHeight });
-            appWindow.MoveInZOrderAtTop();
-
-            // Init stuff
             RegisterBar();
             MonitorSummon();
             TaskbarFrame.Navigate(typeof(Controls.DefaultTaskbar), null, new SuppressNavigationTransitionInfo());
-            SetBackdrop();
-
-            // Show GyroShell when everything is ready
-            m_AppWindow.Show();
-        }
-
-        #region Window Handling
-        private void OnProcessExit(object sender, EventArgs e)
-        {
-            m_explorerManager.ShowTaskbar();
-        }
-
-        private OverlappedPresenter GetAppWindowAndPresenter()
-        {
-            IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
-            Microsoft.UI.WindowId WndId = Win32Interop.GetWindowIdFromWindow(hWnd);
-            AppWindow _apw = AppWindow.GetFromWindowId(WndId);
-
-            return _apw.Presenter as OverlappedPresenter;
-        }
-        private AppWindow GetAppWindowForCurrentWindow()
-        {
-            IntPtr hWndApp = WinRT.Interop.WindowNative.GetWindowHandle(this);
-            Microsoft.UI.WindowId WndIdApp = Win32Interop.GetWindowIdFromWindow(hWndApp);
-
-            return AppWindow.GetFromWindowId(WndIdApp);
         }
 
         internal void MonitorSummon()
         {
-
             bool MonitorEnumProc(IntPtr hMonitor, IntPtr hdcMonitor, ref NativeRect lprcMonitor, IntPtr dwData)
             {
                 return true;
@@ -141,228 +61,41 @@ namespace GyroShell
 
             EnumDisplayMonitors(IntPtr.Zero, IntPtr.Zero, MonitorEnumProc, IntPtr.Zero);
         }
-        #endregion
 
-        #region Backdrop Stuff
-        WindowsSystemDispatcherQueueHelper m_wsdqHelper;
-        MicaController micaController;
-        DesktopAcrylicController acrylicController;
-        SystemBackdropConfiguration m_configurationSource;
 
-        private void SetBackdrop()
-        {
-            bool option = m_appSettings.EnableCustomTransparency;
-
-            byte alpha = m_appSettings.AlphaTint;
-            byte red = m_appSettings.RedTint;
-            byte green = m_appSettings.GreenTint;
-            byte blue = m_appSettings.BlueTint;
-
-            float luminOpacity = m_appSettings.LuminosityOpacity;
-            float tintOpacity = m_appSettings.TintOpacity;
-
-            int transparencyType = m_appSettings.TransparencyType;
-
-            switch (transparencyType)
-            {
-                case 0:
-                default:
-                    if (m_envService.IsWindows11)
-                    {
-                        TrySetMicaBackdrop(MicaKind.BaseAlt, alpha, red, green, blue, tintOpacity, luminOpacity, option);
-                    }
-                    else
-                    {
-                        TrySetAcrylicBackdrop(alpha, red, green, blue, tintOpacity, luminOpacity, option);
-                    }
-                    break;
-                case 1:
-                    if (m_envService.IsWindows11)
-                    {
-                        TrySetMicaBackdrop(MicaKind.Base, alpha, red, green, blue, tintOpacity, luminOpacity, option);
-                    }
-                    else
-                    {
-                        TrySetAcrylicBackdrop(alpha, red, green, blue, tintOpacity, luminOpacity, option);
-                    }
-                    break;
-                case 2:
-                    TrySetAcrylicBackdrop(alpha, red, green, blue, tintOpacity, luminOpacity, option);
-                    break;
-            }
-        }
-
-        bool TrySetMicaBackdrop(MicaKind micaKind, byte alpha, byte red, byte green, byte blue, float tintOpacity, float luminOpacity, bool customTransparency)
-        {
-            if (MicaController.IsSupported())
-            {
-                m_wsdqHelper = new WindowsSystemDispatcherQueueHelper();
-                m_wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
-                m_configurationSource = new Microsoft.UI.Composition.SystemBackdrops.SystemBackdropConfiguration();
-
-                this.Activated += Window_Activated;
-                this.Closed += Window_Closed;
-                ((FrameworkElement)this.Content).ActualThemeChanged += Window_ThemeChanged;
-
-                m_configurationSource.IsInputActive = true;
-
-                SetConfigurationSourceTheme();
-
-                micaController = new MicaController();
-                micaController.Kind = micaKind;
-
-                if (customTransparency)
-                {
-                    micaController.TintColor = Color.FromArgb(alpha, red, green, blue);
-                    micaController.TintOpacity = tintOpacity;
-                }
-
-                micaController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
-                micaController.SetSystemBackdropConfiguration(m_configurationSource);
-
-                return true;
-            }
-
-            TrySetAcrylicBackdrop(alpha, red, green, blue, tintOpacity, luminOpacity, customTransparency);
-
-            return false;
-        }
-
-        bool TrySetAcrylicBackdrop(byte alpha, byte red, byte green, byte blue, float tintOpacity, float luminOpacity, bool customTransparency)
-        {
-            if (DesktopAcrylicController.IsSupported())
-            {
-                m_wsdqHelper = new WindowsSystemDispatcherQueueHelper();
-                m_wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
-                m_configurationSource = new SystemBackdropConfiguration();
-
-                this.Activated += Window_Activated;
-                this.Closed += Window_Closed;
-
-                m_configurationSource.IsInputActive = true;
-
-                SetConfigurationSourceTheme();
-
-                acrylicController = new DesktopAcrylicController();
-
-                acrylicController.TintColor = Color.FromArgb(alpha, red, green, blue);
-                acrylicController.TintOpacity = tintOpacity;
-                acrylicController.LuminosityOpacity = luminOpacity;
-
-                ((FrameworkElement)this.Content).ActualThemeChanged += Window_ThemeChanged;
-
-                acrylicController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
-                acrylicController.SetSystemBackdropConfiguration(m_configurationSource);
-
-                return true;
-            }
-
-            return false;
-        }
-
-        private void Window_Activated(object sender, Microsoft.UI.Xaml.WindowActivatedEventArgs args)
-        {
-            m_configurationSource.IsInputActive = true;
-        }
-
-        private void Window_Closed(object sender, WindowEventArgs args)
-        {
-            RegisterBar();
-
-            if (micaController != null)
-            {
-                micaController.Dispose();
-                micaController = null;
-            }
-            if (acrylicController != null)
-            {
-                acrylicController.Dispose();
-                acrylicController = null;
-            }
-
-            this.Activated -= Window_Activated;
-            m_configurationSource = null;
-        }
-
-        private void Window_ThemeChanged(FrameworkElement sender, object args)
-        {
-            if (m_configurationSource != null)
-            {
-                SetConfigurationSourceTheme();
-            }
-        }
-
-        private void SetConfigurationSourceTheme()
-        {
-            switch (((FrameworkElement)this.Content).ActualTheme)
-            {
-                case ElementTheme.Dark:
-                    m_configurationSource.Theme = SystemBackdropTheme.Dark;
-
-                    if (acrylicController != null)
-                    {
-                        acrylicController.TintColor = Color.FromArgb(255, 32, 32, 32);
-                    }
-                    break;
-                case ElementTheme.Light:
-                    m_configurationSource.Theme = SystemBackdropTheme.Light;
-
-                    if (acrylicController != null)
-                    {
-                        acrylicController.TintColor = Color.FromArgb(255, 232, 232, 232);
-                    }
-                    break;
-                case ElementTheme.Default:
-                    m_configurationSource.Theme = SystemBackdropTheme.Default;
-
-                    if (acrylicController != null)
-                    {
-                        acrylicController.TintColor = Color.FromArgb(255, 0, 0, 0);
-                    }
-                    break;
-            }
-        }
-        #endregion
-
-        #region AppBar
         private void RegisterBar()
         {
-            APPBARDATA abd = new APPBARDATA();
+            APPBARDATA abd = CreateAppBarData();
 
-            abd.cbSize = Marshal.SizeOf(abd);
-            abd.hWnd = hWnd;
-
-            if (!fBarRegistered)
+            if (!_appBarRegistered)
             {
                 uCallBack = RegisterWindowMessage("AppBarMessage");
                 abd.uCallbackMessage = uCallBack;
 
-                uint ret = SHAppBarMessage((int)ABMsg.ABM_NEW, ref abd);
-                bool regShellHook = RegisterShellHookWindow(hWnd);
-                fBarRegistered = true;
+                SHAppBarMessage((int)ABMsg.ABM_NEW, ref abd);
+                RegisterShellHookWindow(base.WindowHandle);
+
+                _appBarRegistered = true;
 
                 m_explorerManager.ToggleAutoHideExplorer(true);
-                ABSetPos();
+                SetAppBarPosition();
                 m_explorerManager.ToggleAutoHideExplorer(false);
                 m_explorerManager.HideTaskbar();
-                SetWindowPos(hWnd, (IntPtr)WindowZOrder.HWND_TOPMOST, 0, 0, 0, 0, (int)SWPFlags.SWP_NOMOVE | (int)SWPFlags.SWP_NOSIZE | (int)SWPFlags.SWP_SHOWWINDOW);
+
+                SetWindowPos(base.WindowHandle, (IntPtr)WindowZOrder.HWND_TOPMOST, 0, 0, 0, 0,
+                    (int)(SWPFlags.SWP_NOMOVE | SWPFlags.SWP_NOSIZE | SWPFlags.SWP_SHOWWINDOW));
             }
             else
             {
                 SHAppBarMessage((int)ABMsg.ABM_REMOVE, ref abd);
-
-                bool deRegShellHook = DeregisterShellHookWindow(hWnd);
-
-                fBarRegistered = false;
+                DeregisterShellHookWindow(base.WindowHandle);
+                _appBarRegistered = false;
             }
         }
 
-        private void ABSetPos()
+        private void SetAppBarPosition()
         {
-            APPBARDATA abd = new APPBARDATA();
-
-            abd.cbSize = Marshal.SizeOf(abd);
-            abd.hWnd = hWnd;
+            APPBARDATA abd = CreateAppBarData();
             abd.uEdge = (int)ABEdge.ABE_BOTTOM;
 
             abd.rc.left = 0;
@@ -371,35 +104,54 @@ namespace GyroShell
             if (abd.uEdge == (int)ABEdge.ABE_TOP)
             {
                 abd.rc.top = 0;
-                abd.rc.bottom = 48;
+                abd.rc.bottom = base.Height;
             }
             else
             {
                 abd.rc.bottom = m_envService.MonitorHeight;
-                abd.rc.top = abd.rc.bottom - 46;
+                abd.rc.top = abd.rc.bottom - base.Height;
             }
 
             SHAppBarMessage((int)ABMsg.ABM_QUERYPOS, ref abd);
+            AdjustAppBarBounds(ref abd);
+            SHAppBarMessage((int)ABMsg.ABM_SETPOS, ref abd);
 
-            switch (abd.uEdge)
+            MoveWindow(
+                abd.hWnd,
+                abd.rc.left,
+                abd.rc.top,
+                abd.rc.right - abd.rc.left,
+                abd.rc.bottom - abd.rc.top,
+                true
+            );
+        }
+
+        private APPBARDATA CreateAppBarData()
+        {
+            return new APPBARDATA
             {
-                case (int)ABEdge.ABE_LEFT:
-                    abd.rc.right = abd.rc.left + 48;
+                cbSize = Marshal.SizeOf<APPBARDATA>(),
+                hWnd = base.WindowHandle
+            };
+        }
+
+        private void AdjustAppBarBounds(ref APPBARDATA abd)
+        {
+            switch ((ABEdge)abd.uEdge)
+            {
+                case ABEdge.ABE_LEFT:
+                    abd.rc.right = abd.rc.left + base.Width;
                     break;
-                case (int)ABEdge.ABE_RIGHT:
-                    abd.rc.left = abd.rc.right - 48;
+                case ABEdge.ABE_RIGHT:
+                    abd.rc.left = abd.rc.right - base.Width;
                     break;
-                case (int)ABEdge.ABE_TOP:
-                    abd.rc.bottom = abd.rc.top + 48;
+                case ABEdge.ABE_TOP:
+                    abd.rc.bottom = abd.rc.top + base.Height;
                     break;
-                case (int)ABEdge.ABE_BOTTOM:
-                    abd.rc.top = abd.rc.bottom - 48;
+                case ABEdge.ABE_BOTTOM:
+                    abd.rc.top = abd.rc.bottom - base.Height;
                     break;
             }
-
-            SHAppBarMessage((int)ABMsg.ABM_SETPOS, ref abd);
-            MoveWindow(abd.hWnd, abd.rc.left, abd.rc.top, abd.rc.right - abd.rc.left, abd.rc.bottom - abd.rc.top, true);
         }
-        #endregion
     }
 }
