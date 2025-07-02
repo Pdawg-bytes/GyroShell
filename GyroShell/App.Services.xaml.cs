@@ -8,13 +8,11 @@
  */
 #endregion
 
-using GyroShell.Library.Services.Bridges;
 using GyroShell.Library.Services.Environment;
 using GyroShell.Library.Services.Hardware;
 using GyroShell.Library.Services.Helpers;
 using GyroShell.Library.Services.Managers;
 using GyroShell.Library.ViewModels;
-using GyroShell.Services.Bridges;
 using GyroShell.Services.Environment;
 using GyroShell.Services.Hardware;
 using GyroShell.Services.Helpers;
@@ -44,7 +42,6 @@ namespace GyroShell
             IServiceCollection collection = new ServiceCollection()
                 .AddTransient<IBitmapHelperService, BitmapHelperService>()
                 .AddTransient<IIconHelperService, IconHelperService>()
-                .AddTransient<IPluginServiceBridge, PluginServiceBridge>()
                 .AddSingleton<IAppHelperService, AppHelperService>()
                 .AddSingleton<IEnvironmentInfoService, EnvironmentInfoService>()
                 .AddSingleton<IShellHookService, ShellHookService>()
@@ -58,7 +55,6 @@ namespace GyroShell
                 .AddSingleton<IDispatcherService, DispatcherService>()
                 .AddSingleton<INotificationManager, NotificationManager>()
                 .AddSingleton<ITimeService, TimeService>()
-                .AddTransient<StartupScreenViewModel>()
                 .AddTransient<AboutSettingViewModel>()
                 .AddTransient<PluginSettingViewModel>()
                 .AddTransient<SettingsWindowViewModel>()

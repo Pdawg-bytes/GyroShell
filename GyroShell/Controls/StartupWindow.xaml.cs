@@ -18,6 +18,7 @@ using GyroShell.Library.Services.Environment;
 using Microsoft.Extensions.DependencyInjection;
 
 using static GyroShell.Library.Helpers.Win32.Win32Interop;
+using Windows.ApplicationModel;
 
 namespace GyroShell.Controls
 {
@@ -42,9 +43,11 @@ namespace GyroShell.Controls
                   customTransparency: false)
         {
             this.InitializeComponent();
-            RootPageFrame.Navigate(typeof(StartupPage));
 
             base.Title = "GyroShell Startup Host";
+
+            PackageVersion version = Package.Current.Id.Version;
+            VersionText.Text = $"Version {version.Major}.{version.Minor}.{version.Build}.{version.Revision}";
 
             _explorerManager = App.ServiceProvider.GetRequiredService<IExplorerManagerService>();
 

@@ -45,9 +45,7 @@ namespace GyroShell.Library.Helpers.Composition
             _brush = _compositor.CreateColorBrush(TintColor);
             connectedTarget.SystemBackdrop = _brush;
 
-            var inspectable = connectedTarget.As<IInspectable>();
-            var xamlSource = DesktopWindowXamlSource.FromAbi(inspectable.ThisPtr);
-            var hWnd = xamlSource.SiteBridge.SiteView.EnvironmentView.AppWindowId.Value;
+            ulong hWnd = xamlRoot.ContentIslandEnvironment.AppWindowId.Value;
 
             ConfigureDwm(hWnd);
             ClearBackground((nint)hWnd, GetDC((IntPtr)hWnd));

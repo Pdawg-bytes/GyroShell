@@ -16,11 +16,10 @@ using System.Threading.Tasks;
 using Windows.Storage.Pickers;
 using System;
 using Windows.Storage;
-
-using GyroShell.Library.Models.InternalData;
 using GyroShell.Library.Services.Environment;
 using GyroShell.Library.Services.Managers;
 using System.ComponentModel;
+using GyroShell.Library.Models.Plugins;
 
 namespace GyroShell.Library.ViewModels
 {

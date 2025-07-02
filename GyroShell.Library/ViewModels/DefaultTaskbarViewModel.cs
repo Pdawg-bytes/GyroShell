@@ -23,7 +23,6 @@ using GyroShell.Library.Constants;
 using Windows.UI.Notifications;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using GyroShell.Library.Events;
 using System.Collections.ObjectModel;
 using GyroShell.Library.Models.InternalData;
 
@@ -89,8 +88,6 @@ namespace GyroShell.Library.ViewModels
             _timeService.UpdateClockBinding += TimeService_UpdateClockBinding;
 
             _appSettings.SettingUpdated += AppSettings_SettingUpdated;
-
-            _explorerManager.SystemControlStateChanged += ExplorerManager_SystemControlStateChanged;
         }
 
         public ObservableCollection<WindowModel> CurrentWindows => _shellHookService.CurrentWindows;
@@ -196,22 +193,6 @@ namespace GyroShell.Library.ViewModels
         private bool isActionCenterOpen;
         [ObservableProperty]
         private bool isSystemControlsOpen;
-
-        private void ExplorerManager_SystemControlStateChanged(object sender, SystemTaskbarControlChangedEventArgs e)
-        {
-            switch (e.Type)
-            {
-                case SystemTaskbarControlChangedEventArgs.SystemControlChangedType.Start:
-                    IsStartOpen = e.Value;
-                    break;
-                case SystemTaskbarControlChangedEventArgs.SystemControlChangedType.ActionCenter:
-                    IsActionCenterOpen = e.Value;
-                    break;
-                case SystemTaskbarControlChangedEventArgs.SystemControlChangedType.SystemControls:
-                    IsSystemControlsOpen = e.Value;
-                    break;
-            }
-        }
 
 
         #region Sound
@@ -413,7 +394,6 @@ namespace GyroShell.Library.ViewModels
             _notifManager.NotifcationChanged -= NotificationManager_NotificationChanged;
             _timeService.UpdateClockBinding -= TimeService_UpdateClockBinding;
             _appSettings.SettingUpdated -= AppSettings_SettingUpdated;
-            _explorerManager.SystemControlStateChanged -= ExplorerManager_SystemControlStateChanged;
         }
     }
 }

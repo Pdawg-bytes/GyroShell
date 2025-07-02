@@ -1,13 +1,14 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
+using GyroShell.Library.Helpers.Window;
+
 
 namespace GyroShell.Library.Controls
 {
     public sealed partial class ShellFlyout : UserControl
     {
-        FlyoutWindow containerWindow;
+        private readonly FlyoutWindow containerWindow;
+
         public ShellFlyout()
         {
             this.InitializeComponent();
@@ -34,13 +35,7 @@ namespace GyroShell.Library.Controls
         public bool IsOpen
         {
             get => containerWindow.Visible;
-            set
-            {
-                if (value) { containerWindow.ShowWindow(); } 
-                else { containerWindow.HideWindow(); }
-
-                SetValue(IsOpenProperty, value);
-            }
+            set => containerWindow.ToggleWindow(value);
         }
     }
 }

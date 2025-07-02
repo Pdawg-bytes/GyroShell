@@ -8,7 +8,7 @@
  */
 #endregion
 
-using System;
+using GyroShell.Library.Models.Plugins;
 
 namespace GyroShell.Library.Interfaces
 {
@@ -16,7 +16,7 @@ namespace GyroShell.Library.Interfaces
     {
         public IPluginInfo PluginInformation { get; }
 
-        void Initialize(IServiceProvider localServiceProvider);
+        void Initialize(PluginServiceContext serviceContext);
 
         void Shutdown();
     }

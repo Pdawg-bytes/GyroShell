@@ -8,8 +8,8 @@
  */
 #endregion
 
-using GyroShell.Library.Enums;
 using System;
+using GyroShell.Library.Enums;
 
 namespace GyroShell.Library.Interfaces
 {
@@ -39,11 +39,6 @@ namespace GyroShell.Library.Interfaces
         /// The Guid associated with the plugin.
         /// </summary>
         Guid PluginId { get; }
-
-        /// <summary>
-        /// The required services required for the plugin to function.
-        /// </summary>
-        ServiceType[] RequiredServices { get; }
 
         /// <summary>
         /// The type of plugin that is being loaded.

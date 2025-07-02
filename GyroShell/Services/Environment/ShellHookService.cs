@@ -120,36 +120,6 @@ namespace GyroShell.Services.Environment
         {
             switch (eventType)
             {
-                case EVENT_OBJECT_CLOAKED:
-                    switch (_appHelper.GetWindowTitle(hwnd))
-                    {
-                        case "Start":
-                            _explorerManager.IsStartMenuOpen = false;
-                            break;
-                        case "Quick settings":
-                            _explorerManager.IsSystemControlsOpen = false;
-                            break;
-                        case "Windows Shell Experience Host":
-                        case "Notification Center":
-                            _explorerManager.IsActionCenterOpen = false;
-                            break;
-                    }
-                    break;
-                case EVENT_OBJECT_UNCLOAKED:
-                    switch (_appHelper.GetWindowTitle(hwnd))
-                    {
-                        case "Start":
-                            _explorerManager.IsStartMenuOpen = true;
-                            break;
-                        case "Quick settings":
-                            _explorerManager.IsSystemControlsOpen = true;
-                            break;
-                        case "Windows Shell Experience Host":
-                        case "Notification Center":
-                            _explorerManager.IsActionCenterOpen = true;
-                            break;
-                    }
-                    break;
                 case EVENT_OBJECT_NAMECHANGED:
                     if (_currentWindows.Any(wnd => wnd.Id == hwnd))
                     {

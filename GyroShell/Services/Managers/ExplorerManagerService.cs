@@ -8,7 +8,6 @@
  */
 #endregion
 
-using GyroShell.Library.Events;
 using GyroShell.Library.Services.Managers;
 using System;
 using System.Runtime.InteropServices;
@@ -18,8 +17,6 @@ namespace GyroShell.Services.Managers
 {
     internal class ExplorerManagerService : IExplorerManagerService
     {
-        private const uint EVENT_MODIFY_STATE = 0x0002;
-
         public IntPtr _hTaskBar { get; set; }
         public IntPtr _hMultiTaskBar { get; set; }
         public IntPtr _hStartMenu { get; set; }
@@ -36,66 +33,19 @@ namespace GyroShell.Services.Managers
             }
         }
 
-        public event EventHandler<SystemTaskbarControlChangedEventArgs> SystemControlStateChanged;
 
-        private bool _isStartMenuOpen;
-        public bool IsStartMenuOpen
-        {
-            get => _isStartMenuOpen;
-            set
-            {
-                _isStartMenuOpen = value;
-                SystemControlStateChanged?.Invoke(this, new SystemTaskbarControlChangedEventArgs(SystemTaskbarControlChangedEventArgs.SystemControlChangedType.Start, value));
-            }
-        }
-
-        private bool _isActionCenterOpen;
-        public bool IsActionCenterOpen
-        {
-            get => _isActionCenterOpen;
-            set
-            {
-                _isActionCenterOpen = value;
-                SystemControlStateChanged?.Invoke(this, new SystemTaskbarControlChangedEventArgs(SystemTaskbarControlChangedEventArgs.SystemControlChangedType.ActionCenter, value));
-            }
-        }
-
-        private bool _isSystemControlsOpen;
-        public bool IsSystemControlsOpen
-        {
-            get => _isSystemControlsOpen;
-            set
-            {
-                _isActionCenterOpen = value;
-                SystemControlStateChanged?.Invoke(this, new SystemTaskbarControlChangedEventArgs(SystemTaskbarControlChangedEventArgs.SystemControlChangedType.SystemControls, value));
-            }
-        }
+        public void ShowTaskbar() => SetVisibility(true);
+        public void HideTaskbar() => SetVisibility(false);
 
 
-        public void ShowTaskbar()
-        {
-            SetVisibility(true);
-        }
+        public void ToggleStartMenu() => SendMessage(_hTaskBar, WM_SYSCOMMAND, /*SC_TASKLIST*/ 0xF130, 0);
 
-        public void HideTaskbar()
-        {
-            SetVisibility(false);
-        }
+        public void ToggleControlCenter() =>
+            ShellExecute(IntPtr.Zero, "open", "ms-actioncenter:controlcenter/&suppressAnimations=false&showFooter=true&allowPageNavigation=true", null, null, 1);
 
-        public void ToggleStartMenu()
-        {
-            SendMessage(_hTaskBar, /*WM_SYSCOMMAND*/ 0x0112, (IntPtr) /*SC_TASKLIST*/ 0xF130, (IntPtr)0);
-        }
+        public void ToggleActionCenter() => 
+            ShellExecute(IntPtr.Zero, "open", "ms-actioncenter:", null, null, 1);
 
-        public void ToggleControlCenter()
-        {
-            ShellExecute(IntPtr.Zero, "open", "ms-actioncenter:controlcenter/&suppressAnimations=false&showFooter=true&allowPageNavigation=true" /* CNTRLCTR, bool, bool, bool */, null, null, 1);
-        }
-
-        public void ToggleActionCenter()
-        {
-            ShellExecute(IntPtr.Zero, "open", "ms-actioncenter:" /* ACTION CENTER */, null, null, 1);
-        }
 
         public void ToggleAutoHideExplorer(bool doHide)
         {
@@ -137,7 +87,7 @@ namespace GyroShell.Services.Managers
 
         public void NotifyWinlogonShowShell()
         {
-            IntPtr handle = OpenEvent(EVENT_MODIFY_STATE, false, "msgina: ShellReadyEvent");
+            IntPtr handle = OpenEvent(0x0002, false, "msgina: ShellReadyEvent");
 
             if (handle != IntPtr.Zero)
             {

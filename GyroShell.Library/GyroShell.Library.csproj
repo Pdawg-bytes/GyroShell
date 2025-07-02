@@ -10,7 +10,6 @@
     <UseWinUI>true</UseWinUI>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="Controls\FlyoutWindow.xaml" />
     <None Remove="Controls\ShellFlyout.xaml" />
   </ItemGroup>
 
@@ -24,12 +23,6 @@
 
   <ItemGroup>
     <Page Update="Controls\ShellFlyout.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Update="Controls\FlyoutWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

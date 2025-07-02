@@ -6,8 +6,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
-    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
-    xmlns:media="using:Microsoft.Xaml.Interactions.Media"
     xmlns:fl="using:GyroShell.Library.Controls"
     mc:Ignorable="d"
     x:Name="DefaultTaskbarPage"

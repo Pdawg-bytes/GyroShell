@@ -73,12 +73,10 @@
     <None Remove="Controls\DebugDialog.xaml" />
     <None Remove="Controls\DefaultTaskbar.xaml" />
     <None Remove="Controls\StartupWindow.xaml" />
-    <None Remove="Controls\StartWindow.xaml" />
     <None Remove="Controls\TaskButton.xaml" />
     <None Remove="Settings\AboutPage.xaml" />
     <None Remove="Settings\SettingsWindow.xaml" />
     <None Remove="Views\PluginsSettingView.xaml" />
-    <None Remove="Views\StartupPage.xaml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GyroShell.Library\GyroShell.Library.csproj" />
@@ -90,11 +88,6 @@
   </ItemGroup>
   <ItemGroup>
     <Page Update="Controls\DebugDialog.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="Views\StartupPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
@@ -115,11 +108,6 @@
   </ItemGroup>
   <ItemGroup>
     <Page Update="Settings\SettingsWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="Controls\StartWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

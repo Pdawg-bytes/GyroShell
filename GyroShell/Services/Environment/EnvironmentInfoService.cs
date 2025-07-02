@@ -8,10 +8,10 @@
  */
 #endregion
 
-using GyroShell.Library.Services.Environment;
 using System;
 using System.IO;
 using Windows.ApplicationModel;
+using GyroShell.Library.Services.Environment;
 using static GyroShell.Library.Helpers.Win32.Win32Interop;
 
 namespace GyroShell.Services.Environment
@@ -59,39 +59,14 @@ namespace GyroShell.Services.Environment
 
         public EnvironmentInfoService()
         {
-            try
-            {
-                if (Package.Current.InstalledLocation != null)
-                {
-                    Package package = Package.Current;
-                    SystemArchitecture = package.Id.Architecture.ToString();
+            Package package = Package.Current;
+            SystemArchitecture = package.Id.Architecture.ToString();
 
-                    PackageVersion version = package.Id.Version;
-                    AppVersion = new Version(version.Major, version.Minor, version.Build, version.Revision);
+            PackageVersion version = package.Id.Version;
+            AppVersion = new Version(version.Major, version.Minor, version.Build, version.Revision);
 
-                    string mainExecutablePath = Path.Combine(Package.Current.InstalledLocation.Path, "GyroShell.exe");
-                    AppBuildDate = File.GetLastWriteTime(mainExecutablePath);
-                }
-            }
-            catch
-            {
-                SYSTEM_INFO sysInfo = new SYSTEM_INFO();
-                GetNativeSystemInfo(out sysInfo);
-
-                ushort arch = sysInfo.wProcessorArchitecture;
-
-                SystemArchitecture = arch switch
-                {
-                    0 => "X86",
-                    5 => "ARM",
-                    6 => "ARM64",
-                    9 => "X64",
-                    _ => "Unknown Processor",
-                };
-
-                AppVersion = new Version(1, 0, 0, 0);
-                AppBuildDate = new DateTime(2024, 7, 4);
-            }
+            string mainExecutablePath = Path.Combine(Package.Current.InstalledLocation.Path, "GyroShell.exe");
+            AppBuildDate = File.GetLastWriteTime(mainExecutablePath);
         }
     }
 }

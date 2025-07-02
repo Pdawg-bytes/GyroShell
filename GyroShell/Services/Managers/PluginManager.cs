@@ -18,10 +18,11 @@ using System.Reflection;
 using System.Runtime.Loader;
 using System.Xml.Linq;
 using GyroShell.Library.Interfaces;
-using GyroShell.Library.Models.InternalData;
-using GyroShell.Library.Services.Bridges;
+using GyroShell.Library.Models.Plugins;
 using GyroShell.Library.Services.Environment;
+using GyroShell.Library.Services.Hardware;
 using GyroShell.Library.Services.Managers;
+using Microsoft.Extensions.DependencyInjection;
 using Windows.Storage;
 
 namespace GyroShell.Services.Managers
@@ -31,19 +32,31 @@ namespace GyroShell.Services.Managers
         private readonly Dictionary<AssemblyLoadContext, IPlugin> loadedPlugins = new Dictionary<AssemblyLoadContext, IPlugin>();
 
         private readonly ISettingsService _settingsService;
-        private readonly IPluginServiceBridge _pluginServiceBridge;
+        private readonly PluginServiceContext _sharedPluginContext;
 
 
-        public PluginManager(ISettingsService settingsService, IPluginServiceBridge pluginServiceBridge)
+        public PluginManager(ISettingsService settingsService)
         {
             _settingsService = settingsService;
 
-            _pluginServiceBridge = pluginServiceBridge;
+            _sharedPluginContext = new PluginServiceContext
+            {
+                Settings = App.ServiceProvider.GetRequiredService<ISettingsService>(),
+                Launcher = App.ServiceProvider.GetRequiredService<IInternalLauncher>(),
+                Dispatcher = App.ServiceProvider.GetRequiredService<IDispatcherService>(),
+                EnvironmentInfo = App.ServiceProvider.GetRequiredService<IEnvironmentInfoService>(),
+                ShellHook = App.ServiceProvider.GetRequiredService<IShellHookService>(),
+
+                Clock = App.ServiceProvider.GetRequiredService<ITimeService>(),
+                Network = App.ServiceProvider.GetRequiredService<INetworkService>(),
+                Battery = App.ServiceProvider.GetRequiredService<IBatteryService>(),
+                Sound = App.ServiceProvider.GetRequiredService<ISoundService>(),
+
+                Notifications = App.ServiceProvider.GetRequiredService<INotificationManager>()
+            };
 
             foreach (string pluginName in _settingsService.PluginsToLoad)
-            {
                 LoadAndRunPlugin(pluginName);
-            }
 
             IsUnloadRestartPending = false;
             Debug.WriteLine(ApplicationData.Current.TemporaryFolder.Path);
@@ -98,7 +111,7 @@ namespace GyroShell.Services.Managers
                                     break;
                             }
 
-                            plugin.Initialize(_pluginServiceBridge.CreatePluginServiceProvider(plugin.PluginInformation.RequiredServices));
+                            plugin.Initialize(_sharedPluginContext);
                             loadedPlugins[localPluginLoadContext] = plugin;
                             if (_settingsService.SettingExists($"LoadPlugin_{pluginName}"))
                             {

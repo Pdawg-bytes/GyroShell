@@ -8,6 +8,7 @@ using WinRT;
 using static GyroShell.Library.Helpers.Win32.Win32Interop;
 using WinRT.Interop;
 using Windows.UI;
+using Microsoft.UI.Xaml.Media;
 
 namespace GyroShell.Library.Helpers.Window
 {
@@ -25,6 +26,7 @@ namespace GyroShell.Library.Helpers.Window
 
         protected IntPtr WindowHandle;
 
+        protected readonly SystemBackdrop CustomBackdrop;
         private WindowsSystemDispatcherQueueHelper _queueHelper;
         private SystemBackdropConfiguration _backdropConfig;
         private MicaController _mica;
@@ -35,7 +37,7 @@ namespace GyroShell.Library.Helpers.Window
         public ShellWindow(ISettingsService settingsProvider,
                            int width, int height, int x = 0, int y = 0,
                            bool dockBottom = false, bool round = false,
-                           bool customTransparency = true)
+                           bool customTransparency = true, SystemBackdrop customBackdrop = null)
         {
             Width = width;
             Height = height;
@@ -55,6 +57,7 @@ namespace GyroShell.Library.Helpers.Window
 
             IsRound = round;
             CustomTransparency = customTransparency;
+            CustomBackdrop = customBackdrop;
 
             SettingsService = settingsProvider;
 
@@ -68,6 +71,7 @@ namespace GyroShell.Library.Helpers.Window
 
             if (AppWindow.Presenter is OverlappedPresenter presenter)
             {
+                presenter.IsAlwaysOnTop = true;
                 presenter.IsResizable = false;
                 presenter.SetBorderAndTitleBar(false, false);
             }
@@ -91,7 +95,6 @@ namespace GyroShell.Library.Helpers.Window
             AppWindow.Move(new PointInt32 { X = this.X, Y = this.Y });
             AppWindow.MoveInZOrderAtTop();
 
-
             SetupBackdrop();
             this.Closed += (_, _) => CleanupBackdrop();
             this.Activated += (_, _) =>
@@ -106,7 +109,6 @@ namespace GyroShell.Library.Helpers.Window
                 if (_backdropConfig is not null)
                     _backdropConfig.IsInputActive = true;
             };
-
         }
 
         private void SetupBackdrop()
@@ -120,6 +122,12 @@ namespace GyroShell.Library.Helpers.Window
             };
 
             SetBackdropTheme();
+
+            if (CustomBackdrop is not null)
+            {
+                SystemBackdrop = CustomBackdrop;
+                return;
+            }
 
             int type = SettingsService.TransparencyType;
             Color tint = CustomTransparency ?

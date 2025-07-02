@@ -8,7 +8,7 @@
  */
 #endregion
 
-using GyroShell.Library.Models.InternalData;
+using GyroShell.Library.Models.Plugins;
 using System.Collections.Generic;
 
 namespace GyroShell.Library.Services.Managers

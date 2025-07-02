@@ -12,7 +12,7 @@ using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace GyroShell.Library.Models.InternalData
+namespace GyroShell.Library.Models.Plugins
 {
     public class PluginUIModel : INotifyPropertyChanged
     {
